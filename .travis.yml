@@ -14,9 +14,9 @@ install:
 script:
 - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 - npm run build
-- docker build -t ${DOCKER_USER}/funds-front . &&
-  docker push ${DOCKER_USER}/funds-front
-- docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile . &&
-  docker push ${DOCKER_USER}/funds-api
+- docker build -t ${DOCKER_USER}/funds-front .
+- docker push ${DOCKER_USER}/funds-front
+- docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile .
+- docker push ${DOCKER_USER}/funds-api
 notifications:
   email: false
