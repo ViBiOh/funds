@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { browserHistory } from 'react-router';
 import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
-import { buildFullTextRegex, fullTextRegexFilter } from '../FullTextSearch';
+import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import FundsService from './FundsService';
 import FundRow from './FundRow';
@@ -144,9 +145,16 @@ const COLUMNS = {
   },
 };
 
-export default class MorningStarList extends Component {
+export default class Funds extends Component {
   constructor(props) {
     super(props);
+
+    const filters = Object.keys(props.location.query)
+      .filter(param => param !== 'o')
+      .reduce((previous, current) => {
+        previous[current] = props.location.query[current]; // eslint-disable-line no-param-reassign
+        return previous;
+      }, {});
 
     this.state = {
       loaded: false,
@@ -155,10 +163,10 @@ export default class MorningStarList extends Component {
       input: '',
       selectedFilter: 'label',
       order: {
-        key: '',
+        key: props.location.query.o || '',
         descending: true,
       },
-      filters: {},
+      filters,
       orderDisplayed: false,
       filterDisplayed: false,
     };
@@ -176,6 +184,7 @@ export default class MorningStarList extends Component {
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.updateDataPresentation = this.updateDataPresentation.bind(this);
+    this.pushHistory = this.pushHistory.bind(this);
 
     this.renderFilterIcon = this.renderFilterIcon.bind(this);
     this.renderOrderIcon = this.renderOrderIcon.bind(this);
@@ -288,8 +297,19 @@ export default class MorningStarList extends Component {
 
       this.setState({
         displayed,
-      });
+      }, this.pushHistory);
     }, 400);
+  }
+
+  pushHistory() {
+    const params = Object.keys(this.state.filters)
+      .map(filter => `${filter}=${this.state.filters[filter]}`);
+
+    if (this.state.order.key) {
+      params.push(`o=${this.state.order.key}`);
+    }
+
+    browserHistory.push(`/?${params.join('&')}`);
   }
 
   renderRow() {
@@ -406,7 +426,7 @@ export default class MorningStarList extends Component {
     }, {});
 
     return (
-      <section>
+      <article>
         <div key="search" className={style.list}>
           {this.renderSearch()}
           {this.renderFilter()}
@@ -416,7 +436,15 @@ export default class MorningStarList extends Component {
           <FundRow key={'header'} fund={header} />
           {this.renderRow()}
         </div>
-      </section>
+      </article>
     );
   }
 }
+
+Funds.propTypes = {
+  location: React.PropTypes.shape({
+    query: React.PropTypes.shape({
+      o: React.PropTypes.string,
+    }),
+  }).isRequired,
+};

@@ -1,4 +1,4 @@
-import Fetch from '../Fetch';
+import Fetch from '../Fetch/Fetch';
 
 const API_PATH = 'https://funds-api.vibioh.fr/';
 

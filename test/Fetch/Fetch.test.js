@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env mocha */
 import { expect } from 'chai';
-import Fetch from '../app/Fetch';
+import Fetch from '../../app/Fetch/Fetch';
 
 describe('Fetch', () => {
   it('should return a promise', () => {
