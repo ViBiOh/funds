@@ -8,11 +8,11 @@ install:
 - make
 - npm i
 script:
-- npm run build
-- docker build -t ${DOCKER_USER}/funds-api ./src/
-- docker build -t ${DOCKER_USER}/funds-front .
 - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-- docker push ${DOCKER_USER}/funds-api
-- docker push ${DOCKER_USER}/funds-front
+- npm run build &&
+  docker build -t ${DOCKER_USER}/funds-front . &&
+  docker push ${DOCKER_USER}/funds-front
+- docker build -t ${DOCKER_USER}/funds-api ./src/ &&
+  docker push ${DOCKER_USER}/funds-api
 notifications:
   email: false
