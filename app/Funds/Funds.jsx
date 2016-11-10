@@ -5,9 +5,9 @@ import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import { buildFullTextRegex } from '../FullTextSearch';
 import Throbber from '../Throbber/Throbber';
-import MorningStarService from './MorningStarService';
-import MorningStarRow from './MorningStarRow';
-import style from './MorningStar.css';
+import FundsService from './FundsService';
+import FundRow from './FundRow';
+import style from './Funds.css';
 
 const morningStarIdList = [
   'F00000VSR5', 'F0GBR05V29', 'F00000OVC2', 'F00000VRCL', 'F0GBR05SSA', 'F00000VU45', 'F0GBR04SNN',
@@ -176,7 +176,7 @@ export default class MorningStarList extends Component {
   }
 
   fetchPerformances(ids) {
-    return MorningStarService.getPerformances(ids)
+    return FundsService.getPerformances(ids)
       .then((performances) => {
         const results = performances.results.filter(performance => performance.id);
         this.setState({
@@ -188,7 +188,7 @@ export default class MorningStarList extends Component {
   }
 
   fetchPerformance(id) {
-    return MorningStarService.getPerformance(id)
+    return FundsService.getPerformance(id)
       .then((performance) => {
         this.setState({
           performances: [...this.state.performances, performance],
@@ -269,7 +269,7 @@ export default class MorningStarList extends Component {
 
   renderRow() {
     return this.state.displayed.map(performance => (
-      <MorningStarRow
+      <FundRow
         key={performance.id}
         performance={performance}
         filterBy={this.filterBy}
@@ -373,7 +373,7 @@ export default class MorningStarList extends Component {
           }
         </div>
         <div key="list" className={style.list}>
-          <MorningStarRow key={'header'} performance={header} />
+          <FundRow key={'header'} performance={header} />
           {this.renderRow()}
         </div>
       </span>

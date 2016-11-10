@@ -1,5 +1,5 @@
 import React from 'react';
-import style from './MorningStar.css';
+import style from './Funds.css';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 

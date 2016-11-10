@@ -1,10 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
-
-const toggleProps = {
-  idle: <span>&#x2715;</span>,
-  active: <span>&#x2261;</span>,
-};
 
 const Main = ({ children }) => (
   <span id="mainLayout">

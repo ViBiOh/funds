@@ -1,6 +1,6 @@
 import React from 'react';
 import PerformanceCell from './PerformanceCell';
-import style from './MorningStar.css';
+import style from './Funds.css';
 
 const MorningStarRow = ({ performance, filterBy }) => (
   <span className={style.row}>
