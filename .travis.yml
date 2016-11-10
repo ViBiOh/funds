@@ -1,6 +1,6 @@
 language:
-- node_js
 - go
+- node_js
 sudo: required
 services:
 - docker
@@ -14,6 +14,7 @@ install:
 script:
 - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 - npm run build
+- ls -litrah .
 - docker build -t ${DOCKER_USER}/funds-front .
 - docker push ${DOCKER_USER}/funds-front
 - docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile .

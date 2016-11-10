@@ -182,8 +182,7 @@ func isinHandler(w http.ResponseWriter, isin string) {
 
   results := make([]Search, size)
   for i, line := range lines {
-    err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &results[i])
-    if err != nil {
+    if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &results[i]); err != nil {
       http.Error(w, `Error while unmarshalling data for ISIN `+isin, 500)
     }
   }
@@ -215,8 +214,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   for i, _ := range ids {
-    performanceAsync := <-ch
-    if performanceAsync.err == nil {
+    if performanceAsync := <-ch; performanceAsync.err != nil {
       results[i] = *performanceAsync.performance
     }
   }
