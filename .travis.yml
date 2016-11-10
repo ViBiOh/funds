@@ -8,15 +8,15 @@ go:
 - 1.7
 node_js:
 - 6.7.0
-install: 
+install:
 - make
 - npm i
 script:
 - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 - npm run build
-- docker build -t ${DOCKER_USER}/funds-front . &&
-  docker push ${DOCKER_USER}/funds-front
-- docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile . &&
-  docker push ${DOCKER_USER}/funds-api
+- docker build -t ${DOCKER_USER}/funds-front . && docker push ${DOCKER_USER}/funds-front
+- docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile . && docker push ${DOCKER_USER}/funds-api
 notifications:
   email: false
+before_install:
+- openssl aes-256-cbc -K $encrypted_afb3f4a0fd37_key -iv $encrypted_afb3f4a0fd37_iv -in deploy_rsa.enc -out deploy_rsa -d
