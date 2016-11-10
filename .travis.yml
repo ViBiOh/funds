@@ -1,0 +1,16 @@
+language: node_js
+sudo: required
+services:
+- docker
+node_js:
+- 6.7.0
+install: make
+script:
+- npm run build
+- docker build -t ${DOCKER_USER}/funds-api ./src/
+- docker build -t ${DOCKER_USER}/funds-front .
+- docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+- docker push ${DOCKER_USER}/funds-api
+- docker push ${DOCKER_USER}/funds-front
+notifications:
+  email: false
