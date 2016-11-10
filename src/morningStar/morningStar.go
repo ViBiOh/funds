@@ -225,7 +225,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-  path := strings.ToLower(strings.Replace(r.URL.Path, `/morningStar/`, ``, -1))
+  path := strings.ToLower(r.URL.Path)
 
   w.Header().Add(`Access-Control-Allow-Origin`, `*`)
   w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
