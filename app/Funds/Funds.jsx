@@ -139,7 +139,7 @@ export default class MorningStarList extends Component {
     super(props);
 
     this.state = {
-      performances: [],
+      funds: [],
       displayed: [],
       order: {
         key: '',
@@ -176,25 +176,25 @@ export default class MorningStarList extends Component {
   }
 
   fetchPerformances(ids) {
-    return FundsService.getPerformances(ids)
-      .then((performances) => {
-        const results = performances.results.filter(performance => performance.id);
+    return FundsService.getFunds(ids)
+      .then((funds) => {
+        const results = funds.results.filter(fund => fund.id);
         this.setState({
-          performances: [...this.state.performances, ...results],
+          funds: [...this.state.funds, ...results],
         }, this.updateDataPresentation);
 
-        return performances;
+        return funds;
       });
   }
 
   fetchPerformance(id) {
-    return FundsService.getPerformance(id)
-      .then((performance) => {
+    return FundsService.getFund(id)
+      .then((fund) => {
         this.setState({
-          performances: [...this.state.performances, performance],
+          funds: [...this.state.funds, fund],
         }, this.updateDataPresentation);
 
-        return performance;
+        return fund;
       });
   }
 
@@ -226,7 +226,7 @@ export default class MorningStarList extends Component {
   updateDataPresentation() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      let displayed = this.state.performances.slice();
+      let displayed = this.state.funds.slice();
 
       const categoryFilter = this.state.filters.category;
       if (categoryFilter) {
@@ -268,10 +268,10 @@ export default class MorningStarList extends Component {
   }
 
   renderRow() {
-    return this.state.displayed.map(performance => (
+    return this.state.displayed.map(fund => (
       <FundRow
-        key={performance.id}
-        performance={performance}
+        key={fund.id}
+        fund={fund}
         filterBy={this.filterBy}
       />
     ));
@@ -315,7 +315,7 @@ export default class MorningStarList extends Component {
   }
 
   render() {
-    if (this.state.performances.length === 0) {
+    if (this.state.funds.length === 0) {
       return <Throbber label="Chargement des données" />;
     }
 
@@ -325,7 +325,7 @@ export default class MorningStarList extends Component {
     }, {});
 
     return (
-      <span>
+      <section>
         <div key="search" className={style.list}>
           {this.renderSearch()}
           {
@@ -373,10 +373,10 @@ export default class MorningStarList extends Component {
           }
         </div>
         <div key="list" className={style.list}>
-          <FundRow key={'header'} performance={header} />
+          <FundRow key={'header'} fund={header} />
           {this.renderRow()}
         </div>
-      </span>
+      </section>
     );
   }
 }

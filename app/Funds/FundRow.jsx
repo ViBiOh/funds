@@ -2,27 +2,27 @@ import React from 'react';
 import PerformanceCell from './PerformanceCell';
 import style from './Funds.css';
 
-const MorningStarRow = ({ performance, filterBy }) => (
+const MorningStarRow = ({ fund, filterBy }) => (
   <span className={style.row}>
     <span
-      title={`${performance.isin} - ${performance.label}`}
+      title={`${fund.isin} - ${fund.label}`}
       className={`${style.label} ${style.ellipsis}`}
-    >{performance.label}</span>
+    >{fund.label}</span>
     <button
-      title={performance.category}
+      title={fund.category}
       className={`${style.category} ${style.ellipsis}`}
-      onClick={() => filterBy && filterBy('category', performance.category)}
-    >{performance.category}</button>
+      onClick={() => filterBy && filterBy('category', fund.category)}
+    >{fund.category}</button>
     <button
       className={style.rating}
-      onClick={() => filterBy && filterBy('rating', performance.rating)}
-    >{performance.rating}</button>
-    <PerformanceCell value={performance['1m']} type="p1m" />
-    <PerformanceCell value={performance['3m']} type="p3m" />
-    <PerformanceCell value={performance['6m']} type="p6m" />
-    <PerformanceCell value={performance['1y']} type="p1y" />
-    <PerformanceCell value={performance.v1y} type="pvol" />
-    <PerformanceCell value={performance.score} type="pscore" />
+      onClick={() => filterBy && filterBy('rating', fund.rating)}
+    >{fund.rating}</button>
+    <PerformanceCell value={fund['1m']} type="p1m" />
+    <PerformanceCell value={fund['3m']} type="p3m" />
+    <PerformanceCell value={fund['6m']} type="p6m" />
+    <PerformanceCell value={fund['1y']} type="p1y" />
+    <PerformanceCell value={fund.v1y} type="pvol" />
+    <PerformanceCell value={fund.score} type="pscore" />
   </span>
 );
 
@@ -34,7 +34,7 @@ const STRING_OR_NUMBER = React.PropTypes.oneOfType([
 ]).isRequired;
 
 MorningStarRow.propTypes = {
-  performance: React.PropTypes.shape({
+  fund: React.PropTypes.shape({
     isin: STRING_OR_NUMBER,
     label: STRING_OR_NUMBER,
     category: STRING_OR_NUMBER,

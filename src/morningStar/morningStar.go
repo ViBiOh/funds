@@ -17,9 +17,9 @@ const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.asp
 const SEARCH_ID = `http://www.morningstar.fr/fr/util/SecuritySearch.ashx?q=`
 const REFRESH_DELAY = 18
 
-var LIST_REQUEST = regexp.MustCompile(`^list$`)
-var PERF_REQUEST = regexp.MustCompile(`^(.+?)$`)
-var ISIN_REQUEST = regexp.MustCompile(`^(.+?)/isin$`)
+var LIST_REQUEST = regexp.MustCompile(`^/list$`)
+var PERF_REQUEST = regexp.MustCompile(`^/(.+?)$`)
+var ISIN_REQUEST = regexp.MustCompile(`^/(.+?)/isin$`)
 
 var CARRIAGE_RETURN = regexp.MustCompile(`\r?\n`)
 var END_CARRIAGE_RETURN = regexp.MustCompile(`\r?\n$`)
@@ -214,7 +214,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   for i, _ := range ids {
-    if performanceAsync := <-ch; performanceAsync.err != nil {
+    if performanceAsync := <-ch; performanceAsync.err == nil {
       results[i] = *performanceAsync.performance
     }
   }

@@ -29,7 +29,16 @@ svg.active {
   color: #F8F8F8;
 }
 
-.search input[type="text"], .search svg, .search ol, .count, .row, .dataModifier, .rating, .category, .performance {
+.search input[type="text"],
+.search svg,
+.search ol,
+.search li,
+.count,
+.row,
+.dataModifier,
+.rating,
+.category,
+.performance {
   padding: 5px;
 }
 
@@ -76,7 +85,7 @@ svg.active {
 }
 
 .row {
-  width: 100%;
+  width: 100vw;
   min-height: 24px;
   display: flex;
   flex-wrap: wrap;
@@ -98,7 +107,7 @@ svg.active {
 }
 
 .category {
-  width: 185px;
+  width: 200px;
 }
 
 .rating {
@@ -118,10 +127,6 @@ svg.active {
 
 
 @media screen and (max-width: 1023px) {
-  .row {
-    width: 100vw;
-  }
-
   .row:first-child {
     display: none;
   }
@@ -130,7 +135,9 @@ svg.active {
     flex-basis: 100vw;
   }
 
-  .rating, .category, .performance {
+  .rating,
+  .category,
+  .performance {
     width: auto;
     border: 1px solid;
     border-radius: 5px;
