@@ -27,7 +27,7 @@ function replaceAccentedChar(str) {
 
 function buildFullTextRegex(value) {
   const wildcard = '.*';
-  const flags = 'gi';
+  const flags = 'gmi';
   if (value.trim() === '') {
     return new RegExp(wildcard, flags);
   }
@@ -52,7 +52,11 @@ function buildFullTextRegex(value) {
 }
 
 function fullTextRegexFilter(value, search) {
-  return buildFullTextRegex(search).test(replaceAccentedChar(value));
+  let regex = search;
+  if (!(search instanceof RegExp)) {
+    regex = buildFullTextRegex(search);
+  }
+  return regex.test(replaceAccentedChar(value));
 }
 
 export { replaceAccentedChar, buildFullTextRegex, fullTextRegexFilter };

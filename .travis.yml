@@ -29,6 +29,6 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds-ob https://github.com/ViBiOh/funds-ob.git vibioh.fr funds
+  script: ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds https://github.com/ViBiOh/funds-ob.git vibioh.fr funds
   on:
     branch: master

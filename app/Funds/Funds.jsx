@@ -3,7 +3,7 @@ import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
-import { buildFullTextRegex } from '../FullTextSearch';
+import { buildFullTextRegex, fullTextRegexFilter } from '../FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import FundsService from './FundsService';
 import FundRow from './FundRow';
@@ -95,42 +95,52 @@ const COLUMNS = {
   isin: {
     label: 'ISIN',
     sortable: false,
+    filterable: true,
   },
   label: {
     label: 'Libellé',
     sortable: true,
+    filterable: true,
   },
   category: {
     label: 'Catégorie',
     sortable: true,
+    filterable: true,
   },
   rating: {
     label: 'Note',
     sortable: true,
+    filterable: true,
   },
   '1m': {
     label: '1 mois',
     sortable: true,
+    filterable: false,
   },
   '3m': {
     label: '3 mois',
     sortable: true,
+    filterable: false,
   },
   '6m': {
     label: '6 mois',
     sortable: true,
+    filterable: false,
   },
   '1y': {
     label: '1 an',
     sortable: true,
+    filterable: false,
   },
   v1y: {
     label: 'Volatilité',
     sortable: true,
+    filterable: false,
   },
   score: {
     label: 'Score',
     sortable: true,
+    filterable: false,
   },
 };
 
@@ -139,40 +149,65 @@ export default class MorningStarList extends Component {
     super(props);
 
     this.state = {
+      loaded: false,
       funds: [],
       displayed: [],
+      input: '',
+      selectedFilter: 'label',
       order: {
         key: '',
         descending: true,
       },
-      filters: {
-        text: '',
-      },
+      filters: {},
       orderDisplayed: false,
+      filterDisplayed: false,
     };
 
+    this.fetchAllPerformances = this.fetchAllPerformances.bind(this);
     this.fetchPerformances = this.fetchPerformances.bind(this);
     this.fetchPerformance = this.fetchPerformance.bind(this);
 
+    this.onOrderClick = this.onOrderClick.bind(this);
+    this.onFilterClick = this.onFilterClick.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+
     this.filterBy = this.filterBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
-    this.onOrderClick = this.onOrderClick.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.updateDataPresentation = this.updateDataPresentation.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-    this.renderOrder = this.renderOrder.bind(this);
+
+    this.renderFilterIcon = this.renderFilterIcon.bind(this);
+    this.renderOrderIcon = this.renderOrderIcon.bind(this);
     this.renderSearch = this.renderSearch.bind(this);
+    this.renderFilter = this.renderFilter.bind(this);
+    this.renderOrder = this.renderOrder.bind(this);
+    this.renderRow = this.renderRow.bind(this);
   }
 
   componentDidMount() {
-    for (let i = 0, size = morningStarIdList.length; i < size; i += FETCH_SIZE) {
-      this.fetchPerformances(morningStarIdList.slice(i, i + FETCH_SIZE));
-    }
+    this.fetchAllPerformances();
   }
 
   onOrderClick() {
     this.setState({ orderDisplayed: !this.state.orderDisplayed });
+  }
+
+  onFilterClick() {
+    this.setState({ filterDisplayed: !this.state.filterDisplayed });
+  }
+
+  onFilterChange(e) {
+    this.setState({ selectedFilter: e.target.value, filterDisplayed: false });
+  }
+
+  fetchAllPerformances() {
+    const fetches = [];
+    for (let i = 0, size = morningStarIdList.length; i < size; i += FETCH_SIZE) {
+      fetches.push(this.fetchPerformances(morningStarIdList.slice(i, i + FETCH_SIZE)));
+    }
+
+    Promise.all(fetches).then(() => this.setState({ loaded: true }));
   }
 
   fetchPerformances(ids) {
@@ -228,20 +263,10 @@ export default class MorningStarList extends Component {
     this.timeout = setTimeout(() => {
       let displayed = this.state.funds.slice();
 
-      const categoryFilter = this.state.filters.category;
-      if (categoryFilter) {
-        displayed = displayed.filter(({ category }) => category === categoryFilter);
-      }
-
-      const ratingFilter = this.state.filters.rating;
-      if (ratingFilter) {
-        displayed = displayed.filter(({ rating }) => rating === ratingFilter);
-      }
-
-      if (this.state.filters.text) {
-        const regex = buildFullTextRegex(this.state.filters.text);
-        displayed = displayed.filter(({ label }) => regex.test(label));
-      }
+      Object.keys(this.state.filters).forEach((filter) => {
+        const regex = buildFullTextRegex(this.state.filters[filter]);
+        displayed = displayed.filter(fund => fullTextRegexFilter(fund[filter], regex));
+      });
 
       if (this.state.order.key) {
         const orderKey = this.state.order.key;
@@ -277,7 +302,7 @@ export default class MorningStarList extends Component {
     ));
   }
 
-  renderOrder() {
+  renderOrderIcon() {
     const orderColumns = Object.keys(COLUMNS)
       .filter(column => COLUMNS[column].sortable)
       .map(key => (
@@ -297,19 +322,75 @@ export default class MorningStarList extends Component {
     );
   }
 
+  renderFilterIcon() {
+    const filterColumns = Object.keys(COLUMNS)
+      .filter(column => COLUMNS[column].filterable)
+      .map(key => (
+        <li key={key}>
+          <button onClick={this.onFilterChange} value={key}>{COLUMNS[key].label}</button>
+        </li>
+      ));
+
+    return (
+      <span className={style.icon}>
+        <FaFilter
+          className={this.state.filterDisplayed ? style.active : ''}
+          onClick={this.onFilterClick}
+        />
+        <ol className={this.state.filterDisplayed ? style.displayed : style.hidden}>
+          {filterColumns}
+        </ol>
+      </span>
+    );
+  }
+
   renderSearch() {
+    const count = `${this.state.displayed.length} / ${morningStarIdList.length}`;
+
     return (
       <span className={style.search}>
-        {this.renderOrder()}
+        {this.renderOrderIcon()}
+        {this.renderFilterIcon()}
         <input
           type="text"
-          placeholder="Filter on label"
-          value={this.state.filters.text}
-          onChange={e => this.filterBy('text', e.target.value)}
+          placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
+          value={this.state.text}
+          onChange={e => this.filterBy(this.state.selectedFilter, e.target.value)}
         />
         <span className={style.count}>
-          {this.state.displayed.length} / {morningStarIdList.length}
+          {this.state.loaded ? count : <Throbber title={count} />}
         </span>
+      </span>
+    );
+  }
+
+  renderFilter() {
+    return Object.keys(this.state.filters)
+      .filter(filter => this.state.filters[filter])
+      .map(filter => (
+        <span key={filter} className={style.dataModifier}>
+          <span className={style.icon}>
+            <FaFilter />
+          </span>
+          <span><em> {COLUMNS[filter].label}</em> &#x2243; </span>
+          {this.state.filters[filter]}
+          <button onClick={() => this.filterBy(filter, '')} className={style.icon}>
+            <FaClose />
+          </button>
+        </span>
+      ));
+  }
+
+  renderOrder() {
+    return this.state.order.key && (
+      <span className={style.dataModifier}>
+        <button onClick={this.reverseOrder} className={style.icon}>
+          {this.state.order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
+        </button>
+        &nbsp;{COLUMNS[this.state.order.key].label}
+        <button onClick={() => this.orderBy('')} className={style.icon}>
+          <FaClose />
+        </button>
       </span>
     );
   }
@@ -328,49 +409,8 @@ export default class MorningStarList extends Component {
       <section>
         <div key="search" className={style.list}>
           {this.renderSearch()}
-          {
-            this.state.filters.category && (
-              <span className={style.dataModifier}>
-                <span className={style.icon}>
-                  <FaFilter />
-                </span>
-                <span><em> Catégorie</em> = </span>
-                {this.state.filters.category}
-                <button onClick={() => this.filterBy('category', '')} className={style.icon}>
-                  <FaClose />
-                </button>
-              </span>
-            )
-          }
-          {
-            this.state.filters.rating && (
-              <span className={style.dataModifier}>
-                <span className={style.icon}>
-                  <FaFilter />
-                </span>
-                <span><em> Note</em> = </span>
-                {this.state.filters.rating}
-                <button onClick={() => this.filterBy('rating', '')} className={style.icon}>
-                  <FaClose />
-                </button>
-              </span>
-            )
-          }
-          {
-            this.state.order.key && (
-              <span className={style.dataModifier}>
-                <button onClick={this.reverseOrder} className={style.icon}>
-                  {
-                    this.state.order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />
-                  }
-                </button>
-                &nbsp;{COLUMNS[this.state.order.key].label}
-                <button onClick={() => this.orderBy('')} className={style.icon}>
-                  <FaClose />
-                </button>
-              </span>
-            )
-          }
+          {this.renderFilter()}
+          {this.renderOrder()}
         </div>
         <div key="list" className={style.list}>
           <FundRow key={'header'} fund={header} />
