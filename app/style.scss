@@ -29,16 +29,9 @@ html {
   padding: 10px;
 }
 
-#mainLayout {
-  height: 100%;
-  width: 100%;
-  display: inline-flex;
-  flex-wrap: wrap;
-}
-
 header {
   @include darkBox;
-  width: 100%;
+  width: 100vw;
   text-align: center;
 }
 
@@ -48,40 +41,12 @@ h1 {
   @include smallPadding;
 }
 
-nav > ul {
-  @include darkBox;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-li {
-  @include smallPadding;
-}
-
-a, a:hover, a:visited, a:active, a:focus {
-  text-decoration: none;
-  color: inherit;
-}
-
 article {
   text-align: center;
-  flex: 1;
-}
-
-@media screen and (min-width: 1024px) {
-  section {
-    @include smallPadding;
-  }
 }
 
 @media screen and (max-width: 1023px) {
   h1 {
     font-size: 1em;
-  }
-
-  article {
-    flex-basis: auto;
   }
 }

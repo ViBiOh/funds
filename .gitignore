@@ -28,3 +28,6 @@ coverage/
 tmp/
 dist/
 .nyc_output
+
+# Go binary
+server

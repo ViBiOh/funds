@@ -15,7 +15,7 @@ svg.active {
 }
 
 .list {
-  width: 100%;
+  width: 100vw;
   display: flex;
   flex-wrap: wrap;
 }
@@ -29,31 +29,23 @@ svg.active {
   color: #F8F8F8;
 }
 
-.search input[type="text"], .search svg, .search ol, .count, .row, .dataModifier, .rating, .category, .performance {
+.search input[type="text"],
+.search svg,
+.search ol,
+.search li,
+.count,
+.row,
+.dataModifier,
+.rating,
+.category,
+.performance {
   padding: 5px;
 }
 
 .search {
   display: flex;
   align-items: center;
-  width: 100%;
-}
-
-.search input[type="text"] {
-  height: 50px;
-  border-radius: 0;
-  flex: 1;
-}
-
-.search ol {
-  background-color: #3A3A3A;
-  text-align: left;
-  list-style: none;
-  position: absolute;
-  top: 3em;
-  right: 1em;
-  margin: 0;
-  border-radius: 5px;
+  width: 100vw;
 }
 
 .search .icon {
@@ -67,6 +59,23 @@ svg.active {
   height: 50px;
 }
 
+.search ol {
+  background-color: #3A3A3A;
+  text-align: left;
+  list-style: none;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  margin: 0;
+  border-radius: 0 0 5px 0;
+}
+
+.search input[type="text"] {
+  height: 50px;
+  border-radius: 0;
+  flex: 1;
+}
+
 .hidden {
   display: none;
 }
@@ -76,7 +85,7 @@ svg.active {
 }
 
 .row {
-  width: 100%;
+  width: 100vw;
   min-height: 24px;
   display: flex;
   flex-wrap: wrap;
@@ -98,7 +107,7 @@ svg.active {
 }
 
 .category {
-  width: 185px;
+  width: 200px;
 }
 
 .rating {
@@ -118,10 +127,6 @@ svg.active {
 
 
 @media screen and (max-width: 1023px) {
-  .row {
-    width: 100vw;
-  }
-
   .row:first-child {
     display: none;
   }
@@ -130,7 +135,9 @@ svg.active {
     flex-basis: 100vw;
   }
 
-  .rating, .category, .performance {
+  .rating,
+  .category,
+  .performance {
     width: auto;
     border: 1px solid;
     border-radius: 5px;
