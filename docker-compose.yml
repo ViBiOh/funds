@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  api:
+    image: vibioh/funds-api
+    labels:
+      traefik.frontend.passHostHeader: 'true'
+      traefik.frontend.rule: 'Host: funds-api.${DOMAIN}'
+      traefik.port: '1080'
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: on-failure:5
+    read_only: true
+    cpu_shares: 128
+    mem_limit: 134217728
+#    security_opt:
+#    - no-new-privileges
+
+  front:
+    image: vibioh/funds-front
+    command: -spa -domain 'funds-api.vibioh.fr fonts.gstatic.com'
+    labels:
+      traefik.frontend.passHostHeader: 'true'
+      traefik.frontend.rule: 'Host: funds.${DOMAIN}'
+      traefik.port: '1080'
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: on-failure:5
+    read_only: true
+    cpu_shares: 128
+    mem_limit: 134217728
+#    security_opt:
+#    - no-new-privileges
+
+networks:
+  default:
+    external:
+      name: traefik

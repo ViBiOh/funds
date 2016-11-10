@@ -1,0 +1,71 @@
+{
+  "name": "funds-ob",
+  "version": "0.0.1",
+  "description": "Funds OB",
+  "main": "index.js",
+  "scripts": {
+    "copy:html": "mkdir -p ./dist && cp ./app/index.html ./dist/",
+    "copy": "npm run copy:html",
+    "mustache": "./mustache.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
+    "eslint": "./node_modules/.bin/eslint --ext .js --ext .jsx src/",
+    "start": "npm run copy && ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
+    "test": "./node_modules/.bin/nyc --reporter html --reporter text --extension .jsx --require babel-core/register ./node_modules/.bin/mocha --require ./test/common/setup.js --require ignore-styles",
+    "build": "npm run eslint && npm test && npm run mustache && PRODUCTION=true ./node_modules/.bin/webpack --progress -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ViBiOh/funds-ob.git"
+  },
+  "keywords": [
+    "react",
+    "boilerplate"
+  ],
+  "author": "Vincent Boutour",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ViBiOh/funds-ob/issues"
+  },
+  "homepage": "https://github.com/ViBiOh/funds-ob",
+  "devDependencies": {
+    "babel-core": "latest",
+    "babel-loader": "latest",
+    "babel-preset-es2015": "latest",
+    "babel-preset-react": "latest",
+    "chai": "latest",
+    "css-loader": "latest",
+    "eslint": "latest",
+    "eslint-config-airbnb": "latest",
+    "eslint-loader": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-react": "latest",
+    "extract-text-webpack-plugin": "latest",
+    "glob": "latest",
+    "identity-obj-proxy": "latest",
+    "ignore-styles": "latest",
+    "jest": "latest",
+    "js-utils": "git+https://github.com/ViBiOh/js-utils.git",
+    "jsdom": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest",
+    "mustache": "latest",
+    "node-sass": "latest",
+    "normalize.css": "latest",
+    "nyc": "latest",
+    "react-addons-test-utils": "latest",
+    "sass-loader": "latest",
+    "sinon": "latest",
+    "style-loader": "latest",
+    "webpack": "latest",
+    "webpack-dev-server": "latest",
+    "yargs": "latest"
+  },
+  "dependencies": {
+    "classnames": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-icons": "latest",
+    "react-router": "latest",
+    "whatwg-fetch": "latest"
+  }
+}

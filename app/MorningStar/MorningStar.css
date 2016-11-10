@@ -1,0 +1,167 @@
+button {
+  border: 0;
+  padding: 0;
+  margin-left: 5px;
+  background-color: inherit;
+}
+
+svg {
+  color: #3A3A3A;
+}
+
+svg.active {
+  color: #F8F8F8;
+  background-color: #3A3A3A;
+}
+
+.list {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon button {
+  color: #F8F8F8;
+}
+
+.search input[type="text"], .search svg, .search ol, .count, .row, .dataModifier, .rating, .category, .performance {
+  padding: 5px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search input[type="text"] {
+  height: 50px;
+  border-radius: 0;
+  flex: 1;
+}
+
+.search ol {
+  background-color: #3A3A3A;
+  text-align: left;
+  list-style: none;
+  position: absolute;
+  top: 3em;
+  right: 1em;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.search .icon {
+  position: relative;
+  display: inline-block;
+}
+
+.search .icon svg {
+  padding: 5px;
+  width: 50px;
+  height: 50px;
+}
+
+.hidden {
+  display: none;
+}
+
+.displayed {
+  display: block;
+}
+
+.row {
+  width: 100%;
+  min-height: 24px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row:nth-child(even) {
+  background-color: #e1e1e8;
+}
+
+.dataModifier {
+  width: auto;
+  border: 1px solid;
+  border-radius: 5px;
+  margin: 2px;
+}
+
+.label {
+  flex: 1;
+}
+
+.category {
+  width: 185px;
+}
+
+.rating {
+  width: 30px;
+}
+
+.performance {
+  width: 80px;
+}
+
+.ellipsis {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+@media screen and (max-width: 1023px) {
+  .row {
+    width: 100vw;
+  }
+
+  .row:first-child {
+    display: none;
+  }
+
+  .label {
+    flex-basis: 100vw;
+  }
+
+  .rating, .category, .performance {
+    width: auto;
+    border: 1px solid;
+    border-radius: 5px;
+    margin: 2px;
+  }
+
+  .rating::before {
+    content: "Note | ";
+  }
+
+  .p1m::before {
+    content: "1m | ";
+  }
+
+  .p3m::before {
+    content: "3m | ";
+  }
+
+  .p6m::before {
+    content: "6m | ";
+  }
+
+  .p1y::before {
+    content: "1y | ";
+  }
+
+  .pvol::before {
+    content: "Vol. | ";
+  }
+
+  .pscore::before {
+    content: "Score | ";
+  }
+}
