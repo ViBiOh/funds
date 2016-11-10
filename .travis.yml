@@ -4,7 +4,9 @@ services:
 - docker
 node_js:
 - 6.7.0
-install: make
+install: 
+- make
+- npm i
 script:
 - npm run build
 - docker build -t ${DOCKER_USER}/funds-api ./src/
