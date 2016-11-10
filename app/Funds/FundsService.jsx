@@ -1,6 +1,6 @@
 import Fetch from '../Fetch';
 
-const API_PATH = 'http://localhost:1080/';
+const API_PATH = 'https://funds-api.vibioh.fr/';
 
 export default class MorningStarService {
   static getFund(morningStarId) {

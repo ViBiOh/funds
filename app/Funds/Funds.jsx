@@ -300,6 +300,7 @@ export default class MorningStarList extends Component {
   renderSearch() {
     return (
       <span className={style.search}>
+        {this.renderOrder()}
         <input
           type="text"
           placeholder="Filter on label"
@@ -309,7 +310,6 @@ export default class MorningStarList extends Component {
         <span className={style.count}>
           {this.state.displayed.length} / {morningStarIdList.length}
         </span>
-        {this.renderOrder()}
       </span>
     );
   }

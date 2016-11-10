@@ -15,7 +15,7 @@ svg.active {
 }
 
 .list {
-  width: 100%;
+  width: 100vw;
   display: flex;
   flex-wrap: wrap;
 }
@@ -45,24 +45,7 @@ svg.active {
 .search {
   display: flex;
   align-items: center;
-  width: 100%;
-}
-
-.search input[type="text"] {
-  height: 50px;
-  border-radius: 0;
-  flex: 1;
-}
-
-.search ol {
-  background-color: #3A3A3A;
-  text-align: left;
-  list-style: none;
-  position: absolute;
-  top: 3em;
-  right: 1em;
-  margin: 0;
-  border-radius: 5px;
+  width: 100vw;
 }
 
 .search .icon {
@@ -74,6 +57,23 @@ svg.active {
   padding: 5px;
   width: 50px;
   height: 50px;
+}
+
+.search ol {
+  background-color: #3A3A3A;
+  text-align: left;
+  list-style: none;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  margin: 0;
+  border-radius: 0 0 5px 0;
+}
+
+.search input[type="text"] {
+  height: 50px;
+  border-radius: 0;
+  flex: 1;
 }
 
 .hidden {
