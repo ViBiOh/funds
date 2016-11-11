@@ -32,7 +32,6 @@ svg.active {
 .search input[type="text"],
 .search svg,
 .search ol,
-.search li,
 .count,
 .row,
 .dataModifier,
@@ -41,6 +40,11 @@ svg.active {
 .performance {
   padding: 5px;
 }
+
+.search li {
+  padding: 10px;
+}
+
 
 .search {
   display: flex;
@@ -88,6 +92,7 @@ svg.active {
   min-height: 24px;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .row:nth-child(even) {

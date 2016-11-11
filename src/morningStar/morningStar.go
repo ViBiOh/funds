@@ -50,7 +50,7 @@ type Performance struct {
   ThreeMonth    float64   `json:"3m"`
   SixMonth      float64   `json:"6m"`
   OneYear       float64   `json:"1y"`
-  VolThreeYears float64   `json:"v1y"`
+  VolThreeYears float64   `json:"v3y"`
   Score         float64   `json:"score"`
   Update        time.Time `json:"ts"`
 }

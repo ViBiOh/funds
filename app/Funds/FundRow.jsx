@@ -21,7 +21,7 @@ const MorningStarRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund['3m']} type="p3m" />
     <PerformanceCell value={fund['6m']} type="p6m" />
     <PerformanceCell value={fund['1y']} type="p1y" />
-    <PerformanceCell value={fund.v1y} type="pvol" />
+    <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
   </span>
 );
@@ -43,7 +43,7 @@ MorningStarRow.propTypes = {
     '3m': STRING_OR_NUMBER,
     '6m': STRING_OR_NUMBER,
     '1y': STRING_OR_NUMBER,
-    v1y: STRING_OR_NUMBER,
+    v3y: STRING_OR_NUMBER,
     score: STRING_OR_NUMBER,
   }),
   filterBy: React.PropTypes.func,
