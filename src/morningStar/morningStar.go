@@ -114,20 +114,22 @@ func getPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func singlePerformance(morningStarId string) (*Performance, error) {
+  cleanId := strings.ToLower(morningStarId)
+
   PERFORMANCE_CACHE.RLock()
-  performance, present := PERFORMANCE_CACHE.m[morningStarId]
+  performance, present := PERFORMANCE_CACHE.m[cleanId]
   PERFORMANCE_CACHE.RUnlock()
 
   if present && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
     return &performance, nil
   }
 
-  performanceBody, err := getBody(PERFORMANCE_URL + morningStarId)
+  performanceBody, err := getBody(PERFORMANCE_URL + cleanId)
   if err != nil {
     return nil, err
   }
 
-  volatiliteBody, err := getBody(VOLATILITE_URL + morningStarId)
+  volatiliteBody, err := getBody(VOLATILITE_URL + cleanId)
   if err != nil {
     return nil, err
   }
@@ -145,10 +147,10 @@ func singlePerformance(morningStarId string) (*Performance, error) {
   score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
   scoreTruncated := float64(int(score*100)) / 100
 
-  performance = Performance{morningStarId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}
+  performance = Performance{cleanId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}
 
   PERFORMANCE_CACHE.Lock()
-  PERFORMANCE_CACHE.m[morningStarId] = performance
+  PERFORMANCE_CACHE.m[cleanId] = performance
   PERFORMANCE_CACHE.Unlock()
 
   return &performance, nil
@@ -223,18 +225,16 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-  path := strings.ToLower(r.URL.Path)
-
   w.Header().Add(`Access-Control-Allow-Origin`, `*`)
   w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
   w.Header().Add(`Access-Control-Allow-Methods`, `GET, POST`)
   w.Header().Add(`X-Content-Type-Options`, `nosniff`)
 
-  if LIST_REQUEST.MatchString(path) {
+  if LIST_REQUEST.MatchString(r.URL.Path) {
     listHandler(w, r)
-  } else if ISIN_REQUEST.MatchString(path) {
-    isinHandler(w, ISIN_REQUEST.FindStringSubmatch(path)[1])
-  } else if PERF_REQUEST.MatchString(path) {
-    singlePerformanceHandler(w, path)
+  } else if ISIN_REQUEST.MatchString(r.URL.Path) {
+    isinHandler(w, ISIN_REQUEST.FindStringSubmatch(r.URL.Path)[1])
+  } else if PERF_REQUEST.MatchString(r.URL.Path) {
+    singlePerformanceHandler(w, PERF_REQUEST.FindStringSubmatch(r.URL.Path)[1])
   }
 }
