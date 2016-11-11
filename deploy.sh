@@ -71,8 +71,8 @@ cd ${PROJECT_NAME}
 
 export DOMAIN=${3}
 
-if [ `docker-compose -p ${PROJECT_NAME} ps | awk '{if (NR > 2) {print}}' | wc -l` -eq 0 ]; then
-  echo "Deploying new instance"
+if [ `docker-compose -p ${PROJECT_NAME} ps | awk '{if (NR > 2) {print}}' | grep ${4} | wc -l` -eq 0 ]; then
+  echo "Deploying all stack"
   docker-compose-deploy ${PROJECT_NAME} ${3}
 else
   echo "Hot deploying service ${4}"
