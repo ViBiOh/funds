@@ -6,11 +6,9 @@ import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
-import FundsService from './FundsService';
+import FundsService, { FETCH_SIZE } from './FundsService';
 import FundRow from './FundRow';
 import style from './Funds.css';
-
-const FETCH_SIZE = 25;
 
 const COLUMNS = {
   isin: {

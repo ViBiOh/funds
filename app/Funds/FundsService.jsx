@@ -1,6 +1,8 @@
 import Fetch from '../Fetch/Fetch';
 
-const ES_PATH = 'https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000';
+export const FETCH_SIZE = 8000;
+
+const ES_PATH = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=${FETCH_SIZE}`;
 const API_PATH = 'https://funds-api.vibioh.fr/';
 
 export default class MorningStarService {
