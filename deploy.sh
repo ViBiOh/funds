@@ -27,6 +27,8 @@ function docker-compose-deploy() {
   export DOMAIN=${DOMAIN}
 
   docker-compose -p ${PROJECT_NAME} pull
+  docker-compose -p ${PROJECT_NAME} stop
+  docker-compose -p ${PROJECT_NAME} rm -v -f
   docker-compose -p ${PROJECT_NAME} up -d
   docker-clean
 }
