@@ -71,6 +71,7 @@ export default class Funds extends Component {
 
     const filters = Object.assign({}, props.location.query);
     delete filters.o;
+    delete filters.ro;
 
     this.state = {
       loaded: false,
@@ -82,7 +83,7 @@ export default class Funds extends Component {
       selectedFilter: 'label',
       order: {
         key: props.location.query.o || '',
-        descending: true,
+        descending: !!props.location.query.ro,
       },
       filters,
     };
@@ -240,6 +241,10 @@ export default class Funds extends Component {
 
     if (this.state.order.key) {
       params.push(`o=${this.state.order.key}`);
+
+      if (!this.state.order.descending) {
+        params.push('ro');
+      }
     }
 
     if (params.length > 0) {
@@ -387,6 +392,7 @@ Funds.propTypes = {
   location: React.PropTypes.shape({
     query: React.PropTypes.shape({
       o: React.PropTypes.string,
+      ro: React.PropTypes.string,
     }),
   }).isRequired,
 };
