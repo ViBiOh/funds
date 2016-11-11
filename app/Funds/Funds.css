@@ -45,7 +45,6 @@ svg.active {
   padding: 10px;
 }
 
-
 .search {
   display: flex;
   align-items: center;
@@ -107,15 +106,15 @@ svg.active {
 }
 
 .label {
-  flex: 1;
+  flex: 3;
 }
 
 .category {
-  width: 200px;
+  flex: 1;
 }
 
 .rating {
-  width: 30px;
+  width: 40px;
 }
 
 .performance {
@@ -128,7 +127,6 @@ svg.active {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 @media screen and (max-width: 1023px) {
   .row:first-child {
