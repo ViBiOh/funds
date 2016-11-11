@@ -41,8 +41,8 @@ svg.active {
   padding: 5px;
 }
 
-.search li {
-  padding: 10px;
+.search li button {
+  padding: 15px;
 }
 
 .search {
