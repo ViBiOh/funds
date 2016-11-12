@@ -42,18 +42,23 @@ function docker-compose-hot-deploy() {
   services=`docker-compose -p ${PROJECT_NAME} ps | awk '{if (NR > 2) {print $1}}'`
 
   docker-compose -p ${PROJECT_NAME} pull
-  matchPattern='${PROJECT_NAME}_(.*?)_[0-9]+'
+  matchPattern=${PROJECT_NAME}'_(.*?)_[0-9]+'
+
   for service in ${services}; do
     if [[ ${service} =~ ${matchPattern} ]]; then
-      docker-compose scale ${BASH_REMATCH[1]}=2
+      docker-compose -p ${PROJECT_NAME} scale ${BASH_REMATCH[1]}=2
     fi
   done
+
   docker-compose -p ${PROJECT_NAME} up -d
 
   echo "Waiting 5 seconds to start..."
   sleep 5
-  docker stop ${services}
-  docker rm -f -v ${services}
+
+  if [ ! -z "${services}" ]; then
+    docker stop ${services}
+    docker rm -f -v ${services}
+  fi
   
   docker-clean
 }
