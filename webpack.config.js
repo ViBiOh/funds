@@ -27,7 +27,7 @@ const config = {
       loader: process.env.PRODUCTION ? ExtractTextPlugin.extract('style', 'css!sass') : 'style!css!sass',
     }, {
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract('css?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]'),
+      loader: ExtractTextPlugin.extract('css?modules&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]!sass'),
     }],
   },
 

@@ -6,11 +6,11 @@ const MorningStarRow = ({ fund, filterBy }) => (
   <span className={style.row}>
     <span
       title={`${fund.isin} - ${fund.label}`}
-      className={`${style.label} ${style.ellipsis}`}
+      className={style.label}
     >{fund.label}</span>
     <button
       title={fund.category}
-      className={`${style.category} ${style.ellipsis}`}
+      className={style.category}
       onClick={() => filterBy && filterBy('category', fund.category)}
     >{fund.category}</button>
     <button
