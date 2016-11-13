@@ -141,6 +141,11 @@ svg.active {
   width: 80px;
 }
 
+.row svg {
+  width: 25px;
+  height: 25px;
+}
+
 @media screen and (max-width: 1023px) {
   .row:first-child {
     display: none;
@@ -148,6 +153,16 @@ svg.active {
 
   .label {
     flex-basis: 100vw;
+    width: 100vw;
+  }
+
+  .row .icon {
+    margin: 2px;
+  }
+
+  .row svg {
+    width: 30px;
+    height: 30px;
   }
 
   .rating,
@@ -155,6 +170,7 @@ svg.active {
   .performance {
     flex: none;
     @include roundBorder;
+    max-width: 100%;
   }
 
   .rating::before {

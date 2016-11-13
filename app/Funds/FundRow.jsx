@@ -1,4 +1,6 @@
 import React from 'react';
+import FaBarChart from 'react-icons/lib/fa/bar-chart';
+import FundsService from './FundsService';
 import PerformanceCell from './PerformanceCell';
 import style from './Funds.css';
 
@@ -7,7 +9,9 @@ const MorningStarRow = ({ fund, filterBy }) => (
     <span
       title={`${fund.isin} - ${fund.label}`}
       className={style.label}
-    >{fund.label}</span>
+    >
+      {fund.label}
+    </span>
     <button
       title={fund.category}
       className={style.category}
@@ -23,6 +27,15 @@ const MorningStarRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund['1y']} type="p1y" />
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
+    <a
+      title="Lien vers la source des données"
+      href={FundsService.getDataUrl(fund.id)}
+      rel="noopener noreferrer"
+      target="_blank"
+      className={style.icon}
+    >
+      <FaBarChart />
+    </a>
   </span>
 );
 
