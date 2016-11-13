@@ -32,13 +32,13 @@ $iconSize: 50px;
   text-overflow: ellipsis;
 }
 
-header {
+.header {
   @include flexWrap;
   text-align: center;
   width: 100vw;
 }
 
-h1 {
+.header h1 {
   @include darkBox;
   @include smallPadding;
   height: $iconSize;
@@ -80,9 +80,9 @@ svg.active {
   color: $clear;
 }
 
-header input[type="text"],
-header ol,
-header .icon svg,
+.header input[type="text"],
+.header ol,
+.header .icon svg,
 .row,
 .dataModifier,
 .rating,
@@ -91,21 +91,21 @@ header .icon svg,
   @include smallPadding;
 }
 
-header li button {
+.header li button {
   padding: 15px;
 }
 
-header .icon {
+.header .icon {
   position: relative;
   display: inline-block;
 }
 
-header .icon svg {
+.header .icon svg {
   width: $iconSize;
   height: $iconSize;
 }
 
-header ol {
+.header ol {
   background-color: $dark;
   text-align: left;
   list-style: none;
@@ -115,7 +115,7 @@ header ol {
   margin: 0;
 }
 
-header input[type="text"] {
+.header input[type="text"] {
   height: $iconSize;
   border-radius: 0;
   width: 160px;
@@ -167,11 +167,11 @@ header input[type="text"] {
 }
 
 @media screen and (min-width: 1024px) {
-  header h1 {
+  .header h1 {
     flex: 1;
   }
 
-  header input[type="text"] {
+  .header input[type="text"] {
     flex: 5;
   }
 }

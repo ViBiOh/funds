@@ -309,7 +309,7 @@ export default class Funds extends Component {
 
   renderHeader() {
     return (
-      <header>
+      <header className={style.header}>
         <h1>Funds</h1>
         {this.renderOrderIcon()}
         {this.renderFilterIcon()}
