@@ -400,10 +400,7 @@ export default class Funds extends Component {
         {
           this.state.error && this.renderError()
         }
-        {
-          this.state.funds.length === 0 ? <Throbber label="Chargement des données" />
-          : this.renderContent()
-        }
+        {this.renderContent()}
       </span>
     );
   }
