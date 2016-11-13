@@ -104,8 +104,12 @@ export default class Funds extends Component {
     this.renderOrderIcon = this.renderOrderIcon.bind(this);
     this.renderFilterIcon = this.renderFilterIcon.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
+
     this.renderFilter = this.renderFilter.bind(this);
     this.renderOrder = this.renderOrder.bind(this);
+    this.renderDataModifier = this.renderDataModifier.bind(this);
+
+    this.renderList = this.renderList.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
 
@@ -351,39 +355,55 @@ export default class Funds extends Component {
     );
   }
 
+  renderDataModifier() {
+    return (
+      <div className={style.list}>
+        {this.renderFilter()}
+        {this.renderOrder()}
+      </div>
+    );
+  }
+
   renderRow() {
     return this.state.displayed.map(fund => (
       <FundRow key={fund.id} fund={fund} filterBy={this.filterBy} />
     ));
   }
 
-  render() {
-    if (this.state.error) {
-      return this.renderError();
-    }
-
-    if (this.state.funds.length === 0) {
-      return <Throbber label="Chargement des données" />;
-    }
-
+  renderList() {
     const header = Object.keys(COLUMNS).reduce((previous, current) => {
       previous[current] = COLUMNS[current].label; // eslint-disable-line no-param-reassign
       return previous;
     }, {});
 
     return (
+      <div key="list" className={style.list}>
+        <FundRow key={'header'} fund={header} />
+        {this.renderRow()}
+      </div>
+    );
+  }
+
+  renderContent() {
+    return (
+      <article>
+        {this.renderDataModifier()}
+        {this.renderList()}
+      </article>
+    );
+  }
+
+  render() {
+    return (
       <span>
         {this.renderHeader()}
-        <article>
-          <div key="dataModifier" className={style.list}>
-            {this.renderFilter()}
-            {this.renderOrder()}
-          </div>
-          <div key="list" className={style.list}>
-            <FundRow key={'header'} fund={header} />
-            {this.renderRow()}
-          </div>
-        </article>
+        {
+          this.state.error && this.renderError()
+        }
+        {
+          this.state.funds.length === 0 ? <Throbber label="Chargement des données" />
+          : this.renderContent()
+        }
       </span>
     );
   }
