@@ -9,44 +9,10 @@
 
 @import '~normalize.css/normalize.css';
 
-$dark: #3A3A3A;
-$clear: #F8F8F8;
-
 * {
   box-sizing: border-box;
 }
 
 html {
   font-family: 'Open Sans', sans-serif;
-}
-
-@mixin darkBox {
-  background-color: $dark;
-  color: $clear;
-}
-
-@mixin smallPadding {
-  padding: 10px;
-}
-
-header {
-  @include darkBox;
-  width: 100vw;
-  text-align: center;
-}
-
-h1 {
-  font-size: 2em;
-  margin: 0;
-  @include smallPadding;
-}
-
-article {
-  text-align: center;
-}
-
-@media screen and (max-width: 1023px) {
-  h1 {
-    font-size: 1em;
-  }
 }

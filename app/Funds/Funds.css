@@ -4,6 +4,15 @@ $clear: #f8f8f8;
 
 $iconSize: 50px;
 
+@mixin darkBox {
+  background-color: $dark;
+  color: $clear;
+}
+
+@mixin smallPadding {
+  padding: 5px;
+}
+
 @mixin flexWrap {
   display: flex;
   flex-wrap: wrap;
@@ -21,6 +30,24 @@ $iconSize: 50px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+header {
+  @include flexWrap;
+  text-align: center;
+  width: 100vw;
+}
+
+h1 {
+  @include darkBox;
+  @include smallPadding;
+  height: $iconSize;
+  margin: 0;
+  display: inline-block;
+}
+
+article {
+  text-align: center;
 }
 
 button {
@@ -53,40 +80,32 @@ svg.active {
   color: $clear;
 }
 
-.search input[type="text"],
-.search svg,
-.search ol,
-.count,
+header input[type="text"],
+header ol,
+header .icon svg,
 .row,
 .dataModifier,
 .rating,
 .category,
 .performance {
-  padding: 5px;
+  @include smallPadding;
 }
 
-.search li button {
+header li button {
   padding: 15px;
 }
 
-.search {
-  display: flex;
-  align-items: center;
-  width: 100vw;
-}
-
-.search .icon {
+header .icon {
   position: relative;
   display: inline-block;
 }
 
-.search .icon svg {
-  padding: 5px;
+header .icon svg {
   width: $iconSize;
   height: $iconSize;
 }
 
-.search ol {
+header ol {
   background-color: $dark;
   text-align: left;
   list-style: none;
@@ -96,10 +115,11 @@ svg.active {
   margin: 0;
 }
 
-.search input[type="text"] {
+header input[type="text"] {
   height: $iconSize;
   border-radius: 0;
-  flex: 1;
+  width: 160px;
+  flex: 1 1 160px;
 }
 
 .hidden {
@@ -146,6 +166,16 @@ svg.active {
   height: 25px;
 }
 
+@media screen and (min-width: 1024px) {
+  header h1 {
+    flex: 1;
+  }
+
+  header input[type="text"] {
+    flex: 5;
+  }
+}
+
 @media screen and (max-width: 1023px) {
   .row:first-child {
     display: none;
@@ -168,8 +198,8 @@ svg.active {
   .rating,
   .category,
   .performance {
-    flex: none;
     @include roundBorder;
+    flex: none;
     max-width: 100%;
   }
 

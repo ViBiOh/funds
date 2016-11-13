@@ -103,7 +103,7 @@ export default class Funds extends Component {
     this.renderError = this.renderError.bind(this);
     this.renderOrderIcon = this.renderOrderIcon.bind(this);
     this.renderFilterIcon = this.renderFilterIcon.bind(this);
-    this.renderSearch = this.renderSearch.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
     this.renderFilter = this.renderFilter.bind(this);
     this.renderOrder = this.renderOrder.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -303,9 +303,10 @@ export default class Funds extends Component {
     );
   }
 
-  renderSearch() {
+  renderHeader() {
     return (
-      <span className={style.search}>
+      <header>
+        <h1>Funds</h1>
         {this.renderOrderIcon()}
         {this.renderFilterIcon()}
         <input
@@ -315,7 +316,7 @@ export default class Funds extends Component {
           onChange={e => this.filterBy(this.state.selectedFilter, e.target.value)}
         />
         {!this.state.loaded && <Throbber />}
-      </span>
+      </header>
     );
   }
 
@@ -371,17 +372,19 @@ export default class Funds extends Component {
     }, {});
 
     return (
-      <article>
-        <div key="search" className={style.list}>
-          {this.renderSearch()}
-          {this.renderFilter()}
-          {this.renderOrder()}
-        </div>
-        <div key="list" className={style.list}>
-          <FundRow key={'header'} fund={header} />
-          {this.renderRow()}
-        </div>
-      </article>
+      <span>
+        {this.renderHeader()}
+        <article>
+          <div key="dataModifier" className={style.list}>
+            {this.renderFilter()}
+            {this.renderOrder()}
+          </div>
+          <div key="list" className={style.list}>
+            <FundRow key={'header'} fund={header} />
+            {this.renderRow()}
+          </div>
+        </article>
+      </span>
     );
   }
 }
