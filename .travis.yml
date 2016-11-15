@@ -10,7 +10,7 @@ node_js:
 - 6.7.0
 install:
 - make
-- npm i
+- npm set progress=false && npm i
 script:
 - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 - npm run build &&
