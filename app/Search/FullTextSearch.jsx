@@ -36,7 +36,8 @@ function buildFullTextRegex(value) {
     .replace(/[\]/\\^$*+?.(){}|[-]/gmi, ' ')
     .trim()
     .replace(/\s+/, ' ')
-    .split(' ');
+    .split(' ')
+    .filter(value => value.length > 2);
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];
