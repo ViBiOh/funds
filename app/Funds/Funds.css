@@ -35,7 +35,7 @@ $iconSize: 50px;
 .header {
   @include flexWrap;
   text-align: center;
-  width: 100vw;
+  width: 100%;
 }
 
 .header h1 {
@@ -67,7 +67,7 @@ svg.active {
 }
 
 .list {
-  width: 100vw;
+  width: 100%;
   @include flexWrap;
 }
 
