@@ -190,7 +190,7 @@ export default class Funds extends Component {
 
   orderBy(order) {
     this.setState({
-      order: { key: order, descending: true }),
+      order: { key: order, descending: true },
     }, this.updateDataPresentation);
 
     this.orderDisplayed = false;
