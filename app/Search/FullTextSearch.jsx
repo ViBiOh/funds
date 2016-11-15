@@ -32,7 +32,11 @@ function buildFullTextRegex(value) {
     return new RegExp(wildcard, flags);
   }
 
-  const values = replaceAccentedChar(value.trim()).replace(/[\]/\\^$*+?.(){}|[-]/gmi, '').split(' ');
+  const values = replaceAccentedChar(value)
+    .replace(/[\]/\\^$*+?.(){}|[-]/gmi, ' ')
+    .trim()
+    .replace(/\s+/, ' ')
+    .split(' ');
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];
