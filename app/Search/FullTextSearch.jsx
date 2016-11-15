@@ -37,7 +37,7 @@ function buildFullTextRegex(value) {
     .trim()
     .replace(/\s+/, ' ')
     .split(' ')
-    .filter(value => value.length > 2);
+    .filter(v => v.length > 2);
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];

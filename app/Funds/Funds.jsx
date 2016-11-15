@@ -77,7 +77,6 @@ export default class Funds extends Component {
       funds: [],
       displayed: [],
       toggleDisplayed: '',
-      input: '',
       selectedFilter: 'label',
       order: {
         key: props.location.query.o || '',
@@ -205,18 +204,16 @@ export default class Funds extends Component {
   updateDataPresentation() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      let displayed = this.state.funds.slice();
-
-      Object.keys(this.state.filters).forEach((filter) => {
+      const displayed = Object.keys(this.state.filters).reduce((previous, filter) => {
         const regex = buildFullTextRegex(this.state.filters[filter]);
-        displayed = displayed.filter(fund => fullTextRegexFilter(fund[filter], regex));
-      });
+        return previous.filter(fund => fullTextRegexFilter(fund[filter], regex));
+      }, this.state.funds.slice());
 
       if (this.state.order.key) {
         const orderKey = this.state.order.key;
         const compareMultiplier = this.state.order.descending ? -1 : 1;
 
-        displayed = displayed.sort((o1, o2) => {
+        displayed.sort((o1, o2) => {
           if (!o1 || typeof o1[orderKey] === 'undefined') {
             return -1 * compareMultiplier;
           } else if (!o2 || typeof o2[orderKey] === 'undefined') {
@@ -239,7 +236,7 @@ export default class Funds extends Component {
   pushHistory() {
     const params = Object.keys(this.state.filters)
       .filter(filter => this.state.filters[filter])
-      .map(filter => `${filter}=${this.state.filters[filter]}`);
+      .map(filter => `${filter}=${this.state.filters[filter].replace('&', '%26')}`);
 
     if (this.state.order.key) {
       params.push(`o=${this.state.order.key}`);
@@ -249,9 +246,7 @@ export default class Funds extends Component {
       }
     }
 
-    if (params.length > 0) {
-      browserHistory.push(`/?${params.join('&')}`);
-    }
+    browserHistory.push(`/?${params.join('&')}`);
   }
 
   renderError() {
@@ -308,15 +303,16 @@ export default class Funds extends Component {
   }
 
   renderHeader() {
+    const count = `${this.state.displayed.length} / ${this.state.funds.length}`;
+
     return (
       <header className={style.header}>
-        <h1>Funds</h1>
+        <h1 title={count}>Funds</h1>
         {this.renderOrderIcon()}
         {this.renderFilterIcon()}
         <input
           type="text"
           placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
-          value={this.state.text}
           onChange={e => this.filterBy(this.state.selectedFilter, e.target.value)}
         />
         {!this.state.loaded && <Throbber />}
