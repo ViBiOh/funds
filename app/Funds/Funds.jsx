@@ -303,7 +303,8 @@ export default class Funds extends Component {
   }
 
   renderHeader() {
-    const count = `${this.state.displayed.length} / ${this.state.funds.length}`;
+    const count = 
+      `${this.state.displayed.length} / ${this.state.funds.length} / ${this.state.ids.length}`;
 
     return (
       <header className={style.header}>
