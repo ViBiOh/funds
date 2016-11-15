@@ -20,7 +20,7 @@ services:
 
   front:
     image: vibioh/funds-front
-    command: -spa -domain 'elasticsearch.vibioh.fr funds-api.vibioh.fr fonts.gstatic.com'
+    command: -domain 'elasticsearch.vibioh.fr funds-api.vibioh.fr fonts.gstatic.com'
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.${DOMAIN}'
