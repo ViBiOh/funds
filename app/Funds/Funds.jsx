@@ -184,13 +184,13 @@ export default class Funds extends Component {
     filter[filterName] = value;
 
     this.setState({
-      filters: Object.assign(this.state.filters, filter),
+      filters: { filter },
     }, this.updateDataPresentation);
   }
 
   orderBy(order) {
     this.setState({
-      order: Object.assign(this.state.order, { key: order, descending: true }),
+      order: { key: order, descending: true }),
     }, this.updateDataPresentation);
 
     this.orderDisplayed = false;
@@ -198,7 +198,7 @@ export default class Funds extends Component {
 
   reverseOrder() {
     this.setState({
-      order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
+      order: { descending: !this.state.order.descending }),
     }, this.updateDataPresentation);
   }
 
