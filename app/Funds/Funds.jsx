@@ -184,7 +184,7 @@ export default class Funds extends Component {
     filter[filterName] = value;
 
     this.setState({
-      filters: { filter },
+      filters: Object.assign(this.state.filters, filter),
     }, this.updateDataPresentation);
   }
 
@@ -198,7 +198,7 @@ export default class Funds extends Component {
 
   reverseOrder() {
     this.setState({
-      order: { descending: !this.state.order.descending },
+      order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
     }, this.updateDataPresentation);
   }
 
