@@ -31,5 +31,3 @@ dist/
 
 # Go binary
 server
-pkg/
-src/golang.org/
