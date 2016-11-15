@@ -4,8 +4,8 @@
   "description": "Funds OB",
   "main": "index.js",
   "scripts": {
-    "copy:html": "cp ./app/index.html ./dist/",
-    "copy:favicon": "cp ./web/* ./dist/",
+    "copy:html": "cp -v ./app/index.html ./dist/",
+    "copy:favicon": "cp -v ./web/* ./dist/",
     "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:favicon",
     "mustache": "./mustache.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
     "eslint": "./node_modules/.bin/eslint --ext .js --ext .jsx src/",
