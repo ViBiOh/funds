@@ -4,9 +4,9 @@
   "description": "Funds OB",
   "main": "index.js",
   "scripts": {
-    "copy:html": "mkdir -p ./dist && cp ./app/index.html ./dist/",
-    "copy:favicon": "mkdir -p ./dist/static && cp ./web/* ./dist/",
-    "copy": "npm run copy:html && npm run copy:favicon",
+    "copy:html": "cp ./app/index.html ./dist/",
+    "copy:favicon": "cp ./web/* ./dist/",
+    "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:favicon",
     "mustache": "./mustache.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
     "eslint": "./node_modules/.bin/eslint --ext .js --ext .jsx src/",
     "start": "npm run copy && ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
