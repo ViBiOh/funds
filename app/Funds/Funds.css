@@ -131,7 +131,7 @@ svg.active {
 }
 
 .row {
-  width: 100vw;
+  width: 100%;
   @include flexWrap;
 }
 
@@ -182,8 +182,8 @@ svg.active {
   }
 
   .label {
-    flex-basis: 100vw;
-    width: 100vw;
+    flex-basis: 100%;
+    width: 100%;
   }
 
   .row .icon {
