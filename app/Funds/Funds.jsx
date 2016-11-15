@@ -198,7 +198,7 @@ export default class Funds extends Component {
 
   reverseOrder() {
     this.setState({
-      order: { descending: !this.state.order.descending }),
+      order: { descending: !this.state.order.descending },
     }, this.updateDataPresentation);
   }
 
