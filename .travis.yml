@@ -32,3 +32,6 @@ deploy:
   script: ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds https://github.com/ViBiOh/funds-ob.git vibioh.fr
   on:
     branch: master
+after_deploy:
+  - |
+    curl -H "X-Auth-Email: ${CLOUDFLARE_MAIL}" -H "X-Auth-Key: ${CLOUDFLARE_AUTH_KEY}" -H "Content-Type: application/json" -X DELETE https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE}/purge_cache -d '{"purge_everything":true}'
