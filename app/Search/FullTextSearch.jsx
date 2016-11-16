@@ -1,3 +1,7 @@
+const CLEAN_SEARCH_MIN_LENGTH = 2;
+const CLEAN_WORDS_MIN_LENTH = 2;
+const CLEAN_SEARCH_PERCENTAGE = 0.5;
+
 function replaceAccentedChar(str) {
   return String(str).replace(/[\u00c0-\u00c5]/gm, 'A')
     .replace(/[\u00c6]/gm, 'AE')
@@ -32,12 +36,19 @@ function buildFullTextRegex(value) {
     return new RegExp(wildcard, flags);
   }
 
-  const values = replaceAccentedChar(value)
+  let values = replaceAccentedChar(value)
     .replace(/[\]/\\^$*+?.(){}|[-]/gmi, ' ')
     .trim()
     .replace(/\s+/, ' ')
-    .split(' ')
-    .filter(v => v.length > 2);
+    .split(' ');
+  
+  if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
+    const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
+    if ((filteredValues.length / values.length) > CLEAN_SEARCH_PERCENTAGE) {
+      values = filteredValues;
+    }
+  }
+  
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];
