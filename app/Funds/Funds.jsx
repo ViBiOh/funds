@@ -236,7 +236,7 @@ export default class Funds extends Component {
   pushHistory() {
     const params = Object.keys(this.state.filters)
       .filter(filter => this.state.filters[filter])
-      .map(filter => `${filter}=${this.state.filters[filter].replace('&', '%26')}`);
+      .map(filter => `${filter}=${encodeURI(this.state.filters[filter])}`);
 
     if (this.state.order.key) {
       params.push(`o=${this.state.order.key}`);
