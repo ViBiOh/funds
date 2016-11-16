@@ -1,5 +1,5 @@
 function replaceAccentedChar(str) {
-  return str.replace(/[\u00c0-\u00c5]/gm, 'A')
+  return String(str).replace(/[\u00c0-\u00c5]/gm, 'A')
     .replace(/[\u00c6]/gm, 'AE')
     .replace(/[\u00c7]/gm, 'C')
     .replace(/[\u00c8-\u00cb]/gm, 'E')
