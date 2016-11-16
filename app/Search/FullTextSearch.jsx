@@ -41,14 +41,14 @@ function buildFullTextRegex(value) {
     .trim()
     .replace(/\s+/, ' ')
     .split(' ');
-  
+
   if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
     const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
     if ((filteredValues.length / values.length) > CLEAN_SEARCH_PERCENTAGE) {
       values = filteredValues;
     }
   }
-  
+
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];
