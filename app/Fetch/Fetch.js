@@ -98,22 +98,15 @@ class FetchBuilder {
     return this.send();
   }
 
-  update(body) {
+  patch(body) {
     this.body(body);
 
-    this.params.method = 'UPDATE';
+    this.params.method = 'PATCH';
     return this.send();
   }
 
   delete() {
     this.params.method = 'DELETE';
-    return this.send();
-  }
-
-  patch(body) {
-    this.body(body);
-
-    this.params.method = 'PATCH';
     return this.send();
   }
 
@@ -131,12 +124,12 @@ export default class Fetch {
     return new FetchBuilder().url(url).get();
   }
 
-  static post(url) {
-    return new FetchBuilder().url(url).post();
+  static post(url, body) {
+    return new FetchBuilder().url(url).post(body);
   }
 
-  static patch(url) {
-    return new FetchBuilder().url(url).patch();
+  static patch(url, body) {
+    return new FetchBuilder().url(url).patch(body);
   }
 
   static delete(url) {
