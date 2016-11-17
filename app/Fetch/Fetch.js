@@ -128,6 +128,10 @@ export default class Fetch {
     return new FetchBuilder().url(url).post(body);
   }
 
+  static put(url, body) {
+    return new FetchBuilder().url(url).put(body);
+  }
+
   static patch(url, body) {
     return new FetchBuilder().url(url).patch(body);
   }

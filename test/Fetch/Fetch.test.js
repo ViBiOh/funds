@@ -41,7 +41,7 @@ describe('Fetch', () => {
       }),
     });
 
-    return Fetch.get('/').then(data => expect(data).to.eql({
+    return Fetch.put('/').then(data => expect(data).to.eql({
       result: 'Test Mocha',
     }));
   });
