@@ -2,6 +2,7 @@ package morningStar
 
 import (
 	"../jsonHttp"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -9,7 +10,6 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -94,29 +94,29 @@ func getBody(url string) ([]byte, error) {
 	return body, nil
 }
 
-func getLabel(extract *regexp.Regexp, body []byte) string {
+func getLabel(extract *regexp.Regexp, body []byte) []byte {
 	match := extract.FindSubmatch(body)
 	if match == nil {
-		return ``
+		return nil
 	}
 
-	return string(match[1][:])
+	return bytes.Replace(match[1], []byte(`&amp;`), []byte(`&`), -1)
 }
 
 func getPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := strings.Replace(getLabel(extract, body), `,`, `.`, -1)
-	percentageResult := strings.Replace(dotResult, `%`, ``, -1)
-	trimResult := strings.TrimSpace(percentageResult)
+	dotResult := bytes.Replace(getLabel(extract, body), []byte(`,`), []byte(`.`), -1)
+	percentageResult := bytes.Replace(dotResult, []byte(`%`), []byte(``), -1)
+	trimResult := bytes.TrimSpace(percentageResult)
 
-	result, err := strconv.ParseFloat(trimResult, 64)
+	result, err := strconv.ParseFloat(string(trimResult), 64)
 	if err != nil {
 		return 0.0
 	}
 	return result
 }
 
-func SinglePerformance(morningStarId string) (*Performance, error) {
-	cleanId := strings.ToLower(morningStarId)
+func SinglePerformance(morningStarId []byte) (*Performance, error) {
+	cleanId := string(bytes.ToLower(morningStarId))
 
 	PERFORMANCE_CACHE.RLock()
 	performance, present := PERFORMANCE_CACHE.m[cleanId]
@@ -136,10 +136,10 @@ func SinglePerformance(morningStarId string) (*Performance, error) {
 		return nil, err
 	}
 
-	isin := getLabel(ISIN, performanceBody)
-	label := strings.Replace(getLabel(LABEL, performanceBody), `&amp;`, `&`, -1)
-	rating := getLabel(RATING, performanceBody)
-	category := strings.Replace(getLabel(CATEGORY, performanceBody), `&amp;`, `&`, -1)
+	isin := string(getLabel(ISIN, performanceBody))
+	label := string(getLabel(LABEL, performanceBody))
+	rating := string(getLabel(RATING, performanceBody))
+	category := string(getLabel(CATEGORY, performanceBody))
 	oneMonth := getPerformance(PERF_ONE_MONTH, performanceBody)
 	threeMonths := getPerformance(PERF_THREE_MONTH, performanceBody)
 	sixMonths := getPerformance(PERF_SIX_MONTH, performanceBody)
@@ -158,12 +158,12 @@ func SinglePerformance(morningStarId string) (*Performance, error) {
 	return &performance, nil
 }
 
-func singlePerformanceAsync(morningStarId string, ch chan<- PerformanceAsync) {
+func singlePerformanceAsync(morningStarId []byte, ch chan<- PerformanceAsync) {
 	performance, err := SinglePerformance(morningStarId)
 	ch <- PerformanceAsync{performance, err}
 }
 
-func singlePerformanceHandler(w http.ResponseWriter, morningStarId string) {
+func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
 	performance, err := SinglePerformance(morningStarId)
 
 	if err != nil {
@@ -173,21 +173,22 @@ func singlePerformanceHandler(w http.ResponseWriter, morningStarId string) {
 	}
 }
 
-func isinHandler(w http.ResponseWriter, isin string) {
-	searchBody, err := getBody(SEARCH_ID + strings.ToLower(isin))
+func isinHandler(w http.ResponseWriter, isin []byte) {
+	cleanIsin := string(bytes.ToLower(isin))
+	searchBody, err := getBody(SEARCH_ID + cleanIsin)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	cleanBody := END_CARRIAGE_RETURN.ReplaceAllString(string(searchBody[:]), ``)
-	lines := CARRIAGE_RETURN.Split(cleanBody, -1)
+	cleanBody := END_CARRIAGE_RETURN.ReplaceAll(searchBody[:], []byte(``))
+	lines := CARRIAGE_RETURN.Split(string(cleanBody), -1)
 	size := len(lines)
 
 	results := make([]Search, size)
 	for i, line := range lines {
 		if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &results[i]); err != nil {
-			http.Error(w, `Error while unmarshalling data for ISIN `+isin, 500)
+			http.Error(w, `Error while unmarshalling data for ISIN `+cleanIsin, 500)
 		}
 	}
 
@@ -201,13 +202,12 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stringBody := string(listBody[:])
-	if strings.TrimSpace(stringBody) == `` {
+	if len(bytes.TrimSpace(listBody)) == 0 {
 		jsonHttp.ResponseJson(w, Results{[0]Performance{}})
 		return
 	}
 
-	ids := strings.Split(string(listBody[:]), `,`)
+	ids := bytes.Split(listBody, []byte(`,`))
 	size := len(ids)
 
 	ch := make(chan PerformanceAsync, size)
@@ -226,17 +226,22 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	jsonHttp.ResponseJson(w, Results{results})
 }
 
-func Handler(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+}
+
+func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(`Access-Control-Allow-Origin`, `*`)
 	w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
 	w.Header().Add(`Access-Control-Allow-Methods`, `GET, POST`)
 	w.Header().Add(`X-Content-Type-Options`, `nosniff`)
 
-	if LIST_REQUEST.MatchString(r.URL.Path) {
+	urlPath := []byte(r.URL.Path)
+
+	if LIST_REQUEST.Match(urlPath) {
 		listHandler(w, r)
-	} else if ISIN_REQUEST.MatchString(r.URL.Path) {
-		isinHandler(w, ISIN_REQUEST.FindStringSubmatch(r.URL.Path)[1])
-	} else if PERF_REQUEST.MatchString(r.URL.Path) {
-		singlePerformanceHandler(w, PERF_REQUEST.FindStringSubmatch(r.URL.Path)[1])
+	} else if ISIN_REQUEST.Match(urlPath) {
+		isinHandler(w, ISIN_REQUEST.FindSubmatch(urlPath)[1])
+	} else if PERF_REQUEST.Match(urlPath) {
+		singlePerformanceHandler(w, PERF_REQUEST.FindSubmatch(urlPath)[1])
 	}
 }
