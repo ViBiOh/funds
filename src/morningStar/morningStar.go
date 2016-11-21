@@ -119,10 +119,10 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 	cleanId := string(bytes.ToLower(morningStarId))
 
 	PERFORMANCE_CACHE.RLock()
-	performance, present := PERFORMANCE_CACHE.m[cleanId]
+	performance, ok := PERFORMANCE_CACHE.m[cleanId]
 	PERFORMANCE_CACHE.RUnlock()
 
-	if present && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
+	if ok && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
 		return &performance, nil
 	}
 
