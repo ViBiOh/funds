@@ -211,15 +211,14 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	size := len(ids)
 
 	ch := make(chan PerformanceAsync, size)
-	results := make([]Performance, size)
-
 	for _, id := range ids {
 		go singlePerformanceAsync(id, ch)
 	}
 
-	for i, _ := range ids {
+	results := make([]Performance, 0, size)
+	for range ids {
 		if performanceAsync := <-ch; performanceAsync.err == nil {
-			results[i] = *performanceAsync.performance
+			append(results, *performanceAsync.performance)
 		}
 	}
 
