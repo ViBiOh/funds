@@ -3,7 +3,6 @@ package morningStar
 import (
 	"../jsonHttp"
 	"bytes"
-	"encoding/json"
 	"errors"
 	"io"
 	"io/ioutil"
@@ -16,16 +15,10 @@ import (
 
 const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
-const SEARCH_ID = `http://www.morningstar.fr/fr/util/SecuritySearch.ashx?q=`
 const REFRESH_DELAY = 18
 
 var LIST_REQUEST = regexp.MustCompile(`^/list$`)
 var PERF_REQUEST = regexp.MustCompile(`^/(.+?)$`)
-var ISIN_REQUEST = regexp.MustCompile(`^/(.+?)/isin$`)
-
-var CARRIAGE_RETURN = regexp.MustCompile(`\r?\n`)
-var END_CARRIAGE_RETURN = regexp.MustCompile(`\r?\n$`)
-var PIPE = regexp.MustCompile(`[|]`)
 
 var ISIN = regexp.MustCompile(`ISIN.:(\S+)`)
 var LABEL = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
@@ -173,32 +166,6 @@ func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
 	}
 }
 
-func isinHandler(w http.ResponseWriter, isin []byte) {
-	cleanIsin := string(bytes.ToLower(isin))
-	searchBody, err := getBody(SEARCH_ID + cleanIsin)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
-	cleanBody := END_CARRIAGE_RETURN.ReplaceAll(searchBody[:], []byte(``))
-	lines := CARRIAGE_RETURN.Split(string(cleanBody), -1)
-	size := len(lines)
-
-	var result Search
-	results := make([]Search, 0, size)
-	for _, line := range lines {
-		if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &result); err != nil {
-			http.Error(w, `Error while unmarshalling data for ISIN `+cleanIsin, 500)
-			return
-		}
-
-		results = append(results, result)
-	}
-
-	jsonHttp.ResponseJson(w, Results{results})
-}
-
 func listHandler(w http.ResponseWriter, r *http.Request) {
 	listBody, err := readBody(r.Body)
 	if err != nil {
@@ -242,8 +209,6 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if LIST_REQUEST.Match(urlPath) {
 		listHandler(w, r)
-	} else if ISIN_REQUEST.Match(urlPath) {
-		isinHandler(w, ISIN_REQUEST.FindSubmatch(urlPath)[1])
 	} else if PERF_REQUEST.Match(urlPath) {
 		singlePerformanceHandler(w, PERF_REQUEST.FindSubmatch(urlPath)[1])
 	}
