@@ -185,11 +185,15 @@ func isinHandler(w http.ResponseWriter, isin []byte) {
 	lines := CARRIAGE_RETURN.Split(string(cleanBody), -1)
 	size := len(lines)
 
-	results := make([]Search, size)
+	var result Search
+	results := make([]Search, 0, size)
 	for i, line := range lines {
-		if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &results[i]); err != nil {
+		if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &result); err != nil {
 			http.Error(w, `Error while unmarshalling data for ISIN `+cleanIsin, 500)
+			return
 		}
+
+		results = append(results, result)
 	}
 
 	jsonHttp.ResponseJson(w, Results{results})
@@ -218,7 +222,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	results := make([]Performance, 0, size)
 	for range ids {
 		if performanceAsync := <-ch; performanceAsync.err == nil {
-			append(results, *performanceAsync.performance)
+			results = append(results, *performanceAsync.performance)
 		}
 	}
 
