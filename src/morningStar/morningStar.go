@@ -187,7 +187,7 @@ func isinHandler(w http.ResponseWriter, isin []byte) {
 
 	var result Search
 	results := make([]Search, 0, size)
-	for i, line := range lines {
+	for _, line := range lines {
 		if err := json.Unmarshal([]byte(PIPE.Split(line, -1)[1]), &result); err != nil {
 			http.Error(w, `Error while unmarshalling data for ISIN `+cleanIsin, 500)
 			return
