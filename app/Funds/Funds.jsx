@@ -65,7 +65,7 @@ const COLUMNS = {
 export default class Funds extends Component {
   constructor(props) {
     super(props);
-    
+
     const params = {};
     window.location.search.replace(/([^?&=]+)(?:=([^?&=]*))?/g, (match, key, value) => {
       params[key] = typeof value === 'undefined' ? true : value;
