@@ -65,8 +65,13 @@ const COLUMNS = {
 export default class Funds extends Component {
   constructor(props) {
     super(props);
+    
+    const params = {};
+    window.location.search.replace(/([^?&=]+)(?:=([^?&=]*))?/g, (match, key, value) => {
+      params[key] = typeof value === 'undefined' ? true : value;
+    });
 
-    const filters = Object.assign({}, props.location.query);
+    const filters = Object.assign({}, params);
     delete filters.o;
     delete filters.ao;
 
@@ -78,8 +83,8 @@ export default class Funds extends Component {
       toggleDisplayed: '',
       selectedFilter: 'label',
       order: {
-        key: props.location.query.o || '',
-        descending: typeof props.location.query.ao === 'undefined',
+        key: params.o || '',
+        descending: typeof params.ao === 'undefined',
       },
       filters,
     };
