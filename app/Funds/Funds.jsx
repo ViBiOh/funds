@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router';
 import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
@@ -246,7 +245,7 @@ export default class Funds extends Component {
       }
     }
 
-    browserHistory.push(`/?${params.join('&')}`);
+    window.history.pushState(null, null, `/?${params.join('&')}`);
   }
 
   renderError() {
