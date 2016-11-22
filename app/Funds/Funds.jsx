@@ -253,9 +253,7 @@ export default class Funds extends Component {
       }
     }
 
-    if (params.length > 0) {
-      window.history.pushState(null, null, `/?${params.join('&')}`);
-    }
+    window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
   }
 
   renderError() {
