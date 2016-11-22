@@ -65,7 +65,6 @@
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
-    "react-router": "latest",
     "whatwg-fetch": "latest"
   }
 }
