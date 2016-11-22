@@ -71,7 +71,7 @@ export default class Funds extends Component {
 
     const params = {};
     window.location.search.replace(/([^?&=]+)(?:=([^?&=]*))?/g, (match, key, value) => {
-      params[key] = typeof value === 'undefined' ? true : value;
+      params[key] = typeof value === 'undefined' ? true : decodeURIComponent(value);
     });
 
     const filters = Object.assign({}, params);
