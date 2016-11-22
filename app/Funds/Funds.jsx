@@ -62,6 +62,9 @@ const COLUMNS = {
   },
 };
 
+const ORDER_PARAM = 'o';
+const ASCENDING_ORDER_PARAM = 'ao';
+
 export default class Funds extends Component {
   constructor(props) {
     super(props);
@@ -72,8 +75,8 @@ export default class Funds extends Component {
     });
 
     const filters = Object.assign({}, params);
-    delete filters.o;
-    delete filters.ao;
+    delete filters[ORDER_PARAM];
+    delete filters[ASCENDING_ORDER_PARAM];
 
     this.state = {
       loaded: false,
@@ -83,8 +86,8 @@ export default class Funds extends Component {
       toggleDisplayed: '',
       selectedFilter: 'label',
       order: {
-        key: params.o || '',
-        descending: typeof params.ao === 'undefined',
+        key: params[ORDER_PARAM] || '',
+        descending: typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
       },
       filters,
     };
@@ -243,14 +246,16 @@ export default class Funds extends Component {
       .map(filter => `${filter}=${encodeURIComponent(this.state.filters[filter])}`);
 
     if (this.state.order.key) {
-      params.push(`o=${this.state.order.key}`);
+      params.push(`${ORDER_PARAM}=${this.state.order.key}`);
 
       if (!this.state.order.descending) {
-        params.push('ao');
+        params.push(ASCENDING_ORDER_PARAM);
       }
     }
 
-    window.history.pushState(null, null, `/?${params.join('&')}`);
+    if (params.length > 0) {
+      window.history.pushState(null, null, `/?${params.join('&')}`);
+    }
   }
 
   renderError() {
@@ -406,12 +411,3 @@ export default class Funds extends Component {
     );
   }
 }
-
-Funds.propTypes = {
-  location: React.PropTypes.shape({
-    query: React.PropTypes.shape({
-      o: React.PropTypes.string,
-      ao: React.PropTypes.string,
-    }),
-  }).isRequired,
-};
