@@ -38,7 +38,9 @@ type SyncedMap struct {
 func (o SyncedMap) get(key string) (Performance, bool) {
 	o.RLock()
 	defer o.RUnlock()
-	return o.m[key]
+
+	performance, ok := o.m[key]
+	return performance, ok
 }
 
 func (o SyncedMap) push(key string, performance Performance) {
