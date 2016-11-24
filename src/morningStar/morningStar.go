@@ -30,10 +30,24 @@ var PERF_SIX_MONTH = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</t
 var PERF_ONE_YEAR = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var VOL_3_YEAR = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
-var PERFORMANCE_CACHE = struct {
+type SyncedMap struct {
 	sync.RWMutex
 	m map[string]Performance
-}{m: make(map[string]Performance)}
+}
+
+func (SyncedMap) get(key string) (Performance, bool) {
+	RLock()
+	defer RUnlock()
+	performance, ok := m[key]
+}
+
+func (SyncedMap) push(key string, performance Performance) {
+	Lock()
+	defer Unlock()
+	m[key] = performance
+}
+
+var PERFORMANCE_CACHE = SyncedMap{m: make(map[string]Performance)}
 
 type Performance struct {
 	Id            string    `json:"id"`
@@ -111,9 +125,7 @@ func getPerformance(extract *regexp.Regexp, body []byte) float64 {
 func SinglePerformance(morningStarId []byte) (*Performance, error) {
 	cleanId := string(bytes.ToLower(morningStarId))
 
-	PERFORMANCE_CACHE.RLock()
-	performance, ok := PERFORMANCE_CACHE.m[cleanId]
-	PERFORMANCE_CACHE.RUnlock()
+	performance, ok := PERFORMANCE_CACHE.get(cleanId)
 
 	if ok && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
 		return &performance, nil
@@ -144,9 +156,7 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 
 	performance = Performance{cleanId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}
 
-	PERFORMANCE_CACHE.Lock()
-	PERFORMANCE_CACHE.m[cleanId] = performance
-	PERFORMANCE_CACHE.Unlock()
+	PERFORMANCE_CACHE.push(cleanId, performance)
 
 	return &performance, nil
 }
