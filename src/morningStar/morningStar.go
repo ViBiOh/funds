@@ -35,16 +35,16 @@ type SyncedMap struct {
 	m map[string]Performance
 }
 
-func (SyncedMap) get(key string) (Performance, bool) {
-	RLock()
-	defer RUnlock()
-	performance, ok := m[key]
+func (o SyncedMap) get(key string) (Performance, bool) {
+	o.RLock()
+	defer o.RUnlock()
+	return o.m[key]
 }
 
-func (SyncedMap) push(key string, performance Performance) {
-	Lock()
-	defer Unlock()
-	m[key] = performance
+func (o SyncedMap) push(key string, performance Performance) {
+	o.Lock()
+	defer o.Unlock()
+	o.m[key] = performance
 }
 
 var PERFORMANCE_CACHE = SyncedMap{m: make(map[string]Performance)}
