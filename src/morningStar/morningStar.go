@@ -49,7 +49,7 @@ func (m *SyncedMap) push(key string, performance Performance) {
 	m.performances[key] = performance
 }
 
-var PERFORMANCE_CACHE = SyncedMap{m: make(map[string]Performance)}
+var PERFORMANCE_CACHE = SyncedMap{performances: make(map[string]Performance)}
 
 type Performance struct {
 	Id            string    `json:"id"`
