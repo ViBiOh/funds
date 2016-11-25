@@ -32,21 +32,21 @@ var VOL_3_YEAR = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>
 
 type SyncedMap struct {
 	sync.RWMutex
-	m map[string]Performance
+	performances map[string]Performance
 }
 
-func (o SyncedMap) get(key string) (Performance, bool) {
-	o.RLock()
-	defer o.RUnlock()
+func (m *SyncedMap) get(key string) (Performance, bool) {
+	m.RLock()
+	defer m.RUnlock()
 
-	performance, ok := o.m[key]
+	performance, ok := m.performances[key]
 	return performance, ok
 }
 
-func (o SyncedMap) push(key string, performance Performance) {
-	o.Lock()
-	defer o.Unlock()
-	o.m[key] = performance
+func (m *SyncedMap) push(key string, performance Performance) {
+	m.Lock()
+	defer m.Unlock()
+	m.performances[key] = performance
 }
 
 var PERFORMANCE_CACHE = SyncedMap{m: make(map[string]Performance)}
@@ -211,7 +211,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 type Handler struct {
 }
 
-func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(`Access-Control-Allow-Origin`, `*`)
 	w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
 	w.Header().Add(`Access-Control-Allow-Methods`, `GET, POST`)
