@@ -12,7 +12,7 @@ import style from './Funds.css';
 const COLUMNS = {
   isin: {
     label: 'ISIN',
-    sortable: false,
+    sortable: true,
     filterable: true,
   },
   label: {

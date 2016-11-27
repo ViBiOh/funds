@@ -84,6 +84,8 @@ svg.active {
 .header ol,
 .header .icon svg,
 .row,
+.label,
+.isin,
 .dataModifier,
 .rating,
 .category,
@@ -143,6 +145,10 @@ svg.active {
   @include roundBorder;
 }
 
+.isin {
+  width: 140px;
+}
+
 .label {
   flex: 3;
   @include ellipsis;
@@ -188,6 +194,7 @@ svg.active {
 
   .row .icon {
     margin: 2px;
+    order: 3;
   }
 
   .row svg {
@@ -195,12 +202,22 @@ svg.active {
     height: 30px;
   }
 
+  .isin,
   .rating,
   .category,
   .performance {
     @include roundBorder;
     flex: none;
     max-width: 100%;
+    order: 2;
+  }
+
+  .isin {
+    order: 1;
+  }
+
+  .isin::before {
+    content: "ISIN | ";
   }
 
   .rating::before {

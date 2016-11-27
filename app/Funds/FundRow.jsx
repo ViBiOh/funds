@@ -6,12 +6,8 @@ import style from './Funds.css';
 
 const MorningStarRow = ({ fund, filterBy }) => (
   <span className={style.row}>
-    <span
-      title={`${fund.isin} - ${fund.label}`}
-      className={style.label}
-    >
-      {fund.label}
-    </span>
+    <span className={style.isin}>{fund.isin}</span>
+    <span className={style.label} title={fund.label}>{fund.label}</span>
     <button
       title={fund.category}
       className={style.category}
