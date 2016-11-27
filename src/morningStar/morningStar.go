@@ -103,17 +103,17 @@ func getBody(url string) ([]byte, error) {
 	return body, nil
 }
 
-func getLabel(extract *regexp.Regexp, body []byte) []byte {
+func getLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 	match := extract.FindSubmatch(body)
 	if match == nil {
-		return nil
+		return defaultValue
 	}
 
 	return bytes.Replace(match[1], []byte(`&amp;`), []byte(`&`), -1)
 }
 
 func getPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(getLabel(extract, body), []byte(`,`), []byte(`.`), -1)
+	dotResult := bytes.Replace(getLabel(extract, body, []byte(``)), []byte(`,`), []byte(`.`), -1)
 	percentageResult := bytes.Replace(dotResult, []byte(`%`), []byte(``), -1)
 	trimResult := bytes.TrimSpace(percentageResult)
 
@@ -143,10 +143,10 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 		return nil, err
 	}
 
-	isin := string(getLabel(ISIN, performanceBody))
-	label := string(getLabel(LABEL, performanceBody))
-	rating := string(getLabel(RATING, performanceBody))
-	category := string(getLabel(CATEGORY, performanceBody))
+	isin := string(getLabel(ISIN, performanceBody, []byte(``)))
+	label := string(getLabel(LABEL, performanceBody, []byte(``)))
+	rating := string(getLabel(RATING, performanceBody, []byte(`0`)))
+	category := string(getLabel(CATEGORY, performanceBody, []byte(``)))
 	oneMonth := getPerformance(PERF_ONE_MONTH, performanceBody)
 	threeMonths := getPerformance(PERF_THREE_MONTH, performanceBody)
 	sixMonths := getPerformance(PERF_SIX_MONTH, performanceBody)

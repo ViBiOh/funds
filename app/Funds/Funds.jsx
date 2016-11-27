@@ -3,6 +3,7 @@ import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
+import FaCalculator from 'react-icons/lib/fa/calculator';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import FundsService, { FETCH_SIZE } from './FundsService';
@@ -13,55 +14,66 @@ const COLUMNS = {
   isin: {
     label: 'ISIN',
     sortable: true,
+    summable: false,
     filterable: true,
   },
   label: {
     label: 'Libellé',
     sortable: true,
+    summable: false,
     filterable: true,
   },
   category: {
     label: 'Catégorie',
     sortable: true,
+    summable: true,
     filterable: true,
   },
   rating: {
     label: 'Note',
     sortable: true,
+    summable: true,
     filterable: true,
   },
   '1m': {
     label: '1 mois',
     sortable: true,
+    summable: false,
     filterable: false,
   },
   '3m': {
     label: '3 mois',
     sortable: true,
+    summable: false,
     filterable: false,
   },
   '6m': {
     label: '6 mois',
     sortable: true,
+    summable: false,
     filterable: false,
   },
   '1y': {
     label: '1 an',
     sortable: true,
+    summable: false,
     filterable: false,
   },
   v3y: {
     label: 'Volatilité',
     sortable: true,
+    summable: false,
     filterable: false,
   },
   score: {
     label: 'Score',
     sortable: true,
+    summable: false,
     filterable: false,
   },
 };
 
+const SUM_PARAM = 's';
 const ORDER_PARAM = 'o';
 const ASCENDING_ORDER_PARAM = 'ao';
 
@@ -75,6 +87,7 @@ export default class Funds extends Component {
     });
 
     const filters = Object.assign({}, params);
+    delete filters[SUM_PARAM];
     delete filters[ORDER_PARAM];
     delete filters[ASCENDING_ORDER_PARAM];
 
@@ -83,8 +96,13 @@ export default class Funds extends Component {
       ids: [],
       funds: [],
       displayed: [],
+      summed: {},
       toggleDisplayed: '',
       selectedFilter: 'label',
+      sum: {
+        key: params[SUM_PARAM] || '',
+        size: 25,
+      },
       order: {
         key: params[ORDER_PARAM] || '',
         descending: typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
@@ -100,14 +118,17 @@ export default class Funds extends Component {
     this.onFilterChange = this.onFilterChange.bind(this);
 
     this.filterBy = this.filterBy.bind(this);
+    this.sumBy = this.sumBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.updateDataPresentation = this.updateDataPresentation.bind(this);
+    this.computeSum = this.computeSum.bind(this);
     this.pushHistory = this.pushHistory.bind(this);
 
     this.renderError = this.renderError.bind(this);
     this.renderOrderIcon = this.renderOrderIcon.bind(this);
+    this.renderSigmaIcon = this.renderSigmaIcon.bind(this);
     this.renderFilterIcon = this.renderFilterIcon.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
 
@@ -135,6 +156,14 @@ export default class Funds extends Component {
 
   set orderDisplayed(display) {
     this.setState({ toggleDisplayed: display ? 'order' : '' });
+  }
+
+  get sigmaDisplayed() {
+    return this.state.toggleDisplayed === 'sigma';
+  }
+
+  set sigmaDisplayed(display) {
+    this.setState({ toggleDisplayed: display ? 'sigma' : '' });
   }
 
   get filterDisplayed() {
@@ -194,6 +223,14 @@ export default class Funds extends Component {
     }, this.updateDataPresentation);
   }
 
+  sumBy(sum) {
+    this.setState({
+      sum: { key: sum, size: 25 },
+    }, this.updateDataPresentation);
+
+    this.sigmaDisplayed = false;
+  }
+
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
@@ -236,8 +273,27 @@ export default class Funds extends Component {
 
       this.setState({
         displayed,
+        summed: this.computeSum(displayed),
       }, this.pushHistory);
     }, 400);
+  }
+
+  computeSum(displayed) {
+    const { key } = this.state.sum;
+    if (!key) {
+      return {};
+    }
+
+    const summed = {};
+    const size = Math.min(displayed.length, this.state.sum.size);
+    for (let i = 0; i < size; i += 1) {
+      if (typeof summed[displayed[i][key]] === 'undefined') {
+        summed[displayed[i][key]] = 0;
+      }
+      summed[displayed[i][key]] += 1;
+    }
+
+    return summed;
   }
 
   pushHistory() {
@@ -251,6 +307,10 @@ export default class Funds extends Component {
       if (!this.state.order.descending) {
         params.push(ASCENDING_ORDER_PARAM);
       }
+    }
+
+    if (this.state.sum.key) {
+      params.push(`${SUM_PARAM}=${this.state.sum.key}`);
     }
 
     window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
@@ -287,6 +347,28 @@ export default class Funds extends Component {
     );
   }
 
+  renderSigmaIcon() {
+    const filterColumns = Object.keys(COLUMNS)
+      .filter(column => COLUMNS[column].summable)
+      .map(key => (
+        <li key={key}>
+          <button onClick={() => this.sumBy(key)} value={key}>{COLUMNS[key].label}</button>
+        </li>
+      ));
+
+    return (
+      <span className={style.icon}>
+        <FaCalculator
+          className={this.sigmaDisplayed ? style.active : ''}
+          onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
+        />
+        <ol className={this.sigmaDisplayed ? style.displayed : style.hidden}>
+          {filterColumns}
+        </ol>
+      </span>
+    );
+  }
+
   renderFilterIcon() {
     const filterColumns = Object.keys(COLUMNS)
       .filter(column => COLUMNS[column].filterable)
@@ -317,6 +399,7 @@ export default class Funds extends Component {
       <header className={style.header}>
         <h1 title={count}>Funds</h1>
         {this.renderOrderIcon()}
+        {this.renderSigmaIcon()}
         {this.renderFilterIcon()}
         <input
           type="text"
@@ -359,11 +442,35 @@ export default class Funds extends Component {
     );
   }
 
+  renderSigma() {
+    if (!this.state.sum.key) {
+      return null;
+    }
+
+    const { summed } = this.state;
+    const label = COLUMNS[this.state.sum.key].label;
+
+    return [
+      <span key="label" className={style.dataModifier}>
+        &#x3A3; {this.state.sum.size} | {label}
+        <button onClick={() => this.sumBy('')} className={style.icon}>
+          <FaClose />
+        </button>
+      </span>,
+      ...Object.keys(summed).map(key => (
+        <span key={key} className={style.dataModifier}>
+          &#x3A3; {key} = {summed[key]}
+        </span>
+      )),
+    ];
+  }
+
   renderDataModifier() {
     return (
       <div className={style.list}>
         {this.renderFilter()}
         {this.renderOrder()}
+        {this.renderSigma()}
       </div>
     );
   }
