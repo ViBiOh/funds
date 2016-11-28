@@ -33,7 +33,6 @@
     "babel-preset-es2015": "latest",
     "babel-preset-react": "latest",
     "chai": "latest",
-    "chartist": "latest",
     "css-loader": "latest",
     "eslint": "latest",
     "eslint-config-airbnb": "latest",
@@ -66,6 +65,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
+    "chartist": "latest",
     "whatwg-fetch": "latest"
   }
 }
