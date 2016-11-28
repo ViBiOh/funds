@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Chartist from 'chartist';
 import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
@@ -7,6 +6,7 @@ import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaCalculator from 'react-icons/lib/fa/calculator';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
+import Graph from './Graph';
 import FundsService, { FETCH_SIZE } from './FundsService';
 import FundRow from './FundRow';
 import style from './Funds.css';
@@ -456,12 +456,43 @@ export default class Funds extends Component {
       series: [],
     };
 
+    const options = {
+      distributeSeries: true,
+      axisX: {
+        labelInterpolationFnc: value =>
+          value.replace(/Actions|Allocation|Alt|Convertibles|Immobilier|Obligations/gmi, ''),
+      },
+    };
+
+    const responsive = [
+      [
+        'screen and (max-width: 1023px)', {
+          reverseData: true,
+          horizontalBars: true,
+          axisX: {
+            labelInterpolationFnc: e => e,
+          },
+          axisY: {
+            offset: this.state.sum.key === 'category' ? 80 : 30,
+          },
+        },
+      ],
+      [
+        'screen and (min-width: 1024px)', {
+          reverseData: false,
+          horizontalBars: false,
+          seriesBarDistance: 15,
+          axisX: {
+            offset: this.state.sum.key === 'category' ? 60 : 30,
+          },
+        },
+      ],
+    ];
+
     Object.keys(summed).forEach((key) => {
       data.labels.push(key);
       data.series.push(summed[key]);
     });
-
-    const pieChart = new Chartist.Pie('#sigma-chart', data);
 
     return [
       <span key="label" className={style.dataModifier}>
@@ -470,7 +501,13 @@ export default class Funds extends Component {
           <FaClose />
         </button>
       </span>,
-      <div key="graph" id="sigma-chart" className={style.list} />,
+      <Graph
+        type="Bar"
+        data={data}
+        options={options}
+        responsive={responsive}
+        className={style.list}
+      />,
     ];
   }
 
