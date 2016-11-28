@@ -450,18 +450,18 @@ export default class Funds extends Component {
 
     const { summed } = this.state;
     const label = COLUMNS[this.state.sum.key].label;
-    
+
     const data = {
       labels: [],
       series: [],
     };
-    
-    Object.keys(summed).map(key => {
+
+    Object.keys(summed).forEach((key) => {
       data.labels.push(key);
       data.series.push(summed[key]);
     });
-    
-    new Chartist.Pie('#sigma-chart', data);
+
+    const pieChart = new Chartist.Pie('#sigma-chart', data);
 
     return [
       <span key="label" className={style.dataModifier}>
