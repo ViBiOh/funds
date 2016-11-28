@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Chartist from 'chartist';
 import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
@@ -449,6 +450,18 @@ export default class Funds extends Component {
 
     const { summed } = this.state;
     const label = COLUMNS[this.state.sum.key].label;
+    
+    const data = {
+      labels: [],
+      series: [],
+    };
+    
+    Object.keys(summed).map(key => {
+      data.labels.push(key);
+      data.series.push(summed[key]);
+    });
+    
+    new Chartist.Pie('#sigma-chart', data);
 
     return [
       <span key="label" className={style.dataModifier}>
@@ -457,10 +470,7 @@ export default class Funds extends Component {
           <FaClose />
         </button>
       </span>,
-      ...Object.keys(summed).map(key => (
-        <span key={key} className={style.dataModifier}>
-          &#x3A3; {key} = {summed[key]}
-        </span>
+      <div key="graph" id="sigma-chart" className={style.list} />
       )),
     ];
   }
