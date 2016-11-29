@@ -490,7 +490,7 @@ export default class Funds extends Component {
     };
 
     const keyValData = Object.keys(summed).map(key => [key, summed[key]]);
-    keyValData.sort((o1, o2) => o2[1] - o1[1])
+    keyValData.sort((o1, o2) => o2[1] - o1[1]);
     keyValData.forEach((entry) => {
       data.labels.push(entry[0]);
       data.series.push(entry[1]);
