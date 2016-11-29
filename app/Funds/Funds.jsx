@@ -451,11 +451,6 @@ export default class Funds extends Component {
     const { summed } = this.state;
     const label = COLUMNS[this.state.sum.key].label;
 
-    const data = {
-      labels: [],
-      series: [],
-    };
-
     const options = {
       distributeSeries: true,
       axisX: {
@@ -489,9 +484,16 @@ export default class Funds extends Component {
       ],
     ];
 
-    Object.keys(summed).forEach((key) => {
-      data.labels.push(key);
-      data.series.push(summed[key]);
+    const data = {
+      labels: [],
+      series: [],
+    };
+
+    const keyValData = Object.keys(summed).map(key => [key, summed[key]]);
+    keyValData.sort((o1, o2) => o2[1] - o1[1])
+    keyValData.forEach((entry) => {
+      data.labels.push(entry[0]);
+      data.series.push(entry[1]);
     });
 
     return [
