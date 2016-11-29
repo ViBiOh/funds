@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Chartist from 'chartist';
+import Chart from 'chart.js';
 
 export default class Graph extends Component {
   componentDidMount() {
@@ -11,32 +11,36 @@ export default class Graph extends Component {
   }
 
   componentWillUnmount() {
-    if (this.chartist) {
-      try {
-        this.chartist.detach();
-      } catch (err) {
-        throw new Error('Internal chartist error', err);
-      }
-    }
+    this.clearChart();
   }
 
   updateChart(config) {
-    const { type, data, options, responsive } = config;
+    const { type, data, options } = config;
 
-    if (this.chartist) {
-      this.chartist.update(data, options, responsive);
+    if (this.chart) {
+      this.chart.data.datasets = data.datasets;
+      this.chart.data.labels = data.labels;
+      this.chart.update();
     } else {
-      this.chartist = new Chartist[type](this.chart, data, options, responsive);
+      this.chart = new Chart(this.graph, {
+        type,
+        data,
+        options,
+      });
     }
 
-    return this.chartist;
+    return this.chart;
+  }
+
+  clearChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
   }
 
   render() {
-    const className = `ct-chart ${this.props.className}`;
-
     return (
-      <div className={className} key="graph" ref={e => (this.chart = e)} />
+      <canvas ref={e => (this.graph = e)} className={this.props.className} />
     );
   }
 }

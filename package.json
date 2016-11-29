@@ -62,10 +62,10 @@
     "yargs": "latest"
   },
   "dependencies": {
+    "chart.js": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
-    "chartist": "latest",
     "whatwg-fetch": "latest"
   }
 }

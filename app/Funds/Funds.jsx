@@ -74,6 +74,11 @@ const COLUMNS = {
   },
 };
 
+const CHART_COLORS = [
+  '#1f77b4', '#e377c2', '#ff7f0e', '#2ca02c', '#bcbd22', '#d62728',
+  '#17becf', '#9467bd', '#7f7f7f', '#8c564b', '#3366cc',
+];
+
 const SUM_PARAM = 's';
 const ORDER_PARAM = 'o';
 const ASCENDING_ORDER_PARAM = 'ao';
@@ -97,7 +102,7 @@ export default class Funds extends Component {
       ids: [],
       funds: [],
       displayed: [],
-      summed: {},
+      aggregated: [],
       toggleDisplayed: '',
       selectedFilter: 'label',
       sum: {
@@ -119,12 +124,12 @@ export default class Funds extends Component {
     this.onFilterChange = this.onFilterChange.bind(this);
 
     this.filterBy = this.filterBy.bind(this);
-    this.sumBy = this.sumBy.bind(this);
+    this.aggregateBy = this.aggregateBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.updateDataPresentation = this.updateDataPresentation.bind(this);
-    this.computeSum = this.computeSum.bind(this);
+    this.aggregateData = this.aggregateData.bind(this);
     this.pushHistory = this.pushHistory.bind(this);
 
     this.renderError = this.renderError.bind(this);
@@ -224,7 +229,7 @@ export default class Funds extends Component {
     }, this.updateDataPresentation);
   }
 
-  sumBy(sum) {
+  aggregateBy(sum) {
     this.setState({
       sum: { key: sum, size: 25 },
     }, this.updateDataPresentation);
@@ -274,27 +279,33 @@ export default class Funds extends Component {
 
       this.setState({
         displayed,
-        summed: this.computeSum(displayed),
+        aggregated: this.aggregateData(displayed),
       }, this.pushHistory);
     }, 400);
   }
 
-  computeSum(displayed) {
+  aggregateData(displayed) {
     const { key } = this.state.sum;
     if (!key) {
-      return {};
+      return [];
     }
 
-    const summed = {};
+    const aggregate = {};
     const size = Math.min(displayed.length, this.state.sum.size);
     for (let i = 0; i < size; i += 1) {
-      if (typeof summed[displayed[i][key]] === 'undefined') {
-        summed[displayed[i][key]] = 0;
+      if (typeof aggregate[displayed[i][key]] === 'undefined') {
+        aggregate[displayed[i][key]] = 0;
       }
-      summed[displayed[i][key]] += 1;
+      aggregate[displayed[i][key]] += 1;
     }
 
-    return summed;
+    const aggregated = Object.keys(aggregate).map(label => ({
+      label,
+      count: aggregate[label],
+    }));
+    aggregated.sort((o1, o2) => o2.count - o1.count);
+
+    return aggregated;
   }
 
   pushHistory() {
@@ -353,7 +364,7 @@ export default class Funds extends Component {
       .filter(column => COLUMNS[column].summable)
       .map(key => (
         <li key={key}>
-          <button onClick={() => this.sumBy(key)} value={key}>{COLUMNS[key].label}</button>
+          <button onClick={() => this.aggregateBy(key)} value={key}>{COLUMNS[key].label}</button>
         </li>
       ));
 
@@ -448,66 +459,53 @@ export default class Funds extends Component {
       return null;
     }
 
-    const { summed } = this.state;
+    const { aggregated } = this.state;
     const label = COLUMNS[this.state.sum.key].label;
 
     const options = {
-      distributeSeries: true,
-      axisX: {
-        labelInterpolationFnc: value =>
-          value.replace(/Actions|Allocation|Alt|Convertibles|Immobilier|Obligations/gmi, ''),
+      legend: false,
+      scales: {
+        xAxes: [{
+          display: false,
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+          },
+        }],
       },
     };
 
-    const responsive = [
-      [
-        'screen and (max-width: 1023px)', {
-          reverseData: true,
-          horizontalBars: true,
-          axisX: {
-            labelInterpolationFnc: e => e,
-          },
-          axisY: {
-            offset: this.state.sum.key === 'category' ? 80 : 30,
-          },
-        },
-      ],
-      [
-        'screen and (min-width: 1024px)', {
-          reverseData: false,
-          horizontalBars: false,
-          seriesBarDistance: 15,
-          axisX: {
-            offset: this.state.sum.key === 'category' ? 60 : 30,
-          },
-        },
-      ],
-    ];
-
     const data = {
       labels: [],
-      series: [],
+      datasets: [{
+        label: `\u03A3 ${this.state.sum.size} | ${label}`,
+        data: [],
+        backgroundColor: [],
+      }],
     };
 
-    const keyValData = Object.keys(summed).map(key => [key, summed[key]]);
-    keyValData.sort((o1, o2) => o2[1] - o1[1]);
-    keyValData.forEach((entry) => {
-      data.labels.push(entry[0]);
-      data.series.push(entry[1]);
+    let i = 0;
+    aggregated.forEach((entry) => {
+      data.labels.push(entry.label);
+      data.datasets[0].data.push(entry.count);
+      data.datasets[0].backgroundColor.push(CHART_COLORS[i]);
+
+      i = (i + 1) % CHART_COLORS.length;
     });
 
     return [
       <span key="label" className={style.dataModifier}>
         &#x3A3; {this.state.sum.size} | {label}
-        <button onClick={() => this.sumBy('')} className={style.icon}>
+        <button onClick={() => this.aggregateBy('')} className={style.icon}>
           <FaClose />
         </button>
       </span>,
       <Graph
-        type="Bar"
+        key="graph"
+        type="bar"
         data={data}
         options={options}
-        responsive={responsive}
         className={style.list}
       />,
     ];
