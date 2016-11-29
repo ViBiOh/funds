@@ -44,6 +44,7 @@ $iconSize: 50px;
   height: $iconSize;
   margin: 0;
   display: inline-block;
+  flex: 1 1 auto;
 }
 
 article {
@@ -113,7 +114,6 @@ svg.active {
   list-style: none;
   position: absolute;
   top: $iconSize;
-  left: 0;
   margin: 0;
 }
 
@@ -173,16 +173,22 @@ svg.active {
 }
 
 @media screen and (min-width: 1024px) {
-  .header h1 {
-    flex: 1;
-  }
-
   .header input[type="text"] {
     flex: 5;
+  }
+
+  .header ol {
+    left: 0;
+    right: initial;
   }
 }
 
 @media screen and (max-width: 1023px) {
+  .header ol {
+    left: initial;
+    right: 0;
+  }
+
   .row:first-child {
     display: none;
   }
