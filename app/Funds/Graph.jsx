@@ -40,7 +40,11 @@ export default class Graph extends Component {
 
   render() {
     return (
-      <canvas ref={e => (this.graph = e)} className={this.props.className} />
+      <canvas
+        ref={e => (this.graph = e)}
+        className={this.props.className}
+        height={200}
+      />
     );
   }
 }

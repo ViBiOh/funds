@@ -468,6 +468,7 @@ export default class Funds extends Component {
           display: false,
         }],
         yAxes: [{
+          display: false,
           ticks: {
             beginAtZero: true,
           },
