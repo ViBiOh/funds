@@ -62,7 +62,7 @@ svg {
   color: $dark;
 }
 
-svg.active {
+svg.active, .active svg {
   color: $clear;
   background-color: $dark;
 }

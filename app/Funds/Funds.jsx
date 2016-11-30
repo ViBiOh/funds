@@ -9,6 +9,7 @@ import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
 import FundsService, { FETCH_SIZE } from './FundsService';
 import FundRow from './FundRow';
+import HeaderIcon from './HeaderIcon';
 import style from './Funds.css';
 
 const COLUMNS = {
@@ -132,8 +133,6 @@ export default class Funds extends Component {
     this.pushHistory = this.pushHistory.bind(this);
 
     this.renderError = this.renderError.bind(this);
-    this.renderOrderIcon = this.renderOrderIcon.bind(this);
-    this.renderSigmaIcon = this.renderSigmaIcon.bind(this);
     this.renderFilterIcon = this.renderFilterIcon.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
 
@@ -336,50 +335,6 @@ export default class Funds extends Component {
     );
   }
 
-  renderOrderIcon() {
-    const orderColumns = Object.keys(COLUMNS)
-      .filter(column => COLUMNS[column].sortable)
-      .map(key => (
-        <li key={key}>
-          <button onClick={() => this.orderBy(key)}>{COLUMNS[key].label}</button>
-        </li>
-      ));
-
-    return (
-      <span className={style.icon}>
-        <FaSortAmountDesc
-          className={this.orderDisplayed ? style.active : ''}
-          onClick={() => (this.orderDisplayed = !this.orderDisplayed)}
-        />
-        <ol className={this.orderDisplayed ? style.displayed : style.hidden}>
-          {orderColumns}
-        </ol>
-      </span>
-    );
-  }
-
-  renderSigmaIcon() {
-    const filterColumns = Object.keys(COLUMNS)
-      .filter(column => COLUMNS[column].summable)
-      .map(key => (
-        <li key={key}>
-          <button onClick={() => this.aggregateBy(key)} value={key}>{COLUMNS[key].label}</button>
-        </li>
-      ));
-
-    return (
-      <span className={style.icon}>
-        <FaCalculator
-          className={this.sigmaDisplayed ? style.active : ''}
-          onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
-        />
-        <ol className={this.sigmaDisplayed ? style.displayed : style.hidden}>
-          {filterColumns}
-        </ol>
-      </span>
-    );
-  }
-
   renderFilterIcon() {
     const filterColumns = Object.keys(COLUMNS)
       .filter(column => COLUMNS[column].filterable)
@@ -403,14 +358,31 @@ export default class Funds extends Component {
   }
 
   renderHeader() {
-    const count =
-      `${this.state.displayed.length} / ${this.state.funds.length} / ${this.state.ids.length}`;
-
     return (
       <header className={style.header}>
-        <h1 title={count}>Funds</h1>
-        {this.renderOrderIcon()}
-        {this.renderSigmaIcon()}
+        <h1>Funds</h1>
+        <HeaderIcon
+          columns={COLUMNS}
+          filter="sortable"
+          onClick={this.orderBy}
+          icon={
+            <FaSortAmountDesc
+              onClick={() => (this.orderDisplayed = !this.orderDisplayed)}
+            />
+          }
+          displayed={this.orderDisplayed}
+        />
+        <HeaderIcon
+          columns={COLUMNS}
+          filter="summable"
+          onClick={this.aggregateBy}
+          icon={
+            <FaCalculator
+              onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
+            />
+          }
+          displayed={this.sigmaDisplayed}
+        />
         {this.renderFilterIcon()}
         <input
           type="text"
