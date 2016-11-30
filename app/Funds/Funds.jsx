@@ -82,6 +82,7 @@ const CHART_COLORS = [
 const SUM_PARAM = 's';
 const ORDER_PARAM = 'o';
 const ASCENDING_ORDER_PARAM = 'ao';
+const RESERVED_PARAM = [SUM_PARAM, ORDER_PARAM, ASCENDING_ORDER_PARAM];
 
 export default class Funds extends Component {
   constructor(props) {
@@ -93,9 +94,7 @@ export default class Funds extends Component {
     });
 
     const filters = Object.assign({}, params);
-    delete filters[SUM_PARAM];
-    delete filters[ORDER_PARAM];
-    delete filters[ASCENDING_ORDER_PARAM];
+    RESERVED_PARAM.forEach(param => delete filters[param]);
 
     this.state = {
       loaded: false,
@@ -128,7 +127,7 @@ export default class Funds extends Component {
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
-    this.updateDataPresentation = this.updateDataPresentation.bind(this);
+    this.updateData = this.updateData.bind(this);
     this.aggregateData = this.aggregateData.bind(this);
     this.pushHistory = this.pushHistory.bind(this);
 
@@ -203,7 +202,7 @@ export default class Funds extends Component {
         const results = funds.results.filter(fund => fund.id);
         this.setState({
           funds: [...this.state.funds, ...results],
-        }, this.updateDataPresentation);
+        }, this.updateData);
 
         return funds;
       });
@@ -214,7 +213,7 @@ export default class Funds extends Component {
       .then((fund) => {
         this.setState({
           funds: [...this.state.funds, fund],
-        }, this.updateDataPresentation);
+        }, this.updateData);
 
         return fund;
       });
@@ -226,13 +225,13 @@ export default class Funds extends Component {
 
     this.setState({
       filters: Object.assign(this.state.filters, filter),
-    }, this.updateDataPresentation);
+    }, this.updateData);
   }
 
   aggregateBy(sum) {
     this.setState({
       sum: { key: sum, size: 25 },
-    }, this.updateDataPresentation);
+    }, this.updateData);
 
     this.sigmaDisplayed = false;
   }
@@ -240,7 +239,7 @@ export default class Funds extends Component {
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
-    }, this.updateDataPresentation);
+    }, this.updateData);
 
     this.orderDisplayed = false;
   }
@@ -248,10 +247,10 @@ export default class Funds extends Component {
   reverseOrder() {
     this.setState({
       order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
-    }, this.updateDataPresentation);
+    }, this.updateData);
   }
 
-  updateDataPresentation() {
+  updateData() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       const displayed = Object.keys(this.state.filters).reduce((previous, filter) => {
