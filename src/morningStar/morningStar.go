@@ -75,6 +75,11 @@ type Results struct {
 	Results interface{} `json:"results"`
 }
 
+type PerformanceAsync struct {
+	performance *Performance
+	err         error
+}
+
 func readBody(body io.ReadCloser) ([]byte, error) {
 	defer body.Close()
 	return ioutil.ReadAll(body)
@@ -160,9 +165,7 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 
 func singlePerformanceAsync(morningStarId []byte, ch chan<- Performance) {
 	performance, err := SinglePerformance(morningStarId)
-	if err == nil {
-		ch <- *performance
-	}
+	ch <- PerformanceAsync{performance, err}
 }
 
 func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
@@ -196,8 +199,10 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := make([]Performance, 0, size)
-	for performance := range performances {
-		results = append(results, performance)
+	for range ids {
+		if performance := <-ch; performance.err == nil {
+			results = append(results, *performance.performance)
+		}
 	}
 
 	jsonHttp.ResponseJson(w, Results{results})
