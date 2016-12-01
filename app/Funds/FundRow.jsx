@@ -30,7 +30,7 @@ const MorningStarRow = ({ fund, filterBy }) => (
       target="_blank"
       className={style.icon}
     >
-      <FaBarChart />
+      {fund.id && <FaBarChart />}
     </a>
   </span>
 );
