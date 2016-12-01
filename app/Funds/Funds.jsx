@@ -128,9 +128,9 @@ export default class Funds extends Component {
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
-    this.updateData = this.updateData.bind(this);
+    this.filterOrderData = this.filterOrderData.bind(this);
     this.aggregateData = this.aggregateData.bind(this);
-    this.pushHistory = this.pushHistory.bind(this);
+    this.updateUrl = this.updateUrl.bind(this);
 
     this.renderError = this.renderError.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
@@ -200,7 +200,7 @@ export default class Funds extends Component {
         const results = funds.results.filter(fund => fund.id);
         this.setState({
           funds: [...this.state.funds, ...results],
-        }, this.updateData);
+        }, this.filterOrderData);
 
         return funds;
       });
@@ -211,7 +211,7 @@ export default class Funds extends Component {
       .then((fund) => {
         this.setState({
           funds: [...this.state.funds, fund],
-        }, this.updateData);
+        }, this.filterOrderData);
 
         return fund;
       });
@@ -223,13 +223,13 @@ export default class Funds extends Component {
 
     this.setState({
       filters: Object.assign(this.state.filters, filter),
-    }, this.updateData);
+    }, this.filterOrderData);
   }
 
   aggregateBy(sum) {
     this.setState({
       sum: { key: sum, size: 25 },
-    }, this.updateData);
+    }, this.filterOrderData);
 
     this.sigmaDisplayed = false;
   }
@@ -237,7 +237,7 @@ export default class Funds extends Component {
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
-    }, this.updateData);
+    }, this.filterOrderData);
 
     this.orderDisplayed = false;
   }
@@ -245,10 +245,10 @@ export default class Funds extends Component {
   reverseOrder() {
     this.setState({
       order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
-    }, this.updateData);
+    }, this.filterOrderData);
   }
 
-  updateData() {
+  filterOrderData() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       const displayed = Object.keys(this.state.filters).reduce((previous, filter) => {
@@ -277,7 +277,7 @@ export default class Funds extends Component {
       this.setState({
         displayed,
         aggregated: this.aggregateData(displayed),
-      }, this.pushHistory);
+      }, this.updateUrl);
     }, 400);
   }
 
@@ -305,7 +305,7 @@ export default class Funds extends Component {
     return aggregated;
   }
 
-  pushHistory() {
+  updateUrl() {
     const params = Object.keys(this.state.filters)
       .filter(filter => this.state.filters[filter])
       .map(filter => `${filter}=${encodeURIComponent(this.state.filters[filter])}`);
@@ -412,7 +412,7 @@ export default class Funds extends Component {
     );
   }
 
-  renderSigma() {
+  renderAggregate() {
     if (!this.state.sum.key) {
       return null;
     }
@@ -475,7 +475,7 @@ export default class Funds extends Component {
       <div className={style.list}>
         {this.renderFilter()}
         {this.renderOrder()}
-        {this.renderSigma()}
+        {this.renderAggregate()}
       </div>
     );
   }
