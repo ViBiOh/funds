@@ -196,10 +196,8 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := make([]Performance, 0, size)
-	for performance, ok := range performances {
-		if ok {
-			results = append(results, performance)
-		}
+	for performance := range performances {
+		results = append(results, performance)
 	}
 
 	jsonHttp.ResponseJson(w, Results{results})
