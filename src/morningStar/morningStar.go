@@ -75,7 +75,7 @@ type Results struct {
 	Results interface{} `json:"results"`
 }
 
-type PerformanceAsync struct {
+type PerformanceResult struct {
 	performance *Performance
 	err         error
 }
@@ -165,7 +165,7 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 
 func singlePerformanceAsync(morningStarId []byte, ch chan<- Performance) {
 	performance, err := SinglePerformance(morningStarId)
-	ch <- PerformanceAsync{performance, err}
+	ch <- PerformanceResult{performance, err}
 }
 
 func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
@@ -193,7 +193,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	ids := bytes.Split(listBody, []byte(`,`))
 	size := len(ids)
 
-	performances := make(chan Performance, size)
+	performances := make(chan PerformanceResult, size)
 	for _, id := range ids {
 		go singlePerformanceAsync(id, performances)
 	}
