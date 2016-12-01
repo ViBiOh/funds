@@ -15,6 +15,7 @@ import (
 
 const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
+const EMPTY_BYTE = []byte(``)
 const REFRESH_DELAY = 18
 
 var LIST_REQUEST = regexp.MustCompile(`^/list$`)
@@ -75,11 +76,6 @@ type Results struct {
 	Results interface{} `json:"results"`
 }
 
-type PerformanceResult struct {
-	performance *Performance
-	err         error
-}
-
 func readBody(body io.ReadCloser) ([]byte, error) {
 	defer body.Close()
 	return ioutil.ReadAll(body)
@@ -113,8 +109,8 @@ func getLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 }
 
 func getPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(getLabel(extract, body, []byte(``)), []byte(`,`), []byte(`.`), -1)
-	percentageResult := bytes.Replace(dotResult, []byte(`%`), []byte(``), -1)
+	dotResult := bytes.Replace(getLabel(extract, body, EMPTY_BYTE), []byte(`,`), []byte(`.`), -1)
+	percentageResult := bytes.Replace(dotResult, []byte(`%`), EMPTY_BYTE, -1)
 	trimResult := bytes.TrimSpace(percentageResult)
 
 	result, err := strconv.ParseFloat(string(trimResult), 64)
@@ -143,10 +139,10 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 		return nil, err
 	}
 
-	isin := string(getLabel(ISIN, performanceBody, []byte(``)))
-	label := string(getLabel(LABEL, performanceBody, []byte(``)))
+	isin := string(getLabel(ISIN, performanceBody, EMPTY_BYTE))
+	label := string(getLabel(LABEL, performanceBody, EMPTY_BYTE))
 	rating := string(getLabel(RATING, performanceBody, []byte(`0`)))
-	category := string(getLabel(CATEGORY, performanceBody, []byte(``)))
+	category := string(getLabel(CATEGORY, performanceBody, EMPTY_BYTE))
 	oneMonth := getPerformance(PERF_ONE_MONTH, performanceBody)
 	threeMonths := getPerformance(PERF_THREE_MONTH, performanceBody)
 	sixMonths := getPerformance(PERF_SIX_MONTH, performanceBody)
@@ -161,11 +157,6 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 	PERFORMANCE_CACHE.push(cleanId, performance)
 
 	return &performance, nil
-}
-
-func singlePerformanceAsync(morningStarId []byte, ch chan<- PerformanceResult) {
-	performance, err := SinglePerformance(morningStarId)
-	ch <- PerformanceResult{performance, err}
 }
 
 func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
@@ -193,16 +184,28 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	ids := bytes.Split(listBody, []byte(`,`))
 	size := len(ids)
 
-	performances := make(chan PerformanceResult, size)
+	var wg sync.WaitGroup
+	wg.Add(size)
+
+	performances := make(chan Performance, size)
 	for _, id := range ids {
-		go singlePerformanceAsync(id, performances)
+		go func(morningStarId []byte, ch chan<- Performance) {
+			performance, err := SinglePerformance(morningStarId)
+			if err == nil {
+				ch <- *performance
+			}
+			wg.Done()
+		}(id)
 	}
 
+	go func() {
+		wg.Wait()
+		close(performances)
+	}()
+
 	results := make([]Performance, 0, size)
-	for range ids {
-		if performance := <-performances; performance.err == nil {
-			results = append(results, *performance.performance)
-		}
+	for performance := range performances {
+		results = append(results, performance)
 	}
 
 	jsonHttp.ResponseJson(w, Results{results})
