@@ -18,6 +18,12 @@ const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.asp
 const REFRESH_DELAY = 18
 
 var EMPTY_BYTE = []byte(``)
+var ZERO_BYTE = []byte(`0`)
+var PERIOD_BYTE = []byte(`.`)
+var COMMA_BYTE = []byte(`,`)
+var PERCENT_BYTE = []byte(`%`)
+var AMP_BYTE = []byte(`&`)
+var HTML_AMP_BYTE = []byte(`&amp;`)
 
 var LIST_REQUEST = regexp.MustCompile(`^/list$`)
 var PERF_REQUEST = regexp.MustCompile(`^/(.+?)$`)
@@ -48,6 +54,7 @@ func (m *SyncedMap) get(key string) (Performance, bool) {
 func (m *SyncedMap) push(key string, performance Performance) {
 	m.Lock()
 	defer m.Unlock()
+
 	m.performances[key] = performance
 }
 
@@ -66,11 +73,6 @@ type Performance struct {
 	VolThreeYears float64   `json:"v3y"`
 	Score         float64   `json:"score"`
 	Update        time.Time `json:"ts"`
-}
-
-type Search struct {
-	Id    string `json:"i"`
-	Label string `json:"n"`
 }
 
 type Results struct {
@@ -106,12 +108,12 @@ func getLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 		return defaultValue
 	}
 
-	return bytes.Replace(match[1], []byte(`&amp;`), []byte(`&`), -1)
+	return bytes.Replace(match[1], HTML_AMP_BYTE, AMP_BYTE, -1)
 }
 
 func getPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(getLabel(extract, body, EMPTY_BYTE), []byte(`,`), []byte(`.`), -1)
-	percentageResult := bytes.Replace(dotResult, []byte(`%`), EMPTY_BYTE, -1)
+	dotResult := bytes.Replace(getLabel(extract, body, EMPTY_BYTE), COMMA_BYTE, PERIOD_BYTE, -1)
+	percentageResult := bytes.Replace(dotResult, PERCENT_BYTE, EMPTY_BYTE, -1)
 	trimResult := bytes.TrimSpace(percentageResult)
 
 	result, err := strconv.ParseFloat(string(trimResult), 64)
@@ -142,7 +144,7 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 
 	isin := string(getLabel(ISIN, performanceBody, EMPTY_BYTE))
 	label := string(getLabel(LABEL, performanceBody, EMPTY_BYTE))
-	rating := string(getLabel(RATING, performanceBody, []byte(`0`)))
+	rating := string(getLabel(RATING, performanceBody, ZERO_BYTE))
 	category := string(getLabel(CATEGORY, performanceBody, EMPTY_BYTE))
 	oneMonth := getPerformance(PERF_ONE_MONTH, performanceBody)
 	threeMonths := getPerformance(PERF_THREE_MONTH, performanceBody)
@@ -182,7 +184,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ids := bytes.Split(listBody, []byte(`,`))
+	ids := bytes.Split(listBody, COMMA_BYTE)
 	size := len(ids)
 
 	var wg sync.WaitGroup
