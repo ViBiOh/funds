@@ -3,13 +3,12 @@ import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
-import FaCalculator from 'react-icons/lib/fa/calculator';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
 import FundsService, { FETCH_SIZE } from './FundsService';
+import FundsHeader from './FundsHeader';
 import FundRow from './FundRow';
-import HeaderIcon from './HeaderIcon';
 import style from './Funds.css';
 
 const COLUMNS = {
@@ -103,8 +102,6 @@ export default class Funds extends Component {
       funds: [],
       displayed: [],
       aggregated: [],
-      toggleDisplayed: '',
-      selectedFilter: 'label',
       sum: {
         key: params[SUM_PARAM] || '',
         size: 25,
@@ -121,8 +118,6 @@ export default class Funds extends Component {
     this.fetchPerformances = this.fetchPerformances.bind(this);
     this.fetchPerformance = this.fetchPerformance.bind(this);
 
-    this.onFilterChange = this.onFilterChange.bind(this);
-
     this.filterBy = this.filterBy.bind(this);
     this.aggregateBy = this.aggregateBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
@@ -133,7 +128,6 @@ export default class Funds extends Component {
     this.updateUrl = this.updateUrl.bind(this);
 
     this.renderError = this.renderError.bind(this);
-    this.renderHeader = this.renderHeader.bind(this);
 
     this.renderFilter = this.renderFilter.bind(this);
     this.renderOrder = this.renderOrder.bind(this);
@@ -147,34 +141,6 @@ export default class Funds extends Component {
     this.fetchIdList()
       .then(this.fetchAllPerformances)
       .catch(error => this.setState({ error }));
-  }
-
-  onFilterChange(selectedFilter) {
-    this.setState({ selectedFilter, toggleDisplayed: '' });
-  }
-
-  get orderDisplayed() {
-    return this.state.toggleDisplayed === 'order';
-  }
-
-  set orderDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'order' : '' });
-  }
-
-  get sigmaDisplayed() {
-    return this.state.toggleDisplayed === 'sigma';
-  }
-
-  set sigmaDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'sigma' : '' });
-  }
-
-  get filterDisplayed() {
-    return this.state.toggleDisplayed === 'filter';
-  }
-
-  set filterDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'filter' : '' });
   }
 
   fetchIdList() {
@@ -230,16 +196,12 @@ export default class Funds extends Component {
     this.setState({
       sum: { key: sum, size: 25 },
     }, this.filterOrderData);
-
-    this.sigmaDisplayed = false;
   }
 
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
     }, this.filterOrderData);
-
-    this.orderDisplayed = false;
   }
 
   reverseOrder() {
@@ -331,53 +293,6 @@ export default class Funds extends Component {
         <h2>Erreur rencontée</h2>
         <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
       </div>
-    );
-  }
-
-  renderHeader() {
-    return (
-      <header className={style.header}>
-        <h1>Funds</h1>
-        <HeaderIcon
-          columns={COLUMNS}
-          filter="sortable"
-          onClick={this.orderBy}
-          icon={
-            <FaSortAmountDesc
-              onClick={() => (this.orderDisplayed = !this.orderDisplayed)}
-            />
-          }
-          displayed={this.orderDisplayed}
-        />
-        <HeaderIcon
-          columns={COLUMNS}
-          filter="summable"
-          onClick={this.aggregateBy}
-          icon={
-            <FaCalculator
-              onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
-            />
-          }
-          displayed={this.sigmaDisplayed}
-        />
-        <HeaderIcon
-          columns={COLUMNS}
-          filter="filterable"
-          onClick={this.onFilterChange}
-          icon={
-            <FaFilter
-              onClick={() => (this.filterDisplayed = !this.filterDisplayed)}
-            />
-          }
-          displayed={this.filterDisplayed}
-        />
-        <input
-          type="text"
-          placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
-          onChange={e => this.filterBy(this.state.selectedFilter, e.target.value)}
-        />
-        {!this.state.loaded && <Throbber />}
-      </header>
     );
   }
 
@@ -501,10 +416,12 @@ export default class Funds extends Component {
   }
 
   renderContent() {
+    const content = this.state.loaded ? this.renderList() : <Throbber />;
+
     return (
       <article>
         {this.renderDataModifier()}
-        {this.renderList()}
+        {content}
       </article>
     );
   }
@@ -512,7 +429,12 @@ export default class Funds extends Component {
   render() {
     return (
       <span>
-        {this.renderHeader()}
+        <FundsHeader
+          columns={COLUMNS}
+          orderBy={this.orderBy}
+          aggregateBy={this.aggregateBy}
+          filterBy={this.filterBy}
+        />
         {
           this.state.error && this.renderError()
         }
