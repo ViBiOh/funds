@@ -150,8 +150,8 @@ export default class Funds extends Component {
       .catch(error => this.setState({ error }));
   }
 
-  onFilterChange(e) {
-    this.setState({ selectedFilter: e.target.value, toggleDisplayed: '' });
+  onFilterChange(selectedFilter) {
+    this.setState({ selectedFilter, toggleDisplayed: '' });
   }
 
   get orderDisplayed() {
@@ -335,28 +335,6 @@ export default class Funds extends Component {
     );
   }
 
-  renderFilterIcon() {
-    const filterColumns = Object.keys(COLUMNS)
-      .filter(column => COLUMNS[column].filterable)
-      .map(key => (
-        <li key={key}>
-          <button onClick={this.onFilterChange} value={key}>{COLUMNS[key].label}</button>
-        </li>
-      ));
-
-    return (
-      <span className={style.icon}>
-        <FaFilter
-          className={this.filterDisplayed ? style.active : ''}
-          onClick={() => (this.filterDisplayed = !this.filterDisplayed)}
-        />
-        <ol className={this.filterDisplayed ? style.displayed : style.hidden}>
-          {filterColumns}
-        </ol>
-      </span>
-    );
-  }
-
   renderHeader() {
     return (
       <header className={style.header}>
@@ -383,7 +361,17 @@ export default class Funds extends Component {
           }
           displayed={this.sigmaDisplayed}
         />
-        {this.renderFilterIcon()}
+        <HeaderIcon
+          columns={COLUMNS}
+          filter="filterable"
+          onClick={this.onFilterChange}
+          icon={
+            <FaFilter
+              onClick={() => (this.filterDisplayed = !this.filterDisplayed)}
+            />
+          }
+          displayed={this.filterDisplayed}
+        />
         <input
           type="text"
           placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
