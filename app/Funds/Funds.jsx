@@ -133,7 +133,6 @@ export default class Funds extends Component {
     this.pushHistory = this.pushHistory.bind(this);
 
     this.renderError = this.renderError.bind(this);
-    this.renderFilterIcon = this.renderFilterIcon.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
 
     this.renderFilter = this.renderFilter.bind(this);
