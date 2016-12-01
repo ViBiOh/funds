@@ -190,15 +190,15 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(size)
 
-	performances := make(chan Performance, size)
+	performances := make(chan *Performance, 20)
+
 	for _, id := range ids {
-		go func(morningStarId []byte, ch chan<- Performance) {
-			performance, err := SinglePerformance(morningStarId)
-			if err == nil {
-				ch <- *performance
+		go func(morningStarId []byte) {
+			if performance, err := SinglePerformance(morningStarId); err == nil {
+				performances <- performance
 			}
 			wg.Done()
-		}(id, performances)
+		}(id)
 	}
 
 	go func() {
@@ -206,7 +206,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		close(performances)
 	}()
 
-	results := make([]Performance, 0, size)
+	results := make([]*Performance, 0, size)
 	for performance := range performances {
 		results = append(results, performance)
 	}
