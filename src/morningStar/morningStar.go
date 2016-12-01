@@ -161,7 +161,7 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 func singlePerformanceAsync(morningStarId []byte, ch chan<- Performance) {
 	performance, err := SinglePerformance(morningStarId)
 	if err == nil {
-		ch <- performance
+		ch <- *performance
 	}
 }
 
@@ -190,7 +190,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	ids := bytes.Split(listBody, []byte(`,`))
 	size := len(ids)
 
-	performances := make(chan PerformanceAsync, size)
+	performances := make(chan Performance, size)
 	for _, id := range ids {
 		go singlePerformanceAsync(id, performances)
 	}
@@ -198,7 +198,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	results := make([]Performance, 0, size)
 	for performance, ok := range performances {
 		if ok {
-			results = append(results, *performance)
+			results = append(results, performance)
 		}
 	}
 
