@@ -25,12 +25,12 @@ const MorningStarRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund.score} type="pscore" />
     <a
       title="Lien vers la source des données"
-      href={FundsService.getDataUrl(fund.id)}
+      href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
       className={style.icon}
     >
-      {fund.id && <FaBarChart />}
+      <FaBarChart />
     </a>
   </span>
 );
