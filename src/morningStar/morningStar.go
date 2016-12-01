@@ -66,11 +66,6 @@ type Performance struct {
 	Update        time.Time `json:"ts"`
 }
 
-type PerformanceAsync struct {
-	performance *Performance
-	err         error
-}
-
 type Search struct {
 	Id    string `json:"i"`
 	Label string `json:"n"`
@@ -163,9 +158,11 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 	return &performance, nil
 }
 
-func singlePerformanceAsync(morningStarId []byte, ch chan<- PerformanceAsync) {
+func singlePerformanceAsync(morningStarId []byte, ch chan<- Performance) {
 	performance, err := SinglePerformance(morningStarId)
-	ch <- PerformanceAsync{performance, err}
+	if err == nil {
+		ch <- performance
+	}
 }
 
 func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
@@ -193,15 +190,15 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	ids := bytes.Split(listBody, []byte(`,`))
 	size := len(ids)
 
-	ch := make(chan PerformanceAsync, size)
+	performances := make(chan PerformanceAsync, size)
 	for _, id := range ids {
-		go singlePerformanceAsync(id, ch)
+		go singlePerformanceAsync(id, performances)
 	}
 
 	results := make([]Performance, 0, size)
-	for range ids {
-		if performanceAsync := <-ch; performanceAsync.err == nil {
-			results = append(results, *performanceAsync.performance)
+	for performance, ok := range performances {
+		if ok {
+			results = append(results, *performance)
 		}
 	}
 
