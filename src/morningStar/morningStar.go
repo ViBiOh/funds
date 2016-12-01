@@ -15,8 +15,9 @@ import (
 
 const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
-const EMPTY_BYTE = []byte(``)
 const REFRESH_DELAY = 18
+
+var EMPTY_BYTE = []byte(``)
 
 var LIST_REQUEST = regexp.MustCompile(`^/list$`)
 var PERF_REQUEST = regexp.MustCompile(`^/(.+?)$`)
@@ -195,7 +196,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 				ch <- *performance
 			}
 			wg.Done()
-		}(id)
+		}(id, performances)
 	}
 
 	go func() {
