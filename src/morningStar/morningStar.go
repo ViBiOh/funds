@@ -3,7 +3,7 @@ package morningStar
 import (
 	"../jsonHttp"
 	"bytes"
-	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -111,16 +111,16 @@ func readBody(body io.ReadCloser) ([]byte, error) {
 func getBody(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
-		return nil, errors.New(`Error while retrieving data from ` + url + `:` + err.Error())
+		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, errors.New(`Got error ` + strconv.Itoa(response.StatusCode) + ` while getting ` + url + `:` + err.Error())
+		return nil, fmt.Errorf(`Got error %d while getting %s: %v`, response.StatusCode, url, err)
 	}
 
 	body, err := readBody(response.Body)
 	if err != nil {
-		return nil, errors.New(`Error while reading body of ` + url + `:` + err.Error())
+		return nil, fmt.Errorf(`Error while reading body of %s: %v`, url, err)
 	}
 
 	return body, nil
