@@ -205,10 +205,10 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var wg sync.WaitGroup
 	performances := make(chan *Performance, CONCURRENT_FETCHER)
 	ids := bytes.Split(listBody, COMMA_BYTE)
 
+	var wg sync.WaitGroup
 	wg.Add(len(ids))
 	go allPerformances(ids, &wg, performances) 
 
