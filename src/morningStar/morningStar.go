@@ -111,16 +111,16 @@ func readBody(body io.ReadCloser) ([]byte, error) {
 func getBody(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
-		return nil, errors.New(`Error while retrieving data from ` + url + `:` + err)
+		return nil, errors.New(`Error while retrieving data from ` + url + `:` + err.Error())
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, errors.New(`Got error ` + strconv.Itoa(response.StatusCode) + ` while getting ` + url + `:` + err)
+		return nil, errors.New(`Got error ` + strconv.Itoa(response.StatusCode) + ` while getting ` + url + `:` + err.Error())
 	}
 
 	body, err := readBody(response.Body)
 	if err != nil {
-		return nil, errors.New(`Error while reading body of ` + url + `:` + err)
+		return nil, errors.New(`Error while reading body of ` + url + `:` + err.Error())
 	}
 
 	return body, nil
@@ -264,7 +264,7 @@ func performanceHandler(w http.ResponseWriter, morningStarId []byte) {
 func listHandler(w http.ResponseWriter, r *http.Request) {
 	listBody, err := readBody(r.Body)
 	if err != nil {
-		http.Error(w, `Error while reading body for list`, 500)
+		http.Error(w, `Error while reading body for list: `+err.Error(), 500)
 		return
 	}
 
