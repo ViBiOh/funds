@@ -173,6 +173,24 @@ func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
 	}
 }
 
+func allPerformances(ids [][]byte, wg sync.WaitGroup, performances chan<- *Performance) {
+	tokens := make(chan struct{}, CONCURRENT_FETCHER)
+	wg.Add(len(ids))
+
+	for _, id := range ids {
+		tokens <- struct{}{}
+
+		go func(morningStarId []byte) {
+			defer wg.Done()
+			if performance, err := SinglePerformance(morningStarId); err == nil {
+				performances <- performance
+			}
+		}(id)
+
+		<-tokens
+	}
+}
+
 func listHandler(w http.ResponseWriter, r *http.Request) {
 	listBody, err := readBody(r.Body)
 	if err != nil {
@@ -185,36 +203,17 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ids := bytes.Split(listBody, COMMA_BYTE)
-	size := len(ids)
-
 	var wg sync.WaitGroup
-	wg.Add(size)
-
 	performances := make(chan *Performance, CONCURRENT_FETCHER)
-	tokens := make(chan struct{}, CONCURRENT_FETCHER)
 
-	go func() {
-		for _, id := range ids {
-			tokens <- struct{}{}
-
-			go func(morningStarId []byte) {
-				defer wg.Done()
-				if performance, err := SinglePerformance(morningStarId); err == nil {
-					performances <- performance
-				}
-			}(id)
-
-			<-tokens
-		}
-	}()
+	go allPerformances(bytes.Split(listBody, COMMA_BYTE), wg, performances) 
 
 	go func() {
 		wg.Wait()
 		close(performances)
 	}()
 
-	results := make([]*Performance, 0, size)
+	results := make([]*Performance, 0, len(ids))
 	for performance := range performances {
 		results = append(results, performance)
 	}
