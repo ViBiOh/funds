@@ -124,21 +124,13 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 	return result
 }
 
-func SinglePerformance(morningStarId []byte) (*Performance, error) {
-	cleanId := string(bytes.ToLower(morningStarId))
-
-	performance, ok := PERFORMANCE_CACHE.get(cleanId)
-
-	if ok && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
-		return &performance, nil
-	}
-
-	performanceBody, err := getBody(PERFORMANCE_URL + cleanId)
+func fetchPerformance(morningStarId string) (*Performance, error) {
+	performanceBody, err := getBody(PERFORMANCE_URL + morningStarId)
 	if err != nil {
 		return nil, err
 	}
 
-	volatiliteBody, err := getBody(VOLATILITE_URL + cleanId)
+	volatiliteBody, err := getBody(VOLATILITE_URL + morningStarId)
 	if err != nil {
 		return nil, err
 	}
@@ -156,11 +148,25 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
 	scoreTruncated := float64(int(score*100)) / 100
 
-	performance = Performance{cleanId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}
+	return &Performance{morningStarId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
+}
 
-	PERFORMANCE_CACHE.push(cleanId, performance)
+func SinglePerformance(morningStarId []byte) (*Performance, error) {
+	cleanId := string(bytes.ToLower(morningStarId))
 
-	return &performance, nil
+	performance, ok := PERFORMANCE_CACHE.get(cleanId)
+
+	if ok && time.Now().Add(time.Hour*-REFRESH_DELAY).Before(performance.Update) {
+		return &performance, nil
+	}
+
+	
+	if performance, err := fetchPerformance(cleanId); err != nil {
+		return nil, err
+	} else {
+		PERFORMANCE_CACHE.push(cleanId, *performance)
+		return performance, nil
+	}
 }
 
 func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {

@@ -4,7 +4,7 @@ export const FETCH_SIZE = 8000;
 
 const MS_URL = id => `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=${id}`;
 const ES_PATH = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=${FETCH_SIZE}`;
-const API_PATH = 'https://funds-api.vibioh.fr/';
+const API_PATH = 'http://localhost:1080/';
 
 export default class MorningStarService {
   static getDataUrl(id) {
