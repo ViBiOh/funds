@@ -111,16 +111,16 @@ func readBody(body io.ReadCloser) ([]byte, error) {
 func getBody(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
-		return nil, errors.New(`Error while retrieving data from ` + url)
+		return nil, errors.New(`Error while retrieving data from ` + url + `:` + err)
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, errors.New(`Got error ` + strconv.Itoa(response.StatusCode) + ` while getting ` + url)
+		return nil, errors.New(`Got error ` + strconv.Itoa(response.StatusCode) + ` while getting ` + url + `:` + err)
 	}
 
 	body, err := readBody(response.Body)
 	if err != nil {
-		return nil, errors.New(`Error while reading body of ` + url)
+		return nil, errors.New(`Error while reading body of ` + url + `:` + err)
 	}
 
 	return body, nil
