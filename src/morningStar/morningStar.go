@@ -16,6 +16,7 @@ import (
 const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
 const REFRESH_DELAY = 18
+const CONCURRENT_FETCHER = 20
 
 var EMPTY_BYTE = []byte(``)
 var ZERO_BYTE = []byte(`0`)
@@ -190,15 +191,22 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(size)
 
-	performances := make(chan *Performance, 20)
+	performances := make(chan *Performance, CONCURRENT_FETCHER)
+	tokens := make(chan struct{}, CONCURRENT_FETCHER)
 
-	for _, id := range ids {
-		go func(morningStarId []byte) {
-			if performance, err := SinglePerformance(morningStarId); err == nil {
-				performances <- performance
-			}
-			wg.Done()
-		}(id)
+	go func() {
+		for _, id := range ids {
+			tokens <- struct{}{}
+
+			go func(morningStarId []byte) {
+				defer wg.Done()
+				if performance, err := SinglePerformance(morningStarId); err == nil {
+					performances <- performance
+				}
+			}(id)
+
+			<-tokens
+		}
 	}
 
 	go func() {
