@@ -103,7 +103,7 @@ func getBody(url string) ([]byte, error) {
 	return body, nil
 }
 
-func getLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
+func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 	match := extract.FindSubmatch(body)
 	if match == nil {
 		return defaultValue
@@ -112,8 +112,8 @@ func getLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 	return bytes.Replace(match[1], HTML_AMP_BYTE, AMP_BYTE, -1)
 }
 
-func getPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(getLabel(extract, body, EMPTY_BYTE), COMMA_BYTE, PERIOD_BYTE, -1)
+func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
+	dotResult := bytes.Replace(extractLabel(extract, body, EMPTY_BYTE), COMMA_BYTE, PERIOD_BYTE, -1)
 	percentageResult := bytes.Replace(dotResult, PERCENT_BYTE, EMPTY_BYTE, -1)
 	trimResult := bytes.TrimSpace(percentageResult)
 
@@ -143,15 +143,15 @@ func SinglePerformance(morningStarId []byte) (*Performance, error) {
 		return nil, err
 	}
 
-	isin := string(getLabel(ISIN, performanceBody, EMPTY_BYTE))
-	label := string(getLabel(LABEL, performanceBody, EMPTY_BYTE))
-	rating := string(getLabel(RATING, performanceBody, ZERO_BYTE))
-	category := string(getLabel(CATEGORY, performanceBody, EMPTY_BYTE))
-	oneMonth := getPerformance(PERF_ONE_MONTH, performanceBody)
-	threeMonths := getPerformance(PERF_THREE_MONTH, performanceBody)
-	sixMonths := getPerformance(PERF_SIX_MONTH, performanceBody)
-	oneYear := getPerformance(PERF_ONE_YEAR, performanceBody)
-	volThreeYears := getPerformance(VOL_3_YEAR, volatiliteBody)
+	isin := string(extractLabel(ISIN, performanceBody, EMPTY_BYTE))
+	label := string(extractLabel(LABEL, performanceBody, EMPTY_BYTE))
+	rating := string(extractLabel(RATING, performanceBody, ZERO_BYTE))
+	category := string(extractLabel(CATEGORY, performanceBody, EMPTY_BYTE))
+	oneMonth := extractPerformance(PERF_ONE_MONTH, performanceBody)
+	threeMonths := extractPerformance(PERF_THREE_MONTH, performanceBody)
+	sixMonths := extractPerformance(PERF_SIX_MONTH, performanceBody)
+	oneYear := extractPerformance(PERF_ONE_YEAR, performanceBody)
+	volThreeYears := extractPerformance(VOL_3_YEAR, volatiliteBody)
 
 	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
 	scoreTruncated := float64(int(score*100)) / 100
@@ -210,7 +210,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 	var wg sync.WaitGroup
 	wg.Add(len(ids))
-	go allPerformances(ids, &wg, performances) 
+	go allPerformances(ids, &wg, performances)
 
 	go func() {
 		wg.Wait()
