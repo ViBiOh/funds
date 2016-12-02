@@ -174,7 +174,7 @@ func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
 }
 
 func allPerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *Performance) {
-	tokens := make(chan struct{}, CONCURRENT_FETCHER)
+	tokens := make(chan int, CONCURRENT_FETCHER)
 
 	clearSemaphores := func() {
 		wg.Done()
@@ -182,7 +182,7 @@ func allPerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *Perf
 	}
 
 	for _, id := range ids {
-		tokens <- struct{}{}
+		tokens <- 1
 
 		go func(morningStarId []byte) {
 			defer clearSemaphores()
