@@ -173,7 +173,7 @@ func singlePerformanceHandler(w http.ResponseWriter, morningStarId []byte) {
 	}
 }
 
-func allPerformances(ids [][]byte, wg sync.WaitGroup, performances chan<- *Performance) {
+func allPerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *Performance) {
 	tokens := make(chan struct{}, CONCURRENT_FETCHER)
 
 	clearSemaphores := func() {
@@ -210,7 +210,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	ids := bytes.Split(listBody, COMMA_BYTE)
 
 	wg.Add(len(ids))
-	go allPerformances(ids, wg, performances) 
+	go allPerformances(ids, &wg, performances) 
 
 	go func() {
 		wg.Wait()
