@@ -185,9 +185,8 @@ func allPerformances(ids [][]byte, wg sync.WaitGroup, performances chan<- *Perfo
 			if performance, err := SinglePerformance(morningStarId); err == nil {
 				performances <- performance
 			}
+			<-tokens
 		}(id)
-
-		<-tokens
 	}
 }
 
@@ -205,8 +204,9 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 	var wg sync.WaitGroup
 	performances := make(chan *Performance, CONCURRENT_FETCHER)
+	ids := bytes.Split(listBody, COMMA_BYTE)
 
-	go allPerformances(bytes.Split(listBody, COMMA_BYTE), wg, performances) 
+	go allPerformances(ids, wg, performances) 
 
 	go func() {
 		wg.Wait()
