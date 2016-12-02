@@ -115,7 +115,7 @@ func getBody(url string) ([]byte, error) {
 	}
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf(`Got error %d while getting %s: %v`, response.StatusCode, url, err)
+		return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
 	}
 
 	body, err := readBody(response.Body)
