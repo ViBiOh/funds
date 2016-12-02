@@ -207,7 +207,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 			<-tokens
 		}
-	}
+	}()
 
 	go func() {
 		wg.Wait()
