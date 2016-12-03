@@ -17,8 +17,8 @@ import (
 const IDS_URL = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
 const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
-const REFRESH_DELAY = 12
-const CONCURRENT_FETCHER = 20
+const REFRESH_DELAY_HOURS = 12
+const CONCURRENT_FETCHER = 32
 
 var EMPTY_BYTE = []byte(``)
 var ZERO_BYTE = []byte(`0`)
@@ -88,7 +88,7 @@ func init() {
 		ids := fetchIds()
 		refreshCache(ids)
 
-		c := time.Tick(REFRESH_DELAY * time.Hour)
+		c := time.Tick(REFRESH_DELAY_HOURS * time.Hour)
 		for range c {
 			refreshCache(ids)
 		}
@@ -199,7 +199,7 @@ func retrievePerformance(morningStarId []byte) (*Performance, error) {
 	cleanId := cleanId(morningStarId)
 
 	performance, ok := PERFORMANCE_CACHE.get(cleanId)
-	if ok && time.Now().Add(time.Hour*-(REFRESH_DELAY-1)).Before(performance.Update) {
+	if ok && time.Now().Add(time.Hour*-(REFRESH_DELAY_HOURS+1)).Before(performance.Update) {
 		return &performance, nil
 	}
 
