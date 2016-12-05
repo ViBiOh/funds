@@ -42,28 +42,6 @@ var PERF_SIX_MONTH = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</t
 var PERF_ONE_YEAR = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var VOL_3_YEAR = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
-type SyncedMap struct {
-	sync.RWMutex
-	performances map[string]Performance
-}
-
-func (m *SyncedMap) get(key string) (Performance, bool) {
-	m.RLock()
-	defer m.RUnlock()
-
-	performance, ok := m.performances[key]
-	return performance, ok
-}
-
-func (m *SyncedMap) push(key string, performance Performance) {
-	m.Lock()
-	defer m.Unlock()
-
-	m.performances[key] = performance
-}
-
-var PERFORMANCE_CACHE = SyncedMap{performances: make(map[string]Performance)}
-
 type Performance struct {
 	Id            string    `json:"id"`
 	Isin          string    `json:"isin"`
@@ -79,27 +57,47 @@ type Performance struct {
 	Update        time.Time `json:"ts"`
 }
 
+type SyncedMap struct {
+	sync.RWMutex
+	performances map[string]*Performance
+}
+
+func (m *SyncedMap) get(key string) (*Performance, bool) {
+	m.RLock()
+	defer m.RUnlock()
+
+	performance, ok := m.performances[key]
+	return performance, ok
+}
+
+func (m *SyncedMap) push(key string, performance *Performance) {
+	m.Lock()
+	defer m.Unlock()
+
+	m.performances[key] = performance
+}
+
+var PERFORMANCE_CACHE = SyncedMap{performances: make(map[string]*Performance)}
+
 type Results struct {
 	Results interface{} `json:"results"`
 }
 
 func init() {
 	go func() {
-		ids := fetchIds()
-		refreshCache(ids)
-
+		refreshCache()
 		c := time.Tick(REFRESH_DELAY_HOURS * time.Hour)
 		for range c {
-			refreshCache(ids)
+			refreshCache()
 		}
 	}()
 }
 
-func refreshCache(ids [][]byte) {
+func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
-	for _, performance := range retrievePerformances(ids, fetchPerformance) {
-		PERFORMANCE_CACHE.push(performance.Id, *performance)
+	for _, performance := range retrievePerformances(fetchIds(), fetchPerformance) {
+		PERFORMANCE_CACHE.push(performance.Id, performance)
 	}
 }
 
@@ -200,13 +198,13 @@ func retrievePerformance(morningStarId []byte) (*Performance, error) {
 
 	performance, ok := PERFORMANCE_CACHE.get(cleanId)
 	if ok && time.Now().Add(time.Hour*-(REFRESH_DELAY_HOURS+1)).Before(performance.Update) {
-		return &performance, nil
+		return performance, nil
 	}
 
 	if performance, err := fetchPerformance(morningStarId); err != nil {
 		return nil, err
 	} else {
-		PERFORMANCE_CACHE.push(cleanId, *performance)
+		PERFORMANCE_CACHE.push(cleanId, performance)
 		return performance, nil
 	}
 }
