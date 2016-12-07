@@ -66,8 +66,8 @@ func (m *syncedMap) get(key string) (*performance, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
-	performance, ok := m.performances[key]
-	return performance, ok
+	perf, ok := m.performances[key]
+	return perf, ok
 }
 
 func (m *syncedMap) push(key string, performance *performance) {
@@ -96,8 +96,8 @@ func init() {
 func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
-	for _, performance := range retrievePerformances(fetchIds(), fetchPerformance) {
-		performancesCache.push(performance.ID, performance)
+	for _, perf := range retrievePerformances(fetchIds(), fetchPerformance) {
+		performancesCache.push(perf.ID, perf)
 	}
 }
 
@@ -197,18 +197,18 @@ func fetchIds() [][]byte {
 func retrievePerformance(morningStarID []byte) (*performance, error) {
 	cleanID := cleanID(morningStarID)
 
-	performance, ok := performancesCache.get(cleanID)
-	if ok && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(performance.Update) {
-		return performance, nil
+	perf, ok := performancesCache.get(cleanID)
+	if ok && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
+		return perf, nil
 	}
 
-	performance, err := fetchPerformance(morningStarID)
+	perf, err := fetchPerformance(morningStarID)
 	if err != nil {
 		return nil, err
 	}
 
-	performancesCache.push(cleanID, performance)
-	return performance, nil
+	performancesCache.push(cleanID, perf)
+	return perf, nil
 }
 
 func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance, method func([]byte) (*performance, error)) {
@@ -224,8 +224,8 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 
 		go func(morningStarID []byte) {
 			defer clearSemaphores()
-			if performance, err := method(morningStarID); err == nil {
-				performances <- performance
+			if perf, err := method(morningStarID); err == nil {
+				performances <- perf
 			}
 		}(id)
 	}
@@ -244,20 +244,20 @@ func retrievePerformances(ids [][]byte, method func([]byte) (*performance, error
 	}()
 
 	results := make([]*performance, 0, len(ids))
-	for performance := range performances {
-		results = append(results, performance)
+	for perf := range performances {
+		results = append(results, perf)
 	}
 
 	return results
 }
 
 func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
-	performance, err := retrievePerformance(morningStarID)
+	perf, err := retrievePerformance(morningStarID)
 
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 	} else {
-		jsonHttp.ResponseJSON(w, *performance)
+		jsonHttp.ResponseJSON(w, *perf)
 	}
 }
 
