@@ -10,17 +10,7 @@ export default class MorningStarService {
     return MS_URL(id);
   }
 
-  static getFund(morningStarId) {
-    return Fetch.get(`${API_PATH}${morningStarId}`)
-      .catch(error => ({
-        id: morningStarId,
-        error,
-      }));
-  }
-
-  static getFunds(morningStarIds) {
-    return Fetch.url(`${API_PATH}list`)
-      .contentJson()
-      .post(morningStarIds.join(','));
+  static getFunds() {
+    return Fetch.get(`${API_PATH}list`);
   }
 }
