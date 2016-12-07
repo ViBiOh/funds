@@ -141,7 +141,7 @@ export default class Funds extends Component {
     return FundsService.getFunds()
       .then((funds) => {
         this.setState({
-          funds: funds.results.filter(fund => fund.id);,
+          funds: funds.results.filter(fund => fund.id),
           loaded: true,
         }, this.filterOrderData);
 
