@@ -6,7 +6,7 @@ import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
-import FundsService, { FETCH_SIZE } from './FundsService';
+import FundsService from './FundsService';
 import FundsHeader from './FundsHeader';
 import FundRow from './FundRow';
 import style from './Funds.css';
