@@ -14,36 +14,36 @@ import (
 	"time"
 )
 
-const IDS_URL = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
-const PERFORMANCE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
-const VOLATILITE_URL = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
-const REFRESH_DELAY_HOURS = 12
-const CONCURRENT_FETCHER = 32
+const urlIds = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
+const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
+const urlVolatilite = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
+const refreshDelayInHours = 12
+const maxConcurrentFetcher = 32
 
-var EMPTY_BYTE = []byte(``)
-var ZERO_BYTE = []byte(`0`)
-var PERIOD_BYTE = []byte(`.`)
-var COMMA_BYTE = []byte(`,`)
-var PERCENT_BYTE = []byte(`%`)
-var AMP_BYTE = []byte(`&`)
-var HTML_AMP_BYTE = []byte(`&amp;`)
+var emptyByte = []byte(``)
+var zeroByte = []byte(`0`)
+var periodByte = []byte(`.`)
+var commaByte = []byte(`,`)
+var percentByte = []byte(`%`)
+var ampersandByte = []byte(`&`)
+var htmAmpersandByte = []byte(`&amp;`)
 
-var LIST_REQUEST = regexp.MustCompile(`^/list$`)
-var PERF_REQUEST = regexp.MustCompile(`^/(.+?)$`)
+var requestList = regexp.MustCompile(`^/list$`)
+var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
-var ID = regexp.MustCompile(`"_id":"(.*?)"`)
-var ISIN = regexp.MustCompile(`ISIN.:(\S+)`)
-var LABEL = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
-var RATING = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
-var CATEGORY = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
-var PERF_ONE_MONTH = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
-var PERF_THREE_MONTH = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
-var PERF_SIX_MONTH = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
-var PERF_ONE_YEAR = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
-var VOL_3_YEAR = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
+var id = regexp.MustCompile(`"_id":"(.*?)"`)
+var isin = regexp.MustCompile(`isin.:(\S+)`)
+var label = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
+var rating = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
+var category = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
+var perfOneMonth = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
+var perfThreeMonth = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
+var perfSixMonth = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
+var perfOneYear = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
+var volThreeYear = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
-type Performance struct {
-	Id            string    `json:"id"`
+type performance struct {
+	ID            string    `json:"id"`
 	Isin          string    `json:"isin"`
 	Label         string    `json:"label"`
 	Category      string    `json:"category"`
@@ -57,12 +57,12 @@ type Performance struct {
 	Update        time.Time `json:"ts"`
 }
 
-type SyncedMap struct {
+type syncedMap struct {
 	sync.RWMutex
-	performances map[string]*Performance
+	performances map[string]*performance
 }
 
-func (m *SyncedMap) get(key string) (*Performance, bool) {
+func (m *syncedMap) get(key string) (*performance, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -70,23 +70,23 @@ func (m *SyncedMap) get(key string) (*Performance, bool) {
 	return performance, ok
 }
 
-func (m *SyncedMap) push(key string, performance *Performance) {
+func (m *syncedMap) push(key string, performance *performance) {
 	m.Lock()
 	defer m.Unlock()
 
 	m.performances[key] = performance
 }
 
-var PERFORMANCE_CACHE = SyncedMap{performances: make(map[string]*Performance)}
+var performancesCache = syncedMap{performances: make(map[string]*performance)}
 
-type Results struct {
+type results struct {
 	Results interface{} `json:"results"`
 }
 
 func init() {
 	go func() {
 		refreshCache()
-		c := time.Tick(REFRESH_DELAY_HOURS * time.Hour)
+		c := time.Tick(refreshDelayInHours * time.Hour)
 		for range c {
 			refreshCache()
 		}
@@ -97,7 +97,7 @@ func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
 	for _, performance := range retrievePerformances(fetchIds(), fetchPerformance) {
-		PERFORMANCE_CACHE.push(performance.Id, performance)
+		performancesCache.push(performance.ID, performance)
 	}
 }
 
@@ -130,12 +130,12 @@ func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []by
 		return defaultValue
 	}
 
-	return bytes.Replace(match[1], HTML_AMP_BYTE, AMP_BYTE, -1)
+	return bytes.Replace(match[1], htmAmpersandByte, ampersandByte, -1)
 }
 
 func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(extractLabel(extract, body, EMPTY_BYTE), COMMA_BYTE, PERIOD_BYTE, -1)
-	percentageResult := bytes.Replace(dotResult, PERCENT_BYTE, EMPTY_BYTE, -1)
+	dotResult := bytes.Replace(extractLabel(extract, body, emptyByte), commaByte, periodByte, -1)
+	percentageResult := bytes.Replace(dotResult, percentByte, emptyByte, -1)
 	trimResult := bytes.TrimSpace(percentageResult)
 
 	result, err := strconv.ParseFloat(string(trimResult), 64)
@@ -145,72 +145,74 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 	return result
 }
 
-func cleanId(morningStarId []byte) string {
-	return string(bytes.ToLower(morningStarId))
+func cleanID(morningStarID []byte) string {
+	return string(bytes.ToLower(morningStarID))
 }
 
-func fetchPerformance(morningStarId []byte) (*Performance, error) {
-	cleanId := cleanId(morningStarId)
-	performanceBody, err := getBody(PERFORMANCE_URL + cleanId)
+func fetchPerformance(morningStarID []byte) (*performance, error) {
+	cleanID := cleanID(morningStarID)
+	performanceBody, err := getBody(urlPerformance + cleanID)
 	if err != nil {
 		return nil, err
 	}
 
-	volatiliteBody, err := getBody(VOLATILITE_URL + cleanId)
+	volatiliteBody, err := getBody(urlVolatilite + cleanID)
 	if err != nil {
 		return nil, err
 	}
 
-	isin := string(extractLabel(ISIN, performanceBody, EMPTY_BYTE))
-	label := string(extractLabel(LABEL, performanceBody, EMPTY_BYTE))
-	rating := string(extractLabel(RATING, performanceBody, ZERO_BYTE))
-	category := string(extractLabel(CATEGORY, performanceBody, EMPTY_BYTE))
-	oneMonth := extractPerformance(PERF_ONE_MONTH, performanceBody)
-	threeMonths := extractPerformance(PERF_THREE_MONTH, performanceBody)
-	sixMonths := extractPerformance(PERF_SIX_MONTH, performanceBody)
-	oneYear := extractPerformance(PERF_ONE_YEAR, performanceBody)
-	volThreeYears := extractPerformance(VOL_3_YEAR, volatiliteBody)
+	isin := string(extractLabel(isin, performanceBody, emptyByte))
+	label := string(extractLabel(label, performanceBody, emptyByte))
+	rating := string(extractLabel(rating, performanceBody, zeroByte))
+	category := string(extractLabel(category, performanceBody, emptyByte))
+	oneMonth := extractPerformance(perfOneMonth, performanceBody)
+	threeMonths := extractPerformance(perfThreeMonth, performanceBody)
+	sixMonths := extractPerformance(perfSixMonth, performanceBody)
+	oneYear := extractPerformance(perfOneYear, performanceBody)
+	volThreeYears := extractPerformance(volThreeYear, volatiliteBody)
 
 	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
 	scoreTruncated := float64(int(score*100)) / 100
 
-	return &Performance{cleanId, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
+	return &performance{cleanID, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
 }
 
 func fetchIds() [][]byte {
-	if idsBody, err := getBody(IDS_URL); err != nil {
+	idsBody, err := getBody(urlIds)
+	if err != nil {
 		log.Print(err)
 		return nil
-	} else {
-		idsMatch := ID.FindAllSubmatch(idsBody, -1)
-
-		ids := make([][]byte, 0, len(idsMatch))
-		for _, match := range idsMatch {
-			ids = append(ids, match[1])
-		}
-
-		return ids
 	}
+
+	idsMatch := id.FindAllSubmatch(idsBody, -1)
+
+	ids := make([][]byte, 0, len(idsMatch))
+	for _, match := range idsMatch {
+		ids = append(ids, match[1])
+	}
+
+	return ids
 }
 
-func retrievePerformance(morningStarId []byte) (*Performance, error) {
-	cleanId := cleanId(morningStarId)
+func retrievePerformance(morningStarID []byte) (*performance, error) {
+	cleanID := cleanID(morningStarID)
 
-	performance, ok := PERFORMANCE_CACHE.get(cleanId)
-	if ok && time.Now().Add(time.Hour*-(REFRESH_DELAY_HOURS+1)).Before(performance.Update) {
+	performance, ok := performancesCache.get(cleanID)
+	if ok && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(performance.Update) {
 		return performance, nil
 	}
 
-	if performance, err := fetchPerformance(morningStarId); err != nil {
+	performance, err := fetchPerformance(morningStarID)
+	if err != nil {
 		return nil, err
-	} else {
-		PERFORMANCE_CACHE.push(cleanId, performance)
-		return performance, nil
 	}
+
+	performancesCache.push(cleanID, performance)
+	return performance, nil
 }
 
-func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *Performance, method func([]byte) (*Performance, error)) {
-	tokens := make(chan int, CONCURRENT_FETCHER)
+func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance, method func([]byte) (*performance, error)) {
+	tokens := make(chan int, maxConcurrentFetcher)
 
 	clearSemaphores := func() {
 		wg.Done()
@@ -220,20 +222,20 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 	for _, id := range ids {
 		tokens <- 1
 
-		go func(morningStarId []byte) {
+		go func(morningStarID []byte) {
 			defer clearSemaphores()
-			if performance, err := method(morningStarId); err == nil {
+			if performance, err := method(morningStarID); err == nil {
 				performances <- performance
 			}
 		}(id)
 	}
 }
 
-func retrievePerformances(ids [][]byte, method func([]byte) (*Performance, error)) []*Performance {
+func retrievePerformances(ids [][]byte, method func([]byte) (*performance, error)) []*performance {
 	var wg sync.WaitGroup
 	wg.Add(len(ids))
 
-	performances := make(chan *Performance, CONCURRENT_FETCHER)
+	performances := make(chan *performance, maxConcurrentFetcher)
 	go concurrentRetrievePerformances(ids, &wg, performances, method)
 
 	go func() {
@@ -241,7 +243,7 @@ func retrievePerformances(ids [][]byte, method func([]byte) (*Performance, error
 		close(performances)
 	}()
 
-	results := make([]*Performance, 0, len(ids))
+	results := make([]*performance, 0, len(ids))
 	for performance := range performances {
 		results = append(results, performance)
 	}
@@ -249,20 +251,21 @@ func retrievePerformances(ids [][]byte, method func([]byte) (*Performance, error
 	return results
 }
 
-func performanceHandler(w http.ResponseWriter, morningStarId []byte) {
-	performance, err := retrievePerformance(morningStarId)
+func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
+	performance, err := retrievePerformance(morningStarID)
 
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 	} else {
-		jsonHttp.ResponseJson(w, *performance)
+		jsonHttp.ResponseJSON(w, *performance)
 	}
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	jsonHttp.ResponseJson(w, Results{retrievePerformances(fetchIds(), retrievePerformance)})
+	jsonHttp.ResponseJSON(w, results{retrievePerformances(fetchIds(), retrievePerformance)})
 }
 
+// Handler for MorningStar request. Should be use with net/http
 type Handler struct {
 }
 
@@ -274,9 +277,9 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	urlPath := []byte(r.URL.Path)
 
-	if LIST_REQUEST.Match(urlPath) {
+	if requestList.Match(urlPath) {
 		listHandler(w, r)
-	} else if PERF_REQUEST.Match(urlPath) {
-		performanceHandler(w, PERF_REQUEST.FindSubmatch(urlPath)[1])
+	} else if requestPerf.Match(urlPath) {
+		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
 	}
 }
