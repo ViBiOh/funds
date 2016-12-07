@@ -31,16 +31,16 @@ var htmAmpersandByte = []byte(`&amp;`)
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
-var id = regexp.MustCompile(`"_id":"(.*?)"`)
-var isin = regexp.MustCompile(`isin.:(\S+)`)
-var label = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
-var rating = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
-var category = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
-var perfOneMonth = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
-var perfThreeMonth = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
-var perfSixMonth = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
-var perfOneYear = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
-var volThreeYear = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
+var idRegex = regexp.MustCompile(`"_id":"(.*?)"`)
+var isinRegex = regexp.MustCompile(`isin.:(\S+)`)
+var labelRegex = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
+var ratingRegex = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
+var categoryRegex = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
+var perfOneMonthRegex = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
+var perfThreeMonthRegex = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
+var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
+var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
+var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
 type performance struct {
 	ID            string    `json:"id"`
@@ -161,15 +161,15 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	isin := string(extractLabel(isin, performanceBody, emptyByte))
-	label := string(extractLabel(label, performanceBody, emptyByte))
-	rating := string(extractLabel(rating, performanceBody, zeroByte))
-	category := string(extractLabel(category, performanceBody, emptyByte))
-	oneMonth := extractPerformance(perfOneMonth, performanceBody)
-	threeMonths := extractPerformance(perfThreeMonth, performanceBody)
-	sixMonths := extractPerformance(perfSixMonth, performanceBody)
-	oneYear := extractPerformance(perfOneYear, performanceBody)
-	volThreeYears := extractPerformance(volThreeYear, volatiliteBody)
+	isin := string(extractLabel(isinRegex, performanceBody, emptyByte))
+	label := string(extractLabel(labelRegex, performanceBody, emptyByte))
+	rating := string(extractLabel(ratingRegex, performanceBody, zeroByte))
+	category := string(extractLabel(categoryRegex, performanceBody, emptyByte))
+	oneMonth := extractPerformance(perfOneMonthRegex, performanceBody)
+	threeMonths := extractPerformance(perfThreeMonthRegex, performanceBody)
+	sixMonths := extractPerformance(perfSixMonthRegex, performanceBody)
+	oneYear := extractPerformance(perfOneYearRegex, performanceBody)
+	volThreeYears := extractPerformance(volThreeYearRegex, volatiliteBody)
 
 	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
 	scoreTruncated := float64(int(score*100)) / 100
@@ -184,7 +184,7 @@ func fetchIds() [][]byte {
 		return nil
 	}
 
-	idsMatch := id.FindAllSubmatch(idsBody, -1)
+	idsMatch := idRegex.FindAllSubmatch(idsBody, -1)
 
 	ids := make([][]byte, 0, len(idsMatch))
 	for _, match := range idsMatch {
