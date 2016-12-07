@@ -32,7 +32,7 @@ var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
 var idRegex = regexp.MustCompile(`"_id":"(.*?)"`)
-var isinRegex = regexp.MustCompile(`isin.:(\S+)`)
+var isinRegex = regexp.MustCompile(`ISIN.:(\S+)`)
 var labelRegex = regexp.MustCompile(`<h1[^>]*?>((?:.|\n)*?)</h1>`)
 var ratingRegex = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
 var categoryRegex = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
