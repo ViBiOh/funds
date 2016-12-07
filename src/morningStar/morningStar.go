@@ -260,18 +260,7 @@ func performanceHandler(w http.ResponseWriter, morningStarId []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	listBody, err := readBody(r.Body)
-	if err != nil {
-		http.Error(w, `Error while reading body for list: `+err.Error(), 500)
-		return
-	}
-
-	if len(bytes.TrimSpace(listBody)) == 0 {
-		jsonHttp.ResponseJson(w, Results{[0]Performance{}})
-		return
-	}
-
-	jsonHttp.ResponseJson(w, Results{retrievePerformances(bytes.Split(listBody, COMMA_BYTE), retrievePerformance)})
+	jsonHttp.ResponseJson(w, Results{retrievePerformances(fetchIds(), retrievePerformance)})
 }
 
 type Handler struct {
