@@ -140,9 +140,9 @@ export default class Funds extends Component {
   fetchPerformances() {
     return FundsService.getFunds()
       .then((funds) => {
-        const results = funds.results.filter(fund => fund.id);
         this.setState({
-          funds: [...this.state.funds, ...results],
+          funds: funds.results.filter(fund => fund.id);,
+          loaded: true,
         }, this.filterOrderData);
 
         return funds;
