@@ -6,7 +6,7 @@ import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
-import FundsService, { FETCH_SIZE } from './FundsService';
+import FundsService from './FundsService';
 import FundsHeader from './FundsHeader';
 import FundRow from './FundRow';
 import style from './Funds.css';
@@ -98,7 +98,6 @@ export default class Funds extends Component {
 
     this.state = {
       loaded: false,
-      ids: [],
       funds: [],
       displayed: [],
       aggregated: [],
@@ -113,10 +112,7 @@ export default class Funds extends Component {
       filters,
     };
 
-    this.fetchIdList = this.fetchIdList.bind(this);
-    this.fetchAllPerformances = this.fetchAllPerformances.bind(this);
     this.fetchPerformances = this.fetchPerformances.bind(this);
-    this.fetchPerformance = this.fetchPerformance.bind(this);
 
     this.filterBy = this.filterBy.bind(this);
     this.aggregateBy = this.aggregateBy.bind(this);
@@ -138,30 +134,11 @@ export default class Funds extends Component {
   }
 
   componentDidMount() {
-    this.fetchIdList()
-      .then(this.fetchAllPerformances)
-      .catch(error => this.setState({ error }));
+    this.fetchPerformances();
   }
 
-  fetchIdList() {
-    return FundsService.getIdList()
-      .then((ids) => {
-        this.setState({ ids });
-        return ids;
-      });
-  }
-
-  fetchAllPerformances() {
-    const fetches = [];
-    for (let i = 0, size = this.state.ids.length; i < size; i += FETCH_SIZE) {
-      fetches.push(this.fetchPerformances(this.state.ids.slice(i, i + FETCH_SIZE)));
-    }
-
-    Promise.all(fetches).then(() => this.setState({ loaded: true }));
-  }
-
-  fetchPerformances(ids) {
-    return FundsService.getFunds(ids)
+  fetchPerformances() {
+    return FundsService.getFunds()
       .then((funds) => {
         const results = funds.results.filter(fund => fund.id);
         this.setState({
@@ -169,17 +146,6 @@ export default class Funds extends Component {
         }, this.filterOrderData);
 
         return funds;
-      });
-  }
-
-  fetchPerformance(id) {
-    return FundsService.getFund(id)
-      .then((fund) => {
-        this.setState({
-          funds: [...this.state.funds, fund],
-        }, this.filterOrderData);
-
-        return fund;
       });
   }
 
