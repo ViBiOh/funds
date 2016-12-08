@@ -1,17 +1,17 @@
 package morningStar
 
 import (
-	"../jsonHttp"
-	"bytes"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"regexp"
-	"strconv"
-	"sync"
-	"time"
+  "../jsonHttp"
+  "bytes"
+  "fmt"
+  "io"
+  "io/ioutil"
+  "log"
+  "net/http"
+  "regexp"
+  "strconv"
+  "sync"
+  "time"
 )
 
 const urlIds = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
@@ -43,233 +43,233 @@ var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</t
 var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
 type performance struct {
-	ID            string    `json:"id"`
-	Isin          string    `json:"isin"`
-	Label         string    `json:"label"`
-	Category      string    `json:"category"`
-	Rating        string    `json:"rating"`
-	OneMonth      float64   `json:"1m"`
-	ThreeMonth    float64   `json:"3m"`
-	SixMonth      float64   `json:"6m"`
-	OneYear       float64   `json:"1y"`
-	VolThreeYears float64   `json:"v3y"`
-	Score         float64   `json:"score"`
-	Update        time.Time `json:"ts"`
+  ID            string    `json:"id"`
+  Isin          string    `json:"isin"`
+  Label         string    `json:"label"`
+  Category      string    `json:"category"`
+  Rating        string    `json:"rating"`
+  OneMonth      float64   `json:"1m"`
+  ThreeMonth    float64   `json:"3m"`
+  SixMonth      float64   `json:"6m"`
+  OneYear       float64   `json:"1y"`
+  VolThreeYears float64   `json:"v3y"`
+  Score         float64   `json:"score"`
+  Update        time.Time `json:"ts"`
 }
 
 type syncedMap struct {
-	sync.RWMutex
-	performances map[string]*performance
+  sync.RWMutex
+  performances map[string]*performance
 }
 
 func (m *syncedMap) get(key string) (*performance, bool) {
-	m.RLock()
-	defer m.RUnlock()
+  m.RLock()
+  defer m.RUnlock()
 
-	perf, ok := m.performances[key]
-	return perf, ok
+  perf, ok := m.performances[key]
+  return perf, ok
 }
 
 func (m *syncedMap) push(key string, performance *performance) {
-	m.Lock()
-	defer m.Unlock()
+  m.Lock()
+  defer m.Unlock()
 
-	m.performances[key] = performance
+  m.performances[key] = performance
 }
 
 var performancesCache = syncedMap{performances: make(map[string]*performance)}
 
 type results struct {
-	Results interface{} `json:"results"`
+  Results interface{} `json:"results"`
 }
 
 func init() {
-	go func() {
-		refreshCache()
-		c := time.Tick(refreshDelayInHours * time.Hour)
-		for range c {
-			refreshCache()
-		}
-	}()
+  go func() {
+    refreshCache()
+    c := time.Tick(refreshDelayInHours * time.Hour)
+    for range c {
+      refreshCache()
+    }
+  }()
 }
 
 func refreshCache() {
-	log.Print(`Cache refresh - start`)
-	defer log.Print(`Cache refresh - end`)
-	for _, perf := range retrievePerformances(fetchIds(), fetchPerformance) {
-		performancesCache.push(perf.ID, perf)
-	}
+  log.Print(`Cache refresh - start`)
+  defer log.Print(`Cache refresh - end`)
+  for _, perf := range retrievePerformances(fetchIds()) {
+    performancesCache.push(perf.ID, perf)
+  }
 }
 
 func readBody(body io.ReadCloser) ([]byte, error) {
-	defer body.Close()
-	return ioutil.ReadAll(body)
+  defer body.Close()
+  return ioutil.ReadAll(body)
 }
 
 func getBody(url string) ([]byte, error) {
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
-	}
+  response, err := http.Get(url)
+  if err != nil {
+    return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
+  }
 
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
-	}
+  if response.StatusCode >= 400 {
+    return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
+  }
 
-	body, err := readBody(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while reading body of %s: %v`, url, err)
-	}
+  body, err := readBody(response.Body)
+  if err != nil {
+    return nil, fmt.Errorf(`Error while reading body of %s: %v`, url, err)
+  }
 
-	return body, nil
+  return body, nil
 }
 
 func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
-	match := extract.FindSubmatch(body)
-	if match == nil {
-		return defaultValue
-	}
+  match := extract.FindSubmatch(body)
+  if match == nil {
+    return defaultValue
+  }
 
-	return bytes.Replace(match[1], htmAmpersandByte, ampersandByte, -1)
+  return bytes.Replace(match[1], htmAmpersandByte, ampersandByte, -1)
 }
 
 func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
-	dotResult := bytes.Replace(extractLabel(extract, body, emptyByte), commaByte, periodByte, -1)
-	percentageResult := bytes.Replace(dotResult, percentByte, emptyByte, -1)
-	trimResult := bytes.TrimSpace(percentageResult)
+  dotResult := bytes.Replace(extractLabel(extract, body, emptyByte), commaByte, periodByte, -1)
+  percentageResult := bytes.Replace(dotResult, percentByte, emptyByte, -1)
+  trimResult := bytes.TrimSpace(percentageResult)
 
-	result, err := strconv.ParseFloat(string(trimResult), 64)
-	if err != nil {
-		return 0.0
-	}
-	return result
+  result, err := strconv.ParseFloat(string(trimResult), 64)
+  if err != nil {
+    return 0.0
+  }
+  return result
 }
 
 func cleanID(morningStarID []byte) string {
-	return string(bytes.ToLower(morningStarID))
+  return string(bytes.ToLower(morningStarID))
 }
 
 func fetchPerformance(morningStarID []byte) (*performance, error) {
-	cleanID := cleanID(morningStarID)
-	performanceBody, err := getBody(urlPerformance + cleanID)
-	if err != nil {
-		return nil, err
-	}
+  cleanID := cleanID(morningStarID)
+  performanceBody, err := getBody(urlPerformance + cleanID)
+  if err != nil {
+    return nil, err
+  }
 
-	volatiliteBody, err := getBody(urlVolatilite + cleanID)
-	if err != nil {
-		return nil, err
-	}
+  volatiliteBody, err := getBody(urlVolatilite + cleanID)
+  if err != nil {
+    return nil, err
+  }
 
-	isin := string(extractLabel(isinRegex, performanceBody, emptyByte))
-	label := string(extractLabel(labelRegex, performanceBody, emptyByte))
-	rating := string(extractLabel(ratingRegex, performanceBody, zeroByte))
-	category := string(extractLabel(categoryRegex, performanceBody, emptyByte))
-	oneMonth := extractPerformance(perfOneMonthRegex, performanceBody)
-	threeMonths := extractPerformance(perfThreeMonthRegex, performanceBody)
-	sixMonths := extractPerformance(perfSixMonthRegex, performanceBody)
-	oneYear := extractPerformance(perfOneYearRegex, performanceBody)
-	volThreeYears := extractPerformance(volThreeYearRegex, volatiliteBody)
+  isin := string(extractLabel(isinRegex, performanceBody, emptyByte))
+  label := string(extractLabel(labelRegex, performanceBody, emptyByte))
+  rating := string(extractLabel(ratingRegex, performanceBody, zeroByte))
+  category := string(extractLabel(categoryRegex, performanceBody, emptyByte))
+  oneMonth := extractPerformance(perfOneMonthRegex, performanceBody)
+  threeMonths := extractPerformance(perfThreeMonthRegex, performanceBody)
+  sixMonths := extractPerformance(perfSixMonthRegex, performanceBody)
+  oneYear := extractPerformance(perfOneYearRegex, performanceBody)
+  volThreeYears := extractPerformance(volThreeYearRegex, volatiliteBody)
 
-	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
-	scoreTruncated := float64(int(score*100)) / 100
+  score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
+  scoreTruncated := float64(int(score*100)) / 100
 
-	return &performance{cleanID, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
+  return &performance{cleanID, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
 }
 
 func fetchIds() [][]byte {
-	idsBody, err := getBody(urlIds)
-	if err != nil {
-		log.Print(err)
-		return nil
-	}
+  idsBody, err := getBody(urlIds)
+  if err != nil {
+    log.Print(err)
+    return nil
+  }
 
-	idsMatch := idRegex.FindAllSubmatch(idsBody, -1)
+  idsMatch := idRegex.FindAllSubmatch(idsBody, -1)
 
-	ids := make([][]byte, 0, len(idsMatch))
-	for _, match := range idsMatch {
-		ids = append(ids, match[1])
-	}
+  ids := make([][]byte, 0, len(idsMatch))
+  for _, match := range idsMatch {
+    ids = append(ids, match[1])
+  }
 
-	return ids
+  return ids
 }
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
-	cleanID := cleanID(morningStarID)
+  cleanID := cleanID(morningStarID)
 
-	perf, ok := performancesCache.get(cleanID)
-	if ok && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
-		return perf, nil
-	}
+  perf, ok := performancesCache.get(cleanID)
+  if ok && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
+    return perf, nil
+  }
 
-	perf, err := fetchPerformance(morningStarID)
-	if err != nil {
-		return nil, err
-	}
+  perf, err := fetchPerformance(morningStarID)
+  if err != nil {
+    return nil, err
+  }
 
-	performancesCache.push(cleanID, perf)
-	return perf, nil
+  performancesCache.push(cleanID, perf)
+  return perf, nil
 }
 
-func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance, method func([]byte) (*performance, error)) {
-	tokens := make(chan int, maxConcurrentFetcher)
+func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance) {
+  tokens := make(chan int, maxConcurrentFetcher)
 
-	clearSemaphores := func() {
-		wg.Done()
-		<-tokens
-	}
+  clearSemaphores := func() {
+    wg.Done()
+    <-tokens
+  }
 
-	for _, id := range ids {
-		tokens <- 1
+  for _, id := range ids {
+    tokens <- 1
 
-		go func(morningStarID []byte) {
-			defer clearSemaphores()
-			if perf, err := method(morningStarID); err == nil {
-				performances <- perf
-			}
-		}(id)
-	}
+    go func(morningStarID []byte) {
+      defer clearSemaphores()
+      if perf, err := fetchPerformance(morningStarID); err == nil {
+        performances <- perf
+      }
+    }(id)
+  }
 }
 
-func retrievePerformances(ids [][]byte, method func([]byte) (*performance, error)) []*performance {
-	var wg sync.WaitGroup
-	wg.Add(len(ids))
+func retrievePerformances(ids [][]byte) []*performance {
+  var wg sync.WaitGroup
+  wg.Add(len(ids))
 
-	performances := make(chan *performance, maxConcurrentFetcher)
-	go concurrentRetrievePerformances(ids, &wg, performances, method)
+  performances := make(chan *performance, maxConcurrentFetcher)
+  go concurrentRetrievePerformances(ids, &wg, performances)
 
-	go func() {
-		wg.Wait()
-		close(performances)
-	}()
+  go func() {
+    wg.Wait()
+    close(performances)
+  }()
 
-	results := make([]*performance, 0, len(ids))
-	for perf := range performances {
-		results = append(results, perf)
-	}
+  results := make([]*performance, 0, len(ids))
+  for perf := range performances {
+    results = append(results, perf)
+  }
 
-	return results
+  return results
 }
 
 func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
-	perf, err := retrievePerformance(morningStarID)
+  perf, err := retrievePerformance(morningStarID)
 
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-	} else {
-		jsonHttp.ResponseJSON(w, *perf)
-	}
+  if err != nil {
+    http.Error(w, err.Error(), 500)
+  } else {
+    jsonHttp.ResponseJSON(w, *perf)
+  }
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	performancesCache.RLock()
-	defer performancesCache.RUnlock()
-	
-	performances := make([]*performance, 0, len(performancesCache.performances))
-	for _, perf := range performancesCache.performances {
-		performances = append(performances, perf)
-	}
-	jsonHttp.ResponseJSON(w, results{performances})
+  performancesCache.RLock()
+  defer performancesCache.RUnlock()
+  
+  performances := make([]*performance, 0, len(performancesCache.performances))
+  for _, perf := range performancesCache.performances {
+    performances = append(performances, perf)
+  }
+  jsonHttp.ResponseJSON(w, results{performances})
 }
 
 // Handler for MorningStar request. Should be use with net/http
@@ -277,16 +277,16 @@ type Handler struct {
 }
 
 func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add(`Access-Control-Allow-Origin`, `*`)
-	w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
-	w.Header().Add(`Access-Control-Allow-Methods`, `GET`)
-	w.Header().Add(`X-Content-Type-Options`, `nosniff`)
+  w.Header().Add(`Access-Control-Allow-Origin`, `*`)
+  w.Header().Add(`Access-Control-Allow-Headers`, `Content-Type`)
+  w.Header().Add(`Access-Control-Allow-Methods`, `GET`)
+  w.Header().Add(`X-Content-Type-Options`, `nosniff`)
 
-	urlPath := []byte(r.URL.Path)
+  urlPath := []byte(r.URL.Path)
 
-	if requestList.Match(urlPath) {
-		listHandler(w, r)
-	} else if requestPerf.Match(urlPath) {
-		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
-	}
+  if requestList.Match(urlPath) {
+    listHandler(w, r)
+  } else if requestPerf.Match(urlPath) {
+    performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
+  }
 }
