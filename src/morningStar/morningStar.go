@@ -10,8 +10,6 @@ import (
 )
 
 const urlIds = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
-const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
-const urlVolatilite = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
 const refreshDelayInHours = 12
 const maxConcurrentFetcher = 32
 

@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
+const urlVolatilite = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
+
 var emptyByte = []byte(``)
 var zeroByte = []byte(`0`)
 var periodByte = []byte(`.`)
