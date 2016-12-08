@@ -265,8 +265,8 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	performancesCache.RLock()
 	defer performancesCache.RUnlock()
 	
-	performances := make([]*performance, 0, len(performancesCache))
-	for perf, _ := range performancesCache {
+	performances := make([]*performance, 0, len(performancesCache.performances))
+	for perf, _ := range performancesCache.performances {
 		performances = append(performances, perf)
 	}
 	jsonHttp.ResponseJSON(w, results{performances})
