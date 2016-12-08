@@ -68,7 +68,7 @@ type cacheRequest struct {
 	ready chan int
 }
 
-var cacheRequests = make(chan *cacheRequest)
+var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 
 func cacheMonitor() {
 	cache := make(map[string]*performance)
@@ -211,7 +211,7 @@ func fetchIds() [][]byte {
 func retrievePerformance(morningStarID []byte) (*performance, error) {
 	cleanID := cleanID(morningStarID)
 
-	request := cacheRequest{key: cleanID}
+	request := cacheRequest{key: cleanID, ready: make(chan int)}
 	cacheRequests <- &request
 	<-request.ready
 
