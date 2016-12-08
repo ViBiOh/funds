@@ -44,7 +44,6 @@
     "glob": "latest",
     "identity-obj-proxy": "latest",
     "ignore-styles": "latest",
-    "jest": "latest",
     "js-utils": "git+https://github.com/ViBiOh/js-utils.git",
     "jsdom": "latest",
     "mkdirp": "latest",
