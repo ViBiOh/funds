@@ -83,8 +83,7 @@ func fetchIds() [][]byte {
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
 	perf := getCache(cacheRequests, cleanID(morningStarID))
-
-	if perf != nil && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
+	if perf != nil {
 		return perf, nil
 	}
 
@@ -94,6 +93,8 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 	}
 
 	pushCache(cacheRequests, perf)
+	idCount++
+
 	return perf, nil
 }
 
