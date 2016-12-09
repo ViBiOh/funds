@@ -82,11 +82,6 @@ func cleanID(morningStarID []byte) string {
 	return string(bytes.ToLower(morningStarID))
 }
 
-func computeScore(perf *performance) {
-	score := (0.25 * perf.OneMonth) + (0.3 * perf.ThreeMonths) + (0.25 * perf.SixMonths) + (0.2 * perf.OneYear) - (0.1 * perf.VolThreeYears)
-	perf.Score = float64(int(score*100)) / 100
-}
-
 func fetchPerformance(morningStarID []byte) (*performance, error) {
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -129,6 +124,8 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 	
 	var err error
 	for err = range errors {}
+	
+	perf.computeScore()
 
 	return perf, err
 }
