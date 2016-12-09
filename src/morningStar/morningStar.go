@@ -88,11 +88,7 @@ func fetchIds() [][]byte {
 }
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
-	cleanID := cleanID(morningStarID)
-
-	request := cacheRequest{key: cleanID, entries: make(chan *performance)}
-	cacheRequests <- &request
-	perf := <- request.entries
+	perf := getCache(cacheRequests, cleanID(morningStarID))
 
 	if perf != nil && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
 		return perf, nil
@@ -103,11 +99,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	req := cacheRequest{entries: make(chan *performance)}
-	cacheRequests <- &req
-	req.entries <- perf
-	close(req.entries)
-	
+	pushCache(cacheRequests, perf)
 	return perf, nil
 }
 
@@ -162,7 +154,7 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	req := cacheRequest{key: 'list', entries: make(chan *performance)}
+	req := cacheRequest{key: `list`, entries: make(chan *performance)}
 	cacheRequests <- &req
 
 	perfs := make([]*performance, 0, idCount)
