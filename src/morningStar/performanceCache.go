@@ -5,19 +5,31 @@ type cacheRequest struct {
 	entries chan *performance
 }
 
-func getCache(ch <-chan *cacheRequest, key string) *performance {
+func getCache(ch chan<- *cacheRequest, key string) *performance {
 	req := cacheRequest{key: key, entries: make(chan *performance)}
 	ch <- &req
 	
 	return <- req.entries
 }
 
-func pushCache(ch <-chan *cacheRequest, entry *performance) {
+func pushCache(ch chan<- *cacheRequest, entry *performance) {
 	req := cacheRequest{entries: make(chan *performance)}
 	ch <- &req
 	req.entries <- entry
 
 	close(req.entries)
+}
+
+func listCache(ch chan<- *cacheRequest, maxLen int) []*performance {
+	results := make([]*performance, 0, maxLen)
+	
+	req := cacheRequest{key: `list`, entries: make(chan *performance)}
+	ch <- &req
+	for entry := range req.entries {
+		results = append(results, entry)
+	}
+	
+	return results
 }
 
 func cacheServer(chan<- *cacheRequest) {
@@ -28,12 +40,12 @@ func cacheServer(chan<- *cacheRequest) {
 			for _, perf := range cache {
 				req.entries <- perf
 			}
-			close(req.entry)
+			close(req.entries)
 		} else if req.key != `` {
 			if entry, ok := cache[req.key]; ok {
 				req.entries <- entry
 			}
-			close(req.entry)
+			close(req.entries)
 		} else {
 			for entry := range req.entries {
 				cache[entry.ID] = entry
