@@ -5,16 +5,16 @@ type cacheRequest struct {
 	entries chan *performance
 }
 
-func getCache(<-chan *cacheRequest, key string) *performance {
+func getCache(ch <-chan *cacheRequest, key string) *performance {
 	req := cacheRequest{key: key, entries: make(chan *performance)}
-	cacheRequest <- &req
+	ch <- &req
 	
 	return <- req.entries
 }
 
-func pushCache(<-chan *cacheRequest, entry *performance) {
+func pushCache(ch <-chan *cacheRequest, entry *performance) {
 	req := cacheRequest{entries: make(chan *performance)}
-	cacheRequest <- &req
+	ch <- &req
 	req.entries <- entry
 
 	close(req.entries)
@@ -30,7 +30,7 @@ func cacheServer(chan<- *cacheRequest) {
 			}
 			close(req.entry)
 		} else if req.key != `` {
-			if entry, ok = cache[req.key]; ok {
+			if entry, ok := cache[req.key]; ok {
 				req.entries <- entry
 			}
 			close(req.entry)
