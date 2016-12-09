@@ -13,8 +13,7 @@ before_install:
 install:
 - make
 - npm i
-script:
-- |
+script: |
   npm run build &&
   docker build -t ${DOCKER_USER}/funds-front . &&
   docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile .
