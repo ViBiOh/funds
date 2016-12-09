@@ -24,7 +24,6 @@ var percentByte = []byte(`%`)
 var ampersandByte = []byte(`&`)
 var htmlAmpersandByte = []byte(`&amp;`)
 
-var idRegex = regexp.MustCompile(`"_id":"(.*?)"`)
 var isinRegex = regexp.MustCompile(`ISIN.:(\S+)`)
 var labelRegex = regexp.MustCompile(`\|([^|]*?)\|ISIN`)
 var ratingRegex = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
