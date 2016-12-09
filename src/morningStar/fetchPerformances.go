@@ -2,10 +2,6 @@ package morningStar
 
 import (
 	"bytes"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strconv"
 	"sync"
@@ -33,29 +29,6 @@ var perfThreeMonthRegex = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*
 var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
 var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
-
-func readBody(body io.ReadCloser) ([]byte, error) {
-	defer body.Close()
-	return ioutil.ReadAll(body)
-}
-
-func getBody(url string) ([]byte, error) {
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
-	}
-
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
-	}
-
-	body, err := readBody(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while reading body of %s: %v`, url, err)
-	}
-
-	return body, nil
-}
 
 func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
 	match := extract.FindSubmatch(body)
