@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -20,7 +21,7 @@ var periodByte = []byte(`.`)
 var commaByte = []byte(`,`)
 var percentByte = []byte(`%`)
 var ampersandByte = []byte(`&`)
-var htmAmpersandByte = []byte(`&amp;`)
+var htmlAmpersandByte = []byte(`&amp;`)
 
 var idRegex = regexp.MustCompile(`"_id":"(.*?)"`)
 var isinRegex = regexp.MustCompile(`ISIN.:(\S+)`)
@@ -62,7 +63,7 @@ func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []by
 		return defaultValue
 	}
 
-	return bytes.Replace(match[1], htmAmpersandByte, ampersandByte, -1)
+	return bytes.Replace(match[1], htmlAmpersandByte, ampersandByte, -1)
 }
 
 func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
@@ -81,30 +82,53 @@ func cleanID(morningStarID []byte) string {
 	return string(bytes.ToLower(morningStarID))
 }
 
+func computeScore(perf *performance) {
+	score := (0.25 * perf.OneMonth) + (0.3 * perf.ThreeMonths) + (0.25 * perf.SixMonths) + (0.2 * perf.OneYear) - (0.1 * perf.VolThreeYears)
+	perf.Score = float64(int(score*100)) / 100
+}
+
 func fetchPerformance(morningStarID []byte) (*performance, error) {
+	var wg sync.WaitGroup
+	wg.Add(2)
+
 	cleanID := cleanID(morningStarID)
-	performanceBody, err := getBody(urlPerformance + cleanID)
-	if err != nil {
-		return nil, err
-	}
+	perf := &performance{ID: cleanID, Update: time.Now()}
+	errors := make(chan error)
 
-	volatiliteBody, err := getBody(urlVolatilite + cleanID)
-	if err != nil {
-		return nil, err
-	}
+	go func(perf *performance, errors chan<- error) {
+		defer wg.Done()
+		
+		if body, err := getBody(urlPerformance + cleanID); err != nil {
+			errors <- err
+		} else {
+			perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
+			perf.Label = string(extractLabel(labelRegex, body, emptyByte))
+			perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
+			perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
+			perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
+			perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
+			perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
+			perf.OneYear = extractPerformance(perfOneYearRegex, body)
+		}
+	}(perf, errors)
 
-	isin := string(extractLabel(isinRegex, performanceBody, emptyByte))
-	label := string(extractLabel(labelRegex, performanceBody, emptyByte))
-	rating := string(extractLabel(ratingRegex, performanceBody, zeroByte))
-	category := string(extractLabel(categoryRegex, performanceBody, emptyByte))
-	oneMonth := extractPerformance(perfOneMonthRegex, performanceBody)
-	threeMonths := extractPerformance(perfThreeMonthRegex, performanceBody)
-	sixMonths := extractPerformance(perfSixMonthRegex, performanceBody)
-	oneYear := extractPerformance(perfOneYearRegex, performanceBody)
-	volThreeYears := extractPerformance(volThreeYearRegex, volatiliteBody)
+	go func(perf *performance, errors chan<- error) {
+		defer wg.Done()
+		
+		if body, err := getBody(urlVolatilite + cleanID); err != nil {
+			errors <- err
+		} else {
+			perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+		}
+	}(perf, errors)
 
-	score := (0.25 * oneMonth) + (0.3 * threeMonths) + (0.25 * sixMonths) + (0.2 * oneYear) - (0.1 * volThreeYears)
-	scoreTruncated := float64(int(score*100)) / 100
+	go func() {
+		wg.Wait()
+		close(errors)
+	}()
+	
+	var err error
+	for err = range errors {}
 
-	return &performance{cleanID, isin, label, category, rating, oneMonth, threeMonths, sixMonths, oneYear, volThreeYears, scoreTruncated, time.Now()}, nil
+	return perf, err
 }
