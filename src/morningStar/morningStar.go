@@ -10,11 +10,13 @@ import (
 )
 
 const urlIds = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
-const refreshDelayInHours = 12
+const refreshDelayInHours = 6
 const maxConcurrentFetcher = 32
 
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
+
+var idCount = 0
 
 type performance struct {
 	ID            string    `json:"id"`
@@ -43,7 +45,7 @@ type results struct {
 var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 
 func init() {
-	go performanceCacheServer(cacheRequests)
+	go cacheServer(cacheRequests)
 	go func() {
 		refreshCache()
 		c := time.Tick(refreshDelayInHours * time.Hour)
@@ -56,9 +58,10 @@ func init() {
 func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
-	for _, perf := range retrievePerformances(fetchIds()) {
-		cacheRequests <- &cacheRequest{value: perf}
-	}
+	
+	ids := fetchIds()
+	idCount = len(ids)
+	loadCache(cacheRequests, retrievePerformances(ids))
 }
 
 func fetchIds() [][]byte {
@@ -79,13 +82,8 @@ func fetchIds() [][]byte {
 }
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
-	cleanID := cleanID(morningStarID)
+	perf := getCache(cacheRequests, cleanID(morningStarID))
 
-	request := cacheRequest{key: cleanID, ready: make(chan int)}
-	cacheRequests <- &request
-	<-request.ready
-
-	perf := request.value
 	if perf != nil && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
 		return perf, nil
 	}
@@ -95,7 +93,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	cacheRequests <- &cacheRequest{key: cleanID, value: perf}
+	pushCache(cacheRequests, perf)
 	return perf, nil
 }
 
@@ -150,11 +148,12 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	request := cacheRequest{ready: make(chan int)}
-	cacheRequests <- &request
-
-	<-request.ready
-	jsonHttp.ResponseJSON(w, results{request.list})
+	perfs := make([]*performance, 0, idCount)
+	for perf := range listCache(cacheRequests) {
+		perfs = append(perfs, perf)
+	}
+	
+	jsonHttp.ResponseJSON(w, results{perfs})
 }
 
 // Handler for MorningStar request. Should be use with net/http
