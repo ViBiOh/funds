@@ -102,13 +102,13 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 			errors <- err
 		} else {
 			perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
-			perf.Label := string(extractLabel(labelRegex, body, emptyByte))
-			perf.Category := string(extractLabel(categoryRegex, body, emptyByte))
-			perf.Rating := string(extractLabel(ratingRegex, body, zeroByte))
-			perf.OneMonth := extractPerformance(perfOneMonthRegex, body)
-			perf.ThreeMonths := extractPerformance(perfThreeMonthRegex, body)
-			perf.SixMonths := extractPerformance(perfSixMonthRegex, body)
-			perf.OneYear := extractPerformance(perfOneYearRegex, body)
+			perf.Label = string(extractLabel(labelRegex, body, emptyByte))
+			perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
+			perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
+			perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
+			perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
+			perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
+			perf.OneYear = extractPerformance(perfOneYearRegex, body)
 		}
 	}(perf, errors)
 
