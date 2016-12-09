@@ -154,14 +154,7 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	req := cacheRequest{key: `list`, entries: make(chan *performance)}
-	cacheRequests <- &req
-
-	perfs := make([]*performance, 0, idCount)
-	for entry := range req.entries {
-		perfs = append(perfs, entry)
-	}
-	jsonHttp.ResponseJSON(w, results{perfs})
+	jsonHttp.ResponseJSON(w, results{listCache(cacheRequests, idCount)})
 }
 
 // Handler for MorningStar request. Should be use with net/http
