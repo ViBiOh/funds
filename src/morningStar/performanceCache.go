@@ -2,33 +2,29 @@ package morningStar
 
 type cacheRequest struct {
 	key   string
-	value *performance
-	list  []*performance
-	ready chan int
+	size  int
+	entry chan *performance
 }
 
-func performanceCacheServer(chan<- *cacheRequest) {
+func cacheServer(chan<- *cacheRequest) {
 	cache := make(map[string]*performance)
 
-	var ready = func(request *cacheRequest) {
-		if request.ready != nil {
-			close(request.ready)
-		}
-	}
-
-	for request := range cacheRequests {
-		if request.value != nil {
-			cache[request.value.ID] = request.value
-		} else if request.key != `` {
-			request.value, _ = cache[request.key]
-			ready(request)
-		} else {
-			request.list = make([]*performance, 0, len(cache))
+	for req := range cacheRequests {
+		if req.key == `list` {
+			req.size = len(cache)
 			for _, perf := range cache {
-				request.list = append(request.list, perf)
+				req.entry <- perf
 			}
-
-			ready(request)
+			close(req.entry)
+		} else if req.key != `` {
+			if entry, ok = cache[req.key]; ok {
+				req.entry <- entry
+			}
+			close(req.entry)
+		} else {
+			for entry := range req.entry {
+				cache[entry.ID] = entry
+			}
 		}
 	}
 }
