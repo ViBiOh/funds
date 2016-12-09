@@ -59,15 +59,9 @@ func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
 	
-	req := cacheRequest{entries: make(chan *performance, maxConcurrentFetcher)}
-	cacheRequests <- &req
-	
-	idCount = 0
-	for _, perf := range retrievePerformances(fetchIds()) {
-		req.entries <- perf
-		idCount++
-	}
-	close(req.entries)
+	ids := fetchIds()
+	idCount = len(ids)
+	loadCache(retrievePerformances(ids))
 }
 
 func fetchIds() [][]byte {
