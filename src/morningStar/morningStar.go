@@ -23,8 +23,8 @@ type performance struct {
 	Category      string    `json:"category"`
 	Rating        string    `json:"rating"`
 	OneMonth      float64   `json:"1m"`
-	ThreeMonth    float64   `json:"3m"`
-	SixMonth      float64   `json:"6m"`
+	ThreeMonths   float64   `json:"3m"`
+	SixMonths     float64   `json:"6m"`
 	OneYear       float64   `json:"1y"`
 	VolThreeYears float64   `json:"v3y"`
 	Score         float64   `json:"score"`
