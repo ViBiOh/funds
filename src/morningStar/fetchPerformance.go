@@ -14,6 +14,7 @@ import (
 
 const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
 const urlVolatilite = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
+const fetchCount = 2
 
 var emptyByte = []byte(``)
 var zeroByte = []byte(`0`)
@@ -84,13 +85,13 @@ func cleanID(morningStarID []byte) string {
 
 func fetchPerformance(morningStarID []byte) (*performance, error) {
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(fetchCount)
 
 	cleanID := cleanID(morningStarID)
 	perf := &performance{ID: cleanID, Update: time.Now()}
 	errors := make(chan error)
 
-	go func(perf *performance, errors chan<- error) {
+	go func() {
 		defer wg.Done()
 		
 		if body, err := getBody(urlPerformance + cleanID); err != nil {
@@ -105,9 +106,9 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 			perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
 			perf.OneYear = extractPerformance(perfOneYearRegex, body)
 		}
-	}(perf, errors)
+	}()
 
-	go func(perf *performance, errors chan<- error) {
+	go func() {
 		defer wg.Done()
 		
 		if body, err := getBody(urlVolatilite + cleanID); err != nil {
@@ -115,7 +116,7 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 		} else {
 			perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
 		}
-	}(perf, errors)
+	}()
 
 	go func() {
 		wg.Wait()
