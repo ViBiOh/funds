@@ -158,7 +158,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	cacheRequests <- &req
 
 	perfs := make([]*performance, 0, idCount)
-	for entry := <- req.entries {
+	for entry := range req.entries {
 		perfs = append(perfs, entry)
 	}
 	jsonHttp.ResponseJSON(w, results{perfs})
