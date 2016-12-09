@@ -20,14 +20,9 @@ func pushCache(ch chan<- *cacheRequest, entry *performance) {
 	close(req.entries)
 }
 
-func listCache(ch chan<- *cacheRequest, maxLen int) []*performance {
-	results := make([]*performance, 0, maxLen)
-	
-	req := cacheRequest{key: `list`, entries: make(chan *performance)}
-	ch <- &req
-	for entry := range req.entries {
-		results = append(results, entry)
-	}
+func listCache(ch chan<- *cacheRequest, maxLen int) <-chan *performance {
+	results := make(chan *performance)
+	ch <- &cacheRequest{key: `list`, entries: results}
 	
 	return results
 }
