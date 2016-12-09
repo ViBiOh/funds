@@ -1,5 +1,7 @@
 package morningStar
 
+const listPerformanceBuffer = 8
+
 type cacheRequest struct {
 	key     string
 	entries chan *performance
@@ -20,8 +22,8 @@ func pushCache(ch chan<- *cacheRequest, entry *performance) {
 	close(req.entries)
 }
 
-func listCache(ch chan<- *cacheRequest, maxLen int) <-chan *performance {
-	results := make(chan *performance)
+func listCache(ch chan<- *cacheRequest) <-chan *performance {
+	results := make(chan *performance, listPerformanceBuffer)
 	ch <- &cacheRequest{key: `list`, entries: results}
 	
 	return results
