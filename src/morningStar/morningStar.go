@@ -16,6 +16,8 @@ const maxConcurrentFetcher = 32
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
+var idCount = 0
+
 type performance struct {
 	ID            string    `json:"id"`
 	Isin          string    `json:"isin"`
@@ -43,7 +45,7 @@ type results struct {
 var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 
 func init() {
-	go performanceCacheServer(cacheRequests)
+	go cacheServer(cacheRequests)
 	go func() {
 		refreshCache()
 		c := time.Tick(refreshDelayInHours * time.Hour)
@@ -56,9 +58,16 @@ func init() {
 func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
+	
+	req := cacheRequest{entries: make(chan *performance, maxConcurrentFetcher)}
+	cacheRequests <- &req
+	
+	idCount = 0
 	for _, perf := range retrievePerformances(fetchIds()) {
-		cacheRequests <- &cacheRequest{value: perf}
+		req.entries <- perf
+		idCount++
 	}
+	close(req.entries)
 }
 
 func fetchIds() [][]byte {
@@ -81,11 +90,10 @@ func fetchIds() [][]byte {
 func retrievePerformance(morningStarID []byte) (*performance, error) {
 	cleanID := cleanID(morningStarID)
 
-	request := cacheRequest{key: cleanID, ready: make(chan int)}
+	request := cacheRequest{key: cleanID, entries: make(chan *performance)}
 	cacheRequests <- &request
-	<-request.ready
+	perf := <- request.entries
 
-	perf := request.value
 	if perf != nil && time.Now().Add(time.Hour*-(refreshDelayInHours+1)).Before(perf.Update) {
 		return perf, nil
 	}
@@ -95,7 +103,11 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	cacheRequests <- &cacheRequest{key: cleanID, value: perf}
+	req := cacheRequest{entries: make(chan *performance)}
+	cacheRequests <- &req
+	req.entries <- perf
+	close(req.entries)
+	
 	return perf, nil
 }
 
@@ -150,11 +162,14 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	request := cacheRequest{ready: make(chan int)}
-	cacheRequests <- &request
+	req := cacheRequest{key: 'list', entries: make(chan *performance)}
+	cacheRequests <- &req
 
-	<-request.ready
-	jsonHttp.ResponseJSON(w, results{request.list})
+	perfs := make([]*performance, 0, idCount)
+	for entry := <- req.entries {
+		perfs = append(perfs, entry)
+	}
+	jsonHttp.ResponseJSON(w, results{perfs})
 }
 
 // Handler for MorningStar request. Should be use with net/http
