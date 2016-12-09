@@ -22,9 +22,7 @@ script: |
   docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile .
 after_success:
   - if [ "${TRAVIS_BRANCH}" == "master" ]; then
-      docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} &&
-      docker push ${DOCKER_USER}/funds-front &&
-      docker push ${DOCKER_USER}/funds-api
+      docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} && docker push ${DOCKER_USER}/funds-front && docker push ${DOCKER_USER}/funds-api
     fi
 notifications:
   email: false
