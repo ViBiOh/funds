@@ -31,6 +31,11 @@ type performance struct {
 	Update        time.Time `json:"ts"`
 }
 
+func (perf *performance) computeScore() {
+	score := (0.25 * perf.OneMonth) + (0.3 * perf.ThreeMonths) + (0.25 * perf.SixMonths) + (0.2 * perf.OneYear) - (0.1 * perf.VolThreeYears)
+	perf.Score = float64(int(score*100)) / 100
+}
+
 type results struct {
 	Results interface{} `json:"results"`
 }
