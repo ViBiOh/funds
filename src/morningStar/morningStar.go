@@ -10,7 +10,7 @@ import (
 )
 
 const urlIds = `https://elasticsearch.vibioh.fr/funds/morningStarId/_search?size=8000`
-const refreshDelayInHours = 12
+const refreshDelayInHours = 6
 const maxConcurrentFetcher = 32
 
 var requestList = regexp.MustCompile(`^/list$`)
@@ -61,7 +61,7 @@ func refreshCache() {
 	
 	ids := fetchIds()
 	idCount = len(ids)
-	loadCache(retrievePerformances(ids))
+	loadCache(cacheRequests, retrievePerformances(ids))
 }
 
 func fetchIds() [][]byte {
