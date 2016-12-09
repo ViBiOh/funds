@@ -22,11 +22,11 @@ func pushCache(ch chan<- *cacheRequest, entry *performance) {
 	close(req.entries)
 }
 
-func pushCache(ch chan<- *cacheRequest, entries []*performance) {
+func loadCache(ch chan<- *cacheRequest, entries []*performance) {
 	req := cacheRequest{entries: make(chan *performance, bufferSize)}
 	ch <- &req
 	
-	for entry := range entries {
+	for _, entry := range entries {
 		req.entries <- entry
 	}
 
