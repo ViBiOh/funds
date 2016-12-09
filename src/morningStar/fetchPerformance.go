@@ -84,7 +84,7 @@ func cleanID(morningStarID []byte) string {
 
 func computeScore(perf *performance) {
 	score := (0.25 * perf.OneMonth) + (0.3 * perf.ThreeMonths) + (0.25 * perf.SixMonths) + (0.2 * perf.OneYear) - (0.1 * perf.VolThreeYears)
-	perf.Score := float64(int(score*100)) / 100
+	perf.Score = float64(int(score*100)) / 100
 }
 
 func fetchPerformance(morningStarID []byte) (*performance, error) {
@@ -93,7 +93,7 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 
 	cleanID := cleanID(morningStarID)
 	perf := &performance{ID: cleanID, Update: time.Now()}
-	errors := chan(error)
+	errors := make(chan error)
 
 	go func(perf *performance, errors chan<- error) {
 		defer wg.Done()
@@ -118,7 +118,7 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 		if body, err := getBody(urlVolatilite + cleanID); err != nil {
 			errors <- err
 		} else {
-			perf.VolThreeYears := extractPerformance(volThreeYearRegex, body)
+			perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
 		}
 	}(perf, errors)
 
