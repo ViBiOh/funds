@@ -15,12 +15,9 @@ install:
 - npm i
 script:
 - |
-  docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} &&
   npm run build &&
   docker build -t ${DOCKER_USER}/funds-front . &&
-  docker push ${DOCKER_USER}/funds-front &&
-  docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile . &&
-  docker push ${DOCKER_USER}/funds-api
+  docker build -t ${DOCKER_USER}/funds-api -f src/Dockerfile .
 notifications:
   email: false
 before_deploy:
@@ -30,7 +27,11 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds https://github.com/ViBiOh/funds-ob.git vibioh.fr
+  script: |
+    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} &&
+    docker push ${DOCKER_USER}/funds-front &&
+    docker push ${DOCKER_USER}/funds-api &&
+    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds https://github.com/ViBiOh/funds-ob.git vibioh.fr
   on:
     branch: master
 after_deploy:
