@@ -55,49 +55,53 @@ func cleanID(morningStarID []byte) string {
 	return string(bytes.ToLower(morningStarID))
 }
 
+func getPerformance(wg *sync.WaitGroup, url string, perf *performance, errors chan<- error) {
+	defer wg.Done()
+
+	if body, err := getBody(url); err != nil {
+		errors <- err
+	} else {
+		perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
+		perf.Label = string(extractLabel(labelRegex, body, emptyByte))
+		perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
+		perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
+		perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
+		perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
+		perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
+		perf.OneYear = extractPerformance(perfOneYearRegex, body)
+	}
+}
+
+func getVolatilite(wg *sync.WaitGroup, url string, perf *performance, errors chan<- error) {
+	defer wg.Done()
+
+	if body, err := getBody(url); err != nil {
+		errors <- err
+	} else {
+		perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+	}
+}
+
 func fetchPerformance(morningStarID []byte) (*performance, error) {
 	var wg sync.WaitGroup
-	wg.Add(fetchCount)
 
 	cleanID := cleanID(morningStarID)
 	perf := &performance{ID: cleanID, Update: time.Now()}
+
+	wg.Add(fetchCount)
 	errors := make(chan error)
-
-	go func() {
-		defer wg.Done()
-		
-		if body, err := getBody(urlPerformance + cleanID); err != nil {
-			errors <- err
-		} else {
-			perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
-			perf.Label = string(extractLabel(labelRegex, body, emptyByte))
-			perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
-			perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
-			perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
-			perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
-			perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
-			perf.OneYear = extractPerformance(perfOneYearRegex, body)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-		
-		if body, err := getBody(urlVolatilite + cleanID); err != nil {
-			errors <- err
-		} else {
-			perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
-		}
-	}()
+	go getPerformance(&wg, urlPerformance+cleanID, perf, errors)
+	go getVolatilite(&wg, urlVolatilite+cleanID, perf, errors)
 
 	go func() {
 		wg.Wait()
 		close(errors)
 	}()
-	
+
 	var err error
-	for err = range errors {}
-	
+	for err = range errors {
+	}
+
 	perf.computeScore()
 
 	return perf, err

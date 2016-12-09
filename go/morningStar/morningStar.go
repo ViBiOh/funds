@@ -1,7 +1,7 @@
 package morningStar
 
 import (
-	"../jsonHttp"
+	"github.com/ViBiOh/funds-ob/go/jsonHttp"
 	"log"
 	"net/http"
 	"regexp"
@@ -10,7 +10,7 @@ import (
 )
 
 const refreshDelayInHours = 6
-const maxConcurrentFetcher = 32
+const maxConcurrentFetcher = 128
 
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
@@ -57,7 +57,7 @@ func init() {
 func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
-	
+
 	ids := fetchIds()
 	idCount = len(ids)
 	loadCache(cacheRequests, retrievePerformances(ids))
@@ -135,7 +135,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	for perf := range listCache(cacheRequests) {
 		perfs = append(perfs, perf)
 	}
-	
+
 	jsonHttp.ResponseJSON(w, results{perfs})
 }
 

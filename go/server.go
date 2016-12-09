@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./morningStar"
+	"github.com/ViBiOh/funds-ob/go/morningStar"
 	"log"
 	"net/http"
 )
