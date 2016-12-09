@@ -5,6 +5,21 @@ type cacheRequest struct {
 	entries chan *performance
 }
 
+func getCache(<-chan *cacheRequest, key string) *performance {
+	req := cacheRequest{key: key, entries: make(chan *performance)}
+	cacheRequest <- &req
+	
+	return <- req.entries
+}
+
+func pushCache(<-chan *cacheRequest, entry *performance) {
+	req := cacheRequest{entries: make(chan *performance)}
+	cacheRequest <- &req
+	req.entries <- entry
+
+	close(req.entries)
+}
+
 func cacheServer(chan<- *cacheRequest) {
 	cache := make(map[string]*performance)
 
