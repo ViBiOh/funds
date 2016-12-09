@@ -10,7 +10,7 @@ import (
 )
 
 const refreshDelayInHours = 6
-const maxConcurrentFetcher = 128
+const maxConcurrentFetcher = 16
 
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
