@@ -40,10 +40,10 @@ func listCache(ch chan<- *cacheRequest) <-chan *performance {
 	return results
 }
 
-func cacheServer(chan<- *cacheRequest) {
+func cacheServer(ch <-chan *cacheRequest) {
 	cache := make(map[string]*performance)
 
-	for req := range cacheRequests {
+	for req := range ch {
 		if req.key == `list` {
 			for _, perf := range cache {
 				req.entries <- perf

@@ -49,7 +49,7 @@
     "mkdirp": "latest",
     "mocha": "latest",
     "mustache": "latest",
-    "node-sass": "latest",
+    "node-sass": "^3.4.2",
     "normalize.css": "latest",
     "nyc": "latest",
     "react-addons-test-utils": "latest",
