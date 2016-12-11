@@ -18,7 +18,7 @@ func fetchIds() [][]byte {
 
 	idsMatch := idRegex.FindAllSubmatch(body, -1)
 
-	ids := make([][]byte, 0, len(idsMatch))
+	ids := make([][]byte, 0)
 	for _, match := range idsMatch {
 		ids = append(ids, match[1])
 	}

@@ -15,7 +15,7 @@ const maxConcurrentFetcher = 16
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
-var idCount = 0
+var ids [][]byte
 
 type performance struct {
 	ID            string    `json:"id"`
@@ -46,6 +46,7 @@ var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 func init() {
 	go cacheServer(cacheRequests)
 	go func() {
+		ids = fetchIds()
 		refreshCache()
 		c := time.Tick(refreshDelayInHours * time.Hour)
 		for range c {
@@ -58,8 +59,6 @@ func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
 
-	ids := fetchIds()
-	idCount = len(ids)
 	loadCache(cacheRequests, retrievePerformances(ids))
 }
 
@@ -75,7 +74,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 	}
 
 	pushCache(cacheRequests, perf)
-	idCount++
+	ids = append(ids, morningStarID)
 
 	return perf, nil
 }
@@ -131,7 +130,7 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	perfs := make([]*performance, 0, idCount)
+	perfs := make([]*performance, 0, len(ids))
 	for perf := range listCache(cacheRequests) {
 		perfs = append(perfs, perf)
 	}
