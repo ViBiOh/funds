@@ -30,9 +30,17 @@ var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)
 var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
+func cleanID(morningStarID []byte) string {
+	return string(bytes.ToLower(morningStarID))
+}
+
 func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
+	if extract == nil {
+		return defaultValue
+	}
+
 	match := extract.FindSubmatch(body)
-	if match == nil {
+	if match == nil || len(match) < 2 {
 		return defaultValue
 	}
 
@@ -49,10 +57,6 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 		return 0.0
 	}
 	return result
-}
-
-func cleanID(morningStarID []byte) string {
-	return string(bytes.ToLower(morningStarID))
 }
 
 func getPerformance(wg *sync.WaitGroup, url string, perf *performance, errors chan<- error) {
