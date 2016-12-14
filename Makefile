@@ -3,7 +3,7 @@ default: test vet build
 test:
 	go test ./...
 
-test:
+vet:
 	go vet ./...
 
 build:
