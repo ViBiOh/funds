@@ -1,5 +1,6 @@
 app/
-src/
 test/
 web/
 node_modules/
+
+**/*.go

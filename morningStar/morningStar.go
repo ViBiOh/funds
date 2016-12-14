@@ -1,7 +1,7 @@
 package morningStar
 
 import (
-	"github.com/ViBiOh/funds-ob/go/jsonHttp"
+	"github.com/ViBiOh/funds-ob/jsonHttp"
 	"log"
 	"net/http"
 	"regexp"
