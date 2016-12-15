@@ -65,6 +65,6 @@
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
-    "whatwg-fetch": "latest"
+    "js-fetch": "git+https://github.com/ViBiOh/js-fetch.git"
   }
 }
