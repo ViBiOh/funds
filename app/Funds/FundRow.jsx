@@ -4,7 +4,7 @@ import FundsService from './FundsService';
 import PerformanceCell from './PerformanceCell';
 import style from './Funds.css';
 
-isUpdateTimeGreaterThanSixHours(updateTime) {
+function isUpdateTimeGreaterThanSixHours(updateTime) {
   return (Date.now() - Date.parse(updateTime)) / 1000 / 3600 > 6
 }
 
