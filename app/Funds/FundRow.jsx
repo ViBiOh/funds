@@ -5,7 +5,7 @@ import PerformanceCell from './PerformanceCell';
 import style from './Funds.css';
 
 function isUpdateTimeGreaterThanSixHours(updateTime) {
-  return (Date.now() - Date.parse(updateTime)) / 1000 / 3600 > 6;
+  return (performance.now() - Date.parse(updateTime)) / 3600000 > 6;
 }
 
 const MorningStarRow = ({ fund, filterBy }) => (
