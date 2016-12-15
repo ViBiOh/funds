@@ -4,6 +4,10 @@ import FundsService from './FundsService';
 import PerformanceCell from './PerformanceCell';
 import style from './Funds.css';
 
+isUpdateTimeGreaterThanSixHours(updateTime) {
+  return (Date.now() - Date.parse(updateTime)) / 1000 / 3600 > 6
+}
+
 const MorningStarRow = ({ fund, filterBy }) => (
   <span className={style.row}>
     <span className={style.isin}>{fund.isin}</span>
@@ -28,7 +32,7 @@ const MorningStarRow = ({ fund, filterBy }) => (
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
-      className={style.icon}
+      className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.fresh : style.old}`}
     >
       <FaBarChart />
     </a>
