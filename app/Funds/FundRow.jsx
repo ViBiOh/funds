@@ -28,11 +28,11 @@ const MorningStarRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
     <a
-      title={`Lien vers la source des données. MàJ le ${new Date(Date.parse(fund.ts)).toString()}`}
+      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${new Date(Date.parse(fund.ts)).toString()}` : ''}`}
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
-      className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.fresh : style.old}`}
+      className={`${style.icon} ${fund.ts ? (isUpdateTimeGreaterThanSixHours(fund.ts) ? style.fresh : style.old}) : ''`}
     >
       <FaBarChart />
     </a>
