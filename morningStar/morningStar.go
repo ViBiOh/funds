@@ -123,7 +123,7 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 	perf, err := retrievePerformance(morningStarID)
 
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
 		jsonHttp.ResponseJSON(w, *perf)
 	}
