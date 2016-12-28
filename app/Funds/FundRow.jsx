@@ -32,7 +32,7 @@ const MorningStarRow = ({ fund, filterBy }) => (
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
-      className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.old : style.fresh}`}
+      className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.old : ''}`}
     >
       <FaBarChart />
     </a>

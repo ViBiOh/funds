@@ -3,6 +3,7 @@ import FaClose from 'react-icons/lib/fa/close';
 import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
+import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
@@ -79,10 +80,13 @@ const CHART_COLORS = [
   '#17becf', '#9467bd', '#7f7f7f', '#8c564b', '#3366cc',
 ];
 
-const SUM_PARAM = 's';
+const AGGREGATE_SIZES = [25, 50, 100];
+
+const SUM_PARAM = 'a';
+const SUM_SIZE_PARAM = 'as';
 const ORDER_PARAM = 'o';
 const ASCENDING_ORDER_PARAM = 'ao';
-const RESERVED_PARAM = [SUM_PARAM, ORDER_PARAM, ASCENDING_ORDER_PARAM];
+const RESERVED_PARAM = [SUM_PARAM, SUM_SIZE_PARAM, ORDER_PARAM, ASCENDING_ORDER_PARAM];
 
 export default class Funds extends Component {
   constructor(props) {
@@ -103,7 +107,7 @@ export default class Funds extends Component {
       aggregated: [],
       sum: {
         key: params[SUM_PARAM] || '',
-        size: 25,
+        size: params[SUM_SIZE_PARAM] || AGGREGATE_SIZES[0],
       },
       order: {
         key: params[ORDER_PARAM] || '',
@@ -113,6 +117,7 @@ export default class Funds extends Component {
     };
 
     this.fetchPerformances = this.fetchPerformances.bind(this);
+    this.onAggregateSizeChange = this.onAggregateSizeChange.bind(this);
 
     this.filterBy = this.filterBy.bind(this);
     this.aggregateBy = this.aggregateBy.bind(this);
@@ -120,11 +125,13 @@ export default class Funds extends Component {
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.filterOrderData = this.filterOrderData.bind(this);
+    this.filterOrderDataDebounce = this.filterOrderDataDebounce.bind(this);
     this.aggregateData = this.aggregateData.bind(this);
     this.updateUrl = this.updateUrl.bind(this);
 
     this.renderError = this.renderError.bind(this);
 
+    this.renderCount = this.renderCount.bind(this);
     this.renderFilter = this.renderFilter.bind(this);
     this.renderOrder = this.renderOrder.bind(this);
     this.renderDataModifier = this.renderDataModifier.bind(this);
@@ -137,13 +144,19 @@ export default class Funds extends Component {
     this.fetchPerformances();
   }
 
+  onAggregateSizeChange(value) {
+    this.setState({
+      sum: Object.assign({}, this.state.sum, { size: value.target.value }),
+    }, this.filterOrderDataDebounce);
+  }
+
   fetchPerformances() {
     return FundsService.getFunds()
       .then((funds) => {
         this.setState({
           funds: funds.results.filter(fund => fund.id),
           loaded: true,
-        }, this.filterOrderData);
+        }, this.filterOrderDataDebounce);
 
         return funds;
       });
@@ -155,58 +168,60 @@ export default class Funds extends Component {
 
     this.setState({
       filters: Object.assign(this.state.filters, filter),
-    }, this.filterOrderData);
+    }, this.filterOrderDataDebounce);
   }
 
   aggregateBy(sum) {
     this.setState({
       sum: { key: sum, size: 25 },
-    }, this.filterOrderData);
+    }, this.filterOrderDataDebounce);
   }
 
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
-    }, this.filterOrderData);
+    }, this.filterOrderDataDebounce);
   }
 
   reverseOrder() {
     this.setState({
       order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
-    }, this.filterOrderData);
+    }, this.filterOrderDataDebounce);
   }
 
   filterOrderData() {
+    const displayed = Object.keys(this.state.filters).reduce((previous, filter) => {
+      const regex = buildFullTextRegex(this.state.filters[filter]);
+      return previous.filter(fund => fullTextRegexFilter(fund[filter], regex));
+    }, this.state.funds.slice());
+
+    if (this.state.order.key) {
+      const orderKey = this.state.order.key;
+      const compareMultiplier = this.state.order.descending ? -1 : 1;
+
+      displayed.sort((o1, o2) => {
+        if (!o1 || typeof o1[orderKey] === 'undefined') {
+          return -1 * compareMultiplier;
+        } else if (!o2 || typeof o2[orderKey] === 'undefined') {
+          return 1 * compareMultiplier;
+        } else if (o1[orderKey] < o2[orderKey]) {
+          return -1 * compareMultiplier;
+        } else if (o1[orderKey] > o2[orderKey]) {
+          return 1 * compareMultiplier;
+        }
+        return 0;
+      });
+    }
+
+    this.setState({
+      displayed,
+      aggregated: this.aggregateData(displayed),
+    }, this.updateUrl);
+  }
+
+  filterOrderDataDebounce() {
     clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      const displayed = Object.keys(this.state.filters).reduce((previous, filter) => {
-        const regex = buildFullTextRegex(this.state.filters[filter]);
-        return previous.filter(fund => fullTextRegexFilter(fund[filter], regex));
-      }, this.state.funds.slice());
-
-      if (this.state.order.key) {
-        const orderKey = this.state.order.key;
-        const compareMultiplier = this.state.order.descending ? -1 : 1;
-
-        displayed.sort((o1, o2) => {
-          if (!o1 || typeof o1[orderKey] === 'undefined') {
-            return -1 * compareMultiplier;
-          } else if (!o2 || typeof o2[orderKey] === 'undefined') {
-            return 1 * compareMultiplier;
-          } else if (o1[orderKey] < o2[orderKey]) {
-            return -1 * compareMultiplier;
-          } else if (o1[orderKey] > o2[orderKey]) {
-            return 1 * compareMultiplier;
-          }
-          return 0;
-        });
-      }
-
-      this.setState({
-        displayed,
-        aggregated: this.aggregateData(displayed),
-      }, this.updateUrl);
-    }, 400);
+    this.timeout = setTimeout(this.filterOrderData, 400);
   }
 
   aggregateData(displayed) {
@@ -248,6 +263,7 @@ export default class Funds extends Component {
 
     if (this.state.sum.key) {
       params.push(`${SUM_PARAM}=${this.state.sum.key}`);
+      params.push(`${SUM_SIZE_PARAM}=${this.state.sum.size}`);
     }
 
     window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
@@ -259,6 +275,18 @@ export default class Funds extends Component {
         <h2>Erreur rencontée</h2>
         <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
       </div>
+    );
+  }
+
+  renderCount() {
+    if (this.state.displayed.length === this.state.funds.length) {
+      return null;
+    }
+
+    return (
+      <span key="count" className={style.dataModifier}>
+        {this.state.displayed.length} / {this.state.funds.length}
+      </span>
     );
   }
 
@@ -319,7 +347,7 @@ export default class Funds extends Component {
     const data = {
       labels: [],
       datasets: [{
-        label: `\u03A3 ${this.state.sum.size} | ${label}`,
+        label: 'Count',
         data: [],
         backgroundColor: [],
       }],
@@ -336,7 +364,15 @@ export default class Funds extends Component {
 
     return [
       <span key="label" className={style.dataModifier}>
-        &#x3A3; {this.state.sum.size} | {label}
+        <FaPieChart />
+        &nbsp;
+        <select value={this.state.sum.size} onChange={this.onAggregateSizeChange}>
+          {
+            AGGREGATE_SIZES.map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))
+          }
+        </select> | {label}
         <button onClick={() => this.aggregateBy('')} className={style.icon}>
           <FaClose />
         </button>
@@ -354,6 +390,7 @@ export default class Funds extends Component {
   renderDataModifier() {
     return (
       <div className={style.list}>
+        {this.renderCount()}
         {this.renderFilter()}
         {this.renderOrder()}
         {this.renderAggregate()}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
-import FaCalculator from 'react-icons/lib/fa/calculator';
+import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import FaFilter from 'react-icons/lib/fa/filter';
 import HeaderIcon from './HeaderIcon';
 import style from './Funds.css';
@@ -77,7 +77,7 @@ export default class FundsHeader extends Component {
           filter="summable"
           onClick={this.onAggregateBy}
           icon={
-            <FaCalculator
+            <FaPieChart
               onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
             />
           }

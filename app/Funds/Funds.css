@@ -172,10 +172,6 @@ svg.active, .active svg {
   height: 25px;
 }
 
-.fresh svg {
-  color: #337ab7;
-}
-
 .old svg {
   color: #f0ad4e;
 }
