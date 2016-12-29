@@ -18,7 +18,7 @@ func getBody(url string) ([]byte, error) {
 		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
 	}
 
-	if response.StatusCode >= 400 {
+	if response.StatusCode >= http.StatusBadRequest {
 		return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
 	}
 
