@@ -71,7 +71,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 	}
 
 	pushCache(cacheRequests, perf)
-	ids = append(ids, morningStarID)
+	morningStarIds = append(morningStarIds, morningStarID)
 
 	return perf, nil
 }
@@ -127,7 +127,7 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	perfs := make([]*performance, 0, len(ids))
+	perfs := make([]*performance, 0, len(morningStarIds))
 	for perf := range listCache(cacheRequests) {
 		perfs = append(perfs, perf)
 	}
