@@ -32,6 +32,12 @@ $iconSize: 50px;
   text-overflow: ellipsis;
 }
 
+@mixin roundLabel {
+  @include roundBorder;
+  flex: none;
+  max-width: 100%;
+}
+
 .header {
   @include flexWrap;
   text-align: center;
@@ -204,7 +210,7 @@ svg.active, .active svg {
 
   .row .icon {
     margin: 2px;
-    order: 3;
+    order: 5;
   }
 
   .row svg {
@@ -212,18 +218,24 @@ svg.active, .active svg {
     height: 30px;
   }
 
-  .isin,
-  .rating,
-  .category,
   .performance {
-    @include roundBorder;
-    flex: none;
-    max-width: 100%;
-    order: 2;
+    @include roundLabel;
+    order: 4;
+  }
+
+  .category {
+    @include roundLabel;
+    order: 1;
   }
 
   .isin {
-    order: 1;
+    @include roundLabel;
+    order: 3;
+  }
+
+  .rating {
+    @include roundLabel;
+    order: 2;
   }
 
   .isin::before {
