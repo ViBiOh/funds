@@ -3,8 +3,6 @@ sudo: required
 services:
 - docker
 go: 1.7
-before_install:
-- openssl aes-256-cbc -K $encrypted_afb3f4a0fd37_key -iv $encrypted_afb3f4a0fd37_iv -in deploy_rsa.enc -out deploy_rsa -d
 install:
 - make
 - nvm install node
@@ -12,7 +10,7 @@ install:
 - npm i
 script: |
   npm run build &&
-  docker build -t ${DOCKER_USER}/funds-front . &&
+  docker build -t ${DOCKER_USER}/funds-front -f Dockerfile_front . &&
   docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
 after_success: |
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
@@ -20,14 +18,10 @@ after_success: |
   fi
 notifications:
   email: false
-before_deploy:
-- eval "$(ssh-agent -s)"
-- chmod 600 $TRAVIS_BUILD_DIR/deploy_rsa
-- ssh-add $TRAVIS_BUILD_DIR/deploy_rsa
 deploy:
   provider: script
   skip_cleanup: true
-  script: ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "bash -s" 2>/dev/null -- < ./deploy.sh funds https://github.com/ViBiOh/funds-ob.git vibioh.fr
+  script: curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://docker-api.vibioh.fr/containers/funds/ --data-binary @docker-compose.yml
   on:
     branch: master
 after_deploy:

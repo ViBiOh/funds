@@ -5,7 +5,7 @@ services:
     image: vibioh/funds-api
     labels:
       traefik.frontend.passHostHeader: 'true'
-      traefik.frontend.rule: 'Host: funds-api.${DOMAIN}'
+      traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
     logging:
       driver: json-file
@@ -18,12 +18,12 @@ services:
     security_opt:
     - no-new-privileges
 
-  front:
+  site:
     image: vibioh/funds-front
     command: -spa -domain 'funds-api.vibioh.fr fonts.gstatic.com'
     labels:
       traefik.frontend.passHostHeader: 'true'
-      traefik.frontend.rule: 'Host: funds.${DOMAIN}'
+      traefik.frontend.rule: 'Host: funds.vibioh.fr'
       traefik.port: '1080'
     logging:
       driver: json-file
