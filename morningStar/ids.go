@@ -1,6 +1,6 @@
 package morningStar
 
-var morningStarId := [][]byte {
+var morningStarIds = [][]byte {
 	[]byte(`F00000VSR5`),
 	[]byte(`F0GBR05V29`),
 	[]byte(`F00000OVC2`),
