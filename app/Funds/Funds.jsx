@@ -419,7 +419,12 @@ export default class Funds extends Component {
   }
 
   renderContent() {
-    const content = this.state.loaded ? this.renderList() : <Throbber />;
+    let content;
+    if (this.state.loaded) {
+      content = this.renderList();
+    } else {
+      content = <Throbber label="Chargement des fonds" />;
+    }
 
     return (
       <article>
