@@ -66,4 +66,4 @@ FundRow.defaultProps = {
   filterBy: () => null,
 };
 
-export default MorningStarRow;
+export default FundRow;
