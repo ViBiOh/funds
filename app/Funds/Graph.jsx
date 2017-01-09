@@ -52,3 +52,8 @@ export default class Graph extends Component {
 Graph.propTypes = {
   className: React.PropTypes.string,
 };
+
+MorningStarRow.defaultProps = {
+  className: '',
+};
+

@@ -58,8 +58,12 @@ MorningStarRow.propTypes = {
     '1y': STRING_OR_NUMBER,
     v3y: STRING_OR_NUMBER,
     score: STRING_OR_NUMBER,
-  }),
+  }).isRequired,
   filterBy: React.PropTypes.func,
+};
+
+MorningStarRow.defaultProps = {
+  filterBy: () => null,
 };
 
 export default MorningStarRow;
