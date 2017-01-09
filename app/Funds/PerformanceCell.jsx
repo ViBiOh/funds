@@ -32,6 +32,6 @@ MorningStarRow.defaultProps = {
   value: '',
 };
 
-PerformanceCell.displayName = 'PerformanceCell';
+MorningStarRow.displayName = 'PerformanceCell';
 
 export default PerformanceCell;

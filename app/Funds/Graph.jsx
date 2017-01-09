@@ -53,7 +53,7 @@ Graph.propTypes = {
   className: React.PropTypes.string,
 };
 
-MorningStarRow.defaultProps = {
+Graph.defaultProps = {
   className: '',
 };
 
