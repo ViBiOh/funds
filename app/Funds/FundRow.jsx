@@ -8,7 +8,7 @@ function isUpdateTimeGreaterThanSixHours(updateTime) {
   return (performance.now() - Date.parse(updateTime)) / 3600000 > 6;
 }
 
-const MorningStarRow = ({ fund, filterBy }) => (
+const FundRow = ({ fund, filterBy }) => (
   <span className={style.row}>
     <span className={style.isin}>{fund.isin}</span>
     <span className={style.label} title={fund.label}>{fund.label}</span>
@@ -39,14 +39,14 @@ const MorningStarRow = ({ fund, filterBy }) => (
   </span>
 );
 
-MorningStarRow.displayName = 'MorningStarRow';
+FundRow.displayName = 'MorningStarRow';
 
 const STRING_OR_NUMBER = React.PropTypes.oneOfType([
   React.PropTypes.string,
   React.PropTypes.number,
 ]).isRequired;
 
-MorningStarRow.propTypes = {
+FundRow.propTypes = {
   fund: React.PropTypes.shape({
     isin: STRING_OR_NUMBER,
     label: STRING_OR_NUMBER,
@@ -62,7 +62,7 @@ MorningStarRow.propTypes = {
   filterBy: React.PropTypes.func,
 };
 
-MorningStarRow.defaultProps = {
+FundRow.defaultProps = {
   filterBy: () => null,
 };
 
