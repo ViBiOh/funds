@@ -284,7 +284,7 @@ export default class Funds extends Component {
     }
 
     return (
-      <span key="count" className={style.dataModifier}>
+      <span key="count" className={style.modifier}>
         {this.state.displayed.length} / {this.state.funds.length}
       </span>
     );
@@ -294,7 +294,7 @@ export default class Funds extends Component {
     return Object.keys(this.state.filters)
       .filter(filter => this.state.filters[filter])
       .map(filter => (
-        <span key={filter} className={style.dataModifier}>
+        <span key={filter} className={style.modifier}>
           <span className={style.icon}>
             <FaFilter />
           </span>
@@ -309,7 +309,7 @@ export default class Funds extends Component {
 
   renderOrder() {
     return this.state.order.key && (
-      <span className={style.dataModifier}>
+      <span className={style.modifier}>
         <button onClick={this.reverseOrder} className={style.icon}>
           {this.state.order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
         </button>
@@ -363,7 +363,7 @@ export default class Funds extends Component {
     });
 
     return [
-      <span key="label" className={style.dataModifier}>
+      <span key="label" className={style.modifier}>
         <FaPieChart />
         &nbsp;
         <select value={this.state.sum.size} onChange={this.onAggregateSizeChange}>

@@ -1,56 +1,57 @@
 $dark: #3a3a3a;
 $grey: #e1e1e8;
 $clear: #f8f8f8;
+$warning: #f0ad4e;
 
-$iconSize: 50px;
+$icon-size: 50px;
 
-@mixin darkBox {
+@mixin dark-box {
   background-color: $dark;
   color: $clear;
 }
 
-@mixin smallPadding {
+@mixin small-padding {
   padding: 5px;
 }
 
-@mixin flexWrap {
+@mixin flex-wrap {
   display: flex;
   flex-wrap: wrap;
 }
 
-@mixin roundBorder {
-  width: auto;
+@mixin round-border {
   border: 1px solid;
   border-radius: 5px;
   margin: 2px;
+  width: auto;
 }
 
 @mixin ellipsis {
-  text-align: left;
-  white-space: nowrap;
   overflow: hidden;
+  text-align: left;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@mixin roundLabel {
-  @include roundBorder;
+@mixin round-label {
+  @include round-border;
   flex: none;
   max-width: 100%;
 }
 
 .header {
-  @include flexWrap;
+  @include flex-wrap;
   text-align: center;
   width: 100%;
 }
 
 .header h1 {
-  @include darkBox;
-  @include smallPadding;
-  height: $iconSize;
-  margin: 0;
+  @include dark-box;
+  @include small-padding;
   display: inline-block;
   flex: 1 1 auto;
+  height: $icon-size;
+  margin: 0;
 }
 
 article {
@@ -58,46 +59,47 @@ article {
 }
 
 button {
-  border: 0;
-  padding: 0;
-  margin-left: 5px;
   background-color: inherit;
+  border: 0;
+  margin-left: 5px;
+  padding: 0;
 }
 
 svg {
   color: $dark;
 }
 
-svg.active, .active svg {
-  color: $clear;
+svg.active,
+.active svg {
   background-color: $dark;
+  color: $clear;
 }
 
 .list {
+  @include flex-wrap;
   width: 100%;
-  @include flexWrap;
 }
 
 .icon svg {
-  width: 20px;
   height: 20px;
+  width: 20px;
 }
 
 .icon button {
   color: $clear;
 }
 
-.header input[type="text"],
+.header input[type='text'],
 .header ol,
 .header .icon svg,
 .row,
 .label,
 .isin,
-.dataModifier,
+.modifier,
 .rating,
 .category,
 .performance {
-  @include smallPadding;
+  @include small-padding;
 }
 
 .header li button {
@@ -106,28 +108,28 @@ svg.active, .active svg {
 }
 
 .header .icon {
-  position: relative;
   display: inline-block;
+  position: relative;
 }
 
 .header .icon svg {
-  width: $iconSize;
-  height: $iconSize;
+  height: $icon-size;
+  width: $icon-size;
 }
 
 .header ol {
   background-color: $dark;
   list-style: none;
-  position: absolute;
-  top: $iconSize;
   margin: 0;
+  position: absolute;
+  top: $icon-size;
 }
 
-.header input[type="text"] {
-  height: $iconSize;
+.header input[type='text'] {
   border-radius: 0;
-  width: 160px;
   flex: 1 1 160px;
+  height: $icon-size;
+  width: 160px;
 }
 
 .hidden {
@@ -139,16 +141,16 @@ svg.active, .active svg {
 }
 
 .row {
+  @include flex-wrap;
   width: 100%;
-  @include flexWrap;
 }
 
 .row:nth-child(even) {
   background-color: $grey;
 }
 
-.dataModifier {
-  @include roundBorder;
+.modifier {
+  @include round-border;
 }
 
 .isin {
@@ -156,13 +158,13 @@ svg.active, .active svg {
 }
 
 .label {
-  flex: 3;
   @include ellipsis;
+  flex: 3;
 }
 
 .category {
-  flex: 1;
   @include ellipsis;
+  flex: 1;
 }
 
 .rating {
@@ -174,16 +176,16 @@ svg.active, .active svg {
 }
 
 .row svg {
-  width: 25px;
   height: 25px;
+  width: 25px;
 }
 
 .old svg {
-  color: #f0ad4e;
+  color: $warning;
 }
 
 @media screen and (min-width: 1024px) {
-  .header input[type="text"] {
+  .header input[type='text'] {
     flex: 5;
   }
 
@@ -214,59 +216,59 @@ svg.active, .active svg {
   }
 
   .row svg {
-    width: 30px;
     height: 30px;
+    width: 30px;
   }
 
   .performance {
-    @include roundLabel;
+    @include round-label;
     order: 4;
   }
 
   .category {
-    @include roundLabel;
+    @include round-label;
     order: 1;
   }
 
   .isin {
-    @include roundLabel;
+    @include round-label;
     order: 3;
   }
 
   .rating {
-    @include roundLabel;
+    @include round-label;
     order: 2;
   }
 
   .isin::before {
-    content: "ISIN | ";
+    content: 'ISIN | ';
   }
 
   .rating::before {
-    content: "Note | ";
+    content: 'Note | ';
   }
 
   .p1m::before {
-    content: "1m | ";
+    content: '1m | ';
   }
 
   .p3m::before {
-    content: "3m | ";
+    content: '3m | ';
   }
 
   .p6m::before {
-    content: "6m | ";
+    content: '6m | ';
   }
 
   .p1y::before {
-    content: "1y | ";
+    content: '1y | ';
   }
 
   .pvol::before {
-    content: "Vol. | ";
+    content: 'Vol. | ';
   }
 
   .pscore::before {
-    content: "Score | ";
+    content: 'Score | ';
   }
 }
