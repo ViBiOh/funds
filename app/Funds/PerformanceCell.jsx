@@ -28,10 +28,10 @@ PerformanceCell.propTypes = {
   ]),
 };
 
-MorningStarRow.defaultProps = {
+PerformanceCell.defaultProps = {
   value: '',
 };
 
-MorningStarRow.displayName = 'PerformanceCell';
+PerformanceCell.displayName = 'PerformanceCell';
 
 export default PerformanceCell;
