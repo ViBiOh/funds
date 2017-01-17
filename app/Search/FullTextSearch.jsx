@@ -30,7 +30,7 @@ function replaceAccentedChar(str) {
 }
 
 function buildFullTextRegex(value) {
-  const wildcard = '.*';
+  const wildcard = '[\\s\\S]*';
   const flags = 'gimy';
   if (value.trim() === '') {
     return new RegExp(wildcard, flags);
