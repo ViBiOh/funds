@@ -1,1 +1,123 @@
+$clear: #f8f8f8;
+$warning: #f0ad4e;
 
+@mixin small-padding {
+  padding: 5px;
+}
+
+@mixin round-border {
+  border: 1px solid;
+  border-radius: 5px;
+  margin: 2px;
+  width: auto;
+}
+
+@mixin round-label {
+  @include round-border;
+  flex: none;
+  max-width: 100%;
+}
+
+@mixin ellipsis {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row,
+.isin,
+.label,
+.category,
+.rating {
+  @include small-padding;
+}
+
+.row {
+  @include flex-wrap;
+  width: 100%;
+}
+
+.row:nth-child(even) {
+  background-color: $grey;
+}
+
+.row svg {
+  height: 25px;
+  width: 25px;
+}
+
+.old svg {
+  color: $warning;
+}
+
+.isin {
+  width: 140px;
+}
+
+.label {
+  @include ellipsis;
+  flex: 3;
+}
+
+.category {
+  @include ellipsis;
+  flex: 1;
+}
+
+.rating {
+  width: 40px;
+}
+
+.icon svg {
+  height: 20px;
+  width: 20px;
+}
+
+.icon button {
+  color: $clear;
+}
+
+@media screen and (max-width: 1023px) {
+  .row:first-child {
+    display: none;
+  }
+
+  .row svg {
+    height: 30px;
+    width: 30px;
+  }
+
+  .row .icon {
+    margin: 2px;
+    order: 5;
+  }
+
+  .label {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .category {
+    @include round-label;
+    order: 1;
+  }
+
+  .isin {
+    @include round-label;
+    order: 3;
+  }
+
+  .isin::before {
+    content: 'ISIN | ';
+  }
+
+  .rating {
+    @include round-label;
+    order: 2;
+  }
+
+  .rating::before {
+    content: 'Note | ';
+  }
+}
