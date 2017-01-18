@@ -18,6 +18,11 @@ $warning: #f0ad4e;
   max-width: 100%;
 }
 
+@mixin flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 @mixin ellipsis {
   overflow: hidden;
   text-align: left;
