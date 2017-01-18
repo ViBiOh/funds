@@ -125,7 +125,6 @@ export default class Funds extends Component {
     this.reverseOrder = this.reverseOrder.bind(this);
 
     this.filterOrderData = this.filterOrderData.bind(this);
-    this.filterOrderDataDebounce = this.filterOrderDataDebounce.bind(this);
     this.aggregateData = this.aggregateData.bind(this);
     this.updateUrl = this.updateUrl.bind(this);
 
@@ -147,7 +146,7 @@ export default class Funds extends Component {
   onAggregateSizeChange(value) {
     this.setState({
       sum: Object.assign({}, this.state.sum, { size: value.target.value }),
-    }, this.filterOrderDataDebounce);
+    }, this.filterOrderData);
   }
 
   fetchPerformances() {
@@ -156,7 +155,7 @@ export default class Funds extends Component {
         this.setState({
           funds: funds.results.filter(fund => fund.id),
           loaded: true,
-        }, this.filterOrderDataDebounce);
+        }, this.filterOrderData);
 
         return funds;
       });
@@ -168,25 +167,25 @@ export default class Funds extends Component {
 
     this.setState({
       filters: Object.assign(this.state.filters, filter),
-    }, this.filterOrderDataDebounce);
+    }, this.filterOrderData);
   }
 
   aggregateBy(sum) {
     this.setState({
       sum: { key: sum, size: 25 },
-    }, this.filterOrderDataDebounce);
+    }, this.filterOrderData);
   }
 
   orderBy(order) {
     this.setState({
       order: { key: order, descending: true },
-    }, this.filterOrderDataDebounce);
+    }, this.filterOrderData);
   }
 
   reverseOrder() {
     this.setState({
       order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
-    }, this.filterOrderDataDebounce);
+    }, this.filterOrderData);
   }
 
   filterOrderData() {
@@ -217,11 +216,6 @@ export default class Funds extends Component {
       displayed,
       aggregated: this.aggregateData(displayed),
     }, this.updateUrl);
-  }
-
-  filterOrderDataDebounce() {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(this.filterOrderData, 400);
   }
 
   aggregateData(displayed) {

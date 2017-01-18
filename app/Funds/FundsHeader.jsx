@@ -17,6 +17,7 @@ export default class FundsHeader extends Component {
     this.onOrderBy = this.onOrderBy.bind(this);
     this.onAggregateBy = this.onAggregateBy.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
+    this.onTextChangeDebounce = this.onTextChangeDebounce.bind(this);
   }
 
   onOrderBy(...args) {
@@ -31,6 +32,12 @@ export default class FundsHeader extends Component {
 
   onFilterChange(selectedFilter) {
     this.setState({ selectedFilter, toggleDisplayed: '' });
+  }
+
+  onTextChangeDebounce(e) {
+    clearTimeout(this.timeout);
+    (text => (this.timeout = setTimeout(() => this.props.filterBy(this.state.selectedFilter, text),
+      300)))(e.target.value);
   }
 
   get orderDisplayed() {
@@ -97,7 +104,7 @@ export default class FundsHeader extends Component {
         <input
           type="text"
           placeholder={`Fitre sur ${this.props.columns[this.state.selectedFilter].label}`}
-          onChange={e => this.props.filterBy(this.state.selectedFilter, e.target.value)}
+          onChange={this.onTextChangeDebounce}
         />
       </header>
     );
