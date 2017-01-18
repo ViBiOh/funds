@@ -2,6 +2,10 @@ $dark: #3a3a3a;
 $grey: #e1e1e8;
 $clear: #f8f8f8;
 
+@mixin small-padding {
+  padding: 5px;
+}
+
 @mixin flex-wrap {
   display: flex;
   flex-wrap: wrap;
