@@ -1,0 +1,60 @@
+$dark: #3a3a3a;
+$clear: #f8f8f8;
+$icon-size: 50px;
+
+@mixin small-padding {
+  padding: 5px;
+}
+
+.icon {
+  display: inline-block;
+  position: relative;
+}
+
+.icon ol {
+  @include small-padding;
+  background-color: $dark;
+  list-style: none;
+  margin: 0;
+  position: absolute;
+  top: $icon-size;
+}
+
+.icon li button {
+  color: $clear;
+  padding: 15px;
+  width: 100%;
+}
+
+.icon svg {
+  @include small-padding;
+  height: $icon-size;
+  width: $icon-size;
+}
+
+.active svg {
+  background-color: $dark;
+  color: $clear;
+}
+
+.hidden {
+  display: none;
+}
+
+.displayed {
+  display: block;
+}
+
+@media screen and (min-width: 1024px) {
+  ol {
+    left: 0;
+    right: initial;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  ol {
+    left: initial;
+    right: 0;
+  }
+}

@@ -6,17 +6,13 @@ $warning: #f0ad4e;
   padding: 5px;
 }
 
-@mixin round-border {
+@mixin round-label {
   border: 1px solid;
   border-radius: 5px;
-  margin: 2px;
-  width: auto;
-}
-
-@mixin round-label {
-  @include round-border;
   flex: none;
+  margin: 2px;
   max-width: 100%;
+  width: auto;
 }
 
 @mixin flex-wrap {
@@ -75,15 +71,6 @@ $warning: #f0ad4e;
   width: 40px;
 }
 
-.icon svg {
-  height: 20px;
-  width: 20px;
-}
-
-.icon button {
-  color: $clear;
-}
-
 @media screen and (max-width: 1023px) {
   .row:first-child {
     display: none;
@@ -92,11 +79,6 @@ $warning: #f0ad4e;
   .row svg {
     height: 30px;
     width: 30px;
-  }
-
-  .row .icon {
-    margin: 2px;
-    order: 5;
   }
 
   .label {
@@ -125,5 +107,10 @@ $warning: #f0ad4e;
 
   .rating::before {
     content: 'Note | ';
+  }
+
+  .icon {
+    margin: 2px;
+    order: 5;
   }
 }

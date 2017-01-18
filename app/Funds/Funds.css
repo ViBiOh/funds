@@ -1,28 +1,4 @@
 $dark: #3a3a3a;
-$grey: #e1e1e8;
-$clear: #f8f8f8;
-
-@mixin small-padding {
-  padding: 5px;
-}
-
-@mixin flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-@mixin round-border {
-  border: 1px solid;
-  border-radius: 5px;
-  margin: 2px;
-  width: auto;
-}
-
-@mixin round-label {
-  @include round-border;
-  flex: none;
-  max-width: 100%;
-}
 
 article {
   text-align: center;
@@ -39,65 +15,18 @@ svg {
   color: $dark;
 }
 
-svg.active,
-.active svg {
-  background-color: $dark;
-  color: $clear;
-}
-
 .list {
-  @include flex-wrap;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 
-.modifier,
-.performance {
-  @include small-padding;
-}
-
-.hidden {
-  display: none;
-}
-
-.displayed {
-  display: block;
-}
-
 .modifier {
-  @include round-border;
-}
-
-.performance {
-  width: 80px;
-}
-
-@media screen and (max-width: 1023px) {
-  .performance {
-    @include round-label;
-    order: 4;
-  }
-
-  .p1m::before {
-    content: '1m | ';
-  }
-
-  .p3m::before {
-    content: '3m | ';
-  }
-
-  .p6m::before {
-    content: '6m | ';
-  }
-
-  .p1y::before {
-    content: '1y | ';
-  }
-
-  .pvol::before {
-    content: 'Vol. | ';
-  }
-
-  .pscore::before {
-    content: 'Score | ';
-  }
+  border: 1px solid;
+  border-radius: 5px;
+  flex: none;
+  margin: 2px;
+  max-width: 100%;
+  padding: 5px;
+  width: auto;
 }

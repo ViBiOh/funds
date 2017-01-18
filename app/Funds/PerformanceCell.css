@@ -1,0 +1,48 @@
+@mixin small-padding {
+  padding: 5px;
+}
+
+@mixin round-label {
+  border: 1px solid;
+  border-radius: 5px;
+  flex: none;
+  margin: 2px;
+  max-width: 100%;
+  width: auto;
+}
+
+.performance {
+  @include small-padding;
+  width: 80px;
+}
+
+@media screen and (max-width: 1023px) {
+  .performance {
+    @include round-label;
+    order: 4;
+  }
+
+  .p1m::before {
+    content: '1m | ';
+  }
+
+  .p3m::before {
+    content: '3m | ';
+  }
+
+  .p6m::before {
+    content: '6m | ';
+  }
+
+  .p1y::before {
+    content: '1y | ';
+  }
+
+  .pvol::before {
+    content: 'Vol. | ';
+  }
+
+  .pscore::before {
+    content: 'Score | ';
+  }
+}
