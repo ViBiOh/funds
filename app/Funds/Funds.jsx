@@ -7,7 +7,7 @@ import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import Throbber from '../Throbber/Throbber';
 import Graph from './Graph';
-import FundsService from './FundsService';
+import FundsService from '../Service/FundsService';
 import FundsHeader from './FundsHeader';
 import FundRow from './FundRow';
 import style from './Funds.css';
@@ -295,12 +295,12 @@ export default class Funds extends Component {
       .filter(filter => this.state.filters[filter])
       .map(filter => (
         <span key={filter} className={style.modifier}>
-          <span className={style.icon}>
+          <span>
             <FaFilter />
           </span>
           <span><em> {COLUMNS[filter].label}</em> &#x2243; </span>
           {this.state.filters[filter]}
-          <button onClick={() => this.filterBy(filter, '')} className={style.icon}>
+          <button onClick={() => this.filterBy(filter, '')}>
             <FaClose />
           </button>
         </span>
@@ -310,11 +310,11 @@ export default class Funds extends Component {
   renderOrder() {
     return this.state.order.key && (
       <span className={style.modifier}>
-        <button onClick={this.reverseOrder} className={style.icon}>
+        <button onClick={this.reverseOrder}>
           {this.state.order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
         </button>
         &nbsp;{COLUMNS[this.state.order.key].label}
-        <button onClick={() => this.orderBy('')} className={style.icon}>
+        <button onClick={() => this.orderBy('')}>
           <FaClose />
         </button>
       </span>
@@ -373,7 +373,7 @@ export default class Funds extends Component {
             ))
           }
         </select> | {label}
-        <button onClick={() => this.aggregateBy('')} className={style.icon}>
+        <button onClick={() => this.aggregateBy('')}>
           <FaClose />
         </button>
       </span>,

@@ -1,8 +1,8 @@
 import React from 'react';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
-import FundsService from './FundsService';
+import FundsService from '../Service/FundsService';
 import PerformanceCell from './PerformanceCell';
-import style from './Funds.css';
+import style from './FundRow.css';
 
 function isUpdateTimeGreaterThanSixHours(updateTime) {
   return (performance.now() - Date.parse(updateTime)) / 3600000 > 6;

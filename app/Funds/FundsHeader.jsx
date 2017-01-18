@@ -3,7 +3,7 @@ import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import FaFilter from 'react-icons/lib/fa/filter';
 import HeaderIcon from './HeaderIcon';
-import style from './Funds.css';
+import style from './FundsHeader.css';
 
 export default class FundsHeader extends Component {
   constructor(props) {

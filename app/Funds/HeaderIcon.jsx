@@ -1,5 +1,5 @@
 import React from 'react';
-import style from './Funds.css';
+import style from './HeaderIcon.css';
 
 const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
   const list = Object.keys(columns)
