@@ -1,4 +1,5 @@
 $clear: #f8f8f8;
+$grey: #e1e1e8;
 $warning: #f0ad4e;
 
 @mixin small-padding {
