@@ -1,17 +1,5 @@
-$dark: #3a3a3a;
 $grey: #e1e1e8;
 $clear: #f8f8f8;
-
-$icon-size: 50px;
-
-@mixin dark-box {
-  background-color: $dark;
-  color: $clear;
-}
-
-@mixin small-padding {
-  padding: 5px;
-}
 
 @mixin flex-wrap {
   display: flex;
@@ -29,21 +17,6 @@ $icon-size: 50px;
   @include round-border;
   flex: none;
   max-width: 100%;
-}
-
-.header {
-  @include flex-wrap;
-  text-align: center;
-  width: 100%;
-}
-
-.header h1 {
-  @include dark-box;
-  @include small-padding;
-  display: inline-block;
-  flex: 1 1 auto;
-  height: $icon-size;
-  margin: 0;
 }
 
 article {
@@ -72,42 +45,9 @@ svg.active,
   width: 100%;
 }
 
-.header input[type='text'],
-.header ol,
-.header .icon svg,
 .modifier,
 .performance {
   @include small-padding;
-}
-
-.header li button {
-  padding: 15px;
-  width: 100%;
-}
-
-.header .icon {
-  display: inline-block;
-  position: relative;
-}
-
-.header .icon svg {
-  height: $icon-size;
-  width: $icon-size;
-}
-
-.header ol {
-  background-color: $dark;
-  list-style: none;
-  margin: 0;
-  position: absolute;
-  top: $icon-size;
-}
-
-.header input[type='text'] {
-  border-radius: 0;
-  flex: 1 1 160px;
-  height: $icon-size;
-  width: 160px;
 }
 
 .hidden {
@@ -126,23 +66,7 @@ svg.active,
   width: 80px;
 }
 
-@media screen and (min-width: 1024px) {
-  .header input[type='text'] {
-    flex: 5;
-  }
-
-  .header ol {
-    left: 0;
-    right: initial;
-  }
-}
-
 @media screen and (max-width: 1023px) {
-  .header ol {
-    left: initial;
-    right: 0;
-  }
-
   .performance {
     @include round-label;
     order: 4;
