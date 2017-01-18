@@ -39,7 +39,7 @@ const FundRow = ({ fund, filterBy }) => (
   </span>
 );
 
-FundRow.displayName = 'MorningStarRow';
+FundRow.displayName = 'FundRow';
 
 const STRING_OR_NUMBER = React.PropTypes.oneOfType([
   React.PropTypes.string,
