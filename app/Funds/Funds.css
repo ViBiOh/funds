@@ -1,7 +1,6 @@
 $dark: #3a3a3a;
 $grey: #e1e1e8;
 $clear: #f8f8f8;
-$warning: #f0ad4e;
 
 $icon-size: 50px;
 
@@ -24,13 +23,6 @@ $icon-size: 50px;
   border-radius: 5px;
   margin: 2px;
   width: auto;
-}
-
-@mixin ellipsis {
-  overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 @mixin round-label {
@@ -80,24 +72,10 @@ svg.active,
   width: 100%;
 }
 
-.icon svg {
-  height: 20px;
-  width: 20px;
-}
-
-.icon button {
-  color: $clear;
-}
-
 .header input[type='text'],
 .header ol,
 .header .icon svg,
-.row,
-.label,
-.isin,
 .modifier,
-.rating,
-.category,
 .performance {
   @include small-padding;
 }
@@ -140,48 +118,12 @@ svg.active,
   display: block;
 }
 
-.row {
-  @include flex-wrap;
-  width: 100%;
-}
-
-.row:nth-child(even) {
-  background-color: $grey;
-}
-
 .modifier {
   @include round-border;
 }
 
-.isin {
-  width: 140px;
-}
-
-.label {
-  @include ellipsis;
-  flex: 3;
-}
-
-.category {
-  @include ellipsis;
-  flex: 1;
-}
-
-.rating {
-  width: 40px;
-}
-
 .performance {
   width: 80px;
-}
-
-.row svg {
-  height: 25px;
-  width: 25px;
-}
-
-.old svg {
-  color: $warning;
 }
 
 @media screen and (min-width: 1024px) {
@@ -201,51 +143,9 @@ svg.active,
     right: 0;
   }
 
-  .row:first-child {
-    display: none;
-  }
-
-  .label {
-    flex-basis: 100%;
-    width: 100%;
-  }
-
-  .row .icon {
-    margin: 2px;
-    order: 5;
-  }
-
-  .row svg {
-    height: 30px;
-    width: 30px;
-  }
-
   .performance {
     @include round-label;
     order: 4;
-  }
-
-  .category {
-    @include round-label;
-    order: 1;
-  }
-
-  .isin {
-    @include round-label;
-    order: 3;
-  }
-
-  .rating {
-    @include round-label;
-    order: 2;
-  }
-
-  .isin::before {
-    content: 'ISIN | ';
-  }
-
-  .rating::before {
-    content: 'Note | ';
   }
 
   .p1m::before {
