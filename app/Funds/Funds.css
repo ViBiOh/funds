@@ -22,9 +22,12 @@ svg {
 }
 
 .modifier {
+  align-items: center;
   border: 1px solid;
   border-radius: 5px;
+  display: inline-flex;
   flex: none;
+  flex-wrap: nowrap;
   margin: 2px;
   max-width: 100%;
   padding: 5px;
