@@ -20,7 +20,10 @@ services:
 
   site:
     image: vibioh/funds-front
-    command: -spa -domain 'funds-api.vibioh.fr fonts.gstatic.com'
+    command:
+    - -spa
+    - -csp
+    - default-src 'self' funds-api.vibioh.fr fonts.gstatic.com
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
