@@ -8,7 +8,7 @@
     "copy:web": "cp ./web/* ./dist/",
     "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:web",
     "mustache": "./mustache.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
-    "eslint": "./node_modules/.bin/eslint --ext .js --ext .jsx src/",
+    "eslint": "./node_modules/.bin/eslint --ext .js --ext .jsx app/",
     "sassLint": "./node_modules/.bin/sass-lint \"app/**/*.css\" -v -s scss",
     "lint": "npm run eslint && npm run sassLint",
     "start": "npm run copy && ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
