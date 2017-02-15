@@ -64,7 +64,7 @@
     "yargs": "latest"
   },
   "dependencies": {
-    "chart.js": "latest",
+    "chart.js": "2.4.0",
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
