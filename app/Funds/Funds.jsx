@@ -97,7 +97,7 @@ export default class Funds extends Component {
       params[key] = typeof value === 'undefined' ? true : decodeURIComponent(value);
     });
 
-    const filters = Object.assign({}, params);
+    const filters = { ...params };
     RESERVED_PARAM.forEach(param => delete filters[param]);
 
     this.state = {
@@ -145,7 +145,7 @@ export default class Funds extends Component {
 
   onAggregateSizeChange(value) {
     this.setState({
-      sum: Object.assign({}, this.state.sum, { size: value.target.value }),
+      sum: { ...this.state.sum, size: value.target.value },
     }, this.filterOrderData);
   }
 
@@ -166,7 +166,7 @@ export default class Funds extends Component {
     filter[filterName] = value;
 
     this.setState({
-      filters: Object.assign(this.state.filters, filter),
+      filters: { ...this.state.filters, filter },
     }, this.filterOrderData);
   }
 
@@ -184,7 +184,7 @@ export default class Funds extends Component {
 
   reverseOrder() {
     this.setState({
-      order: Object.assign(this.state.order, { descending: !this.state.order.descending }),
+      order: { ...this.state.order, descending: !this.state.order.descending },
     }, this.filterOrderData);
   }
 
