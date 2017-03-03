@@ -166,7 +166,7 @@ export default class Funds extends Component {
     filter[filterName] = value;
 
     this.setState({
-      filters: { ...this.state.filters, filter },
+      filters: { ...this.state.filters, ...filter },
     }, this.filterOrderData);
   }
 
