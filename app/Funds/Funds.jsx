@@ -162,11 +162,11 @@ export default class Funds extends Component {
   }
 
   filterBy(filterName, value) {
-    const filter = {};
-    filter[filterName] = value;
-
     this.setState({
-      filters: { ...this.state.filters, ...filter },
+      filters: {
+        ...this.state.filters,
+        [filterName]: value,
+      },
     }, this.filterOrderData);
   }
 

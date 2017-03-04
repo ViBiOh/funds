@@ -1,28 +1,31 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-env mocha */
 import { expect } from 'chai';
-import ReactDOM from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
-import Throbber from '../../app/Throbber/Throbber';
+import React from 'react';
+import { createRenderer } from 'react-addons-test-utils';
+import Throbber from './Throbber';
 
 describe('Throbber', () => {
-  it('should render empty', () => {
-    const component = TestUtils.renderIntoDocument(new Throbber({}));
+  const renderer = createRenderer();
 
-    expect(!!component).to.be.true;
+  it('should render into a div', () => {
+    renderer.render(<Throbber />);
+    const wrapper = renderer.getRenderOutput();
+
+    expect(wrapper.type).to.equal('div');
   });
 
   it('should have no label by default', () => {
-    const component = TestUtils.renderIntoDocument(new Throbber({}));
-    const result = ReactDOM.findDOMNode(component).getElementsByTagName('span').length === 0;
+    renderer.render(<Throbber />);
+    const wrapper = renderer.getRenderOutput();
 
-    expect(result).to.be.true;
+    expect(wrapper.props.children.type).to.not.equal('span');
   });
 
-  it('should have a label when given', () => {
-    const component = TestUtils.renderIntoDocument(new Throbber({ label: 'Test Mocha' }));
-    const result = ReactDOM.findDOMNode(component).getElementsByTagName('span')[0].innerHTML;
+  it('should have label when given', () => {
+    renderer.render(<Throbber label="test" />);
+    const wrapper = renderer.getRenderOutput();
 
-    expect(result).to.equal('Test Mocha');
+    expect(wrapper.props.children[0].type).to.equal('span');
   });
 });
