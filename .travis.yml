@@ -24,6 +24,3 @@ deploy:
   script: curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://docker-api.vibioh.fr/containers/funds/ --data-binary @docker-compose.yml
   on:
     branch: master
-after_deploy:
-  - |
-    curl -H "X-Auth-Email: ${CLOUDFLARE_MAIL}" -H "X-Auth-Key: ${CLOUDFLARE_AUTH_KEY}" -H "Content-Type: application/json" -X DELETE https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE}/purge_cache -d '{"purge_everything":true}'
