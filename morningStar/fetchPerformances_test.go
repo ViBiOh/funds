@@ -81,8 +81,18 @@ func TestExtractPerformance(t *testing.T) {
 	}{
 		{
 			regexp.MustCompile(`ISIN.:(\S+)`),
-			[]byte(`ISIN :3.14`),
+			[]byte(`ISIN :3.14%`),
 			3.14,
+		},
+		{
+			regexp.MustCompile(`ISIN.:(\S+)`),
+			[]byte(`ISIN :-.07%`),
+			-0.07,
+		},
+		{
+			regexp.MustCompile(`ISIN.:(\S+)`),
+			[]byte(`ISIN :notValid`),
+			0.0,
 		},
 	}
 
