@@ -45,6 +45,11 @@ $icon-size: 50px;
   display: block;
 }
 
+ol {
+  max-height: 80vh;
+  overflow: scroll;
+}
+
 @media screen and (min-width: 1024px) {
   ol {
     left: 0;
