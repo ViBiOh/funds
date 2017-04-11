@@ -7,13 +7,15 @@ import (
 	"net/http"
 )
 
+var httpGet = http.Get
+
 func readBody(body io.ReadCloser) ([]byte, error) {
 	defer body.Close()
 	return ioutil.ReadAll(body)
 }
 
 func getBody(url string) ([]byte, error) {
-	response, err := http.Get(url)
+	response, err := httpGet(url)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
 	}
