@@ -6,6 +6,22 @@ import (
 	"testing"
 )
 
+type FakeReaderCloser struct {
+	data []byte
+	err  error
+}
+
+func (o FakeReaderCloser) Read([]byte) (int, error) {
+	if o.err != nil {
+		return 0, o.err
+	}
+	return 0, nil
+}
+
+func (FakeReaderCloser) Close() error {
+	return nil
+}
+
 func TestGetBody(t *testing.T) {
 	var tests = []struct {
 		url     string
@@ -20,6 +36,25 @@ func TestGetBody(t *testing.T) {
 			},
 			make([]byte, 0),
 			`Error while retrieving data from test: Error from test`,
+		},
+		{
+			`test`,
+			func(url string) (*http.Response, error) {
+				return &http.Response{StatusCode: 401}, nil
+			},
+			make([]byte, 0),
+			`Got error 401 while getting test`,
+		},
+		{
+			`test`,
+			func(url string) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       FakeReaderCloser{nil, fmt.Errorf(`Error from test`)},
+				}, nil
+			},
+			make([]byte, 0),
+			`Error while reading body of test: Error from test`,
 		},
 	}
 
