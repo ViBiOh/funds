@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FundsService from '../Service/FundsService';
 import PerformanceCell from './PerformanceCell';
@@ -41,13 +42,13 @@ const FundRow = ({ fund, filterBy }) => (
 
 FundRow.displayName = 'FundRow';
 
-const STRING_OR_NUMBER = React.PropTypes.oneOfType([
-  React.PropTypes.string,
-  React.PropTypes.number,
+const STRING_OR_NUMBER = PropTypes.oneOfType([
+  PropTypes.string,
+  PropTypes.number,
 ]).isRequired;
 
 FundRow.propTypes = {
-  fund: React.PropTypes.shape({
+  fund: PropTypes.shape({
     isin: STRING_OR_NUMBER,
     label: STRING_OR_NUMBER,
     category: STRING_OR_NUMBER,
@@ -59,7 +60,7 @@ FundRow.propTypes = {
     v3y: STRING_OR_NUMBER,
     score: STRING_OR_NUMBER,
   }).isRequired,
-  filterBy: React.PropTypes.func,
+  filterBy: PropTypes.func,
 };
 
 FundRow.defaultProps = {

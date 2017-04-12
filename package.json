@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "chart.js": "2.4.0",
+    "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",

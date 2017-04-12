@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Chart from 'chart.js';
 
 export default class Graph extends Component {
@@ -44,7 +45,7 @@ export default class Graph extends Component {
 }
 
 Graph.propTypes = {
-  className: React.PropTypes.string,
+  className: PropTypes.string,
 };
 
 Graph.defaultProps = {

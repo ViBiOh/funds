@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import style from './PerformanceCell.css';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
@@ -21,10 +22,10 @@ const PerformanceCell = ({ type, value }) => (
 );
 
 PerformanceCell.propTypes = {
-  type: React.PropTypes.string.isRequired,
-  value: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number,
+  type: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
   ]),
 };
 

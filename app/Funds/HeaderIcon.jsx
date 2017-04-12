@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import style from './HeaderIcon.css';
 
 const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
@@ -25,11 +26,11 @@ const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
 HeaderIcon.displayName = 'HeaderIcon';
 
 HeaderIcon.propTypes = {
-  columns: React.PropTypes.shape({}).isRequired,
-  filter: React.PropTypes.string.isRequired,
-  onClick: React.PropTypes.func.isRequired,
-  icon: React.PropTypes.node.isRequired,
-  displayed: React.PropTypes.bool.isRequired,
+  columns: PropTypes.shape({}).isRequired,
+  filter: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  icon: PropTypes.node.isRequired,
+  displayed: PropTypes.bool.isRequired,
 };
 
 export default HeaderIcon;

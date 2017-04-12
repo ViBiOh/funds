@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import FaFilter from 'react-icons/lib/fa/filter';
@@ -112,8 +113,8 @@ export default class FundsHeader extends Component {
 }
 
 FundsHeader.propTypes = {
-  columns: React.PropTypes.shape({}).isRequired,
-  orderBy: React.PropTypes.func.isRequired,
-  aggregateBy: React.PropTypes.func.isRequired,
-  filterBy: React.PropTypes.func.isRequired,
+  columns: PropTypes.shape({}).isRequired,
+  orderBy: PropTypes.func.isRequired,
+  aggregateBy: PropTypes.func.isRequired,
+  filterBy: PropTypes.func.isRequired,
 };
