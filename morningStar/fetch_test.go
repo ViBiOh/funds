@@ -3,19 +3,20 @@ package morningStar
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 )
 
 type FakeReaderCloser struct {
-	data []byte
-	err  error
+	reader *strings.Reader
+	err    error
 }
 
-func (o FakeReaderCloser) Read([]byte) (int, error) {
+func (o FakeReaderCloser) Read(p []byte) (int, error) {
 	if o.err != nil {
 		return 0, o.err
 	}
-	return 0, nil
+	return o.reader.Read(p)
 }
 
 func (FakeReaderCloser) Close() error {
@@ -56,13 +57,24 @@ func TestGetBody(t *testing.T) {
 			make([]byte, 0),
 			`Error while reading body of test: Error from test`,
 		},
+		{
+			`test`,
+			func(url string) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: 200,
+					Body:       FakeReaderCloser{strings.NewReader(`Body retrieved from fetch`), nil},
+				}, nil
+			},
+			[]byte(`Body retrieved from fetch`),
+			``,
+		},
 	}
 
 	for _, test := range tests {
 		httpGet = test.httpGet
 
 		body, err := getBody(test.url)
-		if err.Error() != test.err || string(body) != string(test.want) {
+		if (err == nil && test.err == `` || err != nil && err.Error() != test.err) && string(body) != string(test.want) {
 			t.Errorf("getBody(%v) = (%v, %v), want (%v, %v)", test.url, body, err, test.want, test.err)
 		}
 	}
