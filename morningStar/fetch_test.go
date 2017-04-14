@@ -1,14 +1,15 @@
 package morningStar
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
-	"strings"
 	"testing"
 )
 
 type FakeReaderCloser struct {
-	reader *strings.Reader
+	reader io.Reader
 	err    error
 }
 
@@ -23,59 +24,55 @@ func (FakeReaderCloser) Close() error {
 	return nil
 }
 
+func fakeGet(err error, statusCode int, body []byte, readerErr error) func(string) (*http.Response, error) {
+	return func(string) (*http.Response, error) {
+		return &http.Response{
+			StatusCode: statusCode,
+			Body:       FakeReaderCloser{bytes.NewReader(body), readerErr},
+		}, err
+	}
+}
+
 func TestGetBody(t *testing.T) {
 	var tests = []struct {
-		url     string
-		httpGet func(string) (*http.Response, error)
-		want    []byte
-		err     string
+		url        string
+		err        error
+		statusCode int
+		body       []byte
+		readerErr  error
+		want       []byte
+		wantErr    string
 	}{
 		{
-			`test`,
-			func(url string) (*http.Response, error) {
-				return nil, fmt.Errorf(`Error from test`)
-			},
-			make([]byte, 0),
-			`Error while retrieving data from test: Error from test`,
+			url:     `test`,
+			err:     fmt.Errorf(`Error from get`),
+			wantErr: `Error while retrieving data from test: Error from get`,
 		},
 		{
-			`test`,
-			func(url string) (*http.Response, error) {
-				return &http.Response{StatusCode: 401}, nil
-			},
-			make([]byte, 0),
-			`Got error 401 while getting test`,
+			url:        `test`,
+			statusCode: 401,
+			wantErr:    `Got error 401 while getting test`,
 		},
 		{
-			`test`,
-			func(url string) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 200,
-					Body:       FakeReaderCloser{nil, fmt.Errorf(`Error from test`)},
-				}, nil
-			},
-			make([]byte, 0),
-			`Error while reading body of test: Error from test`,
+			url:        `test`,
+			statusCode: 200,
+			readerErr:  fmt.Errorf(`Error from reader`),
+			wantErr:    `Error while reading body of test: Error from reader`,
 		},
 		{
-			`test`,
-			func(url string) (*http.Response, error) {
-				return &http.Response{
-					StatusCode: 200,
-					Body:       FakeReaderCloser{strings.NewReader(`Body retrieved from fetch`), nil},
-				}, nil
-			},
-			[]byte(`Body retrieved from fetch`),
-			``,
+			url:        `test`,
+			statusCode: 200,
+			body:       []byte(`Body retrieved from fetch`),
+			want:       []byte(`Body retrieved from fetch`),
 		},
 	}
 
 	for _, test := range tests {
-		httpGet = test.httpGet
+		httpGet = fakeGet(test.err, test.statusCode, test.body, test.readerErr)
 
 		body, err := getBody(test.url)
-		if (err == nil && test.err == `` || err != nil && err.Error() != test.err) && string(body) != string(test.want) {
-			t.Errorf("getBody(%v) = (%v, %v), want (%v, %v)", test.url, body, err, test.want, test.err)
+		if (err == nil && test.wantErr != ``) || (err != nil && err.Error() != test.wantErr) || string(body) != string(test.want) {
+			t.Errorf("getBody(%v) = (%v, %v), want (%v, %v)", test.url, body, err, test.want, test.wantErr)
 		}
 	}
 }
