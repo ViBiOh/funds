@@ -10,10 +10,7 @@ func TestCleanID(t *testing.T) {
 		morningStarID []byte
 		want          string
 	}{
-		{
-			nil,
-			``,
-		},
+		{},
 		{
 			[]byte(`aZeRtY`),
 			`azerty`,
@@ -34,12 +31,7 @@ func TestExtractLabel(t *testing.T) {
 		defaultValue []byte
 		want         string
 	}{
-		{
-			nil,
-			nil,
-			nil,
-			``,
-		},
+		{},
 		{
 			regexp.MustCompile(`id:(\S+)`),
 			[]byte(`id:12345`),
