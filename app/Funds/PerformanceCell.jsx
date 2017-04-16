@@ -15,18 +15,14 @@ function getPerformanceStyle(performance) {
 }
 
 const PerformanceCell = ({ type, value }) => (
-  <span
-    style={getPerformanceStyle(value)}
-    className={`${style.performance} ${style[type]}`}
-  >{value}</span>
+  <span style={getPerformanceStyle(value)} className={`${style.performance} ${style[type]}`}>
+    {value}
+  </span>
 );
 
 PerformanceCell.propTypes = {
   type: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 PerformanceCell.defaultProps = {

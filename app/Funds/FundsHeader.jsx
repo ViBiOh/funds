@@ -19,6 +19,7 @@ export default class FundsHeader extends Component {
     this.onAggregateBy = this.onAggregateBy.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
     this.onTextChangeDebounce = this.onTextChangeDebounce.bind(this);
+    this.toggleDisplay = this.toggleDisplay.bind(this);
   }
 
   onOrderBy(...args) {
@@ -37,32 +38,26 @@ export default class FundsHeader extends Component {
 
   onTextChangeDebounce(e) {
     clearTimeout(this.timeout);
-    (text => (this.timeout = setTimeout(() => this.props.filterBy(this.state.selectedFilter, text),
-      300)))(e.target.value);
+    ((text) => {
+      this.timeout = setTimeout(() => this.props.filterBy(this.state.selectedFilter, text), 300);
+      return undefined;
+    })(e.target.value);
+  }
+
+  toggleDisplay(icon, display) {
+    this.setState({ toggleDisplayed: display ? icon : '' });
   }
 
   get orderDisplayed() {
     return this.state.toggleDisplayed === 'order';
   }
 
-  set orderDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'order' : '' });
-  }
-
   get sigmaDisplayed() {
     return this.state.toggleDisplayed === 'sigma';
   }
 
-  set sigmaDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'sigma' : '' });
-  }
-
   get filterDisplayed() {
     return this.state.toggleDisplayed === 'filter';
-  }
-
-  set filterDisplayed(display) {
-    this.setState({ toggleDisplayed: display ? 'filter' : '' });
   }
 
   render() {
@@ -74,9 +69,7 @@ export default class FundsHeader extends Component {
           filter="sortable"
           onClick={this.onOrderBy}
           icon={
-            <FaSortAmountDesc
-              onClick={() => (this.orderDisplayed = !this.orderDisplayed)}
-            />
+            <FaSortAmountDesc onClick={() => this.toggleDisplay('order', !this.orderDisplayed)} />
           }
           displayed={this.orderDisplayed}
         />
@@ -84,22 +77,14 @@ export default class FundsHeader extends Component {
           columns={this.props.columns}
           filter="summable"
           onClick={this.onAggregateBy}
-          icon={
-            <FaPieChart
-              onClick={() => (this.sigmaDisplayed = !this.sigmaDisplayed)}
-            />
-          }
+          icon={<FaPieChart onClick={() => this.toggleDisplay('sigma', !this.sigmaDisplayed)} />}
           displayed={this.sigmaDisplayed}
         />
         <HeaderIcon
           columns={this.props.columns}
           filter="filterable"
           onClick={this.onFilterChange}
-          icon={
-            <FaFilter
-              onClick={() => (this.filterDisplayed = !this.filterDisplayed)}
-            />
-          }
+          icon={<FaFilter onClick={() => this.toggleDisplay('filter', !this.filterDisplayed)} />}
           displayed={this.filterDisplayed}
         />
         <input

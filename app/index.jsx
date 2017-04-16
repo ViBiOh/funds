@@ -3,7 +3,4 @@ import ReactDOM from 'react-dom';
 
 import Funds from './Funds/Funds';
 
-ReactDOM.render(
-  <Funds />,
-  document.getElementById('root'),
-);
+ReactDOM.render(<Funds />, document.getElementById('root'));

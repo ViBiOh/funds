@@ -76,8 +76,17 @@ const COLUMNS = {
 };
 
 const CHART_COLORS = [
-  '#1f77b4', '#e377c2', '#ff7f0e', '#2ca02c', '#bcbd22', '#d62728',
-  '#17becf', '#9467bd', '#7f7f7f', '#8c564b', '#3366cc',
+  '#1f77b4',
+  '#e377c2',
+  '#ff7f0e',
+  '#2ca02c',
+  '#bcbd22',
+  '#d62728',
+  '#17becf',
+  '#9467bd',
+  '#7f7f7f',
+  '#8c564b',
+  '#3366cc',
 ];
 
 const AGGREGATE_SIZES = [25, 50, 100];
@@ -144,48 +153,65 @@ export default class Funds extends Component {
   }
 
   onAggregateSizeChange(value) {
-    this.setState({
-      sum: { ...this.state.sum, size: value.target.value },
-    }, this.filterOrderData);
+    this.setState(
+      {
+        sum: { ...this.state.sum, size: value.target.value },
+      },
+      this.filterOrderData,
+    );
   }
 
   fetchPerformances() {
-    return FundsService.getFunds()
-      .then((funds) => {
-        this.setState({
+    return FundsService.getFunds().then((funds) => {
+      this.setState(
+        {
           funds: funds.results.filter(fund => fund.id),
           loaded: true,
-        }, this.filterOrderData);
+        },
+        this.filterOrderData,
+      );
 
-        return funds;
-      });
+      return funds;
+    });
   }
 
   filterBy(filterName, value) {
-    this.setState({
-      filters: {
-        ...this.state.filters,
-        [filterName]: value,
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          [filterName]: value,
+        },
       },
-    }, this.filterOrderData);
+      this.filterOrderData,
+    );
   }
 
   aggregateBy(sum) {
-    this.setState({
-      sum: { key: sum, size: 25 },
-    }, this.filterOrderData);
+    this.setState(
+      {
+        sum: { key: sum, size: 25 },
+      },
+      this.filterOrderData,
+    );
   }
 
   orderBy(order) {
-    this.setState({
-      order: { key: order, descending: true },
-    }, this.filterOrderData);
+    this.setState(
+      {
+        order: { key: order, descending: true },
+      },
+      this.filterOrderData,
+    );
   }
 
   reverseOrder() {
-    this.setState({
-      order: { ...this.state.order, descending: !this.state.order.descending },
-    }, this.filterOrderData);
+    this.setState(
+      {
+        order: { ...this.state.order, descending: !this.state.order.descending },
+      },
+      this.filterOrderData,
+    );
   }
 
   filterOrderData() {
@@ -212,10 +238,13 @@ export default class Funds extends Component {
       });
     }
 
-    this.setState({
-      displayed,
-      aggregated: this.aggregateData(displayed),
-    }, this.updateUrl);
+    this.setState(
+      {
+        displayed,
+        aggregated: this.aggregateData(displayed),
+      },
+      this.updateUrl,
+    );
   }
 
   aggregateData(displayed) {
@@ -292,7 +321,7 @@ export default class Funds extends Component {
           <span>
             <FaFilter />
           </span>
-          <span><em> {COLUMNS[filter].label}</em> &#x2243; </span>
+          <span><em> {COLUMNS[filter].label}</em> ≃ </span>
           {this.state.filters[filter]}
           <button onClick={() => this.filterBy(filter, '')}>
             <FaClose />
@@ -302,7 +331,8 @@ export default class Funds extends Component {
   }
 
   renderOrder() {
-    return this.state.order.key && (
+    return (
+      this.state.order.key &&
       <span className={style.modifier}>
         <button onClick={this.reverseOrder}>
           {this.state.order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
@@ -326,25 +356,31 @@ export default class Funds extends Component {
     const options = {
       legend: false,
       scales: {
-        xAxes: [{
-          display: false,
-        }],
-        yAxes: [{
-          display: false,
-          ticks: {
-            beginAtZero: true,
+        xAxes: [
+          {
+            display: false,
           },
-        }],
+        ],
+        yAxes: [
+          {
+            display: false,
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
       },
     };
 
     const data = {
       labels: [],
-      datasets: [{
-        label: 'Count',
-        data: [],
-        backgroundColor: [],
-      }],
+      datasets: [
+        {
+          label: 'Count',
+          data: [],
+          backgroundColor: [],
+        },
+      ],
     };
 
     let i = 0;
@@ -361,23 +397,13 @@ export default class Funds extends Component {
         <FaPieChart />
         &nbsp;
         <select value={this.state.sum.size} onChange={this.onAggregateSizeChange}>
-          {
-            AGGREGATE_SIZES.map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))
-          }
+          {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
         </select> | {label}
         <button onClick={() => this.aggregateBy('')}>
           <FaClose />
         </button>
       </span>,
-      <Graph
-        key="graph"
-        type="bar"
-        data={data}
-        options={options}
-        className={style.list}
-      />,
+      <Graph key="graph" type="bar" data={data} options={options} className={style.list} />,
     ];
   }
 
@@ -437,9 +463,7 @@ export default class Funds extends Component {
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
         />
-        {
-          this.state.error && this.renderError()
-        }
+        {this.state.error && this.renderError()}
         {this.renderContent()}
       </span>
     );

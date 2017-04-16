@@ -3,7 +3,8 @@ const CLEAN_WORDS_MIN_LENTH = 2;
 const CLEAN_SEARCH_PERCENTAGE = 0.5;
 
 function replaceAccentedChar(str) {
-  return String(str).replace(/[\u00c0-\u00c5]/gm, 'A')
+  return String(str)
+    .replace(/[\u00c0-\u00c5]/gm, 'A')
     .replace(/[\u00c6]/gm, 'AE')
     .replace(/[\u00c7]/gm, 'C')
     .replace(/[\u00c8-\u00cb]/gm, 'E')
@@ -44,7 +45,7 @@ function buildFullTextRegex(value) {
 
   if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
     const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
-    if ((filteredValues.length / values.length) > CLEAN_SEARCH_PERCENTAGE) {
+    if (filteredValues.length / values.length > CLEAN_SEARCH_PERCENTAGE) {
       values = filteredValues;
     }
   }

@@ -17,11 +17,12 @@ const FundRow = ({ fund, filterBy }) => (
       title={fund.category}
       className={style.category}
       onClick={() => filterBy && filterBy('category', fund.category)}
-    >{fund.category}</button>
-    <button
-      className={style.rating}
-      onClick={() => filterBy && filterBy('rating', fund.rating)}
-    >{fund.rating}</button>
+    >
+      {fund.category}
+    </button>
+    <button className={style.rating} onClick={() => filterBy && filterBy('rating', fund.rating)}>
+      {fund.rating}
+    </button>
     <PerformanceCell value={fund['1m']} type="p1m" />
     <PerformanceCell value={fund['3m']} type="p3m" />
     <PerformanceCell value={fund['6m']} type="p6m" />
@@ -42,10 +43,7 @@ const FundRow = ({ fund, filterBy }) => (
 
 FundRow.displayName = 'FundRow';
 
-const STRING_OR_NUMBER = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.number,
-]).isRequired;
+const STRING_OR_NUMBER = PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired;
 
 FundRow.propTypes = {
   fund: PropTypes.shape({

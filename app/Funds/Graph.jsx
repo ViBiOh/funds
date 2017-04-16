@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Chart from 'chart.js';
+import setRef from '../Tools/ref';
 
 export default class Graph extends Component {
   componentDidMount() {
@@ -40,7 +41,9 @@ export default class Graph extends Component {
   }
 
   render() {
-    return <canvas ref={e => (this.graph = e)} className={this.props.className} height={200} />;
+    return (
+      <canvas ref={e => setRef(this, 'graph', e)} className={this.props.className} height={200} />
+    );
   }
 }
 
@@ -51,4 +54,3 @@ Graph.propTypes = {
 Graph.defaultProps = {
   className: '',
 };
-

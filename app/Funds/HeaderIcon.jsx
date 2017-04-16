@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 import style from './HeaderIcon.css';
 
 const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
-  const list = Object.keys(columns)
-    .filter(e => columns[e][filter])
-    .map(key => (
-      <li key={key}>
-        <button onClick={() => onClick(key)}>{columns[key].label}</button>
-      </li>
-    ));
+  const list = Object.keys(columns).filter(e => columns[e][filter]).map(key => (
+    <li key={key}>
+      <button onClick={() => onClick(key)}>{columns[key].label}</button>
+    </li>
+  ));
 
   return (
     <span className={style.icon}>
