@@ -30,7 +30,7 @@ const FundRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
     <a
-      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${new Date(Date.parse(fund.ts)).toString()}` : ''}`}
+      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${Date.parse(fund.ts).toString()}` : ''}`}
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"

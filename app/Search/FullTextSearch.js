@@ -38,7 +38,7 @@ function buildFullTextRegex(value) {
   }
 
   let values = replaceAccentedChar(value)
-    .replace(/[\]/\\^$*+?.(){}|[-]/gmi, ' ')
+    .replace(/[\]/\\^$*+?.(){}|[-]/gim, ' ')
     .trim()
     .replace(/\s+/, ' ')
     .split(' ');

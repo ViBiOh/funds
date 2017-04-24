@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import FundsContainer from './Funds/FundsContainer';
 
-import Funds from './Funds/Funds';
-
-ReactDOM.render(<Funds />, document.getElementById('root'));
+ReactDOM.render(<FundsContainer />, document.getElementById('root'));

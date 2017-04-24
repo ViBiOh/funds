@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { COLUMNS } from './FundsConstantes';
 import style from './HeaderIcon.css';
 
-const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
-  const list = Object.keys(columns).filter(e => columns[e][filter]).map(key => (
+const HeaderIcon = ({ filter, onClick, icon, displayed }) => {
+  const list = Object.keys(COLUMNS).filter(e => COLUMNS[e][filter]).map(key => (
     <li key={key}>
-      <button onClick={() => onClick(key)}>{columns[key].label}</button>
+      <button onClick={() => onClick(key)}>{COLUMNS[key].label}</button>
     </li>
   ));
 
@@ -24,7 +25,6 @@ const HeaderIcon = ({ columns, filter, onClick, icon, displayed }) => {
 HeaderIcon.displayName = 'HeaderIcon';
 
 HeaderIcon.propTypes = {
-  columns: PropTypes.shape({}).isRequired,
   filter: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   icon: PropTypes.node.isRequired,

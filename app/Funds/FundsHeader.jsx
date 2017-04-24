@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import FaFilter from 'react-icons/lib/fa/filter';
+import { COLUMNS } from './FundsConstantes';
 import HeaderIcon from './HeaderIcon';
 import style from './FundsHeader.css';
 
@@ -65,7 +66,6 @@ export default class FundsHeader extends Component {
       <header className={style.header}>
         <h1>Funds</h1>
         <HeaderIcon
-          columns={this.props.columns}
           filter="sortable"
           onClick={this.onOrderBy}
           icon={
@@ -74,14 +74,12 @@ export default class FundsHeader extends Component {
           displayed={this.orderDisplayed}
         />
         <HeaderIcon
-          columns={this.props.columns}
           filter="summable"
           onClick={this.onAggregateBy}
           icon={<FaPieChart onClick={() => this.toggleDisplay('sigma', !this.sigmaDisplayed)} />}
           displayed={this.sigmaDisplayed}
         />
         <HeaderIcon
-          columns={this.props.columns}
           filter="filterable"
           onClick={this.onFilterChange}
           icon={<FaFilter onClick={() => this.toggleDisplay('filter', !this.filterDisplayed)} />}
@@ -89,7 +87,7 @@ export default class FundsHeader extends Component {
         />
         <input
           type="text"
-          placeholder={`Fitre sur ${this.props.columns[this.state.selectedFilter].label}`}
+          placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
           onChange={this.onTextChangeDebounce}
         />
       </header>
@@ -98,7 +96,6 @@ export default class FundsHeader extends Component {
 }
 
 FundsHeader.propTypes = {
-  columns: PropTypes.shape({}).isRequired,
   orderBy: PropTypes.func.isRequired,
   aggregateBy: PropTypes.func.isRequired,
   filterBy: PropTypes.func.isRequired,
