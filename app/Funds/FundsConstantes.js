@@ -62,7 +62,8 @@ export const COLUMNS = {
 };
 
 export const COLUMNS_HEADER = Object.keys(COLUMNS).reduce((previous, current) => {
-  previous[current] = COLUMNS[current].label; // eslint-disable-line no-param-reassign
+  // eslint-disable-next-line no-param-reassign
+  previous[current] = COLUMNS[current].label;
   return previous;
 }, {});
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Throbber from '../Throbber/Throbber';
 import FundsHeader from './FundsHeader';
+import FundsModifier from './FundsModifier';
 import FundsList from './FundsList';
 
 const Funds = ({
@@ -25,20 +27,23 @@ const Funds = ({
         <h2>Erreur rencontée</h2>
         <pre>{JSON.stringify(error, null, 2)}</pre>
       </div>}
-    <FundsList
-      loaded={loaded}
-      funds={funds}
-      orderBy={orderBy}
-      order={order}
-      reverseOrder={reverseOrder}
-      aggregateBy={aggregateBy}
-      aggregate={aggregate}
-      onAggregateSizeChange={onAggregateSizeChange}
-      filterBy={filterBy}
-      filters={filters}
-      aggregated={aggregated}
-      initialSize={initialSize}
-    />
+    <article>
+      <FundsModifier
+        fundsSize={funds.length}
+        initialSize={initialSize}
+        orderBy={orderBy}
+        order={order}
+        filterBy={filterBy}
+        filters={filters}
+        reverseOrder={reverseOrder}
+        aggregateBy={aggregateBy}
+        aggregate={aggregate}
+        onAggregateSizeChange={onAggregateSizeChange}
+        aggregated={aggregated}
+      />
+      {!loaded && <Throbber label="Chargement des fonds" />}
+      {loaded && <FundsList funds={funds} filterBy={filterBy} />}
+    </article>
   </span>
 );
 
