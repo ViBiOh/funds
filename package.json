@@ -67,11 +67,12 @@
   },
   "dependencies": {
     "chart.js": "2.4.0",
+    "classnames": "latest",
+    "js-fetch": "git+https://github.com/ViBiOh/js-fetch.git",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-icons": "latest",
-    "js-fetch": "git+https://github.com/ViBiOh/js-fetch.git"
+    "react-icons": "latest"
   },
   "ava": {
     "files": [

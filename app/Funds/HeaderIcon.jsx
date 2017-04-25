@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from '../Button/Button';
 import { COLUMNS } from './FundsConstantes';
 import style from './HeaderIcon.css';
 
 const HeaderIcon = ({ filter, onClick, icon, displayed }) => {
   const list = Object.keys(COLUMNS).filter(e => COLUMNS[e][filter]).map(key => (
     <li key={key}>
-      <button onClick={() => onClick(key)}>{COLUMNS[key].label}</button>
+      <Button type="none" className={style.button} onClick={() => onClick(key)}>
+        {COLUMNS[key].label}
+      </Button>
     </li>
   ));
 

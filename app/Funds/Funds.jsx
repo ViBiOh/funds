@@ -4,6 +4,7 @@ import Throbber from '../Throbber/Throbber';
 import FundsHeader from './FundsHeader';
 import FundsModifier from './FundsModifier';
 import FundsList from './FundsList';
+import style from './Funds.css';
 
 const Funds = ({
   orderBy,
@@ -27,7 +28,7 @@ const Funds = ({
         <h2>Erreur rencontée</h2>
         <pre>{JSON.stringify(error, null, 2)}</pre>
       </div>}
-    <article>
+    <article className={style.container}>
       <FundsModifier
         fundsSize={funds.length}
         initialSize={initialSize}

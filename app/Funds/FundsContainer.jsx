@@ -94,7 +94,7 @@ export default class FundsContainer extends Component {
   }
 
   fetchPerformances() {
-    return FundsService.getFunds().then(funds => {
+    return FundsService.getFunds().then((funds) => {
       this.setState(
         {
           funds: funds.results.filter(fund => fund.id),

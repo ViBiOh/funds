@@ -16,3 +16,7 @@
   padding: 5px;
   width: auto;
 }
+
+.modifier svg {
+  margin-right: 5px;
+}

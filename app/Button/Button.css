@@ -1,0 +1,76 @@
+$primary: #337ab7;
+$success: #5cb85c;
+$info: #5bc0de;
+$warning: #f0ad4e;
+$danger: #d9534f;
+$white: #fff;
+$shadow: rgba(0, 0, 0, .5);
+
+@mixin flex-wrap {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+
+.button {
+  @include flex-wrap;
+  background-color: transparent;
+  border: 0;
+  border-radius: 2px;
+  color: $white;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.wrapper {
+  @include flex-wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.wrapper svg {
+  color: $white;
+}
+
+.wrapper > * {
+  margin-left: 5px;
+}
+
+.wrapper > *:first-child {
+  margin-left: 0;
+}
+
+.active {
+  box-shadow: inset 0 0 10px $shadow;
+}
+
+.transparent,
+.none {
+  background-color: transparent;
+}
+
+.none {
+  color: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.primary {
+  background-color: $primary;
+}
+
+.success {
+  background-color: $success;
+}
+
+.info {
+  background-color: $info;
+}
+
+.warning {
+  background-color: $warning;
+}
+
+.danger {
+  background-color: $danger;
+}

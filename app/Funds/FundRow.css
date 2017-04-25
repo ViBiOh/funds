@@ -1,5 +1,6 @@
 $clear: #f8f8f8;
 $grey: #e1e1e8;
+$dark: #3a3a3a;
 $warning: #f0ad4e;
 
 @mixin small-padding {
@@ -44,7 +45,15 @@ $warning: #f0ad4e;
   background-color: $grey;
 }
 
+.row button {
+  background-color: inherit;
+  border: 0;
+  margin-left: 5px;
+  padding: 0;
+}
+
 .row svg {
+  color: $dark;
   height: 25px;
   width: 25px;
 }

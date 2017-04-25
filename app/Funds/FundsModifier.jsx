@@ -5,6 +5,7 @@ import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
+import Button from '../Button/Button';
 import { COLUMNS, CHART_COLORS, AGGREGATE_SIZES } from './FundsConstantes';
 import Graph from './Graph';
 import style from './FundsModifier.css';
@@ -24,14 +25,12 @@ function renderCount(fundsSize, initialSize) {
 function renderFilters(filters, filterBy) {
   return Object.keys(filters).filter(filter => filters[filter]).map(filter => (
     <span key={filter} className={style.modifier}>
-      <span>
-        <FaFilter />
-      </span>
+      <FaFilter />
       <span><em> {COLUMNS[filter].label}</em> ≃ </span>
-      {filters[filter]}
-      <button onClick={() => filterBy(filter, '')}>
+      <span>{filters[filter]}</span>
+      <Button type="none" onClick={() => filterBy(filter, '')}>
         <FaClose />
-      </button>
+      </Button>
     </span>
   ));
 }
@@ -40,13 +39,13 @@ function renderOrder(order, orderBy, reverseOrder) {
   return (
     order.key &&
     <span className={style.modifier}>
-      <button onClick={reverseOrder}>
+      <Button type="none" onClick={reverseOrder}>
         {order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
-      </button>
-      &nbsp;{COLUMNS[order.key].label}
-      <button onClick={() => orderBy('')}>
+      </Button>
+      <span>{COLUMNS[order.key].label}</span>
+      <Button type="none" onClick={() => orderBy('')}>
         <FaClose />
-      </button>
+      </Button>
     </span>
   );
 }
@@ -100,13 +99,12 @@ function renderAggregate(aggregate, aggregateBy, aggregated, onAggregateSizeChan
   return [
     <span key="label" className={style.modifier}>
       <FaPieChart />
-      &nbsp;
       <select value={aggregate.size} onChange={onAggregateSizeChange}>
         {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
       </select> | {label}
-      <button onClick={() => aggregateBy('')}>
+      <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />
-      </button>
+      </Button>
     </span>,
     <Graph key="graph" type="bar" data={data} options={options} className={style.list} />,
   ];

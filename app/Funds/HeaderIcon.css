@@ -20,14 +20,14 @@ $icon-size: 50px;
   top: $icon-size;
 }
 
-.icon li button {
+.button {
   color: $clear;
   padding: 15px;
-  width: 100%;
 }
 
 .icon svg {
   @include small-padding;
+  color: $dark;
   height: $icon-size;
   width: $icon-size;
 }
