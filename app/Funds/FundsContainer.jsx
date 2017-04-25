@@ -12,6 +12,10 @@ import {
 import Funds from './Funds';
 
 export default class FundsContainer extends Component {
+  static isUndefined(o, orderKey) {
+    return !o || typeof o[orderKey] === 'undefined';
+  }
+
   static filterFunds(funds, filters) {
     return Object.keys(filters).reduce((previous, filter) => {
       const regex = buildFullTextRegex(filters[filter]);
@@ -23,9 +27,9 @@ export default class FundsContainer extends Component {
     const compareMultiplier = reverse ? -1 : 1;
 
     funds.sort((o1, o2) => {
-      if (!o1 || typeof o1[orderKey] === 'undefined') {
+      if (FundsContainer.isUndefined(o1, orderKey)) {
         return -1 * compareMultiplier;
-      } else if (!o2 || typeof o2[orderKey] === 'undefined') {
+      } else if (FundsContainer.isUndefined(o2, orderKey)) {
         return 1 * compareMultiplier;
       } else if (o1[orderKey] < o2[orderKey]) {
         return -1 * compareMultiplier;
@@ -90,7 +94,7 @@ export default class FundsContainer extends Component {
   }
 
   fetchPerformances() {
-    return FundsService.getFunds().then((funds) => {
+    return FundsService.getFunds().then(funds => {
       this.setState(
         {
           funds: funds.results.filter(fund => fund.id),
