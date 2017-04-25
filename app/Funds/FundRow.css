@@ -71,6 +71,11 @@ $warning: #f0ad4e;
   width: 40px;
 }
 
+.icon {
+  align-items: center;
+  display: inline-flex;
+}
+
 @media screen and (max-width: 1023px) {
   .row:first-child {
     display: none;
