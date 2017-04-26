@@ -100,7 +100,7 @@ $warning: #f0ad4e;
     width: 100%;
   }
 
-  .category {
+  button.category {
     @include round-label;
     order: 1;
   }
@@ -114,7 +114,7 @@ $warning: #f0ad4e;
     content: 'ISIN | ';
   }
 
-  .rating {
+  button.rating {
     @include round-label;
     order: 2;
   }
