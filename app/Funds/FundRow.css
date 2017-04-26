@@ -48,6 +48,7 @@ $warning: #f0ad4e;
 .row button {
   background-color: inherit;
   border: 0;
+  cursor: pointer;
   margin-left: 5px;
   padding: 0;
 }
