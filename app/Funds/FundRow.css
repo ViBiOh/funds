@@ -107,6 +107,7 @@ $warning: #f0ad4e;
 
   .isin {
     @include round-label;
+    @include small-padding;
     order: 3;
   }
 
@@ -116,6 +117,7 @@ $warning: #f0ad4e;
 
   button.rating {
     @include round-label;
+    @include small-padding;
     order: 2;
   }
 
