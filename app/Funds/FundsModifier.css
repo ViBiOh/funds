@@ -17,10 +17,10 @@
   width: auto;
 }
 
-.modifier *:first-child {
+.modifier > *:first-child {
   margin-right: 5px;
 }
 
-.modifier *:last-child {
+.modifier > *:last-child {
   margin-left: 5px;
 }
