@@ -102,12 +102,12 @@ $warning: #f0ad4e;
 
   button.category {
     @include round-label;
+    @include small-padding;
     order: 1;
   }
 
   .isin {
     @include round-label;
-    @include small-padding;
     order: 3;
   }
 
