@@ -17,10 +17,10 @@
   width: auto;
 }
 
-.modifier button:first-of-type {
+.modifier *:first-child {
   margin-right: 5px;
 }
 
-.modifier button:last-of-type {
+.modifier *:last-child {
   margin-left: 5px;
 }
