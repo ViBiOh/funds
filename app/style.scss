@@ -22,3 +22,13 @@ html, button, input {
   font-weight: 400;
   line-height: normal;
 }
+
+@media print {
+  body:after {
+    content: 'Save ink, share link.';
+  }
+
+  body > * {
+    display: none;
+  }
+}
