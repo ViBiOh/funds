@@ -101,7 +101,7 @@ function renderAggregate(aggregate, aggregateBy, aggregated, onAggregateSizeChan
       <FaPieChart />
       <select value={aggregate.size} onChange={onAggregateSizeChange}>
         {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
-      </select> | {label}
+      </select> {label}
       <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />
       </Button>
