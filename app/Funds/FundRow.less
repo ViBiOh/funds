@@ -1,13 +1,13 @@
-$clear: #f8f8f8;
-$grey: #e1e1e8;
-$dark: #3a3a3a;
-$warning: #f0ad4e;
+@clear: #f8f8f8;
+@grey: #e1e1e8;
+@dark: #3a3a3a;
+@warning: #f0ad4e;
 
-@mixin small-padding {
+.small-padding {
   padding: 5px;
 }
 
-@mixin round-label {
+.round-label {
   border: 1px solid;
   border-radius: 5px;
   flex: none;
@@ -16,12 +16,12 @@ $warning: #f0ad4e;
   width: auto;
 }
 
-@mixin flex-wrap {
+.flex-wrap {
   display: flex;
   flex-wrap: wrap;
 }
 
-@mixin ellipsis {
+.ellipsis {
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -33,16 +33,17 @@ $warning: #f0ad4e;
 .label,
 .category,
 .rating {
-  @include small-padding;
+  .small-padding;
 }
 
 .row {
-  @include flex-wrap;
+  .flex-wrap;
+
   width: 100%;
 }
 
 .row:nth-child(even) {
-  background-color: $grey;
+  background-color: @grey;
 }
 
 .row button {
@@ -54,13 +55,13 @@ $warning: #f0ad4e;
 }
 
 .row svg {
-  color: $dark;
+  color: @dark;
   height: 25px;
   width: 25px;
 }
 
 .old svg {
-  color: $warning;
+  color: @warning;
 }
 
 .isin {
@@ -68,12 +69,14 @@ $warning: #f0ad4e;
 }
 
 .label {
-  @include ellipsis;
+  .ellipsis;
+
   flex: 3;
 }
 
 .category {
-  @include ellipsis;
+  .ellipsis;
+
   flex: 1;
 }
 
@@ -102,13 +105,15 @@ $warning: #f0ad4e;
   }
 
   button.category {
-    @include round-label;
-    @include small-padding;
+    .round-label;
+    .small-padding;
+
     order: 1;
   }
 
   .isin {
-    @include round-label;
+    .round-label;
+
     order: 3;
   }
 
@@ -117,8 +122,9 @@ $warning: #f0ad4e;
   }
 
   button.rating {
-    @include round-label;
-    @include small-padding;
+    .round-label;
+    .small-padding;
+
     order: 2;
   }
 

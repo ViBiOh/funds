@@ -5,7 +5,7 @@ import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import FaFilter from 'react-icons/lib/fa/filter';
 import { COLUMNS } from './FundsConstantes';
 import HeaderIcon from './HeaderIcon';
-import style from './FundsHeader.css';
+import style from './FundsHeader.less';
 
 export default class FundsHeader extends Component {
   constructor(props) {

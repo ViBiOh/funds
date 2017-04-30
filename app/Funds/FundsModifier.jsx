@@ -8,7 +8,7 @@ import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import Button from '../Button/Button';
 import { COLUMNS, CHART_COLORS, AGGREGATE_SIZES } from './FundsConstantes';
 import Graph from './Graph';
-import style from './FundsModifier.css';
+import style from './FundsModifier.less';
 
 function renderCount(fundsSize, initialSize) {
   if (fundsSize === initialSize) {

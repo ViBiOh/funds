@@ -1,8 +1,8 @@
-$dark: #3a3a3a;
-$clear: #f8f8f8;
-$icon-size: 50px;
+@dark: #3a3a3a;
+@clear: #f8f8f8;
+@icon-size: 50px;
 
-@mixin small-padding {
+.small-padding {
   padding: 5px;
 }
 
@@ -14,20 +14,22 @@ $icon-size: 50px;
 }
 
 .header h1 {
-  @include small-padding;
-  background-color: $dark;
-  color: $clear;
+  .small-padding;
+
+  background-color: @dark;
+  color: @clear;
   display: inline-block;
   flex: 1 1 auto;
-  height: $icon-size;
+  height: @icon-size;
   margin: 0;
 }
 
 .header input[type='text'] {
-  @include small-padding;
+  .small-padding;
+
   border-radius: 0;
   flex: 1 1 160px;
-  height: $icon-size;
+  height: @icon-size;
   width: 160px;
 }
 

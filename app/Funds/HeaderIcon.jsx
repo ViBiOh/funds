@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../Button/Button';
 import { COLUMNS } from './FundsConstantes';
-import style from './HeaderIcon.css';
+import style from './HeaderIcon.less';
 
 const HeaderIcon = ({ filter, onClick, icon, displayed }) => {
   const list = Object.keys(COLUMNS).filter(e => COLUMNS[e][filter]).map(key => (

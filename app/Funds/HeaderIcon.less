@@ -1,8 +1,8 @@
-$dark: #3a3a3a;
-$clear: #f8f8f8;
-$icon-size: 50px;
+@dark: #3a3a3a;
+@clear: #f8f8f8;
+@icon-size: 50px;
 
-@mixin small-padding {
+.small-padding {
   padding: 5px;
 }
 
@@ -12,30 +12,32 @@ $icon-size: 50px;
 }
 
 .icon ol {
-  @include small-padding;
-  background-color: $dark;
+  .small-padding;
+
+  background-color: @dark;
   list-style: none;
   margin: 0;
   overflow: auto;
   position: absolute;
-  top: $icon-size;
+  top: @icon-size;
 }
 
 .button {
-  color: $clear;
+  color: @clear;
   padding: 15px;
 }
 
 .icon svg {
-  @include small-padding;
-  color: $dark;
-  height: $icon-size;
-  width: $icon-size;
+  .small-padding;
+
+  color: @dark;
+  height: @icon-size;
+  width: @icon-size;
 }
 
 .active svg {
-  background-color: $dark;
-  color: $clear;
+  background-color: @dark;
+  color: @clear;
 }
 
 .hidden {

@@ -15,7 +15,9 @@ body {
   margin: 0;
 }
 
-html, button, input {
+html,
+button,
+input {
   font-family: 'Open Sans', sans-serif;
   font-size: initial;
   font-style: normal;
@@ -24,7 +26,7 @@ html, button, input {
 }
 
 @media print {
-  body:after {
+  body::after {
     content: 'Save ink, share link.';
   }
 

@@ -9,9 +9,9 @@
     "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:web",
     "mustache": "./node_modules/js-index-builder/index.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
     "prettier": "./node_modules/.bin/prettier --print-width 100 --single-quote --trailing-comma all --color --write \"./app/**/*.{js,jsx}\"",
+    "stylelint": "./node_modules/.bin/stylelint \"app/**/*.{css,less}\"",
     "eslint": "./node_modules/.bin/eslint --fix --ext .jsx \"./app/**/*.{js,jsx}\"",
-    "sassLint": "./node_modules/.bin/sass-lint \"app/**/*.css\" -v -s scss",
-    "codestyle": "npm run prettier && npm run eslint && npm run sassLint",
+    "codestyle": "npm run prettier && npm run eslint && npm run stylelint",
     "start": "npm run copy && ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
     "test": "./node_modules/.bin/nyc --reporter text --reporter lcov --extension .jsx --require babel-core/register ./node_modules/.bin/ava",
     "coverage": "./node_modules/.bin/codecov -f ./coverage/lcov.info",
@@ -35,9 +35,9 @@
     "ava": "latest",
     "babel-core": "latest",
     "babel-loader": "latest",
+    "babel-plugin-transform-object-rest-spread": "latest",
     "babel-preset-es2015": "latest",
     "babel-preset-react": "latest",
-    "babel-plugin-transform-object-rest-spread": "latest",
     "codecov": "latest",
     "css-loader": "latest",
     "enzyme": "latest",
@@ -52,16 +52,17 @@
     "ignore-styles": "latest",
     "js-index-build": "git+https://github.com/ViBiOh/js-index-builder.git",
     "jsdom": "latest",
-    "node-sass": "latest",
+    "less": "latest",
+    "less-loader": "latest",
     "normalize.css": "latest",
     "nyc": "latest",
     "prettier": "latest",
     "react-addons-test-utils": "latest",
     "react-test-renderer": "latest",
-    "sass-lint": "latest",
-    "sass-loader": "latest",
     "sinon": "latest",
     "style-loader": "latest",
+    "stylelint": "latest",
+    "stylelint-config-standard": "latest",
     "webpack": "latest",
     "webpack-dev-server": "latest"
   },
@@ -84,5 +85,8 @@
     ],
     "concurrency": 4,
     "babel": "inherit"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard"
   }
 }

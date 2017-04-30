@@ -1,8 +1,8 @@
-@mixin small-padding {
+.small-padding {
   padding: 5px;
 }
 
-@mixin round-label {
+.round-label {
   border: 1px solid;
   border-radius: 5px;
   flex: none;
@@ -12,13 +12,15 @@
 }
 
 .performance {
-  @include small-padding;
+  .small-padding;
+
   width: 80px;
 }
 
 @media screen and (max-width: 1023px) {
   .performance {
-    @include round-label;
+    .round-label;
+
     order: 4;
   }
 
