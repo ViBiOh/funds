@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import FundsService from '../Service/FundsService';
+import Throbber from '../Throbber/Throbber';
 import {
   AGGREGATE_SIZES,
   SUM_PARAM,
@@ -9,7 +10,10 @@ import {
   ASCENDING_ORDER_PARAM,
   RESERVED_PARAM,
 } from './FundsConstantes';
-import Funds from './Funds';
+import FundsHeader from './FundsHeader';
+import FundsModifier from './FundsModifier';
+import FundsList from './FundsList';
+import style from './FundsContainer.less';
 
 export default class FundsContainer extends Component {
   static isUndefined(o, orderKey) {
@@ -207,21 +211,35 @@ export default class FundsContainer extends Component {
 
   render() {
     return (
-      <Funds
-        orderBy={this.orderBy}
-        order={this.state.order}
-        reverseOrder={this.reverseOrder}
-        aggregateBy={this.aggregateBy}
-        aggregate={this.state.sum}
-        onAggregateSizeChange={this.onAggregateSizeChange}
-        filterBy={this.filterBy}
-        filters={this.state.filters}
-        error={this.state.error}
-        loaded={this.state.loaded}
-        funds={this.state.displayed}
-        aggregated={this.state.aggregated}
-        initialSize={this.state.funds.length}
-      />
+      <span>
+        <FundsHeader
+          orderBy={this.orderBy}
+          aggregateBy={this.aggregateBy}
+          filterBy={this.filterBy}
+        />
+        {this.state.error &&
+          <div>
+            <h2>Erreur rencontée</h2>
+            <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
+          </div>}
+        <article className={style.container}>
+          <FundsModifier
+            fundsSize={this.state.displayed.length}
+            initialSize={this.state.funds.length}
+            orderBy={this.orderBy}
+            order={this.state.order}
+            filterBy={this.filterBy}
+            filters={this.state.filters}
+            reverseOrder={this.reverseOrder}
+            aggregateBy={this.aggregateBy}
+            aggregate={this.state.sum}
+            onAggregateSizeChange={this.onAggregateSizeChange}
+            aggregated={this.state.aggregated}
+          />
+          {!this.state.loaded && <Throbber label="Chargement des fonds" />}
+          {this.state.loaded && <FundsList funds={this.state.displayed} filterBy={this.filterBy} />}
+        </article>
+      </span>
     );
   }
 }
