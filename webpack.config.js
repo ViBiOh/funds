@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const config = {
@@ -52,21 +51,5 @@ const config = {
     path: path.join(__dirname, 'dist/static'),
   },
 };
-
-if (process.env.PRODUCTION) {
-  const production = new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: JSON.stringify('production'),
-    },
-  });
-  config.plugins.push(production);
-
-  const uglify = new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false,
-    },
-  });
-  config.plugins.push(uglify);
-}
 
 module.exports = config;
