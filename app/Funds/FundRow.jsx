@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
 import FundsService from '../Service/FundsService';
+import Button from '../Button/Button';
 import PerformanceCell from './PerformanceCell';
 import style from './FundRow.less';
 
@@ -13,16 +14,16 @@ const FundRow = ({ fund, filterBy }) => (
   <span className={style.row}>
     <span className={style.isin}>{fund.isin}</span>
     <span className={style.label} title={fund.label}>{fund.label}</span>
-    <button
-      title={fund.category}
+    <Button
+      type="none"
       className={style.category}
-      onClick={() => filterBy && filterBy('category', fund.category)}
+      onClick={() => filterBy('category', fund.category)}
     >
-      {fund.category}
-    </button>
-    <button className={style.rating} onClick={() => filterBy && filterBy('rating', fund.rating)}>
-      {fund.rating}
-    </button>
+      <span className={style.ellipsis} title={fund.category}>{fund.category}</span>
+    </Button>
+    <Button type="none" onClick={() => filterBy('rating', fund.rating)}>
+      <span className={style.rating}>{fund.rating}</span>
+    </Button>
     <PerformanceCell value={fund['1m']} type="p1m" />
     <PerformanceCell value={fund['3m']} type="p3m" />
     <PerformanceCell value={fund['6m']} type="p6m" />
