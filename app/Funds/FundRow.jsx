@@ -6,8 +6,10 @@ import Button from '../Button/Button';
 import PerformanceCell from './PerformanceCell';
 import style from './FundRow.less';
 
+const now = Date.now();
+
 function isUpdateTimeGreaterThanSixHours(updateTime) {
-  return (performance.now() - Date.parse(updateTime)) / 3600000 > 6;
+  return (now - Date.parse(updateTime)) / 3600000 > 6;
 }
 
 const FundRow = ({ fund, filterBy }) => (
@@ -31,7 +33,7 @@ const FundRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
     <a
-      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${Date.parse(fund.ts).toString()}` : ''}`}
+      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${new Date(Date.parse(fund.ts))}` : ''}`}
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
