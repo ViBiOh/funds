@@ -23,8 +23,8 @@ const FundRow = ({ fund, filterBy }) => (
     >
       <span className={style.ellipsis} title={fund.category}>{fund.category}</span>
     </Button>
-    <Button type="none" onClick={() => filterBy('rating', fund.rating)}>
-      <span className={style.rating}>{fund.rating}</span>
+    <Button className={style.rating} type="none" onClick={() => filterBy('rating', fund.rating)}>
+      <span>{fund.rating}</span>
     </Button>
     <PerformanceCell value={fund['1m']} type="p1m" />
     <PerformanceCell value={fund['3m']} type="p3m" />

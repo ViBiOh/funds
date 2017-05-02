@@ -80,7 +80,7 @@
   flex: 1;
 }
 
-.rating {
+.rating > span {
   text-align: center;
   width: 40px;
 }
@@ -129,8 +129,12 @@
     order: 2;
   }
 
-  .rating::before {
+  button.rating > span::before {
     content: 'Note | ';
+  }
+
+  button.rating > span {
+    width: auto;
   }
 
   .icon {
