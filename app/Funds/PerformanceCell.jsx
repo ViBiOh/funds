@@ -4,18 +4,16 @@ import style from './PerformanceCell.less';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 
-function getPerformanceStyle(performance) {
-  if (!NUMBER_PATTERN.test(performance)) {
-    return null;
+const getValue = value => {
+  if (!NUMBER_PATTERN.test(value)) {
+    return '';
   }
 
-  return {
-    color: performance < 0 ? '#d43f3a' : '#4cae4c',
-  };
-}
+  return value < 0 ? style.red : style.green;
+};
 
 const PerformanceCell = ({ type, value }) => (
-  <span style={getPerformanceStyle(value)} className={`${style.performance} ${style[type]}`}>
+  <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>
     {value}
   </span>
 );
