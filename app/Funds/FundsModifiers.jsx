@@ -6,9 +6,8 @@ import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
 import Button from '../Button/Button';
-import { COLUMNS, CHART_COLORS, AGGREGATE_SIZES } from './FundsConstantes';
-import Graph from './Graph';
-import style from './FundsModifier.less';
+import { COLUMNS, AGGREGATE_SIZES } from './FundsConstantes';
+import style from './FundsModifiers.less';
 
 function renderCount(fundsSize, initialSize) {
   if (fundsSize === initialSize) {
@@ -50,64 +49,24 @@ function renderOrder(order, orderBy, reverseOrder) {
   );
 }
 
-function renderAggregate(aggregate, aggregateBy, aggregated, onAggregateSizeChange) {
-  if (!aggregate.key) {
+function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
+  if (!aggregat.key) {
     return null;
   }
 
-  const label = COLUMNS[aggregate.key].label;
+  const label = COLUMNS[aggregat.key].label;
 
-  const options = {
-    legend: false,
-    scales: {
-      xAxes: [
-        {
-          display: false,
-        },
-      ],
-      yAxes: [
-        {
-          display: false,
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
-  };
-
-  const data = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Count',
-        data: [],
-        backgroundColor: [],
-      },
-    ],
-  };
-
-  let i = 0;
-  aggregated.forEach((entry) => {
-    data.labels.push(entry.label);
-    data.datasets[0].data.push(entry.count);
-    data.datasets[0].backgroundColor.push(CHART_COLORS[i]);
-
-    i = (i + 1) % CHART_COLORS.length;
-  });
-
-  return [
-    <span key="label" className={style.modifier}>
+  return (
+    <span className={style.modifier}>
       <FaPieChart />
-      <select value={aggregate.size} onChange={onAggregateSizeChange}>
+      <select value={aggregat.size} onChange={onAggregateSizeChange}>
         {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
       </select> {label}
       <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />
       </Button>
-    </span>,
-    <Graph key="graph" type="bar" data={data} options={options} className={style.list} />,
-  ];
+    </span>
+  );
 }
 
 const FundsModifier = ({
@@ -118,16 +77,15 @@ const FundsModifier = ({
   order,
   orderBy,
   reverseOrder,
-  aggregate,
+  aggregat,
   aggregateBy,
   onAggregateSizeChange,
-  aggregated,
 }) => (
   <div className={style.list}>
     {renderCount(fundsSize, initialSize)}
     {renderFilters(filters, filterBy)}
     {renderOrder(order, orderBy, reverseOrder)}
-    {renderAggregate(aggregate, aggregateBy, aggregated, onAggregateSizeChange)}
+    {renderAggregat(aggregat, aggregateBy, onAggregateSizeChange)}
   </div>
 );
 
@@ -141,10 +99,9 @@ FundsModifier.propTypes = {
   order: PropTypes.shape({}).isRequired,
   orderBy: PropTypes.func.isRequired,
   reverseOrder: PropTypes.func.isRequired,
-  aggregate: PropTypes.shape({}).isRequired,
+  aggregat: PropTypes.shape({}).isRequired,
   aggregateBy: PropTypes.func.isRequired,
   onAggregateSizeChange: PropTypes.func.isRequired,
-  aggregated: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 export default FundsModifier;

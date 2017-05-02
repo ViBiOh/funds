@@ -83,8 +83,13 @@ export const CHART_COLORS = [
 
 export const AGGREGATE_SIZES = [25, 50, 100];
 
-export const SUM_PARAM = 'a';
-export const SUM_SIZE_PARAM = 'as';
+export const AGGREGAT_PARAM = 'a';
+export const AGGREGAT_SIZE_PARAM = 'as';
 export const ORDER_PARAM = 'o';
 export const ASCENDING_ORDER_PARAM = 'ao';
-export const RESERVED_PARAM = [SUM_PARAM, SUM_SIZE_PARAM, ORDER_PARAM, ASCENDING_ORDER_PARAM];
+export const RESERVED_PARAM = [
+  AGGREGAT_PARAM,
+  AGGREGAT_SIZE_PARAM,
+  ORDER_PARAM,
+  ASCENDING_ORDER_PARAM,
+];

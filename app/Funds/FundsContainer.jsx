@@ -4,14 +4,15 @@ import FundsService from '../Service/FundsService';
 import Throbber from '../Throbber/Throbber';
 import {
   AGGREGATE_SIZES,
-  SUM_PARAM,
-  SUM_SIZE_PARAM,
+  AGGREGAT_PARAM,
+  AGGREGAT_SIZE_PARAM,
   ORDER_PARAM,
   ASCENDING_ORDER_PARAM,
   RESERVED_PARAM,
 } from './FundsConstantes';
 import FundsHeader from './FundsHeader';
-import FundsModifier from './FundsModifier';
+import FundsModifiers from './FundsModifiers';
+import FundsGraph from './FundsGraph';
 import FundsList from './FundsList';
 import style from './FundsContainer.less';
 
@@ -60,9 +61,9 @@ export default class FundsContainer extends Component {
       funds: [],
       displayed: [],
       aggregated: [],
-      sum: {
-        key: params[SUM_PARAM] || '',
-        size: params[SUM_SIZE_PARAM] || AGGREGATE_SIZES[0],
+      aggregat: {
+        key: params[AGGREGAT_PARAM] || '',
+        size: params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0],
       },
       order: {
         key: params[ORDER_PARAM] || '',
@@ -91,7 +92,7 @@ export default class FundsContainer extends Component {
   onAggregateSizeChange(value) {
     this.setState(
       {
-        sum: { ...this.state.sum, size: value.target.value },
+        aggregat: { ...this.state.aggregat, size: value.target.value },
       },
       this.filterOrderData,
     );
@@ -123,10 +124,10 @@ export default class FundsContainer extends Component {
     );
   }
 
-  aggregateBy(sum) {
+  aggregateBy(aggregat) {
     this.setState(
       {
-        sum: { key: sum, size: 25 },
+        aggregat: { key: aggregat, size: 25 },
       },
       this.filterOrderData,
     );
@@ -165,13 +166,13 @@ export default class FundsContainer extends Component {
   }
 
   aggregateData(displayed) {
-    const { key } = this.state.sum;
+    const { key } = this.state.aggregat;
     if (!key) {
       return [];
     }
 
     const aggregate = {};
-    const size = Math.min(displayed.length, this.state.sum.size);
+    const size = Math.min(displayed.length, this.state.aggregat.size);
     for (let i = 0; i < size; i += 1) {
       if (typeof aggregate[displayed[i][key]] === 'undefined') {
         aggregate[displayed[i][key]] = 0;
@@ -201,9 +202,9 @@ export default class FundsContainer extends Component {
       }
     }
 
-    if (this.state.sum.key) {
-      params.push(`${SUM_PARAM}=${this.state.sum.key}`);
-      params.push(`${SUM_SIZE_PARAM}=${this.state.sum.size}`);
+    if (this.state.aggregat.key) {
+      params.push(`${AGGREGAT_PARAM}=${this.state.aggregat.key}`);
+      params.push(`${AGGREGAT_SIZE_PARAM}=${this.state.aggregat.size}`);
     }
 
     window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
@@ -223,19 +224,21 @@ export default class FundsContainer extends Component {
             <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
           </div>}
         <article className={style.container}>
-          <FundsModifier
-            fundsSize={this.state.displayed.length}
-            initialSize={this.state.funds.length}
-            orderBy={this.orderBy}
-            order={this.state.order}
-            filterBy={this.filterBy}
-            filters={this.state.filters}
-            reverseOrder={this.reverseOrder}
-            aggregateBy={this.aggregateBy}
-            aggregate={this.state.sum}
-            onAggregateSizeChange={this.onAggregateSizeChange}
-            aggregated={this.state.aggregated}
-          />
+          <div className={style.modifiers}>
+            <FundsModifiers
+              fundsSize={this.state.displayed.length}
+              initialSize={this.state.funds.length}
+              orderBy={this.orderBy}
+              order={this.state.order}
+              filterBy={this.filterBy}
+              filters={this.state.filters}
+              reverseOrder={this.reverseOrder}
+              aggregateBy={this.aggregateBy}
+              aggregat={this.state.aggregat}
+              onAggregateSizeChange={this.onAggregateSizeChange}
+            />
+            <FundsGraph aggregat={this.state.aggregat} aggregated={this.state.aggregated} />
+          </div>
           {!this.state.loaded && <Throbber label="Chargement des fonds" />}
           {this.state.loaded && <FundsList funds={this.state.displayed} filterBy={this.filterBy} />}
         </article>
