@@ -4,7 +4,7 @@ import style from './PerformanceCell.less';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 
-const getValue = value => {
+const getValue = (value) => {
   if (!NUMBER_PATTERN.test(value)) {
     return '';
   }
