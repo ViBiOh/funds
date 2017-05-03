@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ViBiOh/funds-ob/morningStar"
+	"github.com/ViBiOh/funds/morningStar"
 	"log"
 	"net/http"
 	"runtime"

@@ -1,5 +1,5 @@
 {
-  "name": "funds-ob",
+  "name": "funds",
   "version": "0.0.1",
   "description": "Funds OB",
   "main": "index.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ViBiOh/funds-ob.git"
+    "url": "git://github.com/ViBiOh/funds.git"
   },
   "keywords": [
     "react",
@@ -28,9 +28,9 @@
   "author": "Vincent Boutour",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ViBiOh/funds-ob/issues"
+    "url": "https://github.com/ViBiOh/funds/issues"
   },
-  "homepage": "https://github.com/ViBiOh/funds-ob",
+  "homepage": "https://github.com/ViBiOh/funds",
   "devDependencies": {
     "ava": "latest",
     "babel-core": "latest",
