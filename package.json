@@ -67,7 +67,7 @@
     "webpack-dev-server": "latest"
   },
   "dependencies": {
-    "chart.js": "2.4.0",
+    "chart.js": "latest",
     "classnames": "latest",
     "js-fetch": "git+https://github.com/ViBiOh/js-fetch.git",
     "prop-types": "latest",

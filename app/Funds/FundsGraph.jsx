@@ -9,30 +9,11 @@ const FundsGraph = ({ aggregat, aggregated }) => {
     return null;
   }
 
-  const options = {
-    legend: false,
-    scales: {
-      xAxes: [
-        {
-          display: false,
-        },
-      ],
-      yAxes: [
-        {
-          display: false,
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
-  };
-
   const data = {
     labels: [],
     datasets: [
       {
-        label: 'Count',
+        label: 'Aggregat count ',
         data: [],
         backgroundColor: [],
       },
@@ -48,7 +29,7 @@ const FundsGraph = ({ aggregat, aggregated }) => {
     i = (i + 1) % CHART_COLORS.length;
   });
 
-  return <Graph type="bar" data={data} options={options} className={style.container} />;
+  return <Graph type="bar" data={data} className={style.container} />;
 };
 
 FundsGraph.displayName = 'FundsGraph';
