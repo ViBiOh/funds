@@ -29,7 +29,11 @@ export default class Graph extends Component {
           display: false,
         },
         scales: {
-          xAxes: [],
+          xAxes: [
+            {
+              display: false,
+            },
+          ],
           yAxes: [
             {
               display: false,
