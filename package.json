@@ -45,7 +45,7 @@
     "eslint-config-airbnb": "latest",
     "eslint-loader": "latest",
     "eslint-plugin-import": "latest",
-    "eslint-plugin-jsx-a11y": "latest",
+    "eslint-plugin-jsx-a11y": "^4",
     "eslint-plugin-react": "latest",
     "extract-text-webpack-plugin": "latest",
     "identity-obj-proxy": "latest",
@@ -69,7 +69,7 @@
   "dependencies": {
     "chart.js": "latest",
     "classnames": "latest",
-    "js-fetch": "git+https://github.com/ViBiOh/js-fetch.git",
+    "funtch": "latest",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",

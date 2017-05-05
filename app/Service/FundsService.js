@@ -1,4 +1,4 @@
-import Fetch from 'js-fetch';
+import funtch from 'funtch';
 
 const MS_URL = id => `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=${id}`;
 const API_PATH = 'https://funds-api.vibioh.fr/';
@@ -9,6 +9,6 @@ export default class MorningStarService {
   }
 
   static getFunds() {
-    return Fetch.get(`${API_PATH}list`);
+    return funtch.get(`${API_PATH}list`);
   }
 }
