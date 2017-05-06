@@ -96,13 +96,13 @@
     ]
   },
   "eslintConfig": {
-      "extends": "airbnb",
-      "env": {
-        "browser": true
-      },
-      "rules": {
-        "react/jsx-filename-extension": 1
-      }
+    "extends": "airbnb",
+    "env": {
+      "browser": true
+    },
+    "rules": {
+      "react/jsx-filename-extension": 1
+    }
   },
   "stylelint": {
     "extends": "stylelint-config-standard"
