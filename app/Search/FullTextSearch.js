@@ -30,6 +30,17 @@ function replaceAccentedChar(str) {
     .replace(/[\u0153]/gm, 'oe');
 }
 
+function cleanSearchValues(values) {
+  if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
+    const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
+    if (filteredValues.length / values.length > CLEAN_SEARCH_PERCENTAGE) {
+      return filteredValues;
+    }
+  }
+
+  return values;
+}
+
 function buildFullTextRegex(value) {
   const wildcard = '[\\s\\S]*';
   const flags = 'gimy';
@@ -37,19 +48,13 @@ function buildFullTextRegex(value) {
     return new RegExp(wildcard, flags);
   }
 
-  let values = replaceAccentedChar(value)
-    .replace(/[\]/\\^$*+?.(){}|[-]/gim, ' ')
-    .trim()
-    .replace(/\s+/, ' ')
-    .split(' ');
-
-  if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
-    const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
-    if (filteredValues.length / values.length > CLEAN_SEARCH_PERCENTAGE) {
-      values = filteredValues;
-    }
-  }
-
+  const values = cleanSearchValues(
+    replaceAccentedChar(value)
+      .replace(/[\]/\\^$*+?.(){}|[-]/gim, ' ')
+      .trim()
+      .replace(/\s+/, ' ')
+      .split(' '),
+  );
   const textGroup = `(${values.join('|')})`;
 
   const parts = [];
@@ -75,7 +80,6 @@ function fullTextRegexFilter(value, search) {
   }
 
   regex.lastIndex = 0;
-
   return regex.test(replaceAccentedChar(value));
 }
 
