@@ -1,7 +1,7 @@
 @import '../style.less';
 
 .small-padding {
-  padding: 5px;
+  padding: 0.5rem;
 }
 
 .header {
@@ -26,12 +26,18 @@
   .small-padding;
 
   border-radius: 0;
-  flex: 1 1 160px;
+  flex: 1 1 16rem;
   height: @icon-size;
-  width: 160px;
+  width: 16rem;
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (max-width: 102.3rem) {
+  .header h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (min-width: 102.4rem) {
   .header input[type='text'] {
     flex: 5;
   }

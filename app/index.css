@@ -11,15 +11,19 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 62.5%;
+}
+
 body {
   margin: 0;
 }
 
-html,
+body,
 button,
 input {
   font-family: 'Open Sans', sans-serif;
-  font-size: initial;
+  font-size: 1.6rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
