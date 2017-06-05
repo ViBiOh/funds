@@ -5,13 +5,13 @@ import { COLUMNS } from './FundsConstantes';
 import style from './HeaderIcon.less';
 
 const HeaderIcon = ({ filter, onClick, icon, displayed }) => {
-  const list = Object.keys(COLUMNS).filter(e => COLUMNS[e][filter]).map(key => (
-    <li key={key}>
+  const list = Object.keys(COLUMNS).filter(e => COLUMNS[e][filter]).map(key =>
+    (<li key={key}>
       <Button type="none" className={style.button} onClick={() => onClick(key)}>
         {COLUMNS[key].label}
       </Button>
-    </li>
-  ));
+    </li>),
+  );
 
   return (
     <span className={style.icon}>

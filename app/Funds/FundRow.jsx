@@ -12,8 +12,8 @@ function isUpdateTimeGreaterThanSixHours(updateTime) {
   return (now - Date.parse(updateTime)) / 3600000 > 6;
 }
 
-const FundRow = ({ fund, filterBy }) => (
-  <span className={style.row}>
+const FundRow = ({ fund, filterBy }) =>
+  (<span className={style.row}>
     <span className={style.isin}>{fund.isin}</span>
     <span className={style.label} title={fund.label}>{fund.label}</span>
     <Button
@@ -33,7 +33,9 @@ const FundRow = ({ fund, filterBy }) => (
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
     <a
-      title={`Lien vers la source des données. ${fund.ts ? `MàJ le ${new Date(Date.parse(fund.ts))}` : ''}`}
+      title={`Lien vers la source des données. ${fund.ts
+        ? `MàJ le ${new Date(Date.parse(fund.ts))}`
+        : ''}`}
       href={fund.id && FundsService.getDataUrl(fund.id)}
       rel="noopener noreferrer"
       target="_blank"
@@ -41,8 +43,7 @@ const FundRow = ({ fund, filterBy }) => (
     >
       <FaBarChart />
     </a>
-  </span>
-);
+  </span>);
 
 FundRow.displayName = 'FundRow';
 

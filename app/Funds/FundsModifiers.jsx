@@ -22,16 +22,16 @@ function renderCount(fundsSize, initialSize) {
 }
 
 function renderFilters(filters, filterBy) {
-  return Object.keys(filters).filter(filter => filters[filter]).map(filter => (
-    <span key={filter} className={style.modifier}>
+  return Object.keys(filters).filter(filter => filters[filter]).map(filter =>
+    (<span key={filter} className={style.modifier}>
       <FaFilter />
       <span><em> {COLUMNS[filter].label}</em> ≃ </span>
       <span>{filters[filter]}</span>
       <Button type="none" onClick={() => filterBy(filter, '')}>
         <FaClose />
       </Button>
-    </span>
-  ));
+    </span>),
+  );
 }
 
 function renderOrder(order, orderBy, reverseOrder) {
@@ -61,7 +61,9 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
       <FaPieChart />
       <select value={aggregat.size} onChange={onAggregateSizeChange}>
         {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
-      </select> {label}
+      </select>
+      {' '}
+      {label}
       <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />
       </Button>
@@ -80,14 +82,13 @@ const FundsModifier = ({
   aggregat,
   aggregateBy,
   onAggregateSizeChange,
-}) => (
-  <div className={style.list}>
+}) =>
+  (<div className={style.list}>
     {renderCount(fundsSize, initialSize)}
     {renderFilters(filters, filterBy)}
     {renderOrder(order, orderBy, reverseOrder)}
     {renderAggregat(aggregat, aggregateBy, onAggregateSizeChange)}
-  </div>
-);
+  </div>);
 
 FundsModifier.displayName = 'FundsModifier';
 
