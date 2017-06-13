@@ -50,7 +50,7 @@
     "extract-text-webpack-plugin": "latest",
     "identity-obj-proxy": "latest",
     "ignore-styles": "latest",
-    "js-index-builder": "git+https://github.com/ViBiOh/js-index-builder.git",
+    "js-index-builder": "ViBiOh/js-index-builder",
     "jsdom": "latest",
     "less": "latest",
     "less-loader": "latest",
