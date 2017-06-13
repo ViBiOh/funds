@@ -98,8 +98,10 @@
   "eslintConfig": {
     "extends": "airbnb",
     "env": {
+      "es6": true,
       "browser": true
     },
+    "ecmaFeatures": {},
     "rules": {
       "react/jsx-filename-extension": 1
     }
