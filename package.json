@@ -8,7 +8,7 @@
     "copy:web": "cp ./web/* ./dist/",
     "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:web",
     "mustache": "./node_modules/js-index-builder/index.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
-    "prettier": "./node_modules/.bin/prettier --print-width 100 --single-quote --trailing-comma all --color --write \"./app/**/*.{js,jsx}\"",
+    "prettier": "./node_modules/.bin/prettier --print-width 100 --single-quote --trailing-comma all --color --write \"./app/**/*.{js,jsx,css,less}\"",
     "stylelint": "./node_modules/.bin/stylelint \"app/**/*.{css,less}\"",
     "eslint": "./node_modules/.bin/eslint --fix --ext .jsx \"./app/**/*.{js,jsx}\"",
     "codestyle": "npm run prettier && npm run eslint && npm run stylelint",
@@ -41,7 +41,7 @@
     "codecov": "latest",
     "css-loader": "latest",
     "enzyme": "latest",
-    "eslint": "latest",
+    "eslint": "3",
     "eslint-config-airbnb": "latest",
     "eslint-loader": "latest",
     "eslint-plugin-import": "latest",
@@ -105,6 +105,10 @@
     }
   },
   "stylelint": {
-    "extends": "stylelint-config-standard"
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "selector-list-comma-newline-after": null,
+      "declaration-colon-newline-after": null
+    }
   }
 }
