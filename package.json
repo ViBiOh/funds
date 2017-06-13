@@ -45,7 +45,7 @@
     "eslint-config-airbnb": "latest",
     "eslint-loader": "latest",
     "eslint-plugin-import": "latest",
-    "eslint-plugin-jsx-a11y": "latest",
+    "eslint-plugin-jsx-a11y": "4",
     "eslint-plugin-react": "latest",
     "extract-text-webpack-plugin": "latest",
     "identity-obj-proxy": "latest",
@@ -98,7 +98,6 @@
   "eslintConfig": {
     "extends": "airbnb",
     "env": {
-      "es6": true,
       "browser": true
     },
     "rules": {
