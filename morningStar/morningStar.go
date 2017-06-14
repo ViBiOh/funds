@@ -52,11 +52,67 @@ func init() {
 	}()
 }
 
+func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance, errors chan<- []byte) {
+	tokens := make(chan int, maxConcurrentFetcher)
+
+	clearSemaphores := func() {
+		wg.Done()
+		<-tokens
+	}
+
+	for _, id := range ids {
+		tokens <- 1
+
+		go func(morningStarID []byte) {
+			defer clearSemaphores()
+			perf, err := fetchPerformance(morningStarID)
+			if err == nil {
+				performances <- perf
+			} else {
+				errors <- morningStarID
+			}
+		}(id)
+	}
+}
+
+func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
+	var wg sync.WaitGroup
+	wg.Add(len(ids))
+
+	performances := make(chan *performance, maxConcurrentFetcher)
+	errors := make(chan []byte)
+	go concurrentRetrievePerformances(ids, &wg, performances, errors)
+
+	go func() {
+		wg.Wait()
+		close(performances)
+		close(errors)
+	}()
+
+	results := make([]*performance, 0, len(ids))
+	for perf := range performances {
+		results = append(results, perf)
+	}
+
+	idsInError := make([][]byte, 0)
+	for idWithError := range errors {
+		idsInError = append(idsInError, idWithError)
+	}
+
+	return results, idsInError
+}
+
 func refreshCache() {
 	log.Print(`Cache refresh - start`)
 	defer log.Print(`Cache refresh - end`)
 
-	loadCache(cacheRequests, retrievePerformances(morningStarIds))
+	performances, errors := retrievePerformances(morningStarIds)
+
+	if len(errors) > 0 {
+		log.Printf(`Errors while refreshing ids %v`, errors)
+	}
+
+	loadCache(cacheRequests, performances)
 }
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
@@ -74,46 +130,6 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 	morningStarIds = append(morningStarIds, morningStarID)
 
 	return perf, nil
-}
-
-func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance) {
-	tokens := make(chan int, maxConcurrentFetcher)
-
-	clearSemaphores := func() {
-		wg.Done()
-		<-tokens
-	}
-
-	for _, id := range ids {
-		tokens <- 1
-
-		go func(morningStarID []byte) {
-			defer clearSemaphores()
-			if perf, err := fetchPerformance(morningStarID); err == nil {
-				performances <- perf
-			}
-		}(id)
-	}
-}
-
-func retrievePerformances(ids [][]byte) []*performance {
-	var wg sync.WaitGroup
-	wg.Add(len(ids))
-
-	performances := make(chan *performance, maxConcurrentFetcher)
-	go concurrentRetrievePerformances(ids, &wg, performances)
-
-	go func() {
-		wg.Wait()
-		close(performances)
-	}()
-
-	results := make([]*performance, 0, len(ids))
-	for perf := range performances {
-		results = append(results, perf)
-	}
-
-	return results
 }
 
 func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
