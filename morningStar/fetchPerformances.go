@@ -105,7 +105,7 @@ func fetchPerformance(morningStarID []byte) (*performance, error) {
 
 	var err error
 	for err = range errors {
-		log.Printf(`Error while fetching morningStarID=%s, %v`, morningStarID, err)
+		log.Printf(`%s | Error while fetching performance : %v`, morningStarID, err)
 	}
 
 	perf.computeScore()
