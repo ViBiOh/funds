@@ -80,7 +80,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 	wg.Add(len(ids))
 
 	performances := make(chan *performance, maxConcurrentFetcher)
-	errors := make(chan []byte, 0, maxConcurentFetcher)
+	errors := make(chan []byte, maxConcurentFetcher)
 	go concurrentRetrievePerformances(ids, &wg, performances, errors)
 
 	go func() {
