@@ -1,6 +1,7 @@
 package morningStar
 
 import (
+	"bytes"
 	"github.com/ViBiOh/funds/jsonHttp"
 	"log"
 	"net/http"
@@ -86,7 +87,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 	errorsChan := make(chan []byte, 0)
 
 	performances := make([]*performance, 0, len(ids))
-	errors := make([][]byte)
+	errors := make([][]byte, 0)
 	
 	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
 
@@ -98,7 +99,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 	
 	go func() {
 		for perf := range performancesChan {
-			results = append(results, perf)
+			performances = append(performances, perf)
 		}
 		wgDrain.Done()
 	}()
