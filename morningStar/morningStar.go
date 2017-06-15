@@ -76,30 +76,43 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 }
 
 func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
-	var wg sync.WaitGroup
-	wg.Add(len(ids))
+	var wgFetch sync.WaitGroup
+	wgFetch.Add(len(ids))
+	
+	var wgDrain sync.WaitGroup
+	wgDrain.Add(2)
 
-	performances := make(chan *performance, maxConcurrentFetcher)
-	errors := make(chan []byte, maxConcurrentFetcher)
-	go concurrentRetrievePerformances(ids, &wg, performances, errors)
+	performancesChan := make(chan *performance, 0)
+	errorsChan := make(chan []byte, 0)
+
+	performances := make([]*performance, 0, len(ids))
+	errors := make([][]byte)
+	
+	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
 
 	go func() {
-		wg.Wait()
-		close(performances)
-		close(errors)
+		wgFetch.Wait()
+		close(performancesChan)
+		close(errorsChan)
+	}()
+	
+	go func() {
+		for perf := range performancesChan {
+			results = append(results, perf)
+		}
+		wgDrain.Done()
 	}()
 
-	results := make([]*performance, 0, len(ids))
-	for perf := range performances {
-		results = append(results, perf)
-	}
+	go func() {
+		for error := range errorsChan {
+			errors = append(errors, error)
+		}
+		wgDrain.Done()
+	}()
+	
+	wgDrain.Wait()
 
-	idsInError := make([][]byte, 0, len(ids))
-	for idWithError := range errors {
-		idsInError = append(idsInError, idWithError)
-	}
-
-	return results, idsInError
+	return performances, errors
 }
 
 func refreshCache() {
@@ -109,7 +122,7 @@ func refreshCache() {
 	performances, errors := retrievePerformances(morningStarIds)
 
 	if len(errors) > 0 {
-		log.Printf(`Errors while refreshing ids %v`, errors)
+		log.Printf(`Errors while refreshing ids %s`, bytes.Join(errors, []byte(`, `)))
 	}
 
 	loadCache(cacheRequests, performances)
