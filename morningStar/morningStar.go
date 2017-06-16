@@ -188,17 +188,19 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(`Access-Control-Allow-Methods`, `GET`)
 	w.Header().Add(`X-Content-Type-Options`, `nosniff`)
 
+	urlPath := []byte(r.URL.Path)
+
 	if r.Method == http.MethodOptions {
-		w.Write(nil)
+		if requestStatus.Match(urlPath) {
+			statusHandler(w, r)
+		} else {
+		        w.Write(nil)
+		}
 		return
 	}
 
-	urlPath := []byte(r.URL.Path)
-
 	if requestList.Match(urlPath) {
 		listHandler(w, r)
-	} else if requestStatus.Match(urlPath) {
-		statusHandler(w, r)
 	} else if requestPerf.Match(urlPath) {
 		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
 	}
