@@ -197,9 +197,9 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if requestList.Match(urlPath) {
 		listHandler(w, r)
-	} else if requestPerf.Match(urlPath) {
-		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
 	} else if requestStatus.Match(urlPath) {
 		statusHandler(w, r)
+	} else if requestPerf.Match(urlPath) {
+		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
 	}
 }
