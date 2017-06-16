@@ -172,9 +172,9 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
 	if len(listPerformances()) > 0 {
-		w.Write(`OK`)
+		w.Write([]byte(`OK`))
 	} else {
-		w.Write(`KO`)
+		w.Write([]byte(`KO`))
 	}
 }
 
