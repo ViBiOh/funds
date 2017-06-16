@@ -13,6 +13,7 @@ import (
 const refreshDelayInHours = 6
 const maxConcurrentFetcher = 32
 
+var requestStatus = regexp.MustCompile(`^/status$`)
 var requestList = regexp.MustCompile(`^/list$`)
 var requestPerf = regexp.MustCompile(`^/(.+?)$`)
 
@@ -156,13 +157,25 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 	}
 }
 
-func listHandler(w http.ResponseWriter, r *http.Request) {
-	perfs := make([]*performance, 0, len(morningStarIds))
+func listPerformances() []*performance {
+	performances := make([]*performance, 0, len(morningStarIds))
 	for perf := range listCache(cacheRequests) {
-		perfs = append(perfs, perf)
+		performances = append(performances, perf)
 	}
+	
+	return performances
+}
 
-	jsonHttp.ResponseJSON(w, results{perfs})
+func listHandler(w http.ResponseWriter, r *http.Request) {
+	jsonHttp.ResponseJSON(w, results{listPerformances(})
+}
+
+func statusHandler(w http.ResponseWriter, r *http.Request) {
+	if len(listPerformances()) > 0 {
+		w.Write(`OK`)
+	} else {
+		w.Write('KO`)
+	}
 }
 
 // Handler for MorningStar request. Should be use with net/http
@@ -186,5 +199,7 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		listHandler(w, r)
 	} else if requestPerf.Match(urlPath) {
 		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
+	} else if requestStatus.Match(urlPath) {
+		statusHandler(w, r)
 	}
 }
