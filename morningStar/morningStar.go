@@ -167,7 +167,7 @@ func listPerformances() []*performance {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	jsonHttp.ResponseJSON(w, results{listPerformances(})
+	jsonHttp.ResponseJSON(w, results{listPerformances()})
 }
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
