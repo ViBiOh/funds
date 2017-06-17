@@ -4,6 +4,7 @@ services:
   api:
     image: vibioh/funds-api
     labels:
+      traefik.backend.healthcheck.path: '/health'
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
@@ -25,6 +26,7 @@ services:
     - -csp
     - default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     labels:
+      traefik.backend.healthcheck.path: '/health'
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
       traefik.port: '1080'
