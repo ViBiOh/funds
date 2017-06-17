@@ -80,7 +80,7 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 	var wgFetch sync.WaitGroup
 	wgFetch.Add(len(ids))
-	
+
 	var wgDrain sync.WaitGroup
 	wgDrain.Add(2)
 
@@ -89,7 +89,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 
 	performances := make([]*performance, 0, len(ids))
 	errors := make([][]byte, 0)
-	
+
 	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
 
 	go func() {
@@ -97,7 +97,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 		close(performancesChan)
 		close(errorsChan)
 	}()
-	
+
 	go func() {
 		for perf := range performancesChan {
 			performances = append(performances, perf)
@@ -111,7 +111,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 		}
 		wgDrain.Done()
 	}()
-	
+
 	wgDrain.Wait()
 
 	return performances, errors
@@ -162,7 +162,7 @@ func listPerformances() []*performance {
 	for perf := range listCache(cacheRequests) {
 		performances = append(performances, perf)
 	}
-	
+
 	return performances
 }
 
@@ -194,12 +194,9 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if requestStatus.Match(urlPath) {
 			statusHandler(w, r)
 		} else {
-		        w.Write(nil)
+			w.Write(nil)
 		}
-		return
-	}
-
-	if requestList.Match(urlPath) {
+	} else if requestList.Match(urlPath) {
 		listHandler(w, r)
 	} else if requestPerf.Match(urlPath) {
 		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
