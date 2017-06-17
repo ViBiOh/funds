@@ -13,9 +13,9 @@ import (
 const refreshDelayInHours = 6
 const maxConcurrentFetcher = 32
 
-var requestStatus = regexp.MustCompile(`^/status$`)
-var requestList = regexp.MustCompile(`^/list$`)
-var requestPerf = regexp.MustCompile(`^/(.+?)$`)
+var healthRequest = regexp.MustCompile(`^/health$`)
+var listRequest = regexp.MustCompile(`^/list$`)
+var performanceRequest = regexp.MustCompile(`^/(.+?)$`)
 
 type performance struct {
 	ID            string    `json:"id"`
@@ -170,11 +170,11 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 	jsonHttp.ResponseJSON(w, results{listPerformances()})
 }
 
-func statusHandler(w http.ResponseWriter, r *http.Request) {
+func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(listPerformances()) > 0 {
-		w.Write([]byte(`OK`))
+		w.WriteHeader(http.StatusOK)
 	} else {
-		w.Write([]byte(`KO`))
+		w.WriteHeader(http.StatusServiceUnavailable)
 	}
 }
 
@@ -188,17 +188,18 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(`Access-Control-Allow-Methods`, `GET`)
 	w.Header().Add(`X-Content-Type-Options`, `nosniff`)
 
+	if r.Method == http.MethodOptions {
+		w.Write(nil)
+		return
+	}
+
 	urlPath := []byte(r.URL.Path)
 
-	if r.Method == http.MethodOptions {
-		if requestStatus.Match(urlPath) {
-			statusHandler(w, r)
-		} else {
-			w.Write(nil)
-		}
-	} else if requestList.Match(urlPath) {
+	if healthRequest.Match(urlPath) && r.Method == http.MethodGet {
+		healthHandler(w, r)
+	} else if listRequest.Match(urlPath) && r.Method == http.MethodGet {
 		listHandler(w, r)
-	} else if requestPerf.Match(urlPath) {
-		performanceHandler(w, requestPerf.FindSubmatch(urlPath)[1])
+	} else if performanceRequest.Match(urlPath) && r.Method == http.MethodGet {
+		performanceHandler(w, performanceRequest.FindSubmatch(urlPath)[1])
 	}
 }
