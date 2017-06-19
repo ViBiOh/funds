@@ -78,41 +78,40 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 }
 
 func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
-	var wgFetch sync.WaitGroup
-	wgFetch.Add(len(ids))
+	var wg sync.WaitGroup
+	wg.Add(len(ids))
 
-	var wgDrain sync.WaitGroup
-	wgDrain.Add(2)
-
-	performancesChan := make(chan *performance, 0)
-	errorsChan := make(chan []byte, 0)
+	performancesChan := make(chan *performance, 0, maxConcurrentFetcher)
+	errorsChan := make(chan []byte, 0, maxConcurrentFetcher)
 
 	performances := make([]*performance, 0, len(ids))
 	errors := make([][]byte, 0)
 
 	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
 
+	var wgChanDrain sync.WaitGroup
+	
 	go func() {
-		wgFetch.Wait()
+		wg.Wait()
 		close(performancesChan)
 		close(errorsChan)
 	}()
 
 	go func() {
-		for perf := range performancesChan {
-			performances = append(performances, perf)
+		wgChanDrain.Add(1)
+
+		for err := range errorsChan {
+			errors = append(errors, err)
 		}
-		wgDrain.Done()
+		
+		wgChanDrain.Done()
 	}()
 
-	go func() {
-		for error := range errorsChan {
-			errors = append(errors, error)
-		}
-		wgDrain.Done()
-	}()
-
-	wgDrain.Wait()
+	for perf := range performancesChan {
+		performances = append(performances, perf)
+	}
+	
+	wgChanDrain.Wait()
 
 	return performances, errors
 }
