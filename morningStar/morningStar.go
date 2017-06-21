@@ -44,7 +44,7 @@ type results struct {
 var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 
 func init() {
-	go cacheServer(cacheRequests)
+	go cacheServer(cacheRequests, len(morningStarIds))
 	go func() {
 		refreshCache()
 		c := time.Tick(refreshDelayInHours * time.Hour)
@@ -90,7 +90,7 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
 
 	var wgChanDrain sync.WaitGroup
-	
+
 	go func() {
 		wgFetch.Wait()
 		close(performancesChan)
@@ -103,14 +103,14 @@ func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
 		for err := range errorsChan {
 			errors = append(errors, err)
 		}
-		
+
 		wgChanDrain.Done()
 	}()
 
 	for perf := range performancesChan {
 		performances = append(performances, perf)
 	}
-	
+
 	wgChanDrain.Wait()
 
 	return performances, errors
@@ -126,7 +126,7 @@ func refreshCache() {
 		log.Printf(`Errors while refreshing ids %s`, bytes.Join(errors, []byte(`, `)))
 	}
 
-	loadCache(cacheRequests, performances)
+	pushCache(cacheRequests, performances)
 }
 
 func retrievePerformance(morningStarID []byte) (*performance, error) {
@@ -140,7 +140,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	pushCache(cacheRequests, perf)
+	pushCache(cacheRequests, []*performance{perf})
 	morningStarIds = append(morningStarIds, morningStarID)
 
 	return perf, nil

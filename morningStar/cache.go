@@ -1,7 +1,5 @@
 package morningStar
 
-const bufferSize = 8
-
 type cacheRequest struct {
 	key     string
 	entries chan *performance
@@ -14,16 +12,8 @@ func getCache(ch chan<- *cacheRequest, key string) *performance {
 	return <-req.entries
 }
 
-func pushCache(ch chan<- *cacheRequest, entry *performance) {
-	req := cacheRequest{entries: make(chan *performance)}
-	ch <- &req
-	req.entries <- entry
-
-	close(req.entries)
-}
-
-func loadCache(ch chan<- *cacheRequest, entries []*performance) {
-	req := cacheRequest{entries: make(chan *performance, bufferSize)}
+func pushCache(ch chan<- *cacheRequest, entries []*performance) {
+	req := cacheRequest{key: `push`, entries: make(chan *performance, 0)}
 	ch <- &req
 
 	for _, entry := range entries {
@@ -34,14 +24,14 @@ func loadCache(ch chan<- *cacheRequest, entries []*performance) {
 }
 
 func listCache(ch chan<- *cacheRequest) <-chan *performance {
-	results := make(chan *performance, bufferSize)
+	results := make(chan *performance, 0)
 	ch <- &cacheRequest{key: `list`, entries: results}
 
 	return results
 }
 
-func cacheServer(ch <-chan *cacheRequest) {
-	cache := make(map[string]*performance)
+func cacheServer(ch <-chan *cacheRequest, size int) {
+	cache := make(map[string]*performance, size)
 
 	for req := range ch {
 		if req.key == `list` {
@@ -49,15 +39,15 @@ func cacheServer(ch <-chan *cacheRequest) {
 				req.entries <- perf
 			}
 			close(req.entries)
+		} else if req.key == `push` {
+			for entry := range req.entries {
+				cache[entry.ID] = entry
+			}
 		} else if req.key != `` {
 			if entry, ok := cache[req.key]; ok {
 				req.entries <- entry
 			}
 			close(req.entries)
-		} else {
-			for entry := range req.entries {
-				cache[entry.ID] = entry
-			}
 		}
 	}
 }
