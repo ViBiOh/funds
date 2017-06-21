@@ -5,6 +5,7 @@ node_modules/
 coverage/
 tmp/
 dist/
+package-lock.json
 
 # Go binary
 server
