@@ -1,10 +1,10 @@
-default: lint vet coverage build
+default: deps lint coverage build
+
+deps:
+	go get -u github.com/golang/lint/golint
 
 lint:
-	go get -u github.com/golang/lint/golint
 	golint ./...
-
-vet:
 	go vet ./...
 
 coverage:
