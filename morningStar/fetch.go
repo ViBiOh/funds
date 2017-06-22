@@ -8,7 +8,6 @@ import (
 )
 
 var httpClient = http.Client{Timeout: 10 * time.Second}
-var httpGet = httpClient.Get
 
 func readBody(body io.ReadCloser) ([]byte, error) {
 	defer body.Close()
@@ -21,7 +20,7 @@ func getBody(url string) ([]byte, error) {
 		return nil, fmt.Errorf(`Unable to prepare request for url %s : %v`, url, err)
 	}
 
-	response, err := httpGet.Do(request)
+	response, err := httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
 	}
