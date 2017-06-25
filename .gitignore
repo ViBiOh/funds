@@ -9,5 +9,4 @@ package-lock.json
 
 # Go binary
 server
-health_check
 *.out

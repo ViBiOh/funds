@@ -1,4 +1,4 @@
-default: deps lint coverage build
+default: deps lint tst build
 
 deps:
 	go get -u github.com/golang/lint/golint
@@ -7,9 +7,8 @@ lint:
 	golint ./...
 	go vet ./...
 
-coverage:
+tst:
 	./test/coverage
 
 build:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo server.go
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o health_check health/health.go
