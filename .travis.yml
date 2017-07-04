@@ -10,7 +10,7 @@ install:
 - npm i
 - npm run build
 script: |
-  npm run coverage &&
+  bash <(curl -s https://codecov.io/bash) &&
   docker build -t ${DOCKER_USER}/funds-front -f Dockerfile_front . &&
   docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
 after_success: |
