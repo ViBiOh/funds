@@ -9,4 +9,4 @@ package-lock.json
 
 # Go binary
 server
-*.out
+coverage.txt

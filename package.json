@@ -14,7 +14,7 @@
     "codestyle": "npm run prettier && npm run eslint && npm run stylelint",
     "start": "npm run copy && API_HOST=funds-api.vibioh.fr API_SECURE=true ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
     "test": "./node_modules/.bin/nyc --reporter text --reporter lcov --extension .jsx --require babel-core/register ./node_modules/.bin/ava",
-    "coverage": "./node_modules/.bin/codecov -f ./coverage/lcov.info",
+    "coverage": "./node_modules/.bin/codecov",
     "build": "npm run codestyle && npm test && npm run mustache && npm run copy:web && ./node_modules/.bin/webpack --progress -p"
   },
   "repository": {
