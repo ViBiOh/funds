@@ -17,8 +17,8 @@ const FundRow = ({ fund, filterBy }) =>
     <span className={style.isin}>{fund.isin}</span>
     <span className={style.label} title={fund.label}>{fund.label}</span>
     <Button
-      type="none"
       className={style.category}
+      type="none"
       onClick={() => filterBy('category', fund.category)}
     >
       <span className={style.ellipsis} title={fund.category}>{fund.category}</span>
