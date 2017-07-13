@@ -6,15 +6,15 @@ import (
 
 func TestComputeScore(t *testing.T) {
 	var tests = []struct {
-		instance *performance
+		instance *Performance
 		want     float64
 	}{
 		{
-			&performance{},
+			&Performance{},
 			0.0,
 		},
 		{
-			&performance{OneMonth: 1 / 0.25, ThreeMonths: 1 / 0.3, SixMonths: 1 / 0.25, OneYear: 1 / 0.2, VolThreeYears: 1 / 0.1},
+			&Performance{OneMonth: 1 / 0.25, ThreeMonths: 1 / 0.3, SixMonths: 1 / 0.25, OneYear: 1 / 0.2, VolThreeYears: 1 / 0.1},
 			3.0,
 		},
 	}

@@ -8,5 +8,5 @@ dist/
 package-lock.json
 
 # Go binary
-server
+funds
 coverage.txt

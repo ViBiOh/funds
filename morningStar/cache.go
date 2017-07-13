@@ -2,18 +2,18 @@ package morningStar
 
 type cacheRequest struct {
 	key     string
-	entries chan *performance
+	entries chan *Performance
 }
 
-func getCache(ch chan<- *cacheRequest, key string) *performance {
-	req := cacheRequest{key: key, entries: make(chan *performance)}
+func getCache(ch chan<- *cacheRequest, key string) *Performance {
+	req := cacheRequest{key: key, entries: make(chan *Performance)}
 	ch <- &req
 
 	return <-req.entries
 }
 
-func pushCache(ch chan<- *cacheRequest, entries []*performance) {
-	req := cacheRequest{key: `push`, entries: make(chan *performance, 0)}
+func pushCache(ch chan<- *cacheRequest, entries []*Performance) {
+	req := cacheRequest{key: `push`, entries: make(chan *Performance, 0)}
 	ch <- &req
 
 	for _, entry := range entries {
@@ -23,15 +23,15 @@ func pushCache(ch chan<- *cacheRequest, entries []*performance) {
 	close(req.entries)
 }
 
-func listCache(ch chan<- *cacheRequest) <-chan *performance {
-	results := make(chan *performance, 0)
+func listCache(ch chan<- *cacheRequest) <-chan *Performance {
+	results := make(chan *Performance, 0)
 	ch <- &cacheRequest{key: `list`, entries: results}
 
 	return results
 }
 
 func cacheServer(ch <-chan *cacheRequest, size int) {
-	cache := make(map[string]*performance, size)
+	cache := make(map[string]*Performance, size)
 
 	for req := range ch {
 		if req.key == `list` {

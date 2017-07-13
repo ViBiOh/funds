@@ -1,7 +1,12 @@
 default: deps lint tst build
 
 deps:
+	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
+
+fmt:
+	goimports -w **/*.go
+	gofmt -s -w **/*.go
 
 lint:
 	golint ./...

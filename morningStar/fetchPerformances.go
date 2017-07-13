@@ -60,7 +60,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 	return result
 }
 
-func getPerformance(wg *sync.WaitGroup, url string, perf *performance, errors chan<- error) {
+func getPerformance(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
 	defer wg.Done()
 
 	if body, err := getBody(url); err != nil {
@@ -77,7 +77,7 @@ func getPerformance(wg *sync.WaitGroup, url string, perf *performance, errors ch
 	}
 }
 
-func getVolatilite(wg *sync.WaitGroup, url string, perf *performance, errors chan<- error) {
+func getVolatilite(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
 	defer wg.Done()
 
 	if body, err := getBody(url); err != nil {
@@ -87,11 +87,11 @@ func getVolatilite(wg *sync.WaitGroup, url string, perf *performance, errors cha
 	}
 }
 
-func fetchPerformance(morningStarID []byte) (*performance, error) {
+func fetchPerformance(morningStarID []byte) (*Performance, error) {
 	var wg sync.WaitGroup
 
 	cleanID := cleanID(morningStarID)
-	perf := &performance{ID: cleanID, Update: time.Now()}
+	perf := &Performance{ID: cleanID, Update: time.Now()}
 
 	wg.Add(fetchCount)
 	errors := make(chan error)

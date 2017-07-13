@@ -2,22 +2,23 @@ package morningStar
 
 import (
 	"bytes"
-	"github.com/ViBiOh/funds/jsonHttp"
 	"log"
 	"net/http"
 	"regexp"
 	"sync"
 	"time"
+
+	"github.com/ViBiOh/funds/jsonHttp"
 )
 
 const refreshDelayInHours = 6
 const maxConcurrentFetcher = 32
 
-var healthRequest = regexp.MustCompile(`^/health$`)
 var listRequest = regexp.MustCompile(`^/list$`)
 var performanceRequest = regexp.MustCompile(`^/(.+?)$`)
 
-type performance struct {
+// Performance of a funds
+type Performance struct {
 	ID            string    `json:"id"`
 	Isin          string    `json:"isin"`
 	Label         string    `json:"label"`
@@ -32,7 +33,7 @@ type performance struct {
 	Update        time.Time `json:"ts"`
 }
 
-func (perf *performance) computeScore() {
+func (perf *Performance) computeScore() {
 	score := (0.25 * perf.OneMonth) + (0.3 * perf.ThreeMonths) + (0.25 * perf.SixMonths) + (0.2 * perf.OneYear) - (0.1 * perf.VolThreeYears)
 	perf.Score = float64(int(score*100)) / 100
 }
@@ -54,7 +55,7 @@ func init() {
 	}()
 }
 
-func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *performance, errors chan<- []byte) {
+func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performances chan<- *Performance, errors chan<- []byte) {
 	tokens := make(chan int, maxConcurrentFetcher)
 
 	clearSemaphores := func() {
@@ -77,14 +78,14 @@ func concurrentRetrievePerformances(ids [][]byte, wg *sync.WaitGroup, performanc
 	}
 }
 
-func retrievePerformances(ids [][]byte) ([]*performance, [][]byte) {
+func retrievePerformances(ids [][]byte) ([]*Performance, [][]byte) {
 	var wgFetch sync.WaitGroup
 	wgFetch.Add(len(ids))
 
-	performancesChan := make(chan *performance, maxConcurrentFetcher)
+	performancesChan := make(chan *Performance, maxConcurrentFetcher)
 	errorsChan := make(chan []byte, maxConcurrentFetcher)
 
-	performances := make([]*performance, 0, len(ids))
+	performances := make([]*Performance, 0, len(ids))
 	errors := make([][]byte, 0)
 
 	go concurrentRetrievePerformances(ids, &wgFetch, performancesChan, errorsChan)
@@ -129,7 +130,7 @@ func refreshCache() {
 	pushCache(cacheRequests, performances)
 }
 
-func retrievePerformance(morningStarID []byte) (*performance, error) {
+func retrievePerformance(morningStarID []byte) (*Performance, error) {
 	perf := getCache(cacheRequests, cleanID(morningStarID))
 	if perf != nil {
 		return perf, nil
@@ -140,7 +141,7 @@ func retrievePerformance(morningStarID []byte) (*performance, error) {
 		return nil, err
 	}
 
-	pushCache(cacheRequests, []*performance{perf})
+	pushCache(cacheRequests, []*Performance{perf})
 	morningStarIds = append(morningStarIds, morningStarID)
 
 	return perf, nil
@@ -156,8 +157,9 @@ func performanceHandler(w http.ResponseWriter, morningStarID []byte) {
 	}
 }
 
-func listPerformances() []*performance {
-	performances := make([]*performance, 0, len(morningStarIds))
+// ListPerformances return content of performance cache
+func ListPerformances() []*Performance {
+	performances := make([]*Performance, 0, len(morningStarIds))
 	for perf := range listCache(cacheRequests) {
 		performances = append(performances, perf)
 	}
@@ -166,15 +168,7 @@ func listPerformances() []*performance {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	jsonHttp.ResponseJSON(w, results{listPerformances()})
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if len(listPerformances()) > 0 {
-		w.WriteHeader(http.StatusOK)
-	} else {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	}
+	jsonHttp.ResponseJSON(w, results{ListPerformances()})
 }
 
 // Handler for MorningStar request. Should be use with net/http
@@ -194,9 +188,7 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	urlPath := []byte(r.URL.Path)
 
-	if healthRequest.Match(urlPath) && r.Method == http.MethodGet {
-		healthHandler(w, r)
-	} else if listRequest.Match(urlPath) && r.Method == http.MethodGet {
+	if listRequest.Match(urlPath) && r.Method == http.MethodGet {
 		listHandler(w, r)
 	} else if performanceRequest.Match(urlPath) && r.Method == http.MethodGet {
 		performanceHandler(w, performanceRequest.FindSubmatch(urlPath)[1])
