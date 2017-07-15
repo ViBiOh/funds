@@ -51,6 +51,7 @@ func handleGracefulClose(server *http.Server) {
 
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
+	flag.Parse()
 
 	if *url != `` {
 		alcotest.Do(url)
