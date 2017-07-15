@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"runtime"
 	"syscall"
 
+	"github.com/ViBiOh/alcotest/alcotest"
 	"github.com/ViBiOh/funds/morningStar"
 )
 
@@ -48,6 +50,13 @@ func handleGracefulClose(server *http.Server) {
 }
 
 func main() {
+	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
+
+	if *url != `` {
+		alcotest.Do(url)
+		return
+	}
+
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	log.Print(`Starting server on port ` + port)

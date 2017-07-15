@@ -2,7 +2,17 @@ const CLEAN_SEARCH_MIN_LENGTH = 2;
 const CLEAN_WORDS_MIN_LENTH = 2;
 const CLEAN_SEARCH_PERCENTAGE = 0.5;
 
-function replaceAccentedChar(str) {
+/**
+ * Replace accented char in given string
+ *
+ * @param {String} str Given string
+ * @return String with accented character replaced by raw one
+ */
+export function replaceAccentedChar(str) {
+  if (typeof str === 'undefined' || str === null) {
+    return '';
+  }
+
   return String(str)
     .replace(/[\u00c0-\u00c5]/gm, 'A')
     .replace(/[\u00c6]/gm, 'AE')
@@ -15,7 +25,7 @@ function replaceAccentedChar(str) {
     .replace(/[\u00d8]/gm, 'O')
     .replace(/[\u00d9-\u00dc]/gm, 'U')
     .replace(/[\u00dd]/gm, 'Y')
-    .replace(/[\u00e0-\u00e5]/gm, 'A')
+    .replace(/[\u00e0-\u00e5]/gm, 'a')
     .replace(/[\u00e6]/gm, 'ae')
     .replace(/[\u00e7]/gm, 'c')
     .replace(/[\u00e8-\u00eb]/gm, 'e')
@@ -30,7 +40,17 @@ function replaceAccentedChar(str) {
     .replace(/[\u0153]/gm, 'oe');
 }
 
-function cleanSearchValues(values) {
+/**
+ * Clean search values by removing too short words if enough words
+ *
+ * @param {Array<String>} values Search values
+ * @return Cleaned search values
+ */
+export function cleanSearchValues(values) {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
   if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
     const filteredValues = values.filter(v => v.length > CLEAN_WORDS_MIN_LENTH);
     if (filteredValues.length / values.length > CLEAN_SEARCH_PERCENTAGE) {
@@ -41,7 +61,14 @@ function cleanSearchValues(values) {
   return values;
 }
 
-function buildFullTextRegex(value) {
+/**
+ * Build full text regex for given string, splitting words, cleaning and
+ * create a regex that behaves like a fulltext search.
+ *
+ * @param {String} value Search string
+ * @returnRegExp Pattern for make a fulltext-like search from given search string
+ */
+export function buildFullTextRegex(value) {
   const wildcard = '[\\s\\S]*';
   const flags = 'gimy';
   if (value.trim() === '') {
@@ -57,10 +84,9 @@ function buildFullTextRegex(value) {
   );
   const textGroup = `(${values.join('|')})`;
 
-  const parts = [];
+  const parts = [wildcard];
   const excludes = [];
 
-  parts.push(wildcard);
   for (let i = 0, size = values.length; i < size; i += 1) {
     if (i > 0) {
       excludes.push(`\\${i}`);
@@ -73,7 +99,14 @@ function buildFullTextRegex(value) {
   return new RegExp(parts.join(''), flags);
 }
 
-function fullTextRegexFilter(value, search) {
+/**
+ * Perform a fulltext search for given search and indicate if value matches or not
+ *
+ * @param {String} value tested for search matching
+ * @param {string|RegExp} search Searched string or pattern
+ * return True if value matches given search, false otherwise
+ */
+export function fullTextRegexFilter(value, search) {
   let regex = search;
   if (!(search instanceof RegExp)) {
     regex = buildFullTextRegex(search);
@@ -82,5 +115,3 @@ function fullTextRegexFilter(value, search) {
   regex.lastIndex = 0;
   return regex.test(replaceAccentedChar(value));
 }
-
-export { replaceAccentedChar, buildFullTextRegex, fullTextRegexFilter };

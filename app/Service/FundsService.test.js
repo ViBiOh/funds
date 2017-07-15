@@ -16,6 +16,7 @@ test('should get data source url for given id', (t) => {
   t.is(FundsService.getDataUrl('test'), MS_URL('test'));
 });
 
-test('should fetch data for funds', t => FundsService.getFunds().then(({ url }) => {
-  t.truthy(/list/i.test(url));
-}));
+test('should fetch data for funds', t =>
+  FundsService.getFunds().then(({ url }) => {
+    t.truthy(/list/i.test(url));
+  }));
