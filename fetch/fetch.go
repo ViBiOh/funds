@@ -1,4 +1,4 @@
-package morningStar
+package fetch
 
 import (
 	"fmt"
@@ -15,7 +15,8 @@ func readBody(body io.ReadCloser) ([]byte, error) {
 	return ioutil.ReadAll(body)
 }
 
-func getBody(url string) ([]byte, error) {
+// GetBody return body of given URL or error if something goes wrong
+func GetBody(url string) ([]byte, error) {
 	request, err := http.NewRequest(`GET`, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf(`Unable to prepare request for url %s : %v`, url, err)

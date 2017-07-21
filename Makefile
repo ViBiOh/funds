@@ -18,3 +18,4 @@ tst:
 
 build:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo funds.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds-notifier notifier/notifier.go

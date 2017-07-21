@@ -67,6 +67,8 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
+	morningStar.Init()
+
 	server := &http.Server{
 		Addr:    `:` + port,
 		Handler: http.HandlerFunc(fundsHandler),

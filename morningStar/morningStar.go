@@ -44,7 +44,8 @@ type results struct {
 
 var cacheRequests = make(chan *cacheRequest, maxConcurrentFetcher)
 
-func init() {
+// Init start cache server routine and init it from crawling
+func Init() {
 	go cacheServer(cacheRequests, len(morningStarIds))
 	go func() {
 		refreshCache()

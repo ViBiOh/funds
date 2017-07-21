@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/ViBiOh/funds/fetch"
 )
 
 const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
@@ -63,7 +65,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 func getPerformance(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
 	defer wg.Done()
 
-	if body, err := getBody(url); err != nil {
+	if body, err := fetch.GetBody(url); err != nil {
 		errors <- err
 	} else {
 		perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
@@ -80,7 +82,7 @@ func getPerformance(wg *sync.WaitGroup, url string, perf *Performance, errors ch
 func getVolatilite(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
 	defer wg.Done()
 
-	if body, err := getBody(url); err != nil {
+	if body, err := fetch.GetBody(url); err != nil {
 		errors <- err
 	} else {
 		perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
