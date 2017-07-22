@@ -22,6 +22,6 @@ notifications:
 deploy:
   provider: script
   skip_cleanup: true
-  script: curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://dashboard-api.vibioh.fr/containers/funds/ --data-binary @docker-compose.yml
+  script: sed "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" > docker-compose-env.yml && curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://dashboard-api.vibioh.fr/containers/funds/ --data-binary @docker-compose-env.yml
   on:
     branch: master

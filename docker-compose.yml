@@ -3,6 +3,8 @@ version: '2'
 services:
   api:
     image: vibioh/funds-api
+    command:
+    - -performance ${PERFORMANCE_URL}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'

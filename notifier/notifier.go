@@ -1,19 +1,18 @@
-package main
+package notifier
 
 import (
 	"encoding/json"
-	"flag"
 	"log"
 	"time"
 
 	"github.com/ViBiOh/funds/fetch"
-	"github.com/ViBiOh/funds/morningStar"
+	"github.com/ViBiOh/funds/model"
 )
 
 const notificationInterval = 1 * time.Minute
 
 type apiResult struct {
-	Results []morningStar.Performance `json:"results"`
+	Results []model.Performance `json:"results"`
 }
 
 func getTimer(hour int, minute int) *time.Timer {
@@ -27,7 +26,7 @@ func getTimer(hour int, minute int) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func readFunds(apiURL string) ([]morningStar.Performance, error) {
+func readFunds(apiURL string) ([]model.Performance, error) {
 	data, err := fetch.GetBody(apiURL)
 	if err != nil {
 		log.Printf(`Error while fetching funds from %s: %v`, apiURL, err)
@@ -41,38 +40,40 @@ func readFunds(apiURL string) ([]morningStar.Performance, error) {
 	return result.Results, nil
 }
 
-func getFundsWithAboveScore(scoreStep float64, funds []morningStar.Performance) []*morningStar.Performance {
-	filteredFunds := make([]*morningStar.Performance, 0, len(funds))
+func getFundsWithAboveScore(scoreStep float64, funds []model.Performance) []model.Performance {
+	filteredFunds := make([]model.Performance, 0, len(funds))
 
 	for _, fund := range funds {
 		if fund.Score >= scoreStep {
-			filteredFunds = append(filteredFunds, &fund)
+			filteredFunds = append(filteredFunds, fund)
 		}
 	}
 
 	return filteredFunds
 }
 
-func main() {
-	apiURL := flag.String(`api`, `https://funds-api.vibioh.fr/list`, `URL of funds-api`)
-	recipients := flag.String(`recipients`, ``, `Email of notifications recipients`)
-	hourOfDay := flag.Int(`hour`, 8, `Hour of day for sending notifications`)
-	minuteOfHour := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
-	scoreStep := flag.Float64(`score`, 15.0, `Score value to notification when above`)
-	flag.Parse()
+// Start the notifier
+func Start(apiURL string, recipients string, hour int, minute int, score float64) {
+	timer := getTimer(hour, minute)
 
-	timer := getTimer(*hourOfDay, *minuteOfHour)
 	for {
 		select {
 		case <-timer.C:
-			funds, err := readFunds(*apiURL)
+			funds, err := readFunds(apiURL)
 			if err != nil {
-				log.Printf(`Error while reading funds from %s: %v`, *apiURL, err)
+				log.Printf(`Error while reading funds from %s: %v`, apiURL, err)
 			}
 
-			scoreFunds := getFundsWithAboveScore(*scoreStep, funds)
+			scoreFunds := getFundsWithAboveScore(score, funds)
 			if len(scoreFunds) > 0 {
-				log.Printf(`Sended to %s`, *recipients)
+				htmlContent, err := getHTMLContent(score, scoreFunds)
+
+				if err != nil {
+					log.Printf(`Error while creating HTML email: %v`, err)
+				}
+
+				log.Printf(`%s`, htmlContent)
+				log.Printf(`Sended to %s`, recipients)
 			}
 			timer.Reset(notificationInterval)
 		}

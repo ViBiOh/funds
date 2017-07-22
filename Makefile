@@ -6,8 +6,8 @@ deps:
 	go get -u github.com/ViBiOh/alcotest/alcotest
 
 fmt:
-	goimports -w **/*.go *.go
-	gofmt -s -w **/*.go *.go
+	goimports -w **/*.go
+	gofmt -s -w **/*.go
 
 lint:
 	golint ./...
@@ -17,5 +17,5 @@ tst:
 	script/coverage
 
 build:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo funds.go
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds-notifier notifier/notifier.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds api/api.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds-notifier alert/alert.go

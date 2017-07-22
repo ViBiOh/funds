@@ -1,19 +1,14 @@
-package morningStar
+package model
 
 import (
 	"bytes"
 	"log"
 	"regexp"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/ViBiOh/funds/fetch"
 )
-
-const urlPerformance = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=1&id=`
-const urlVolatilite = `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=2&id=`
-const fetchCount = 2
 
 var emptyByte = []byte(``)
 var zeroByte = []byte(`0`)
@@ -33,8 +28,8 @@ var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)
 var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
-func cleanID(morningStarID []byte) string {
-	return string(bytes.ToLower(morningStarID))
+func cleanID(performanceID []byte) string {
+	return string(bytes.ToLower(performanceID))
 }
 
 func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
@@ -62,55 +57,49 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 	return result
 }
 
-func getPerformance(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
-	defer wg.Done()
-
-	if body, err := fetch.GetBody(url); err != nil {
-		errors <- err
-	} else {
-		perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
-		perf.Label = string(extractLabel(labelRegex, body, emptyByte))
-		perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
-		perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
-		perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
-		perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
-		perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
-		perf.OneYear = extractPerformance(perfOneYearRegex, body)
+func getPerformance(url string, perf *Performance) error {
+	body, err := fetch.GetBody(url + `&tab=1`)
+	if err != nil {
+		return err
 	}
+
+	perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
+	perf.Label = string(extractLabel(labelRegex, body, emptyByte))
+	perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
+	perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
+	perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
+	perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
+	perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
+	perf.OneYear = extractPerformance(perfOneYearRegex, body)
+
+	return nil
 }
 
-func getVolatilite(wg *sync.WaitGroup, url string, perf *Performance, errors chan<- error) {
-	defer wg.Done()
-
-	if body, err := fetch.GetBody(url); err != nil {
-		errors <- err
-	} else {
-		perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+func getVolatilite(url string, perf *Performance) error {
+	body, err := fetch.GetBody(url + `&tab=2`)
+	if err != nil {
+		return err
 	}
+
+	perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+	return nil
 }
 
-func fetchPerformance(morningStarID []byte) (*Performance, error) {
-	var wg sync.WaitGroup
-
-	cleanID := cleanID(morningStarID)
+func fetchPerformance(performanceID []byte) (Performance, error) {
+	cleanID := cleanID(performanceID)
 	perf := &Performance{ID: cleanID, Update: time.Now()}
 
-	wg.Add(fetchCount)
-	errors := make(chan error)
-	go getPerformance(&wg, urlPerformance+cleanID, perf, errors)
-	go getVolatilite(&wg, urlVolatilite+cleanID, perf, errors)
-
-	go func() {
-		wg.Wait()
-		close(errors)
-	}()
-
-	var err error
-	for err = range errors {
-		log.Printf(`%s | Error while fetching performance : %v`, morningStarID, err)
+	if err := getPerformance(performanceURL+cleanID, perf); err != nil {
+		log.Printf(`Error while fetching performance for %s: %v`, performanceID, err)
+		return *perf, err
 	}
 
-	perf.computeScore()
+	if err := getVolatilite(performanceURL+cleanID, perf); err != nil {
+		log.Printf(`Error while fetching volatilite for %s: %v`, performanceID, err)
+		return *perf, err
+	}
 
-	return perf, err
+	perf.ComputeScore()
+
+	return *perf, nil
 }

@@ -1,4 +1,4 @@
-package morningStar
+package model
 
 import (
 	"testing"
@@ -20,9 +20,9 @@ func TestComputeScore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test.instance.computeScore()
+		test.instance.ComputeScore()
 		if test.instance.Score != test.want {
-			t.Errorf("computeScore() with %v = %v, want %v", test.instance, test.instance.Score, test.want)
+			t.Errorf("ComputeScore() with %v = %v, want %v", test.instance, test.instance.Score, test.want)
 		}
 	}
 }

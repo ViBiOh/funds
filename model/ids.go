@@ -1,6 +1,6 @@
-package morningStar
+package model
 
-var morningStarIds = [][]byte{
+var performanceIds = [][]byte{
 	[]byte(`F00000VSR5`),
 	[]byte(`F0GBR05V29`),
 	[]byte(`F00000OVC2`),
@@ -46,7 +46,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F0GBR04SJG`),
 	[]byte(`F00000MK7J`),
 	[]byte(`F0GBR04ASD`),
-	[]byte(`F0GBR04EC4`),
 	[]byte(`F0GBR04GQY`),
 	[]byte(`F0GBR05S8J`),
 	[]byte(`F0GBR04D1I`),
@@ -268,7 +267,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F0GBR04H5A`),
 	[]byte(`F00000WL57`),
 	[]byte(`F0GBR04CBH`),
-	[]byte(`F0GBR06MZ9`),
 	[]byte(`F0GBR04QOM`),
 	[]byte(`F00000NY9A`),
 	[]byte(`F0GBR04G59`),
@@ -336,7 +334,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F0GBR04QMW`),
 	[]byte(`F0GBR04MAD`),
 	[]byte(`F0GBR04D0H`),
-	[]byte(`F0GBR04EVF`),
 	[]byte(`F0GBR04CBX`),
 	[]byte(`F00000UO20`),
 	[]byte(`F000000G8T`),
@@ -434,7 +431,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F00000PXES`),
 	[]byte(`F0GBR04QV8`),
 	[]byte(`F0GBR04KPS`),
-	[]byte(`F0GBR04M9Y`),
 	[]byte(`F0GBR04QIY`),
 	[]byte(`F0GBR04RZG`),
 	[]byte(`F00000WL6T`),
@@ -485,7 +481,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F0GBR04PF1`),
 	[]byte(`F0GBR04EUJ`),
 	[]byte(`F00000T6G4`),
-	[]byte(`FOGBR05K58`),
 	[]byte(`0P0000M6N2`),
 	[]byte(`F000000GT1`),
 	[]byte(`F0GBR04DZL`),
@@ -496,7 +491,6 @@ var morningStarIds = [][]byte{
 	[]byte(`F0GBR04QVL`),
 	[]byte(`F0GBR04M1S`),
 	[]byte(`F0GBR04D0T`),
-	[]byte(`F00000H4HR`),
 	[]byte(`F0GBR04JGM`),
 	[]byte(`F0GBR04GTL`),
 	[]byte(`F0GBR04REQ`),

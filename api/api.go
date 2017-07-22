@@ -12,15 +12,15 @@ import (
 	"time"
 
 	"github.com/ViBiOh/alcotest/alcotest"
-	"github.com/ViBiOh/funds/morningStar"
+	"github.com/ViBiOh/funds/model"
 )
 
 const port = `1080`
 
-var morningStarHandler = morningStar.Handler{}
+var modelHandler = model.Handler{}
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if len(morningStar.ListPerformances()) > 0 {
+	if len(model.ListPerformances()) > 0 {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -31,7 +31,7 @@ func fundsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == `/health` {
 		healthHandler(w, r)
 	} else {
-		morningStarHandler.ServeHTTP(w, r)
+		modelHandler.ServeHTTP(w, r)
 	}
 }
 
@@ -56,6 +56,7 @@ func handleGracefulClose(server *http.Server) {
 
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
+	performanceURL := flag.String(`performance`, ``, `Performance URL`)
 	flag.Parse()
 
 	if *url != `` {
@@ -67,7 +68,7 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
-	morningStar.Init()
+	model.Init(*performanceURL)
 
 	server := &http.Server{
 		Addr:    `:` + port,
