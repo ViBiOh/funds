@@ -1,11 +1,7 @@
 import funtch from 'funtch';
-import { API, MS_URL } from '../Constants';
+import { API } from '../Constants';
 
-export default class MorningStarService {
-  static getDataUrl(id) {
-    return MS_URL(id);
-  }
-
+export default class FundsService {
   static getFunds() {
     return funtch.get(`${API}list`);
   }

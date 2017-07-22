@@ -5,11 +5,5 @@ const API_HOST = process.env.API_HOST || document.location.host.replace(/funds/i
  * URL for API requests
  * @type {String}
  */
+// eslint-disable-next-line import/prefer-default-export
 export const API = `http${IS_SECURE ? 's' : ''}://${API_HOST}/`;
-
-/**
- * URL for source URL
- * @type {String}
- */
-export const MS_URL = id =>
-  `http://www.morningstar.fr/fr/funds/snapshot/snapshot.aspx?tab=0&id=${id}`;

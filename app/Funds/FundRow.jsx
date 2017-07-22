@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import FaBarChart from 'react-icons/lib/fa/bar-chart';
-import FundsService from '../Service/FundsService';
 import Button from '../Button/Button';
 import PerformanceCell from './PerformanceCell';
 import style from './FundRow.less';
@@ -44,7 +43,7 @@ const FundRow = ({ fund, filterBy }) =>
       title={`Lien vers la source des données. ${fund.ts
         ? `MàJ le ${new Date(Date.parse(fund.ts))}`
         : ''}`}
-      href={fund.id && FundsService.getDataUrl(fund.id)}
+      href={fund.URL}
       rel="noopener noreferrer"
       target="_blank"
       className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.old : ''}`}

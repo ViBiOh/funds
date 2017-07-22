@@ -2,7 +2,6 @@ import test from 'ava';
 import React from 'react';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import FundsService from '../Service/FundsService';
 import FundRow from './FundRow';
 
 const defaultProps = {
@@ -24,20 +23,14 @@ test('should always render as a span', (t) => {
   t.is(shallow(<FundRow {...defaultProps} />).type(), 'span');
 });
 
-test('should set href if id is provided', (t) => {
-  const wrapper = shallow(<FundRow {...defaultProps} fund={{ ...defaultProps.fund, id: 8000 }} />);
-
-  wrapper.find('Button').at(0).simulate('click');
-
-  t.is(wrapper.findWhere(e => e.props().href === FundsService.getDataUrl(8000)).length, 1);
-});
-
 test('should display not fresh data in special color', (t) => {
   const eightHoursAgo = new Date();
   eightHoursAgo.setTime(new Date().getTime() - 28800000);
   const wrapper = shallow(
     <FundRow {...defaultProps} fund={{ ...defaultProps.fund, ts: eightHoursAgo.toISOString() }} />,
   );
+
+  wrapper.find('Button').at(0).simulate('click');
 
   t.is(wrapper.find('a').props().className.split(' ').length, 2);
 });

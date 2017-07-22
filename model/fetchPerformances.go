@@ -87,14 +87,15 @@ func getVolatilite(url string, perf *Performance) error {
 
 func fetchPerformance(performanceID []byte) (Performance, error) {
 	cleanID := cleanID(performanceID)
-	perf := &Performance{ID: cleanID, Update: time.Now()}
+	url := performanceURL + cleanID
+	perf := &Performance{ID: cleanID, URL: url, Update: time.Now()}
 
-	if err := getPerformance(performanceURL+cleanID, perf); err != nil {
+	if err := getPerformance(url, perf); err != nil {
 		log.Printf(`Error while fetching performance for %s: %v`, performanceID, err)
 		return *perf, err
 	}
 
-	if err := getVolatilite(performanceURL+cleanID, perf); err != nil {
+	if err := getVolatilite(url, perf); err != nil {
 		log.Printf(`Error while fetching volatilite for %s: %v`, performanceID, err)
 		return *perf, err
 	}

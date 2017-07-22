@@ -8,13 +8,13 @@ import (
 )
 
 const mailTemplate = `
-{{define "mail"}}
+{{ define "mail" }}
 <body style="border: 0; margin: 0; padding: 5px;">
 	<h1 style="width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0;">Funds</h1>
 	<p>Bonjour,</p>
-	<p>Les fonds suivants ont un score venant de dépasser <strong>{{.Score}}</strong>.</p>
+	<p>Les fonds suivants ont un score venant de dépasser <strong>{{ .Score }}</strong>.</p>
 	<p>
-		{{template "funds" .Funds}}
+		{{ template "funds" . }}
 	</p>
 	<p>
 		Pour plus d'information, n'hésitez pas à consulter <a href="https://funds.vibioh.fr/?o=score" rel="noopener noreferrer" target="_blank">notre site</a>.
@@ -30,28 +30,28 @@ const mailTemplate = `
 		Funds App - powered by <a href="https://vibioh.fr" rel="noopener noreferrer" target="_blank">ViBiOh</a>
 	</p>
 </body>
-{{end}}
+{{ end }}
 
-{{define "funds"}}
+{{ define "funds" }}
 <table style="border: 0; margin: 0; padding: 0; width: 100%;">
-	<thead style="border: 0; margin: 0; padding: 0; width: 100%;>
-		<tr style="border: 0; margin: 0; padding: 0; width: 100%;>
+	<thead style="border: 0; margin: 0; padding: 0; width: 100%;">
+		<tr style="border: 0; margin: 0; padding: 0; width: 100%;">
 			<td style="padding: 5px;">ISIN</td>
 			<td style="padding: 5px;">Libellé</td>
 			<td style="padding: 5px;">Score</td>
 		</tr>
 	</thead>
-	<tbody style="border: 0; margin: 0; padding: 0; width: 100%;>
-		{{range $index,$fund := .}}
-			<tr style="{{if odd $index}}background-color: #e1e1e8;{{end}}">
-				<td style="padding: 5px;"><a href="https://funds.vibioh.fr/?isin={{$fund.Isin}}" rel="noopener noreferrer" target="_blank">{{$fund.Isin}}</a></td>
-				<td style="padding: 5px;">{{$fund.Label}}</td>
-				<td style="padding: 5px;">{{$fund.Score}}</td>
+	<tbody style="border: 0; margin: 0; padding: 0; width: 100%;">
+		{{ range $index, $fund := .Funds }}
+			<tr style="{{ if odd $index }}background-color: #e1e1e8;{{ end }}">
+				<td style="padding: 5px;"><a href="https://funds.vibioh.fr/?isin={{ $fund.Isin }}" rel="noopener noreferrer" target="_blank">{{ $fund.Isin }}</a></td>
+				<td style="padding: 5px;">{{ $fund.Label }}</td>
+				<td style="padding: 5px;">{{ $fund.Score }}</td>
 			</tr>
 		{{end}}
 	</tbody>
 </table>
-{{end}}
+{{ end }}
 `
 
 type scoreTemplateContent struct {
