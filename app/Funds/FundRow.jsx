@@ -43,7 +43,7 @@ const FundRow = ({ fund, filterBy }) =>
       title={`Lien vers la source des données. ${fund.ts
         ? `MàJ le ${new Date(Date.parse(fund.ts))}`
         : ''}`}
-      href={fund.URL}
+      href={fund.url}
       rel="noopener noreferrer"
       target="_blank"
       className={`${style.icon} ${isUpdateTimeGreaterThanSixHours(fund.ts) ? style.old : ''}`}
@@ -58,9 +58,10 @@ const STRING_OR_NUMBER = PropTypes.oneOfType([PropTypes.string, PropTypes.number
 
 FundRow.propTypes = {
   fund: PropTypes.shape({
-    isin: STRING_OR_NUMBER,
-    label: STRING_OR_NUMBER,
-    category: STRING_OR_NUMBER,
+    url: PropTypes.string,
+    isin: PropTypes.string,
+    label: PropTypes.string,
+    category: PropTypes.string,
     rating: STRING_OR_NUMBER,
     '1m': STRING_OR_NUMBER,
     '3m': STRING_OR_NUMBER,
