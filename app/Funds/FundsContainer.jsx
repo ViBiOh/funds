@@ -221,7 +221,9 @@ export default class FundsContainer extends Component {
         {this.state.error &&
           <div>
             <h2>Erreur rencontée</h2>
-            <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
+            <pre>
+              {JSON.stringify(this.state.error, null, 2)}
+            </pre>
           </div>}
         <article className={style.container}>
           <div className={style.modifiers}>

@@ -25,8 +25,12 @@ function renderFilters(filters, filterBy) {
   return Object.keys(filters).filter(filter => filters[filter]).map(filter =>
     (<span key={filter} className={style.modifier}>
       <FaFilter />
-      <span><em> {COLUMNS[filter].label}</em> ≃ </span>
-      <span>{filters[filter]}</span>
+      <span>
+        <em> {COLUMNS[filter].label}</em> ≃{' '}
+      </span>
+      <span>
+        {filters[filter]}
+      </span>
       <Button type="none" onClick={() => filterBy(filter, '')}>
         <FaClose />
       </Button>
@@ -41,7 +45,9 @@ function renderOrder(order, orderBy, reverseOrder) {
       <Button type="none" onClick={reverseOrder}>
         {order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
       </Button>
-      <span>{COLUMNS[order.key].label}</span>
+      <span>
+        {COLUMNS[order.key].label}
+      </span>
       <Button type="none" onClick={() => orderBy('')}>
         <FaClose />
       </Button>
@@ -60,9 +66,12 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
     <span className={style.modifier}>
       <FaPieChart />
       <select value={aggregat.size} onChange={onAggregateSizeChange}>
-        {AGGREGATE_SIZES.map(size => <option key={size} value={size}>{size}</option>)}
-      </select>
-      {' '}
+        {AGGREGATE_SIZES.map(size =>
+          (<option key={size} value={size}>
+            {size}
+          </option>),
+        )}
+      </select>{' '}
       {label}
       <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />

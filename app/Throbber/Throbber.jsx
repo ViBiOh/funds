@@ -9,7 +9,10 @@ import style from './Throbber.less';
  */
 const Throbber = ({ label, title, className }) =>
   (<div className={style.container} title={title}>
-    {label && <span>{label}</span>}
+    {label &&
+      <span>
+        {label}
+      </span>}
     <div className={`${style.throbber} ${className}`}>
       <div className={style.bounce1} />
       <div className={style.bounce2} />

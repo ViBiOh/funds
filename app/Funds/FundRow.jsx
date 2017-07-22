@@ -14,17 +14,25 @@ function isUpdateTimeGreaterThanSixHours(updateTime) {
 
 const FundRow = ({ fund, filterBy }) =>
   (<span className={style.row}>
-    <span className={style.isin}>{fund.isin}</span>
-    <span className={style.label} title={fund.label}>{fund.label}</span>
+    <span className={style.isin}>
+      {fund.isin}
+    </span>
+    <span className={style.label} title={fund.label}>
+      {fund.label}
+    </span>
     <Button
       className={style.category}
       type="none"
       onClick={() => filterBy('category', fund.category)}
     >
-      <span className={style.ellipsis} title={fund.category}>{fund.category}</span>
+      <span className={style.ellipsis} title={fund.category}>
+        {fund.category}
+      </span>
     </Button>
     <Button className={style.rating} type="none" onClick={() => filterBy('rating', fund.rating)}>
-      <span>{fund.rating}</span>
+      <span>
+        {fund.rating}
+      </span>
     </Button>
     <PerformanceCell value={fund['1m']} type="p1m" />
     <PerformanceCell value={fund['3m']} type="p3m" />
