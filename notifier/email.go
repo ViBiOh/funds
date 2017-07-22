@@ -7,28 +7,8 @@ import (
 	"github.com/ViBiOh/funds/model"
 )
 
-const fundsTemplate = `
-<table style="border: 0; margin: 0; padding: 0; width: 100%;">
-	<thead style="border: 0; margin: 0; padding: 0; width: 100%;>
-		<tr style="border: 0; margin: 0; padding: 0; width: 100%;>
-			<td style="padding: 5px;">ISIN</td>
-			<td style="padding: 5px;">Libellé</td>
-			<td style="padding: 5px;">Score</td>
-		</tr>
-	</thead>
-	<tbody style="border: 0; margin: 0; padding: 0; width: 100%;>
-		{{range $index,$fund := .}}
-			<tr style="{{if odd $index}}background-color: #e1e1e8;{{end}}">
-				<td style="padding: 5px;"><a href="https://funds.vibioh.fr/?isin={{$fund.Isin}}" rel="noopener noreferrer" target="_blank">{{$fund.Isin}}</a></td>
-				<td style="padding: 5px;">{{$fund.Label}}</td>
-				<td style="padding: 5px;">{{$fund.Score}}</td>
-			</tr>
-		{{end}}
-	</tbody>
-</table>
-`
-
-const scoreTemplate = `
+const mailTemplate = `
+{{define "mail"}}
 <body style="border: 0; margin: 0; padding: 5px;">
 	<h1 style="width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0;">Funds</h1>
 	<p>Bonjour,</p>
@@ -50,6 +30,28 @@ const scoreTemplate = `
 		Funds App - powered by <a href="https://vibioh.fr" rel="noopener noreferrer" target="_blank">ViBiOh</a>
 	</p>
 </body>
+{{end}}
+
+{{define "funds"}}
+<table style="border: 0; margin: 0; padding: 0; width: 100%;">
+	<thead style="border: 0; margin: 0; padding: 0; width: 100%;>
+		<tr style="border: 0; margin: 0; padding: 0; width: 100%;>
+			<td style="padding: 5px;">ISIN</td>
+			<td style="padding: 5px;">Libellé</td>
+			<td style="padding: 5px;">Score</td>
+		</tr>
+	</thead>
+	<tbody style="border: 0; margin: 0; padding: 0; width: 100%;>
+		{{range $index,$fund := .}}
+			<tr style="{{if odd $index}}background-color: #e1e1e8;{{end}}">
+				<td style="padding: 5px;"><a href="https://funds.vibioh.fr/?isin={{$fund.Isin}}" rel="noopener noreferrer" target="_blank">{{$fund.Isin}}</a></td>
+				<td style="padding: 5px;">{{$fund.Label}}</td>
+				<td style="padding: 5px;">{{$fund.Score}}</td>
+			</tr>
+		{{end}}
+	</tbody>
+</table>
+{{end}}
 `
 
 type scoreTemplateContent struct {
@@ -66,17 +68,12 @@ func getHTMLContent(scoreLevel float64, funds []model.Performance) ([]byte, erro
 		return i%2 == 0
 	}})
 
-	tmpl, err := tmpl.Parse(scoreTemplate)
+	tmpl, err := tmpl.Parse(mailTemplate)
 	if err != nil {
 		return nil, err
 	}
 
-	tmpl, err = tmpl.New(`funds`).Parse(fundsTemplate)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := tmpl.Execute(buffer, scoreTemplateContent{Score: scoreLevel, Funds: funds}); err != nil {
+	if err := tmpl.ExecuteTemplate(buffer, `mail`, scoreTemplateContent{Score: scoreLevel, Funds: funds}); err != nil {
 		return nil, err
 	}
 

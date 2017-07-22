@@ -15,13 +15,15 @@ script: |
   docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
 after_success: |
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
-    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} && docker push ${DOCKER_USER}/funds-front && docker push ${DOCKER_USER}/funds-api 
+    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} && docker push ${DOCKER_USER}/funds-front && docker push ${DOCKER_USER}/funds-api
+    sed "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" docker-compose.yml > docker-compose-env.yml
+    cat docker-compose-env.yml
   fi
 notifications:
   email: false
 deploy:
   provider: script
   skip_cleanup: true
-  script: sed "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" docker-compose.yml > docker-compose-env.yml && curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://dashboard-api.vibioh.fr/containers/funds/ --data-binary @docker-compose-env.yml
+  script: curl -u ${DEPLOY_USER}:${DEPLOY_PASS} -X POST https://dashboard-api.vibioh.fr/containers/funds/ --data-binary @docker-compose-env.yml
   on:
     branch: master
