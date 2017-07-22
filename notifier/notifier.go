@@ -15,10 +15,21 @@ type apiResult struct {
 	Results []model.Performance `json:"results"`
 }
 
-func readFunds(apiURL string) ([]model.Performance, error) {
-	data, err := fetch.GetBody(apiURL)
+func getTimer(hour int, minute int) *time.Timer {
+	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.Local)
+	if !nextTime.After(time.Now()) {
+		nextTime = nextTime.Add(notificationInterval)
+	}
+
+	log.Printf(`Next notification at %v`, nextTime)
+
+	return time.NewTimer(nextTime.Sub(time.Now()))
+}
+
+func readFunds(api string) ([]model.Performance, error) {
+	data, err := fetch.GetBody(api)
 	if err != nil {
-		log.Printf(`Error while fetching funds from %s: %v`, apiURL, err)
+		log.Printf(`Error while fetching funds from %s: %v`, api, err)
 	}
 
 	result := apiResult{}
@@ -41,11 +52,10 @@ func getFundsWithAboveScore(scoreStep float64, funds []model.Performance) []mode
 	return filteredFunds
 }
 
-// Start the notifier
-func Start(apiURL string, recipients string, score float64) {
-	funds, err := readFunds(apiURL)
+func notify(api string, recipients string, score float64) {
+	funds, err := readFunds(api)
 	if err != nil {
-		log.Printf(`Error while reading funds from %s: %v`, apiURL, err)
+		log.Printf(`Error while reading funds from %s: %v`, api, err)
 	}
 
 	scoreFunds := getFundsWithAboveScore(score, funds)
@@ -58,5 +68,18 @@ func Start(apiURL string, recipients string, score float64) {
 
 		log.Printf(`%s`, htmlContent)
 		log.Printf(`Sended to %s`, recipients)
+	}
+}
+
+// Start the notifier
+func Start(api string, recipients string, score float64, hour int, minute int) {
+	timer := getTimer(hour, minute)
+
+	for {
+		select {
+		case <-timer.C:
+			notify(api, recipients, score)
+			timer.Reset(notificationInterval)
+		}
 	}
 }
