@@ -9,7 +9,7 @@ import (
 	"github.com/ViBiOh/funds/model"
 )
 
-const notificationInterval = 1 * time.Minute
+const notificationInterval = 24 * time.Hour
 
 type apiResult struct {
 	Results []model.Performance `json:"results"`

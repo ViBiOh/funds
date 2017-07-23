@@ -4,6 +4,7 @@ deps:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/ViBiOh/alcotest/alcotest
+	go get -u github.com/lib/pq
 
 fmt:
 	goimports -w **/*.go

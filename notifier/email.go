@@ -3,6 +3,7 @@ package notifier
 import (
 	"bytes"
 	"html/template"
+	"log"
 
 	"github.com/ViBiOh/funds/model"
 )
@@ -59,9 +60,9 @@ type scoreTemplateContent struct {
 	Funds []model.Performance
 }
 
-func getHTMLContent(scoreLevel float64, funds []model.Performance) ([]byte, error) {
-	buffer := &bytes.Buffer{}
+var mailTmpl *template.Template
 
+func init() {
 	tmpl := template.New(`score`)
 
 	tmpl.Funcs(template.FuncMap{`odd`: func(i int) bool {
@@ -70,10 +71,16 @@ func getHTMLContent(scoreLevel float64, funds []model.Performance) ([]byte, erro
 
 	tmpl, err := tmpl.Parse(mailTemplate)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
-	if err := tmpl.ExecuteTemplate(buffer, `mail`, scoreTemplateContent{Score: scoreLevel, Funds: funds}); err != nil {
+	mailTmpl = tmpl
+}
+
+func getHTMLContent(scoreLevel float64, funds []model.Performance) ([]byte, error) {
+	buffer := &bytes.Buffer{}
+
+	if err := mailTmpl.ExecuteTemplate(buffer, `mail`, scoreTemplateContent{Score: scoreLevel, Funds: funds}); err != nil {
 		return nil, err
 	}
 

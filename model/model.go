@@ -27,6 +27,11 @@ var cacheRequests = make(chan cache.Request, crawler.MaxConcurrentFetcher)
 func Init(url string) {
 	performanceURL = url
 
+	InitCache()
+}
+
+// InitCache load cache
+func InitCache() {
 	go cache.Server(cacheRequests, len(performanceIds))
 	go func() {
 		refreshCache()
