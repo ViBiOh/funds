@@ -41,30 +41,45 @@ func RetrieveByID(isin string) (Performance, error) {
 	return perf, nil
 }
 
+// SaveAll create or update all given Performances
+func SaveAll(performances []Performance, tx *sql.Tx) error {
+	var err error
+	var usedTx *sql.Tx
+
+	defer func() {
+		deferTx(tx, usedTx, err)
+	}()
+
+	if usedTx, err = getTx(tx); err != nil {
+		return err
+	}
+
+	for _, performance := range performances {
+		if err = Save(performance, nil); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Save create or update given Performance
 func Save(perf Performance, tx *sql.Tx) error {
 	var err error
 	var usedTx *sql.Tx
 
-	if tx == nil {
-		usedTx, err = db.Begin()
-		if err != nil {
-			return err
-		}
+	defer func() {
+		deferTx(tx, usedTx, err)
+	}()
+
+	if usedTx, err = getTx(tx); err != nil {
+		return err
 	}
 
 	if _, err = RetrieveByID(perf.Isin); err != nil {
 		err = create(perf, usedTx)
 	} else {
 		err = update(perf, usedTx)
-	}
-
-	if tx != usedTx {
-		if err != nil {
-			usedTx.Rollback()
-		} else {
-			usedTx.Commit()
-		}
 	}
 
 	return err
@@ -80,4 +95,22 @@ func update(perf Performance, tx *sql.Tx) error {
 	_, err := tx.Exec(`UPDATE funds SET score=$1, update_date=$2 WHERE isin=$3`, perf.Score, `now()`, perf.Isin)
 
 	return err
+}
+
+func getTx(tx *sql.Tx) (*sql.Tx, error) {
+	if tx == nil {
+		return db.Begin()
+	}
+
+	return tx, nil
+}
+
+func deferTx(tx *sql.Tx, usedTx *sql.Tx, err error) {
+	if usedTx != tx {
+		if err != nil {
+			usedTx.Rollback()
+		} else {
+			usedTx.Commit()
+		}
+	}
 }
