@@ -28,18 +28,15 @@ func InitDB(dbHost string, dbPort int, dbUser string, dbPass string, dbName stri
 }
 
 // RetrieveByID retrieve Performance from database by isin
-func RetrieveByID(isin string) (Performance, error) {
-	perf := Performance{Isin: isin}
-
+func RetrieveByID(isin string) (*Performance, error) {
 	var score float64
 	err := db.QueryRow(`SELECT score FROM funds WHERE isin=$1`, isin).Scan(&score)
 
 	if err != nil {
-		return perf, err
+		return nil, err
 	}
 
-	perf.Score = score
-	return perf, nil
+	return &Performance{Isin: isin, Score: score}, nil
 }
 
 // SaveAll create or update all given Performances
