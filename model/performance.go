@@ -1,9 +1,5 @@
 package model
 
-import (
-	"time"
-)
-
 // Performance of a funds
 type Performance struct {
 	ID            string    `json:"id"`
@@ -17,7 +13,6 @@ type Performance struct {
 	OneYear       float64   `json:"1y"`
 	VolThreeYears float64   `json:"v3y"`
 	Score         float64   `json:"score"`
-	Update        time.Time `json:"ts"`
 }
 
 // GetID returns Performance's ID
