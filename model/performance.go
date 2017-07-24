@@ -7,7 +7,6 @@ import (
 // Performance of a funds
 type Performance struct {
 	ID            string    `json:"id"`
-	URL           string    `json:"url"`
 	Isin          string    `json:"isin"`
 	Label         string    `json:"label"`
 	Category      string    `json:"category"`
