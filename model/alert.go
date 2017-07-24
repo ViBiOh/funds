@@ -4,5 +4,5 @@ package model
 type Alert struct {
 	ID        int
 	Isin      string
-	alertType string
+	AlertType string
 }

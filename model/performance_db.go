@@ -6,33 +6,62 @@ import (
 	"github.com/ViBiOh/funds/db"
 )
 
-// RetrieveByID retrieve Performance from database by isin
-func RetrieveByID(isin string) (*Performance, error) {
-	var score float64
-	err := db.DB.QueryRow(`SELECT score FROM funds WHERE isin=$1`, isin).Scan(&score)
+// PerformanceByIsin retrieve Performance by isin
+func PerformanceByIsin(isin string) (*Performance, error) {
+	var (
+		label string
+		score float64
+	)
+	err := db.DB.QueryRow(`SELECT label, score FROM funds WHERE isin = $1`, isin).Scan(&label, &score)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &Performance{Isin: isin, Score: score}, nil
+	return &Performance{Isin: isin, Label: label, Score: score}, nil
 }
 
-// SaveAll create or update all given Performances
-func SaveAll(performances []Performance, tx *sql.Tx) error {
+// PerformanceWithScoreAbove retrieve Performance with score above a level
+func PerformanceWithScoreAbove(minScore float64) ([]Performance, error) {
+	rows, err := db.DB.Query(`SELECT isin, label, score FROM funds WHERE score >= $1`, minScore)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		performances []Performance
+		isin         string
+		label        string
+		score        float64
+	)
+
+	for rows.Next() {
+		if err := rows.Scan(&isin, &label, &score); err != nil {
+			return nil, err
+		}
+
+		performances = append(performances, Performance{Isin: isin, Label: label, Score: score})
+	}
+
+	return performances, nil
+}
+
+// SavePerformances create or update all given Performances
+func SavePerformances(performances []Performance, tx *sql.Tx) error {
 	var err error
 	var usedTx *sql.Tx
 
 	defer func() {
-		deferTx(tx, usedTx, err)
+		db.DeferTx(tx, usedTx, err)
 	}()
 
-	if usedTx, err = getTx(tx); err != nil {
+	if usedTx, err = db.GetTx(tx); err != nil {
 		return err
 	}
 
 	for _, performance := range performances {
-		if err = Save(performance, usedTx); err != nil {
+		if err = SavePerformance(performance, usedTx); err != nil {
 			return err
 		}
 	}
@@ -40,54 +69,36 @@ func SaveAll(performances []Performance, tx *sql.Tx) error {
 	return nil
 }
 
-// Save create or update given Performance
-func Save(perf Performance, tx *sql.Tx) error {
+// SavePerformance create or update given Performance
+func SavePerformance(perf Performance, tx *sql.Tx) error {
 	var err error
 	var usedTx *sql.Tx
 
 	defer func() {
-		deferTx(tx, usedTx, err)
+		db.DeferTx(tx, usedTx, err)
 	}()
 
-	if usedTx, err = getTx(tx); err != nil {
+	if usedTx, err = db.GetTx(tx); err != nil {
 		return err
 	}
 
-	if _, err = RetrieveByID(perf.Isin); err != nil {
-		err = create(perf, usedTx)
+	if _, err = PerformanceByIsin(perf.Isin); err != nil {
+		err = createPerformance(perf, usedTx)
 	} else {
-		err = update(perf, usedTx)
+		err = updatePerformance(perf, usedTx)
 	}
 
 	return err
 }
 
-func create(perf Performance, tx *sql.Tx) error {
-	_, err := tx.Exec(`INSERT INTO funds (isin, score) VALUES ($1, $2)`, perf.Isin, perf.Score)
+func createPerformance(perf Performance, tx *sql.Tx) error {
+	_, err := tx.Exec(`INSERT INTO funds (isin, label, score) VALUES ($1, $2, $3)`, perf.Isin, perf.Label, perf.Score)
 
 	return err
 }
 
-func update(perf Performance, tx *sql.Tx) error {
-	_, err := tx.Exec(`UPDATE funds SET score=$1, update_date=$2 WHERE isin=$3`, perf.Score, `now()`, perf.Isin)
+func updatePerformance(perf Performance, tx *sql.Tx) error {
+	_, err := tx.Exec(`UPDATE funds SET score = $1, update_date = $2 WHERE isin = $3`, perf.Score, `now()`, perf.Isin)
 
 	return err
-}
-
-func getTx(tx *sql.Tx) (*sql.Tx, error) {
-	if tx == nil {
-		return db.DB.Begin()
-	}
-
-	return tx, nil
-}
-
-func deferTx(tx *sql.Tx, usedTx *sql.Tx, err error) {
-	if usedTx != tx {
-		if err != nil {
-			usedTx.Rollback()
-		} else {
-			usedTx.Commit()
-		}
-	}
 }

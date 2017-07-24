@@ -27,3 +27,23 @@ func InitDB(dbHost string, dbPort int, dbUser string, dbPass string, dbName stri
 	log.Printf(`Connected to %s database`, dbName)
 	DB = database
 }
+
+// GetTx return given transaction if not nil or create a new one
+func GetTx(tx *sql.Tx) (*sql.Tx, error) {
+	if tx == nil {
+		return DB.Begin()
+	}
+
+	return tx, nil
+}
+
+// DeferTx check if transaction is hold by current function and end it properly
+func DeferTx(tx *sql.Tx, usedTx *sql.Tx, err error) {
+	if usedTx != tx {
+		if err != nil {
+			usedTx.Rollback()
+		} else {
+			usedTx.Commit()
+		}
+	}
+}

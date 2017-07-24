@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS funds;
 
 CREATE TABLE funds (
   isin TEXT NOT NULL,
+  label TEXT NOT NULL,
   score NUMERIC(5,2) NOT NULL,
   creation_date TIMESTAMP DEFAULT now(),
   update_date TIMESTAMP

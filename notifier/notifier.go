@@ -1,19 +1,13 @@
 package notifier
 
 import (
-	"encoding/json"
 	"log"
 	"time"
 
-	"github.com/ViBiOh/funds/fetch"
 	"github.com/ViBiOh/funds/model"
 )
 
 const notificationInterval = 24 * time.Hour
-
-type apiResult struct {
-	Results []model.Performance `json:"results"`
-}
 
 func getTimer(hour int, minute int) *time.Timer {
 	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.Local)
@@ -26,41 +20,19 @@ func getTimer(hour int, minute int) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func readFunds(api string) ([]model.Performance, error) {
-	data, err := fetch.GetBody(api)
-	if err != nil {
-		log.Printf(`Error while fetching funds from %s: %v`, api, err)
-	}
-
-	result := apiResult{}
-
-	if err := json.Unmarshal(data, &result); err != nil {
-		return nil, err
-	}
-	return result.Results, nil
+func getPerformances(score float64) ([]model.Performance, error) {
+	return model.PerformanceWithScoreAbove(score)
 }
 
-func getFundsWithAboveScore(scoreStep float64, funds []model.Performance) []model.Performance {
-	filteredFunds := make([]model.Performance, 0, len(funds))
-
-	for _, fund := range funds {
-		if fund.Score >= scoreStep {
-			filteredFunds = append(filteredFunds, fund)
-		}
-	}
-
-	return filteredFunds
-}
-
-func notify(api string, recipients string, score float64) {
-	funds, err := readFunds(api)
+func notify(recipients string, score float64) {
+	performances, err := getPerformances(score)
 	if err != nil {
-		log.Printf(`Error while reading funds from %s: %v`, api, err)
+		log.Printf(`Error while getting performances: %v`, err)
+		return
 	}
 
-	scoreFunds := getFundsWithAboveScore(score, funds)
-	if len(scoreFunds) > 0 {
-		htmlContent, err := getHTMLContent(score, scoreFunds)
+	if len(performances) > 0 {
+		htmlContent, err := getHTMLContent(score, performances)
 
 		if err != nil {
 			log.Printf(`Error while creating HTML email: %v`, err)
@@ -72,13 +44,13 @@ func notify(api string, recipients string, score float64) {
 }
 
 // Start the notifier
-func Start(api string, recipients string, score float64, hour int, minute int) {
+func Start(recipients string, score float64, hour int, minute int) {
 	timer := getTimer(hour, minute)
 
 	for {
 		select {
 		case <-timer.C:
-			notify(api, recipients, score)
+			notify(recipients, score)
 			timer.Reset(notificationInterval)
 		}
 	}

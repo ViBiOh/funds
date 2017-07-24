@@ -62,7 +62,7 @@ func refreshData() {
 	}
 
 	if db.DB != nil {
-		if err := SaveAll(ListPerformances(), nil); err != nil {
+		if err := SavePerformances(ListPerformances(), nil); err != nil {
 			log.Printf(`Error while saving Performances: %v`, err)
 		}
 	}
