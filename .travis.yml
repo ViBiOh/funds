@@ -16,8 +16,7 @@ script: |
 after_success: |
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
     docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} && docker push ${DOCKER_USER}/funds-front && docker push ${DOCKER_USER}/funds-api
-    sed "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" docker-compose.yml > docker-compose-env.yml
-    cat docker-compose-env.yml
+    sed -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" -e "s|\${DB_HOST}|${DB_HOST}|g" -e "s|\${DB_PORT}|${DB_PORT}|g" -e "s|\${DB_USER}|${DB_USER}|g" -e "s|\${DB_PASS}|${DB_PASS}|g" -e "s|\${DB_NAME}|${DB_NAME}|g" docker-compose.yml > docker-compose-env.yml
   fi
 notifications:
   email: false

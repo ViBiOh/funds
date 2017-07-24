@@ -6,6 +6,14 @@ services:
     command:
     - -performance
     - ${PERFORMANCE_URL}
+    - -dbHost
+    - db
+    - -dbUser
+    - ${DB_USER}
+    - -dbPass
+    - ${DB_PASS}
+    - -dbName
+    - ${DB_NAME}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
