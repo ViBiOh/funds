@@ -2,35 +2,14 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 
-	// Not referenced but needed for database/sql
-	_ "github.com/lib/pq"
+	"github.com/ViBiOh/funds/db"
 )
-
-var db *sql.DB
-
-// InitDB start DB connection
-func InitDB(dbHost string, dbPort int, dbUser string, dbPass string, dbName string) {
-	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = database.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf(`Connected to %s database`, dbName)
-	db = database
-}
 
 // RetrieveByID retrieve Performance from database by isin
 func RetrieveByID(isin string) (*Performance, error) {
 	var score float64
-	err := db.QueryRow(`SELECT score FROM funds WHERE isin=$1`, isin).Scan(&score)
+	err := db.DB.QueryRow(`SELECT score FROM funds WHERE isin=$1`, isin).Scan(&score)
 
 	if err != nil {
 		return nil, err
@@ -97,7 +76,7 @@ func update(perf Performance, tx *sql.Tx) error {
 
 func getTx(tx *sql.Tx) (*sql.Tx, error) {
 	if tx == nil {
-		return db.Begin()
+		return db.DB.Begin()
 	}
 
 	return tx, nil

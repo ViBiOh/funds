@@ -7,47 +7,39 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ViBiOh/funds/cache"
 	"github.com/ViBiOh/funds/crawler"
+	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/jsonHttp"
+	"github.com/ViBiOh/funds/tools"
 )
 
 const refreshDelayInHours = 6
 
 var listRequest = regexp.MustCompile(`^/list$`)
 var performanceURL string
+var performanceMap *tools.ConcurrentMap
 
 type results struct {
 	Results interface{} `json:"results"`
 }
 
-var cacheRequests = make(chan cache.Request, crawler.MaxConcurrentFetcher)
-
-// Init start cache server routine and init it from crawling
-func Init(url string, dbHost string, dbPort int, dbUser string, dbPass string, dbName string) {
+// Init start concurrent map and init it from crawling
+func Init(url string) {
 	performanceURL = url
+	performanceMap = tools.CreateConcurrentMap(len(performanceIds), crawler.MaxConcurrentFetcher)
 
-	InitCache()
-	if dbHost != `` {
-		InitDB(dbHost, dbPort, dbUser, dbPass, dbName)
-	}
-}
-
-// InitCache load cache
-func InitCache() {
-	go cache.Server(cacheRequests, len(performanceIds))
 	go func() {
-		refreshCache()
+		refreshData()
 		c := time.Tick(refreshDelayInHours * time.Hour)
 		for range c {
-			refreshCache()
+			refreshData()
 		}
 	}()
 }
 
-func refreshCache() {
-	log.Print(`Cache refresh - start`)
-	defer log.Print(`Cache refresh - end`)
+func refreshData() {
+	log.Print(`Data refresh - start`)
+	defer log.Print(`Data refresh - end`)
 
 	results, errors := crawler.Crawl(performanceIds, func(ID []byte) (interface{}, error) {
 		return fetchPerformance(ID)
@@ -65,28 +57,21 @@ func refreshCache() {
 		}
 	}()
 
-	performancesCache := make([]cache.Content, 0)
 	for performance := range results {
-		performancesCache = append(performancesCache, performance.(cache.Content))
+		performanceMap.Push(performance.(tools.MapContent))
 	}
 
-	cache.Push(cacheRequests, performancesCache)
-	if db != nil {
-		performances := make([]Performance, 0)
-		for _, performance := range performancesCache {
-			performances = append(performances, performance.(Performance))
-		}
-
-		if err := SaveAll(performances, nil); err != nil {
+	if db.DB != nil {
+		if err := SaveAll(ListPerformances(), nil); err != nil {
 			log.Printf(`Error while saving Performances: %v`, err)
 		}
 	}
 }
 
-// ListPerformances return content of performance cache
+// ListPerformances return content of performances' map
 func ListPerformances() []Performance {
 	performances := make([]Performance, 0, len(performanceIds))
-	for perf := range cache.List(cacheRequests) {
+	for perf := range performanceMap.List() {
 		performances = append(performances, perf.(Performance))
 	}
 

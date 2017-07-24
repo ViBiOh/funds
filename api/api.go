@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/alcotest/alcotest"
+	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/model"
 )
 
@@ -73,7 +74,10 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
-	model.Init(*performanceURL, *dbHost, *dbPort, *dbUser, *dbPass, *dbName)
+	model.Init(*performanceURL)
+	if *dbHost != `` {
+		db.InitDB(*dbHost, *dbPort, *dbUser, *dbPass, *dbName)
+	}
 
 	server := &http.Server{
 		Addr:    `:` + port,
