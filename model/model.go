@@ -72,9 +72,8 @@ func refreshCache() {
 
 	cache.Push(cacheRequests, performancesCache)
 	if db != nil {
-		log.Print(`Saving score to db`)
 		performances := make([]Performance, 0)
-		for performance := range results {
+		for performance := range performancesCache {
 			performances = append(performances, performance.(Performance))
 		}
 
