@@ -105,6 +105,7 @@ func getTx(tx *sql.Tx) (*sql.Tx, error) {
 
 func deferTx(tx *sql.Tx, usedTx *sql.Tx, err error) {
 	if usedTx != tx {
+		log.Printf(`Ending transaction with %v`, err)
 		if err != nil {
 			usedTx.Rollback()
 		} else {
