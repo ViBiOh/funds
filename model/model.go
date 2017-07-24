@@ -73,7 +73,7 @@ func refreshCache() {
 	cache.Push(cacheRequests, performancesCache)
 	if db != nil {
 		performances := make([]Performance, 0)
-		for performance := range performancesCache {
+		for _, performance := range performancesCache {
 			performances = append(performances, performance.(Performance))
 		}
 
