@@ -23,6 +23,7 @@ func InitDB(dbHost string, dbPort int, dbUser string, dbPass string, dbName stri
 		log.Fatal(err)
 	}
 
+	log.Printf(`Connected to %s database`, dbName)
 	db = database
 }
 
