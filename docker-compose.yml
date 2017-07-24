@@ -10,6 +10,8 @@ services:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
+    external_links:
+    - postgres_db_1:db
     logging:
       driver: json-file
       options:

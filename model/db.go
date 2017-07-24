@@ -55,7 +55,7 @@ func SaveAll(performances []Performance, tx *sql.Tx) error {
 	}
 
 	for _, performance := range performances {
-		if err = Save(performance, nil); err != nil {
+		if err = Save(performance, usedTx); err != nil {
 			return err
 		}
 	}

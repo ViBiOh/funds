@@ -24,10 +24,13 @@ type results struct {
 var cacheRequests = make(chan cache.Request, crawler.MaxConcurrentFetcher)
 
 // Init start cache server routine and init it from crawling
-func Init(url string) {
+func Init(url string, dbHost string, dbPort int, dbUser string, dbPass string, dbName string) {
 	performanceURL = url
 
 	InitCache()
+	if dbHost != `` {
+		InitDB(dbHost, dbPort, dbUser, dbPass, dbName)
+	}
 }
 
 // InitCache load cache
@@ -62,12 +65,22 @@ func refreshCache() {
 		}
 	}()
 
-	performances := make([]cache.Content, 0)
+	performancesCache := make([]cache.Content, 0)
 	for performance := range results {
-		performances = append(performances, performance.(cache.Content))
+		performancesCache = append(performancesCache, performance.(cache.Content))
 	}
 
-	cache.Push(cacheRequests, performances)
+	cache.Push(cacheRequests, performancesCache)
+	if db != nil {
+		performances := make([]Performance, 0)
+		for performance := range results {
+			performances = append(performances, performance.(Performance))
+		}
+
+		if err := SaveAll(performances, nil); err != nil {
+			log.Printf(`Error while saving Performances: %v`, err)
+		}
+	}
 }
 
 // ListPerformances return content of performance cache
