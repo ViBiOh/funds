@@ -20,7 +20,7 @@ const defaultProps = {
 };
 
 test('should always render as a span', (t) => {
-  const wrapper = shallow(<FundRow {...defaultProps} />;
+  const wrapper = shallow(<FundRow {...defaultProps} />);
 
   wrapper.find('Button').at(0).simulate('click');
 
