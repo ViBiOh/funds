@@ -20,19 +20,11 @@ const defaultProps = {
 };
 
 test('should always render as a span', (t) => {
-  t.is(shallow(<FundRow {...defaultProps} />).type(), 'span');
-});
-
-test('should display not fresh data in special color', (t) => {
-  const eightHoursAgo = new Date();
-  eightHoursAgo.setTime(new Date().getTime() - 28800000);
-  const wrapper = shallow(
-    <FundRow {...defaultProps} fund={{ ...defaultProps.fund, ts: eightHoursAgo.toISOString() }} />,
-  );
+  const wrapper = shallow(<FundRow {...defaultProps} />;
 
   wrapper.find('Button').at(0).simulate('click');
 
-  t.is(wrapper.find('a').props().className.split(' ').length, 2);
+  t.is(wrapper.type()), 'span');
 });
 
 test('should call given filterBy func on category click', (t) => {
