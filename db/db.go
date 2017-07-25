@@ -9,6 +9,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// CommitStep size for batch update processing
+const CommitStep = 100
+
 // DB configured or nil if not
 var DB *sql.DB
 
