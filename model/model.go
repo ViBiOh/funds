@@ -88,7 +88,8 @@ func saveData() error {
 		if err != nil {
 			err = SavePerformance(performance.(Performance), tx)
 
-			if count++ % db.CommitStep == 0 {
+			count++
+			if count % db.CommitStep == 0 {
 				tx.Commit()
 			}
 		}
