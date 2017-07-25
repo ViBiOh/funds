@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"database/sql"
 	"log"
 	"net/http"
 	"regexp"
@@ -57,7 +58,7 @@ func refreshData() {
 		}
 	}()
 
-	var tx *.sql.Tx
+	var tx *sql.Tx
 	var err error
 
 	if db.DB != nil {
