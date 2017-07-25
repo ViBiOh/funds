@@ -86,6 +86,8 @@ func saveData() error {
 			log.Printf(`Error while saving Performance %v: %v`, performance, err)
 		}
 	}
+	
+	return err
 }
 
 // ListPerformances return content of performances' map
