@@ -87,14 +87,13 @@ func saveData() error {
 	for performance := range performanceMap.List() {
 		if err != nil {
 			err = SavePerformance(performance.(Performance), tx)
-			
-			count += 1
-			if count % db.CommitStep == 0 {
+
+			if count++ % db.CommitStep == 0 {
 				tx.Commit()
 			}
 		}
 	}
-	
+
 	return err
 }
 
