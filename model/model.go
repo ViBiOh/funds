@@ -57,13 +57,21 @@ func refreshData() {
 		}
 	}()
 
-	for performance := range results {
-		performanceMap.Push(performance.(tools.MapContent))
-	}
+	var usedTx *.sql.Tx
+	var err error
 
 	if db.DB != nil {
-		if err := SavePerformances(ListPerformances(), nil); err != nil {
-			log.Printf(`Error while saving Performances: %v`, err)
+		usedTx = db.GetTx(nil)
+		defer db.DeferTx(nil, usedTx, err)
+	}
+
+	for performance := range results {
+		performanceMap.Push(performance.(tools.MapContent))
+		
+		if usedTx != nil {
+			if err = SavePerformance(performance.(Performance), usedTx); err != nil {
+				log.Printf(`Error while saving Performance %v: %v`, performance, err)
+			}
 		}
 	}
 }
