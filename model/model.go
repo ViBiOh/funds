@@ -61,8 +61,13 @@ func refreshData() {
 	var err error
 
 	if db.DB != nil {
-		usedTx = db.GetTx(nil)
-		defer db.DeferTx(nil, usedTx, err)
+		if usedTx, err = db.GetTx(tx); err != nil {
+			log.Printf(`Unable to get transaction: %v`, err)
+		}
+
+		defer func() {
+			db.DeferTx(tx, usedTx, err)
+		}()
 	}
 
 	for performance := range results {
