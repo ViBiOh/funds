@@ -40,8 +40,8 @@ func GetTx(tx *sql.Tx) (*sql.Tx, error) {
 // EndTx end transaction properly according to error
 func EndTx(tx *sql.Tx, err error) {
 	if err != nil {
-		usedTx.Rollback()
+		tx.Rollback()
 	} else {
-		usedTx.Commit()
+		tx.Commit()
 	}
 }
