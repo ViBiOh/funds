@@ -70,6 +70,9 @@ func refreshData() {
 }
 
 func saveData() error {
+	log.Print(`Data save - start`)
+	defer log.Print(`Data save - end`)
+
 	var tx *sql.Tx
 	var err error
 
