@@ -37,13 +37,11 @@ func GetTx(tx *sql.Tx) (*sql.Tx, error) {
 	return tx, nil
 }
 
-// DeferTx check if transaction is hold by current function and end it properly
-func DeferTx(tx *sql.Tx, usedTx *sql.Tx, err error) {
-	if usedTx != tx {
-		if err != nil {
-			usedTx.Rollback()
-		} else {
-			usedTx.Commit()
-		}
+// EndTx end transaction properly according to error
+func EndTx(tx *sql.Tx, err error) {
+	if err != nil {
+		usedTx.Rollback()
+	} else {
+		usedTx.Commit()
 	}
 }
