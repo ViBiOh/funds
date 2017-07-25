@@ -47,28 +47,6 @@ func PerformanceWithScoreAbove(minScore float64) ([]Performance, error) {
 	return performances, nil
 }
 
-// SavePerformances create or update all given Performances
-func SavePerformances(performances []Performance, tx *sql.Tx) error {
-	var err error
-	var usedTx *sql.Tx
-
-	defer func() {
-		db.DeferTx(tx, usedTx, err)
-	}()
-
-	if usedTx, err = db.GetTx(tx); err != nil {
-		return err
-	}
-
-	for _, performance := range performances {
-		if err = SavePerformance(performance, usedTx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // SavePerformance create or update given Performance
 func SavePerformance(perf Performance, tx *sql.Tx) error {
 	var err error
