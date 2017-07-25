@@ -57,24 +57,24 @@ func refreshData() {
 		}
 	}()
 
-	var usedTx *.sql.Tx
+	var tx *.sql.Tx
 	var err error
 
 	if db.DB != nil {
-		if usedTx, err = db.GetTx(tx); err != nil {
+		if tx, err = db.GetTx(nil); err != nil {
 			log.Printf(`Unable to get transaction: %v`, err)
+		} else {
+			defer func() {
+				db.EndTx(tx, err)
+			}()
 		}
-
-		defer func() {
-			db.DeferTx(tx, usedTx, err)
-		}()
 	}
 
 	for performance := range results {
 		performanceMap.Push(performance.(tools.MapContent))
 		
-		if usedTx != nil {
-			if err = SavePerformance(performance.(Performance), usedTx); err != nil {
+		if tx != nil {
+			if err = SavePerformance(performance.(Performance), tx); err != nil {
 				log.Printf(`Error while saving Performance %v: %v`, performance, err)
 			}
 		}
