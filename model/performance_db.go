@@ -52,12 +52,14 @@ func SavePerformance(perf Performance, tx *sql.Tx) error {
 	var err error
 	var usedTx *sql.Tx
 
-	defer func() {
-		db.DeferTx(tx, usedTx, err)
-	}()
-
 	if usedTx, err = db.GetTx(tx); err != nil {
 		return err
+	}
+
+	if usedTx != tx {
+		defer func() {
+			db.EndTx(usedTx, err)
+		}()
 	}
 
 	if _, err = PerformanceByIsin(perf.Isin); err != nil {
