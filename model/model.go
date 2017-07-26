@@ -39,9 +39,6 @@ func Init(url string) {
 }
 
 func refreshData() {
-	log.Print(`Data refresh - start`)
-	defer log.Print(`Data refresh - end`)
-
 	results, errors := crawler.Crawl(performanceIds, func(ID []byte) (interface{}, error) {
 		return fetchPerformance(ID)
 	})

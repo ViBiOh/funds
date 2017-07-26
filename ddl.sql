@@ -19,7 +19,7 @@ CREATE UNIQUE INDEX funds_isin ON funds (isin);
 CREATE TYPE alert_type AS ENUM ('above', 'below');
 
 CREATE TABLE alerts (
-  id INTEGER NOT NULL,
+  id BIGINT NOT NULL,
   isin TEXT NOT NULL REFERENCES funds(isin),
   score NUMERIC(5,2) NOT NULL,
   type alert_type NOT NULL,

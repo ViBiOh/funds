@@ -24,18 +24,20 @@ func PerformanceByIsin(isin string) (*Performance, error) {
 // PerformanceWithScoreAbove retrieve Performance with score above a level
 func PerformanceWithScoreAbove(minScore float64) (performances []Performance, err error) {
 	rows, err := db.DB.Query(`SELECT isin, label, score FROM funds WHERE score >= $1 ORDER BY isin`, minScore)
-	defer func() {
-		err = rows.Close()
-	}()
-
 	if err != nil {
 		return
 	}
 
+	defer func() {
+		if endErr := rows.Close(); endErr != nil {
+			err = endErr
+		}
+	}()
+
 	var (
-		isin         string
-		label        string
-		score        float64
+		isin  string
+		label string
+		score float64
 	)
 
 	for rows.Next() {
@@ -59,7 +61,9 @@ func SavePerformance(perf Performance, tx *sql.Tx) (err error) {
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(usedTx, err)
+			if endErr := db.EndTx(usedTx, err); endErr != nil {
+				err = endErr
+			}
 		}()
 	}
 

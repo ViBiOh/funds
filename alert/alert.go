@@ -23,5 +23,7 @@ func main() {
 		db.InitDB(*dbHost, *dbPort, *dbUser, *dbPass, *dbName)
 	}
 
+	notifier.InitMailjet()
+
 	notifier.Start(*recipients, *score, *hour, *minute)
 }
