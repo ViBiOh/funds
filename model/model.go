@@ -70,9 +70,6 @@ func refreshData() {
 }
 
 func saveData() (err error) {
-	log.Print(`Data save - start`)
-	defer log.Print(`Data save - end`)
-
 	var (
 		tx *sql.Tx
 		count int
@@ -89,11 +86,6 @@ func saveData() (err error) {
 	for performance := range performanceMap.List() {
 		if err == nil {
 			err = SavePerformance(performance.(Performance), tx)
-
-			count++
-			if err == nil && count % db.CommitStep == 0 {
-				err = tx.Commit()
-			}
 		}
 	}
 
