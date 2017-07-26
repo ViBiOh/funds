@@ -21,6 +21,7 @@ CREATE TYPE alert_type AS ENUM ('above', 'below');
 CREATE TABLE alerts (
   id INTEGER NOT NULL,
   isin TEXT NOT NULL REFERENCES funds(isin),
+  score NUMERIC(5,2) NOT NULL,
   type alert_type NOT NULL,
   creation_date TIMESTAMP DEFAULT now()
 );
