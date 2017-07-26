@@ -39,7 +39,7 @@ func PerformanceWithScoreAbove(minScore float64) (performances []Performance, er
 	)
 
 	for rows.Next() {
-		if err := rows.Scan(&isin, &label, &score); err != nil {
+		if err = rows.Scan(&isin, &label, &score); err != nil {
 			return
 		}
 
