@@ -87,14 +87,12 @@ func saveData() (err error) {
 	}()
 
 	for performance := range performanceMap.List() {
-		log.Printf(`%v`, err)
-		if err != nil {
+		if err == nil {
 			err = SavePerformance(performance.(Performance), tx)
 
 			count++
-			if count % db.CommitStep == 0 {
+			if err == nil && count % db.CommitStep == 0 {
 				err = tx.Commit()
-				log.Printf(`After intermediate commit %v`, err)
 			}
 		}
 	}
