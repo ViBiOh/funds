@@ -5,4 +5,5 @@ type Alert struct {
 	ID        int
 	Isin      string
 	AlertType string
+	Score     float64
 }
