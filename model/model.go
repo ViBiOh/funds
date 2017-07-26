@@ -69,10 +69,12 @@ func refreshData() {
 	}
 }
 
-func saveData() error {
+func saveData() (err error) {
+	log.Print(`Data save - start`)
+	defer log.Print(`Data save - end`)
+
 	var (
 		tx *sql.Tx
-		err error
 		count int
 	)
 
@@ -81,7 +83,7 @@ func saveData() error {
 	}
 
 	defer func() {
-		db.EndTx(tx, err)
+		err = db.EndTx(tx, err)
 	}()
 
 	for performance := range performanceMap.List() {
@@ -90,12 +92,12 @@ func saveData() error {
 
 			count++
 			if count % db.CommitStep == 0 {
-				tx.Commit()
+				err = tx.Commit()
 			}
 		}
 	}
 
-	return err
+	return
 }
 
 // ListPerformances return content of performances' map
