@@ -6,7 +6,7 @@ import (
 
 // AlertsByIsin retrieve Alerts by isin
 func AlertsByIsin(isin string) ([]Alert, error) {
-	rows, err := db.DB.Query(`SELECT type FROM alerts WHERE isin=$1`, isin)
+	rows, err := db.DB.Query(`SELECT type FROM alerts WHERE isin=$1 ORDER BY creation_date DESC`, isin)
 	defer rows.Close()
 
 	if err != nil {
