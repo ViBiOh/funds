@@ -70,11 +70,7 @@ func refreshData() {
 }
 
 func saveData() (err error) {
-	var (
-		tx *sql.Tx
-		count int
-	)
-
+	var tx *sql.Tx
 	if tx, err = db.GetTx(nil); err != nil {
 		return err
 	}
