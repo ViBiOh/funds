@@ -28,28 +28,29 @@ ORDER BY
 `
 
 // AlertsOpened retrieve Alerts not closed (score didn't go below)
-func AlertsOpened() ([]Alert, error) {
+func AlertsOpened() (alerts []Alert, err error) {
 	rows, err := db.DB.Query(currentAlerts)
-	defer rows.Close()
+	defer func() {
+		err = rows.Close()
+	}()
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	var (
-		alerts    []Alert
 		isin      string
 		alertType string
 		score     float64
 	)
 
 	for rows.Next() {
-		if err := rows.Scan(&isin, &alertType, &score); err != nil {
-			return nil, err
+		if err = rows.Scan(&isin, &alertType, &score); err != nil {
+			return
 		}
 
 		alerts = append(alerts, Alert{Isin: isin, AlertType: alertType, Score: score})
 	}
 
-	return alerts, nil
+	return
 }
