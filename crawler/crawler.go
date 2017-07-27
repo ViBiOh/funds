@@ -1,6 +1,7 @@
 package crawler
 
 import (
+	"log"
 	"sync"
 )
 
@@ -15,18 +16,19 @@ func concurrentCrawl(ids [][]byte, fetcher func([]byte) (interface{}, error), wg
 		<-tokens
 	}
 
-	for _, id := range ids {
+	for _, ID := range ids {
 		tokens <- 1
 
 		go func(ID []byte) {
 			defer clearSemaphores()
-			result, err := fetcher(ID)
-			if err == nil {
+
+			if result, err := fetcher(ID); err == nil {
 				results <- result
 			} else {
+				log.Print(err)
 				errors <- ID
 			}
-		}(id)
+		}(ID)
 	}
 }
 

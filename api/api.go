@@ -70,7 +70,7 @@ func main() {
 	log.Print(`Starting server on port ` + port)
 
 	model.Init(*performanceURL)
-	db.InitDB()
+	db.Init()
 
 	server := &http.Server{
 		Addr:    `:` + port,

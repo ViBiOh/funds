@@ -13,8 +13,8 @@ import (
 // DB configured or nil if not
 var DB *sql.DB
 
-// InitDB start DB connection
-func InitDB() {
+// Init start DB connection
+func Init() {
 	dbHost := os.Getenv(`FUNDS_DATABASE_HOST`)
 	dbPort := os.Getenv(`FUNDS_DATABASE_PORT`)
 	dbUser := os.Getenv(`FUNDS_DATABASE_USER`)
@@ -37,6 +37,11 @@ func InitDB() {
 
 	log.Printf(`Connected to %s database`, dbName)
 	DB = database
+}
+
+// Ping indicate if DB is ready or not
+func Ping() bool {
+	return DB != nil && DB.Ping() != nil
 }
 
 // GetTx return given transaction if not nil or create a new one

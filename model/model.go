@@ -59,7 +59,7 @@ func refreshData() {
 		performanceMap.Push(performance.(tools.MapContent))
 	}
 
-	if db.DB != nil {
+	if db.Ping() {
 		if err := saveData(); err != nil {
 			log.Printf(`Error while saving data: %v`, err)
 		}

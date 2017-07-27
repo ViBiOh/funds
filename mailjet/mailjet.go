@@ -1,4 +1,4 @@
-package notifier
+package mailjet
 
 import (
 	"fmt"
@@ -29,18 +29,23 @@ type mailjetResponse struct {
 	Sent []mailjetRecipient `json:"Sent"`
 }
 
-// InitMailjet inits API auth
-func InitMailjet() {
-	apiPublicKey = os.Getenv("MAILJET_APIKEY_PUBLIC")
-	apiPrivateKey = os.Getenv("MAILJET_APIKEY_PRIVATE")
+// Init inits API auth tokens
+func Init() {
+	apiPublicKey = os.Getenv(`MAILJET_APIKEY_PUBLIC`)
+	apiPrivateKey = os.Getenv(`MAILJET_APIKEY_PRIVATE`)
 
 	if apiPublicKey != `` {
 		log.Print(`Mailjet configured`)
 	}
 }
 
-// MailjetSend send mailjet mail
-func MailjetSend(fromEmail string, fromName string, subject string, to []string, html string) error {
+// Ping indicate if Mailjet is ready or not
+func Ping() bool {
+	return apiPublicKey != ``
+}
+
+// SendMail send mailjet mail
+func SendMail(fromEmail string, fromName string, subject string, to []string, html string) error {
 	recipients := make([]mailjetRecipient, 0, len(to))
 	for _, rawTo := range to {
 		recipients = append(recipients, mailjetRecipient{Email: rawTo})

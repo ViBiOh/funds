@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/funds/db"
+	"github.com/ViBiOh/funds/mailjet"
 	"github.com/ViBiOh/funds/model"
 )
 
@@ -27,7 +28,7 @@ func getTimer(hour int, minute int) *time.Timer {
 }
 
 func getCurrentAlerts() (map[string]model.Alert, error) {
-	if db.DB == nil {
+	if !db.Ping() {
 		return make(map[string]model.Alert, 0), nil
 	}
 
@@ -47,7 +48,7 @@ func getCurrentAlerts() (map[string]model.Alert, error) {
 }
 
 func getPerformancesAbove(score float64, currentAlerts map[string]model.Alert) ([]model.Performance, error) {
-	if db.DB == nil {
+	if !db.Ping() {
 		return make([]model.Performance, 0), nil
 	}
 
@@ -71,7 +72,7 @@ func getPerformancesAbove(score float64, currentAlerts map[string]model.Alert) (
 }
 
 func getPerformancesBelow(currentAlerts map[string]model.Alert) ([]model.Performance, error) {
-	if db.DB == nil {
+	if !db.Ping() {
 		return make([]model.Performance, 0), nil
 	}
 
@@ -133,14 +134,14 @@ func notify(recipients string, score float64) error {
 			return err
 		}
 
-		if apiPublicKey != `` {
-			if err := MailjetSend(from, name, subject, strings.Split(recipients, `,`), string(htmlContent)); err != nil {
+		if mailjet.Ping() {
+			if err := mailjet.SendMail(from, name, subject, strings.Split(recipients, `,`), string(htmlContent)); err != nil {
 				return err
 			}
 			log.Printf(`Sending mail notification for %d funds to %s`, len(above)+len(below), recipients)
 		}
 
-		if db.DB != nil {
+		if db.Ping() {
 			if err := saveAlerts(score, above, below); err != nil {
 				return err
 			}

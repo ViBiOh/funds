@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/ViBiOh/funds/db"
+	"github.com/ViBiOh/funds/mailjet"
 	"github.com/ViBiOh/funds/notifier"
 )
 
@@ -15,8 +16,8 @@ func main() {
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
 	flag.Parse()
 
-	db.InitDB()
-	notifier.InitMailjet()
+	db.Init()
+	mailjet.Init()
 
 	log.Printf(`Notification to %s at %d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 

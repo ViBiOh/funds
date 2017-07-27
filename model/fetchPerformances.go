@@ -2,7 +2,7 @@ package model
 
 import (
 	"bytes"
-	"log"
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -90,13 +90,11 @@ func fetchPerformance(performanceID []byte) (Performance, error) {
 	perf := &Performance{ID: cleanID}
 
 	if err := getPerformance(url, perf); err != nil {
-		log.Printf(`Error while fetching performance for %s: %v`, performanceID, err)
-		return *perf, err
+		return *perf, fmt.Errorf(`Error while fetching performance for %s: %v`, performanceID, err)
 	}
 
 	if err := getVolatilite(url, perf); err != nil {
-		log.Printf(`Error while fetching volatilite for %s: %v`, performanceID, err)
-		return *perf, err
+		return *perf, fmt.Errorf(`Error while fetching volatilite for %s: %v`, performanceID, err)
 	}
 
 	perf.ComputeScore()
