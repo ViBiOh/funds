@@ -53,8 +53,8 @@ func EndTx(tx *sql.Tx, err error) error {
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			log.Printf(`Error while rolling back transaction: %v`, rollbackErr)
-			return err
 		}
+		return err
 	}
 
 	return tx.Commit()

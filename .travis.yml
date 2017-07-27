@@ -11,12 +11,25 @@ install:
 - npm run build
 script: |
   bash <(curl -s https://codecov.io/bash) &&
+  docker build -t ${DOCKER_USER}/funds-notifier -f Dockerfile_notifier . &&
   docker build -t ${DOCKER_USER}/funds-front -f Dockerfile_front . &&
-  docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
+  docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api . &&
 after_success: |
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
-    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} && docker push ${DOCKER_USER}/funds-front && docker push ${DOCKER_USER}/funds-api
-    sed -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" -e "s|\${FUNDS_DATABASE_USER}|${FUNDS_DATABASE_USER}|g" -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" -e "s|\${FUNDS_DATABASE_NAME}|${FUNDS_DATABASE_NAME}|g" docker-compose.yml > docker-compose-env.yml
+    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} \
+      && docker push ${DOCKER_USER}/funds-notifier \
+      && docker push ${DOCKER_USER}/funds-front \
+      && docker push ${DOCKER_USER}/funds-api
+
+    sed \
+      -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
+      -e "s|\${FUNDS_DATABASE_USER}|${FUNDS_DATABASE_USER}|g" \
+      -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" \
+      -e "s|\${FUNDS_DATABASE_NAME}|${FUNDS_DATABASE_NAME}|g" \
+      -e "s|\${MAILJET_APIKEY_PUBLIC}|${MAILJET_APIKEY_PUBLIC}|g" \
+      -e "s|\${MAILJET_APIKEY_PRIVATE}|${MAILJET_APIKEY_PRIVATE}|g" \
+      -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
+      docker-compose.yml > docker-compose-env.yml
   fi
 notifications:
   email: false

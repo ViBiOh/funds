@@ -29,6 +29,34 @@ services:
     security_opt:
     - no-new-privileges
 
+  notifier:
+    image: vibioh/funds-notifier
+    command:
+    - -recipients
+    - ${FUNDS_NOTIFICATION_RECIPIENTS}
+    labels:
+      traefik.enable: 'false'
+    environment:
+      FUNDS_DATABASE_HOST: 'db'
+      FUNDS_DATABASE_PORT: '5432'
+      FUNDS_DATABASE_USER: '${FUNDS_DATABASE_USER}'
+      FUNDS_DATABASE_PASS: '${FUNDS_DATABASE_PASS}'
+      FUNDS_DATABASE_NAME: '${FUNDS_DATABASE_NAME}'
+      MAILJET_APIKEY_PUBLIC: '${MAILJET_APIKEY_PUBLIC}'
+      MAILJET_APIKEY_PRIVATE: '${MAILJET_APIKEY_PRIVATE}'
+    external_links:
+    - postgres_db_1:db
+    logging:
+      driver: json-file
+      options:
+        max-size: '50m'
+    restart: on-failure:5
+    read_only: true
+    cpu_shares: 256
+    mem_limit: 33554432
+    security_opt:
+    - no-new-privileges
+
   site:
     image: vibioh/funds-front
     command:

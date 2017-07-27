@@ -73,7 +73,7 @@ func SaveAlert(alert Alert, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	_, err = usedTx.Exec(`INSERT INTO alerts (isin, score, type) VALUES ($1, $2, $3, $4)`, alert.Isin, alert.Score, alert.AlertType)
+	_, err = usedTx.Exec(`INSERT INTO alerts (isin, score, type) VALUES ($1, $2, $3)`, alert.Isin, alert.Score, alert.AlertType)
 
 	return
 }

@@ -26,16 +26,9 @@ func getTimer(hour int, minute int) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func getPerformancesAbove(score float64) ([]model.Performance, error) {
+func getCurrentAlerts() (map[string]model.Alert, error) {
 	if db.DB == nil {
-		return make([]model.Performance, 0), nil
-	}
-	return model.PerformanceWithScoreAbove(score)
-}
-
-func getPerformancesBelow() ([]model.Performance, error) {
-	if db.DB == nil {
-		return make([]model.Performance, 0), nil
+		return make(map[string]model.Alert, 0), nil
 	}
 
 	alerts, err := model.AlertsOpened()
@@ -43,9 +36,48 @@ func getPerformancesBelow() ([]model.Performance, error) {
 		return nil, err
 	}
 
+	currentAlerts := make(map[string]model.Alert)
+	for _, alert := range alerts {
+		if _, ok := currentAlerts[alert.Isin]; !ok {
+			currentAlerts[alert.Isin] = alert
+		}
+	}
+
+	return currentAlerts, nil
+}
+
+func getPerformancesAbove(score float64, currentAlerts map[string]model.Alert) ([]model.Performance, error) {
+	if db.DB == nil {
+		return make([]model.Performance, 0), nil
+	}
+
+	performances, err := model.PerformanceWithScoreAbove(score)
+	if err != nil {
+		return nil, err
+	}
+
+	performancesToAlert := make([]model.Performance, 0)
+	for _, performance := range performances {
+		if alert, ok := currentAlerts[performance.Isin]; ok {
+			if alert.AlertType != `above` {
+				performancesToAlert = append(performancesToAlert, performance)
+			}
+		} else {
+			performancesToAlert = append(performancesToAlert, performance)
+		}
+	}
+
+	return performancesToAlert, nil
+}
+
+func getPerformancesBelow(currentAlerts map[string]model.Alert) ([]model.Performance, error) {
+	if db.DB == nil {
+		return make([]model.Performance, 0), nil
+	}
+
 	performances := make([]model.Performance, 0)
 
-	for _, alert := range alerts {
+	for _, alert := range currentAlerts {
 		if performance, err := model.PerformanceByIsin(alert.Isin); err != nil {
 			return nil, err
 		} else if performance.Score < alert.Score {
@@ -79,12 +111,17 @@ func saveAlerts(score float64, above []model.Performance, below []model.Performa
 }
 
 func notify(recipients string, score float64) error {
-	above, err := getPerformancesAbove(score)
+	currentAlerts, err := getCurrentAlerts()
+	if err != nil {
+		return fmt.Errorf(`Error while getting current alerts: %v`, err)
+	}
+
+	above, err := getPerformancesAbove(score, currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting above performances: %v`, err)
 	}
 
-	below, err := getPerformancesBelow()
+	below, err := getPerformancesBelow(currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting below performances: %v`, err)
 	}
@@ -100,7 +137,10 @@ func notify(recipients string, score float64) error {
 			if err := MailjetSend(from, name, subject, strings.Split(recipients, `,`), string(htmlContent)); err != nil {
 				return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 			}
+			log.Printf(`Sending mail notification for %d funds to %s`, len(above)+len(below), recipients)
+		}
 
+		if db.DB != nil {
 			if err := saveAlerts(score, above, below); err != nil {
 				return err
 			}
@@ -113,12 +153,13 @@ func notify(recipients string, score float64) error {
 // Start the notifier
 func Start(recipients string, score float64, hour int, minute int) {
 	timer := getTimer(hour, minute)
-	notify(recipients, score)
 
 	for {
 		select {
 		case <-timer.C:
-			notify(recipients, score)
+			if err := notify(recipients, score); err != nil {
+				log.Print(err)
+			}
 			timer.Reset(notificationInterval)
 		}
 	}
