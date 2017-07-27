@@ -21,12 +21,12 @@ func readBody(body io.ReadCloser) ([]byte, error) {
 func GetBody(url string) ([]byte, error) {
 	request, err := http.NewRequest(`GET`, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf(`Unable to prepare request for url %s : %v`, url, err)
+		return nil, fmt.Errorf(`Error while creating request to %s: %v`, url, err)
 	}
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf(`Error while retrieving data from %s: %v`, url, err)
+		return nil, fmt.Errorf(`Error while getting data from %s: %v`, url, err)
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
@@ -60,7 +60,7 @@ func PostJSONBody(url string, body interface{}, user string, pass string) ([]byt
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf(`Error while posting request to %s: %v`, url, err)
+		return nil, fmt.Errorf(`Error while posting data to %s: %v`, url, err)
 	}
 
 	responseContent, err := readBody(response.Body)
