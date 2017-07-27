@@ -37,7 +37,7 @@ func AlertsOpened() (alerts []Alert, err error) {
 	}
 
 	defer func() {
-		if endErr := rows.Close(); endErr != nil {
+		if endErr := rows.Close(); err == nil && endErr != nil {
 			err = endErr
 		}
 	}()
@@ -69,13 +69,11 @@ func SaveAlert(alert Alert, tx *sql.Tx) (err error) {
 
 	if usedTx != tx {
 		defer func() {
-			if endErr := db.EndTx(usedTx, err); endErr != nil {
-				err = endErr
-			}
+			err = db.EndTx(usedTx, err)
 		}()
 	}
 
-	_, err = usedTx.Exec(`INSERT INTO alerts (id, isin, score, type) VALUES ($1, $2, $3, $4)`, alert.ID, alert.Isin, alert.Score, alert.AlertType)
+	_, err = usedTx.Exec(`INSERT INTO alerts (isin, score, type) VALUES ($1, $2, $3, $4)`, alert.Isin, alert.Score, alert.AlertType)
 
 	return
 }

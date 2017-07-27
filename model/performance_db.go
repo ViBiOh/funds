@@ -29,7 +29,7 @@ func PerformanceWithScoreAbove(minScore float64) (performances []Performance, er
 	}
 
 	defer func() {
-		if endErr := rows.Close(); endErr != nil {
+		if endErr := rows.Close(); err == nil && endErr != nil {
 			err = endErr
 		}
 	}()
@@ -61,9 +61,7 @@ func SavePerformance(perf Performance, tx *sql.Tx) (err error) {
 
 	if usedTx != tx {
 		defer func() {
-			if endErr := db.EndTx(usedTx, err); endErr != nil {
-				err = endErr
-			}
+			err = db.EndTx(usedTx, err)
 		}()
 	}
 

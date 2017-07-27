@@ -1,6 +1,8 @@
 package fetch
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -37,4 +39,38 @@ func GetBody(url string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+// PostJSONBody post given interface to URL with optional credential supplied
+func PostJSONBody(url string, body interface{}, user string, pass string) ([]byte, error) {
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := http.NewRequest(`POST`, url, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Add(`Content-Type`, `application/json`)
+	if user != `` {
+		request.SetBasicAuth(user, pass)
+	}
+
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	responseContent, err := readBody(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode >= http.StatusBadRequest {
+		return nil, fmt.Errorf(`Got status %d while sending mail %s`, response.StatusCode, string(responseContent))
+	}
+
+	return responseContent, nil
 }

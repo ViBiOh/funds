@@ -1,25 +1,18 @@
 package notifier
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
-	"time"
+
+	"github.com/ViBiOh/funds/fetch"
 )
 
 const mailjetSendURL = `https://api.mailjet.com/v3/send`
-const jsonContentType = `application/json`
 
-var httpClient = http.Client{Timeout: 30 * time.Second}
 var apiPublicKey string
 var apiPrivateKey string
 
 type mailjetRecipient struct {
-	ID    int    `json:"MessageID"`
 	Email string `json:"Email"`
 }
 
@@ -46,46 +39,16 @@ func InitMailjet() {
 }
 
 // MailjetSend send mailjet mail
-func MailjetSend(fromEmail string, fromName string, subject string, to []string, html string) (int, error) {
+func MailjetSend(fromEmail string, fromName string, subject string, to []string, html string) error {
 	recipients := make([]mailjetRecipient, 0, len(to))
 	for _, rawTo := range to {
 		recipients = append(recipients, mailjetRecipient{Email: rawTo})
 	}
 
-	mailRequest := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	mailRequestJSON, err := json.Marshal(mailRequest)
-	if err != nil {
-		return 0, fmt.Errorf(`Marshall: %v`, err)
+	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
+	if _, err := fetch.PostJSONBody(mailjetSendURL, mailjetMail, apiPublicKey, apiPrivateKey); err != nil {
+		return err
 	}
 
-	request, err := http.NewRequest(`POST`, mailjetSendURL, bytes.NewBuffer(mailRequestJSON))
-	if err != nil {
-		return 0, fmt.Errorf(`Request: %v`, err)
-	}
-
-	request.SetBasicAuth(apiPublicKey, apiPrivateKey)
-	request.Header.Add(`Content-Type`, jsonContentType)
-
-	resp, err := httpClient.Do(request)
-	if err != nil {
-		return 0, fmt.Errorf(`Send: %v`, err)
-	}
-
-	defer resp.Body.Close()
-
-	responseContent, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, fmt.Errorf(`Read: %v`, err)
-	}
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return 0, fmt.Errorf(`Got status %d while sending mail %s`, resp.StatusCode, string(responseContent))
-	}
-
-	mailResponse := mailjetResponse{}
-	if err := json.Unmarshal(responseContent, &mailResponse); err != nil {
-		return 0, fmt.Errorf(`Unmarshal of %s: %v`, string(responseContent), err)
-	}
-
-	return mailResponse.Sent[0].ID, nil
+	return nil
 }
