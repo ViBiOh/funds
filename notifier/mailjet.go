@@ -1,6 +1,7 @@
 package notifier
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -47,7 +48,7 @@ func MailjetSend(fromEmail string, fromName string, subject string, to []string,
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
 	if _, err := fetch.PostJSONBody(mailjetSendURL, mailjetMail, apiPublicKey, apiPrivateKey); err != nil {
-		return err
+		return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 	}
 
 	return nil

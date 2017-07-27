@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/notifier"
@@ -16,6 +17,8 @@ func main() {
 
 	db.InitDB()
 	notifier.InitMailjet()
+
+	log.Printf(`Notification to %s at %d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 
 	notifier.Start(*recipients, *score, *hour, *minute)
 }

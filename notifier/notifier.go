@@ -130,12 +130,12 @@ func notify(recipients string, score float64) error {
 		htmlContent, err := getHTMLContent(score, above, below)
 
 		if err != nil {
-			return fmt.Errorf(`Error while creating HTML email: %v`, err)
+			return err
 		}
 
 		if apiPublicKey != `` {
 			if err := MailjetSend(from, name, subject, strings.Split(recipients, `,`), string(htmlContent)); err != nil {
-				return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
+				return err
 			}
 			log.Printf(`Sending mail notification for %d funds to %s`, len(above)+len(below), recipients)
 		}

@@ -2,14 +2,15 @@ package notifier
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 
 	"github.com/ViBiOh/funds/model"
 )
 
-const mailTemplate = `
-{{ define "mail" }}
+const scoreNotificationTemplate = `
+{{ define "main" }}
 <body style="border: 0; margin: 0; padding: 5px;">
 	<h1 style="width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0;">Funds</h1>
 	<p>Bonjour,</p>
@@ -72,13 +73,13 @@ type scoreTemplateContent struct {
 var mailTmpl *template.Template
 
 func init() {
-	tmpl := template.New(`score`)
+	tmpl := template.New(`ScoreNotification`)
 
 	tmpl.Funcs(template.FuncMap{`odd`: func(i int) bool {
 		return i%2 == 0
 	}})
 
-	tmpl, err := tmpl.Parse(mailTemplate)
+	tmpl, err := tmpl.Parse(scoreNotificationTemplate)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -89,8 +90,8 @@ func init() {
 func getHTMLContent(scoreLevel float64, above []model.Performance, below []model.Performance) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 
-	if err := mailTmpl.ExecuteTemplate(buffer, `mail`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
-		return nil, err
+	if err := mailTmpl.ExecuteTemplate(buffer, `main`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
+		return nil, fmt.Errorf(`Error while creating HTML content: %v`, err)
 	}
 
 	return buffer.Bytes(), nil
