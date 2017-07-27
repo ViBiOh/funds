@@ -30,7 +30,7 @@ func GetBody(url string) ([]byte, error) {
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-		return nil, fmt.Errorf(`Got error %d while getting %s`, response.StatusCode, url)
+		return nil, fmt.Errorf(`Got status %d while getting %s`, response.StatusCode, url)
 	}
 
 	body, err := readBody(response.Body)
@@ -45,12 +45,12 @@ func GetBody(url string) ([]byte, error) {
 func PostJSONBody(url string, body interface{}, user string, pass string) ([]byte, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while marshalling body: %v`, err)
 	}
 
 	request, err := http.NewRequest(`POST`, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while creating request to %s: %v`, url, err)
 	}
 
 	request.Header.Add(`Content-Type`, `application/json`)
@@ -60,16 +60,17 @@ func PostJSONBody(url string, body interface{}, user string, pass string) ([]byt
 
 	response, err := httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while posting request to %s: %v`, url, err)
 	}
 
 	responseContent, err := readBody(response.Body)
-	if err != nil {
-		return nil, err
-	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-		return nil, fmt.Errorf(`Got status %d while sending mail %s`, response.StatusCode, string(responseContent))
+		return nil, fmt.Errorf(`Got status %d while posting %s`, response.StatusCode, url)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf(`Error while reading body of %s: %v`, url, err)
 	}
 
 	return responseContent, nil
