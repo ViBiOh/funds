@@ -6,18 +6,16 @@ services:
     command:
     - -performance
     - ${PERFORMANCE_URL}
-    - -dbHost
-    - db
-    - -dbUser
-    - ${DB_USER}
-    - -dbPass
-    - ${DB_PASS}
-    - -dbName
-    - ${DB_NAME}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
+    environment:
+      FUNDS_DATABASE_HOST: 'db'
+      FUNDS_DATABASE_PORT: '5432'
+      FUNDS_DATABASE_USER: '${FUNDS_DATABASE_USER}'
+      FUNDS_DATABASE_PASS: '${FUNDS_DATABASE_PASS}'
+      FUNDS_DATABASE_NAME: '${FUNDS_DATABASE_NAME}'
     external_links:
     - postgres_db_1:db
     logging:

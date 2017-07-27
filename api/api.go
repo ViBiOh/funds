@@ -58,11 +58,6 @@ func handleGracefulClose(server *http.Server) {
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
 	performanceURL := flag.String(`performance`, ``, `Performance URL`)
-	dbHost := flag.String(`dbHost`, ``, `Host of Postgres database, leave empty for no database use`)
-	dbPort := flag.Int(`dbPort`, 5432, `Port of Postgres database`)
-	dbUser := flag.String(`dbUser`, `postgres`, `User of Postgres database`)
-	dbPass := flag.String(`dbPass`, `postgres`, `Password of Postgres database`)
-	dbName := flag.String(`dbName`, `funds`, `Name of Postgres database`)
 	flag.Parse()
 
 	if *url != `` {
@@ -75,9 +70,7 @@ func main() {
 	log.Print(`Starting server on port ` + port)
 
 	model.Init(*performanceURL)
-	if *dbHost != `` {
-		db.InitDB(*dbHost, *dbPort, *dbUser, *dbPass, *dbName)
-	}
+	db.InitDB()
 
 	server := &http.Server{
 		Addr:    `:` + port,

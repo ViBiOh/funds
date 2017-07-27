@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	// Not referenced but needed for database/sql
 	_ "github.com/lib/pq"
@@ -13,8 +14,18 @@ import (
 var DB *sql.DB
 
 // InitDB start DB connection
-func InitDB(dbHost string, dbPort int, dbUser string, dbPass string, dbName string) {
-	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
+func InitDB() {
+	dbHost := os.Getenv(`FUNDS_DATABASE_HOST`)
+	dbPort := os.Getenv(`FUNDS_DATABASE_PORT`)
+	dbUser := os.Getenv(`FUNDS_DATABASE_USER`)
+	dbPass := os.Getenv(`FUNDS_DATABASE_PASS`)
+	dbName := os.Getenv(`FUNDS_DATABASE_NAME`)
+
+	if dbHost == `` {
+		return
+	}
+
+	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
 	if err != nil {
 		log.Fatal(err)
 	}
