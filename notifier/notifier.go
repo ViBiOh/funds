@@ -22,7 +22,7 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 		nextTime = nextTime.Add(interval)
 	}
 
-	log.Printf(`Next notification at %v`, nextTime)
+	log.Printf(`First notification at %v`, nextTime)
 
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
@@ -164,6 +164,7 @@ func Start(recipients string, score float64, hour int, minute int) {
 				log.Print(err)
 			}
 			timer.Reset(notificationInterval)
+			log.Printf(`Next notification in %v`, notificationInterval)
 		}
 	}
 }
