@@ -15,7 +15,7 @@ func healthcheck() bool {
 }
 
 func main() {
-	check := flag.String(`c`, ``, `Healthcheck (check and exit)`)
+	check := flag.Bool(`c`, false, `Healthcheck (check and exit)`)
 	recipients := flag.String(`recipients`, ``, `Email of notifications recipients`)
 	score := flag.Float64(`score`, 25.0, `Score value to notification when above`)
 	hour := flag.Int(`hour`, 6, `Hour of day for sending notifications in UTC`)
@@ -25,8 +25,7 @@ func main() {
 	db.Init()
 	mailjet.Init()
 
-	if *check == `healthcheck` {
-		log.Print(`Checking health`)
+	if *check {
 		if !healthcheck() {
 			os.Exit(1)
 		}
