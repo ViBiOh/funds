@@ -26,6 +26,7 @@ func main() {
 	mailjet.Init()
 
 	if *check == `healthcheck` {
+		log.Print(`Checking health`)
 		if !healthcheck() {
 			os.Exit(1)
 		}
