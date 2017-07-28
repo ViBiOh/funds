@@ -41,7 +41,7 @@ func Init() {
 
 // Ping indicate if DB is ready or not
 func Ping() bool {
-	return DB != nil && DB.Ping() != nil
+	return DB != nil && DB.Ping() == nil
 }
 
 // GetTx return given transaction if not nil or create a new one
