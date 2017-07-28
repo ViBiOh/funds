@@ -14,7 +14,7 @@ import (
 	"github.com/ViBiOh/funds/tools"
 )
 
-const refreshDelayInHours = 6
+const refreshDelay = 8 * time.Hour
 
 var listRequest = regexp.MustCompile(`^/list$`)
 var performanceURL string
@@ -31,7 +31,7 @@ func Init(url string) {
 
 	go func() {
 		refreshData()
-		c := time.Tick(refreshDelayInHours * time.Hour)
+		c := time.Tick(refreshDelay)
 		for range c {
 			refreshData()
 		}

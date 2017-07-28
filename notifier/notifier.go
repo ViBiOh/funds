@@ -11,20 +11,26 @@ import (
 	"github.com/ViBiOh/funds/model"
 )
 
+const localeParis = `Europe/Paris`
 const from = `funds@vibioh.fr`
 const name = `Funds App`
 const subject = `[Funds] Score level notification`
 const notificationInterval = 24 * time.Hour
 
-func getTimer(hour int, minute int) *time.Timer {
-	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.Local)
+func getTimer(locale string, hour int, minute int, interval time.Duration) (*time.Timer, error) {
+	location, err := time.LoadLocation(locale)
+	if err != nil {
+		return nil, fmt.Errorf(`Error while loading location %s: %v`, locale, err)
+	}
+
+	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, location)
 	if !nextTime.After(time.Now()) {
-		nextTime = nextTime.Add(notificationInterval)
+		nextTime = nextTime.Add(interval)
 	}
 
 	log.Printf(`Next notification at %v`, nextTime)
 
-	return time.NewTimer(nextTime.Sub(time.Now()))
+	return time.NewTimer(nextTime.Sub(time.Now())), nil
 }
 
 func getCurrentAlerts() (map[string]model.Alert, error) {
@@ -111,7 +117,7 @@ func saveAlerts(score float64, above []model.Performance, below []model.Performa
 	return nil
 }
 
-func notify(recipients string, score float64) error {
+func notify(recipients []string, score float64) error {
 	currentAlerts, err := getCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
@@ -127,7 +133,7 @@ func notify(recipients string, score float64) error {
 		return fmt.Errorf(`Error while getting below performances: %v`, err)
 	}
 
-	if (len(above) > 0 || len(below) > 0) && recipients != `` {
+	if (len(above) > 0 || len(below) > 0) && len(recipients) > 0 {
 		htmlContent, err := getHTMLContent(score, above, below)
 
 		if err != nil {
@@ -135,10 +141,10 @@ func notify(recipients string, score float64) error {
 		}
 
 		if mailjet.Ping() {
-			if err := mailjet.SendMail(from, name, subject, strings.Split(recipients, `,`), string(htmlContent)); err != nil {
+			if err := mailjet.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
 				return err
 			}
-			log.Printf(`Sending mail notification for %d funds to %s`, len(above)+len(below), recipients)
+			log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 		}
 
 		if db.Ping() {
@@ -153,12 +159,18 @@ func notify(recipients string, score float64) error {
 
 // Start the notifier
 func Start(recipients string, score float64, hour int, minute int) {
-	timer := getTimer(hour, minute)
+	timer, err := getTimer(localeParis, hour, minute, notificationInterval)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	recipientsList := strings.Split(recipients, `,`)
 
 	for {
 		select {
 		case <-timer.C:
-			if err := notify(recipients, score); err != nil {
+			if err := notify(recipientsList, score); err != nil {
 				log.Print(err)
 			}
 			timer.Reset(notificationInterval)

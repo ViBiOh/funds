@@ -19,7 +19,7 @@ func main() {
 	db.Init()
 	mailjet.Init()
 
-	log.Printf(`Notification to %s at %d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
+	log.Printf(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 
 	notifier.Start(*recipients, *score, *hour, *minute)
 }
