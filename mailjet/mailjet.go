@@ -2,7 +2,6 @@ package mailjet
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/ViBiOh/funds/fetch"
@@ -30,13 +29,11 @@ type mailjetResponse struct {
 }
 
 // Init inits API auth tokens
-func Init() {
+func Init() error {
 	apiPublicKey = os.Getenv(`MAILJET_APIKEY_PUBLIC`)
 	apiPrivateKey = os.Getenv(`MAILJET_APIKEY_PRIVATE`)
 
-	if apiPublicKey != `` {
-		log.Print(`Mailjet configured`)
-	}
+	return nil
 }
 
 // Ping indicate if Mailjet is ready or not
@@ -53,7 +50,7 @@ func SendMail(fromEmail string, fromName string, subject string, to []string, ht
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
 	if _, err := fetch.PostJSONBody(mailjetSendURL, mailjetMail, apiPublicKey, apiPrivateKey); err != nil {
-		return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
+		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 
 	return nil

@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -17,31 +18,53 @@ import (
 const refreshDelay = 8 * time.Hour
 
 var listRequest = regexp.MustCompile(`^/list$`)
-var performanceURL string
-var performanceMap *tools.ConcurrentMap
+var fundURL string
+var fundsMap *tools.ConcurrentMap
 
 type results struct {
 	Results interface{} `json:"results"`
 }
 
 // Init start concurrent map and init it from crawling
-func Init(url string) {
-	performanceURL = url
-	performanceMap = tools.CreateConcurrentMap(len(performanceIds), crawler.MaxConcurrentFetcher)
+func Init(url string) error {
+	fundURL = url
+	fundsMap = tools.CreateConcurrentMap(len(fundsIds), crawler.MaxConcurrentFetcher)
 
 	go func() {
-		refreshData()
+		if err := refresh(); err != nil {
+			log.Print(err)
+		}
 		c := time.Tick(refreshDelay)
 		for range c {
-			refreshData()
+			if err := refresh(); err != nil {
+				log.Print(err)
+			}
 		}
 	}()
+
+	return nil
 }
 
-func refreshData() {
-	results, errors := crawler.Crawl(performanceIds, func(ID []byte) (interface{}, error) {
-		return fetchPerformance(ID)
+func refresh() error {
+	if err := refreshData(); err != nil {
+		return fmt.Errorf(`Error while refreshing: %v`, err)
+	}
+
+	if db.Ping() {
+		if err := saveData(); err != nil {
+			return fmt.Errorf(`Error while saving: %v`, err)
+		}
+	}
+
+	return nil
+}
+
+func refreshData() error {
+	results, errors := crawler.Crawl(fundsIds, func(ID []byte) (interface{}, error) {
+		return fetchFund(ID)
 	})
+
+	var err error
 
 	go func() {
 		ids := make([][]byte, 0)
@@ -51,19 +74,15 @@ func refreshData() {
 		}
 
 		if len(ids) > 0 {
-			log.Printf(`Errors while refreshing ids %s`, bytes.Join(ids, []byte(`, `)))
+			err = fmt.Errorf(`Errors with ids %s`, bytes.Join(ids, []byte(`, `)))
 		}
 	}()
 
-	for performance := range results {
-		performanceMap.Push(performance.(tools.MapContent))
+	for fund := range results {
+		fundsMap.Push(fund.(tools.MapContent))
 	}
 
-	if db.Ping() {
-		if err := saveData(); err != nil {
-			log.Printf(`Error while saving data: %v`, err)
-		}
-	}
+	return err
 }
 
 func saveData() (err error) {
@@ -76,27 +95,27 @@ func saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	for performance := range performanceMap.List() {
+	for fund := range fundsMap.List() {
 		if err == nil {
-			err = SavePerformance(performance.(Performance), tx)
+			err = SaveFund(fund.(Fund), tx)
 		}
 	}
 
 	return
 }
 
-// ListPerformances return content of performances' map
-func ListPerformances() []Performance {
-	performances := make([]Performance, 0, len(performanceIds))
-	for perf := range performanceMap.List() {
-		performances = append(performances, perf.(Performance))
+// ListFunds return content of funds' map
+func ListFunds() []Fund {
+	funds := make([]Fund, 0, len(fundsIds))
+	for fund := range fundsMap.List() {
+		funds = append(funds, fund.(Fund))
 	}
 
-	return performances
+	return funds
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	jsonHttp.ResponseJSON(w, results{ListPerformances()})
+	jsonHttp.ResponseJSON(w, results{ListFunds()})
 }
 
 // Handler for model request. Should be use with net/http

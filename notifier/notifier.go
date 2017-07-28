@@ -32,9 +32,9 @@ func getCurrentAlerts() (map[string]model.Alert, error) {
 		return make(map[string]model.Alert, 0), nil
 	}
 
-	alerts, err := model.AlertsOpened()
+	alerts, err := model.ReadAlertsOpened()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while reading opened alerts: %v`, err)
 	}
 
 	currentAlerts := make(map[string]model.Alert)
@@ -47,65 +47,65 @@ func getCurrentAlerts() (map[string]model.Alert, error) {
 	return currentAlerts, nil
 }
 
-func getPerformancesAbove(score float64, currentAlerts map[string]model.Alert) ([]model.Performance, error) {
+func getFundsAbove(score float64, currentAlerts map[string]model.Alert) ([]model.Fund, error) {
 	if !db.Ping() {
-		return make([]model.Performance, 0), nil
+		return make([]model.Fund, 0), nil
 	}
 
-	performances, err := model.PerformanceWithScoreAbove(score)
+	funds, err := model.ReadFundsWithScoreAbove(score)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while reading funds with score >= %.2f: %v`, score, err)
 	}
 
-	performancesToAlert := make([]model.Performance, 0)
-	for _, performance := range performances {
-		if alert, ok := currentAlerts[performance.Isin]; ok {
+	fundsToAlert := make([]model.Fund, 0)
+	for _, fund := range funds {
+		if alert, ok := currentAlerts[fund.Isin]; ok {
 			if alert.AlertType != `above` {
-				performancesToAlert = append(performancesToAlert, performance)
+				fundsToAlert = append(fundsToAlert, fund)
 			}
 		} else {
-			performancesToAlert = append(performancesToAlert, performance)
+			fundsToAlert = append(fundsToAlert, fund)
 		}
 	}
 
-	return performancesToAlert, nil
+	return fundsToAlert, nil
 }
 
-func getPerformancesBelow(currentAlerts map[string]model.Alert) ([]model.Performance, error) {
+func getFundsBelow(currentAlerts map[string]model.Alert) ([]model.Fund, error) {
 	if !db.Ping() {
-		return make([]model.Performance, 0), nil
+		return make([]model.Fund, 0), nil
 	}
 
-	performances := make([]model.Performance, 0)
+	funds := make([]model.Fund, 0)
 
 	for _, alert := range currentAlerts {
-		if performance, err := model.PerformanceByIsin(alert.Isin); err != nil {
-			return nil, err
-		} else if performance.Score < alert.Score {
-			performances = append(performances, *performance)
+		if fund, err := model.ReadFundByIsin(alert.Isin); err != nil {
+			return nil, fmt.Errorf(`Error while reading funds with isin '%s': %v`, alert.Isin, err)
+		} else if fund.Score < alert.Score {
+			funds = append(funds, *fund)
 		}
 	}
 
-	return performances, nil
+	return funds, nil
 }
 
-func saveTypedAlerts(score float64, performances []model.Performance, alertType string) error {
-	for _, performance := range performances {
-		if err := model.SaveAlert(model.Alert{Isin: performance.Isin, Score: score, AlertType: alertType}, nil); err != nil {
-			return err
+func saveTypedAlerts(score float64, funds []model.Fund, alertType string) error {
+	for _, fund := range funds {
+		if err := model.SaveAlert(model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
 		}
 	}
 
 	return nil
 }
 
-func saveAlerts(score float64, above []model.Performance, below []model.Performance) error {
+func saveAlerts(score float64, above []model.Fund, below []model.Fund) error {
 	if err := saveTypedAlerts(score, above, `above`); err != nil {
-		return fmt.Errorf(`Error while saving above alerts: %v`, err)
+		return err
 	}
 
 	if err := saveTypedAlerts(score, below, `below`); err != nil {
-		return fmt.Errorf(`Error while saving below alerts: %v`, err)
+		return err
 	}
 
 	return nil
@@ -117,33 +117,32 @@ func notify(recipients []string, score float64) error {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
 	}
 
-	above, err := getPerformancesAbove(score, currentAlerts)
+	above, err := getFundsAbove(score, currentAlerts)
 	if err != nil {
-		return fmt.Errorf(`Error while getting above performances: %v`, err)
+		return fmt.Errorf(`Error while getting above funds: %v`, err)
 	}
 
-	below, err := getPerformancesBelow(currentAlerts)
+	below, err := getFundsBelow(currentAlerts)
 	if err != nil {
-		return fmt.Errorf(`Error while getting below performances: %v`, err)
+		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
 
 	if (len(above) > 0 || len(below) > 0) && len(recipients) > 0 {
 		htmlContent, err := getHTMLContent(score, above, below)
-
 		if err != nil {
-			return err
+			return fmt.Errorf(`Error while generating HTML email: %v`, err)
 		}
 
 		if mailjet.Ping() {
 			if err := mailjet.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
-				return err
+				return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 			}
 			log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 		}
 
 		if db.Ping() {
 			if err := saveAlerts(score, above, below); err != nil {
-				return err
+				return fmt.Errorf(`Error while saving alerts: %v`, err)
 			}
 		}
 	}

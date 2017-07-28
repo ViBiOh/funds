@@ -1,7 +1,7 @@
 package model
 
-// Performance of a funds
-type Performance struct {
+// Fund informations
+type Fund struct {
 	ID            string  `json:"id"`
 	Isin          string  `json:"isin"`
 	Label         string  `json:"label"`
@@ -15,13 +15,13 @@ type Performance struct {
 	Score         float64 `json:"score"`
 }
 
-// GetID returns Performance's ID
-func (p Performance) GetID() string {
+// GetID returns Fund's ID
+func (p Fund) GetID() string {
 	return p.ID
 }
 
-// ComputeScore calculate score from Performance's values
-func (p *Performance) ComputeScore() {
+// ComputeScore calculate score of Fund
+func (p *Fund) ComputeScore() {
 	score := (0.25 * p.OneMonth) + (0.3 * p.ThreeMonths) + (0.25 * p.SixMonths) + (0.2 * p.OneYear) - (0.1 * p.VolThreeYears)
 	p.Score = float64(int(score*100)) / 100
 }

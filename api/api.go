@@ -21,7 +21,7 @@ const port = `1080`
 var modelHandler = model.Handler{}
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if len(model.ListPerformances()) > 0 {
+	if len(model.ListFunds()) > 0 {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -57,7 +57,7 @@ func handleGracefulClose(server *http.Server) {
 
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
-	performanceURL := flag.String(`performance`, ``, `Performance URL`)
+	infosURL := flag.String(`infos`, ``, `Informations URL`)
 	flag.Parse()
 
 	if *url != `` {
@@ -67,10 +67,17 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	log.Print(`Starting server on port ` + port)
+	if err := db.Init(); err != nil {
+		log.Printf(`Error while initializing database: %v`, err)
+	} else if db.Ping() {
+		log.Print(`Database ready`)
+	}
 
-	model.Init(*performanceURL)
-	db.Init()
+	if err := model.Init(*infosURL); err != nil {
+		log.Printf(`Error while initializing model: %v`, err)
+	}
+
+	log.Print(`Starting server on port ` + port)
 
 	server := &http.Server{
 		Addr:    `:` + port,

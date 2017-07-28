@@ -1,6 +1,6 @@
 package model
 
-var performanceIds = [][]byte{
+var fundsIds = [][]byte{
 	[]byte(`F00000VSR5`),
 	[]byte(`F0GBR05V29`),
 	[]byte(`F00000OVC2`),

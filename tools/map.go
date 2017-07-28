@@ -49,8 +49,8 @@ func CreateConcurrentMap(contentSize int, channelSize int) *ConcurrentMap {
 	go func() {
 		for request := range concurrentMap.req {
 			if request.action == `list` {
-				for _, perf := range concurrentMap.content {
-					request.ioContent <- perf
+				for _, entry := range concurrentMap.content {
+					request.ioContent <- entry
 				}
 				close(request.ioContent)
 			} else if request.action == `push` {

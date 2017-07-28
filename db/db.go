@@ -14,7 +14,7 @@ import (
 var DB *sql.DB
 
 // Init start DB connection
-func Init() {
+func Init() error {
 	dbHost := os.Getenv(`FUNDS_DATABASE_HOST`)
 	dbPort := os.Getenv(`FUNDS_DATABASE_PORT`)
 	dbUser := os.Getenv(`FUNDS_DATABASE_USER`)
@@ -22,21 +22,22 @@ func Init() {
 	dbName := os.Getenv(`FUNDS_DATABASE_NAME`)
 
 	if dbHost == `` {
-		return
+		return nil
 	}
 
 	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf(`Error while opening: %v`, err)
 	}
 
 	err = database.Ping()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf(`Error while pinging: %v`, err)
 	}
 
-	log.Printf(`Connected to %s database`, dbName)
 	DB = database
+
+	return nil
 }
 
 // Ping indicate if DB is ready or not

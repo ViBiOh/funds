@@ -29,8 +29,8 @@ ORDER BY
   creation_date DESC
 `
 
-// AlertsOpened retrieve Alerts not closed (score didn't go below)
-func AlertsOpened() (alerts []Alert, err error) {
+// ReadAlertsOpened retrieves current Alerts (only one mail sent)
+func ReadAlertsOpened() (alerts []Alert, err error) {
 	rows, err := db.DB.Query(alertsOpenedQuery)
 	if err != nil {
 		return
@@ -59,7 +59,7 @@ func AlertsOpened() (alerts []Alert, err error) {
 	return
 }
 
-// SaveAlert save given Alert in storage
+// SaveAlert saves Alert
 func SaveAlert(alert Alert, tx *sql.Tx) (err error) {
 	var usedTx *sql.Tx
 

@@ -22,8 +22,13 @@ func main() {
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
 	flag.Parse()
 
-	db.Init()
-	mailjet.Init()
+	if err := db.Init(); err != nil {
+		log.Printf(`Error while initializing database: %v`, err)
+	}
+
+	if err := mailjet.Init(); err != nil {
+		log.Printf(`Error while initializing mailjet: %v`, err)
+	}
 
 	if *check {
 		if !healthcheck() {
@@ -32,7 +37,18 @@ func main() {
 		return
 	}
 
+	if db.Ping() {
+		log.Print(`Database ready`)
+	}
+
+	if mailjet.Ping() {
+		log.Print(`Mailjet ready`)
+	}
+
 	log.Printf(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 
+	if err := notifier.Init(); err != nil {
+		log.Printf(`Error while initializing notifier: %v`, err)
+	}
 	notifier.Start(*recipients, *score, *hour, *minute)
 }

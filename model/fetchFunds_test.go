@@ -7,8 +7,8 @@ import (
 
 func TestCleanID(t *testing.T) {
 	var tests = []struct {
-		performanceID []byte
-		want          string
+		fundID []byte
+		want   string
 	}{
 		{},
 		{
@@ -18,8 +18,8 @@ func TestCleanID(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := cleanID(test.performanceID); string(got) != test.want {
-			t.Errorf("cleanID(%v) = %v, want %v", test.performanceID, got, test.want)
+		if got := cleanID(test.fundID); string(got) != test.want {
+			t.Errorf("cleanID(%v) = %v, want %v", test.fundID, got, test.want)
 		}
 	}
 }

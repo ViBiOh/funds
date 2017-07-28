@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/ViBiOh/funds/model"
 )
@@ -66,13 +65,14 @@ const scoreNotificationTemplate = `
 
 type scoreTemplateContent struct {
 	Score      float64
-	AboveFunds []model.Performance
-	BelowFunds []model.Performance
+	AboveFunds []model.Fund
+	BelowFunds []model.Fund
 }
 
 var mailTmpl *template.Template
 
-func init() {
+// Init initialize template from string
+func Init() error {
 	tmpl := template.New(`ScoreNotification`)
 
 	tmpl.Funcs(template.FuncMap{`odd`: func(i int) bool {
@@ -81,17 +81,19 @@ func init() {
 
 	tmpl, err := tmpl.Parse(scoreNotificationTemplate)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf(`Error while parsing template: %v`, err)
 	}
 
 	mailTmpl = tmpl
+
+	return nil
 }
 
-func getHTMLContent(scoreLevel float64, above []model.Performance, below []model.Performance) ([]byte, error) {
+func getHTMLContent(scoreLevel float64, above []model.Fund, below []model.Fund) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 
 	if err := mailTmpl.ExecuteTemplate(buffer, `main`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
-		return nil, fmt.Errorf(`Error while creating HTML content: %v`, err)
+		return nil, fmt.Errorf(`Error while executing template: %v`, err)
 	}
 
 	return buffer.Bytes(), nil

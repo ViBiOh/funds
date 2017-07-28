@@ -27,8 +27,8 @@ var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)
 var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
 var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
 
-func cleanID(performanceID []byte) string {
-	return string(bytes.ToLower(performanceID))
+func cleanID(fundID []byte) string {
+	return string(bytes.ToLower(fundID))
 }
 
 func extractLabel(extract *regexp.Regexp, body []byte, defaultValue []byte) []byte {
@@ -56,48 +56,48 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 	return result
 }
 
-func getPerformance(url string, perf *Performance) error {
+func fetchInfosAndPerformances(url string, fund *Fund) error {
 	body, err := fetch.GetBody(url + `&tab=1`)
 	if err != nil {
-		return err
+		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
 
-	perf.Isin = string(extractLabel(isinRegex, body, emptyByte))
-	perf.Label = string(extractLabel(labelRegex, body, emptyByte))
-	perf.Category = string(extractLabel(categoryRegex, body, emptyByte))
-	perf.Rating = string(extractLabel(ratingRegex, body, zeroByte))
-	perf.OneMonth = extractPerformance(perfOneMonthRegex, body)
-	perf.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
-	perf.SixMonths = extractPerformance(perfSixMonthRegex, body)
-	perf.OneYear = extractPerformance(perfOneYearRegex, body)
+	fund.Isin = string(extractLabel(isinRegex, body, emptyByte))
+	fund.Label = string(extractLabel(labelRegex, body, emptyByte))
+	fund.Category = string(extractLabel(categoryRegex, body, emptyByte))
+	fund.Rating = string(extractLabel(ratingRegex, body, zeroByte))
+	fund.OneMonth = extractPerformance(perfOneMonthRegex, body)
+	fund.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
+	fund.SixMonths = extractPerformance(perfSixMonthRegex, body)
+	fund.OneYear = extractPerformance(perfOneYearRegex, body)
 
 	return nil
 }
 
-func getVolatilite(url string, perf *Performance) error {
+func fetchVolatilite(url string, fund *Fund) error {
 	body, err := fetch.GetBody(url + `&tab=2`)
 	if err != nil {
-		return err
+		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
 
-	perf.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+	fund.VolThreeYears = extractPerformance(volThreeYearRegex, body)
 	return nil
 }
 
-func fetchPerformance(performanceID []byte) (Performance, error) {
-	cleanID := cleanID(performanceID)
-	url := performanceURL + cleanID
-	perf := &Performance{ID: cleanID}
+func fetchFund(fundID []byte) (Fund, error) {
+	cleanID := cleanID(fundID)
+	url := fundURL + cleanID
+	fund := &Fund{ID: cleanID}
 
-	if err := getPerformance(url, perf); err != nil {
-		return *perf, fmt.Errorf(`Error while fetching performance for %s: %v`, performanceID, err)
+	if err := fetchInfosAndPerformances(url, fund); err != nil {
+		return *fund, fmt.Errorf(`[%s] Error while fetching infos and performances: %v`, fundID, err)
 	}
 
-	if err := getVolatilite(url, perf); err != nil {
-		return *perf, fmt.Errorf(`Error while fetching volatilite for %s: %v`, performanceID, err)
+	if err := fetchVolatilite(url, fund); err != nil {
+		return *fund, fmt.Errorf(`[%s] Error while fetching volatilite: %v`, fundID, err)
 	}
 
-	perf.ComputeScore()
+	fund.ComputeScore()
 
-	return *perf, nil
+	return *fund, nil
 }
