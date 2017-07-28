@@ -24,7 +24,7 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 
 	log.Printf(`Next notification at %v`, nextTime)
 
-	return time.NewTimer(nextTime.Sub(time.Now())), nil
+	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
 func getCurrentAlerts() (map[string]model.Alert, error) {
