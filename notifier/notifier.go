@@ -11,19 +11,13 @@ import (
 	"github.com/ViBiOh/funds/model"
 )
 
-const localeParis = `Europe/Paris`
 const from = `funds@vibioh.fr`
 const name = `Funds App`
 const subject = `[Funds] Score level notification`
 const notificationInterval = 24 * time.Hour
 
-func getTimer(locale string, hour int, minute int, interval time.Duration) (*time.Timer, error) {
-	location, err := time.LoadLocation(locale)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while loading location %s: %v`, locale, err)
-	}
-
-	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, location)
+func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
+	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.UTC)
 	if !nextTime.After(time.Now()) {
 		nextTime = nextTime.Add(interval)
 	}
@@ -159,11 +153,7 @@ func notify(recipients []string, score float64) error {
 
 // Start the notifier
 func Start(recipients string, score float64, hour int, minute int) {
-	timer, err := getTimer(localeParis, hour, minute, notificationInterval)
-	if err != nil {
-		log.Print(err)
-		return
-	}
+	timer := getTimer(hour, minute, notificationInterval)
 
 	recipientsList := strings.Split(recipients, `,`)
 
