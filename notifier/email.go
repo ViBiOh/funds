@@ -26,7 +26,7 @@ const scoreNotificationTemplate = `
 		</p>
 	{{ end }}
 	<p>
-		Pour plus d'information, n'hésitez pas à consulter <a href="https://funds.vibioh.fr/?o=score" rel="noopener noreferrer" target="_blank">notre site</a>.
+		Pour plus d'informations, n'hésitez pas à consulter <a href="https://funds.vibioh.fr/?o=score" rel="noopener noreferrer" target="_blank">notre site</a>.
 	</p>
 	<p>
 		Bonne journée,
