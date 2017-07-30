@@ -46,6 +46,9 @@ func Init(url string) error {
 }
 
 func refresh() error {
+	log.Printf(`Refresh started`)
+	defer log.Printf(`Refresh ended`)
+
 	if err := refreshData(); err != nil {
 		return fmt.Errorf(`Error while refreshing: %v`, err)
 	}
@@ -64,13 +67,12 @@ func refreshData() error {
 		return fetchFund(ID)
 	})
 
-	idsLength := len(fundsIds)
-	idsErrors := make([][]byte, 0)
+	errorIds := make([][]byte, 0)
 
-	for i := 0; i < idsLength; i++ {
+	for i := 0; i < len(fundsIds); i++ {
 		select {
 		case id := <-errors:
-			idsErrors = append(idsErrors, id)
+			errorIds = append(errorIds, id)
 			break
 		case fund := <-results:
 			fundsMap.Push(fund.(tools.MapContent))
@@ -78,8 +80,8 @@ func refreshData() error {
 		}
 	}
 
-	if len(idsErrors) > 0 {
-		return fmt.Errorf(`Errors with ids %s`, bytes.Join(idsErrors, []byte(`,`)))
+	if len(errorIds) > 0 {
+		return fmt.Errorf(`Errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
 	}
 	return nil
 }
