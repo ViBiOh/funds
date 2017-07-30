@@ -64,10 +64,10 @@ func refreshData() error {
 		return fetchFund(ID)
 	})
 
-	idsLength := len(ids)
+	idsLength := len(fundsIds)
 	idsErrors := make([][]byte, 0)
 
-	for i = 0; i < idsLength; i++ {
+	for i := 0; i < idsLength; i++ {
 	select {
 		case id := <-errors:
 		        idsErrors = append(idsErrors, id)
