@@ -64,25 +64,24 @@ func refreshData() error {
 		return fetchFund(ID)
 	})
 
-	var err error
+	idsLength := len(ids)
+	idsErrors := make([][]byte, 0)
 
-	go func() {
-		ids := make([][]byte, 0)
-
-		for id := range errors {
-			ids = append(ids, id)
-		}
-
-		if len(ids) > 0 {
-			err = fmt.Errorf(`Errors with ids %s`, bytes.Join(ids, []byte(`, `)))
-		}
-	}()
-
-	for fund := range results {
-		fundsMap.Push(fund.(tools.MapContent))
+	for i = 0; i < idsLength; i++ {
+	select {
+		case id := <-errors:
+		        idsErrors = append(idsErrors, id)
+		        break
+		case fund := <-results:
+		        fundsMap.Push(fund.(tools.MapContent))
+			break
+	}
 	}
 
-	return err
+	if len(idsErrors) > 0 {
+		return fmt.Errorf(`Errors with ids %s`, bytes.Join(idsErrors, []byte(`,`)))
+	}
+	return nil
 }
 
 func saveData() (err error) {
