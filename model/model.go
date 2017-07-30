@@ -68,14 +68,14 @@ func refreshData() error {
 	idsErrors := make([][]byte, 0)
 
 	for i := 0; i < idsLength; i++ {
-	select {
+		select {
 		case id := <-errors:
-		        idsErrors = append(idsErrors, id)
-		        break
-		case fund := <-results:
-		        fundsMap.Push(fund.(tools.MapContent))
+			idsErrors = append(idsErrors, id)
 			break
-	}
+		case fund := <-results:
+			fundsMap.Push(fund.(tools.MapContent))
+			break
+		}
 	}
 
 	if len(idsErrors) > 0 {
