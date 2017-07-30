@@ -45,6 +45,13 @@ func Init(url string) error {
 	return nil
 }
 
+// Shutdown close opened ressource
+func Shutdown() error {
+	fundsMap.Close()
+
+	return nil
+}
+
 func refresh() error {
 	log.Printf(`Refresh started`)
 	defer log.Printf(`Refresh ended`)

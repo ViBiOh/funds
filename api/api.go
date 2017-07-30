@@ -52,6 +52,10 @@ func handleGracefulClose(server *http.Server) {
 		if err := server.Shutdown(ctx); err != nil {
 			log.Print(err)
 		}
+
+		if err := model.Shutdown(); err != nil {
+			log.Print(err)
+		}
 	}
 }
 
