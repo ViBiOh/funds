@@ -107,12 +107,9 @@ func saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	var fund *Fund
-
 	for entry := range fundsMap.List() {
 		if err == nil {
-			fund = entry.(*Fund)
-			err = SaveFund(fund, tx)
+			err = SaveFund(entry.(*Fund), tx)
 		}
 	}
 
@@ -121,12 +118,10 @@ func saveData() (err error) {
 
 // ListFunds return content of funds' map
 func ListFunds() []Fund {
-	var fund *Fund
 	funds := make([]Fund, 0, len(fundsIds))
 
 	for entry := range fundsMap.List() {
-		fund = entry.(*Fund)
-		funds = append(funds, *fund)
+		funds = append(funds, *(entry.(*Fund)))
 	}
 
 	return funds
