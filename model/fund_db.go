@@ -96,6 +96,7 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
 		_, err = tx.Exec(`INSERT INTO funds (isin, label, score) VALUES ($1, $2, $3)`, fund.Isin, fund.Label, fund.Score)
 	} else {
+		log.Printf(`Updating %v`, fund)
 		_, err = tx.Exec(`UPDATE funds SET score = $1, update_date = $2 WHERE isin = $3`, fund.Score, `now()`, fund.Isin)
 	}
 
