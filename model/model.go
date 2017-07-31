@@ -64,6 +64,8 @@ func refresh() error {
 		if err := saveData(); err != nil {
 			return fmt.Errorf(`Error while saving: %v`, err)
 		}
+	} else {
+		log.Printf(`Database not ready: %v`, db.DB.Ping())
 	}
 
 	return nil
