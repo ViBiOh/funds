@@ -15,7 +15,7 @@ type simpleMapContent struct {
 	ID string
 }
 
-func (c *simpleMapContent) GetID() string {
+func (c simpleMapContent) GetID() string {
 	return c.ID
 }
 
@@ -46,7 +46,7 @@ func (c *ConcurrentMap) Remove(ID string) {
 	req := request{action: `remove`, ioContent: make(chan MapContent)}
 	c.req <- req
 
-	req.ioContent <- &simpleMapContent{ID}
+	req.ioContent <- simpleMapContent{ID}
 }
 
 // List map content to output channel

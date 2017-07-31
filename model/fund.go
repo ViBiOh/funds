@@ -16,12 +16,12 @@ type Fund struct {
 }
 
 // GetID returns Fund's ID
-func (p Fund) GetID() string {
-	return p.ID
+func (f Fund) GetID() string {
+	return f.ID
 }
 
 // ComputeScore calculate score of Fund
-func (p *Fund) ComputeScore() {
-	score := (0.25 * p.OneMonth) + (0.3 * p.ThreeMonths) + (0.25 * p.SixMonths) + (0.2 * p.OneYear) - (0.1 * p.VolThreeYears)
-	p.Score = float64(int(score*100)) / 100
+func (f *Fund) ComputeScore() {
+	score := (0.25 * f.OneMonth) + (0.3 * f.ThreeMonths) + (0.25 * f.SixMonths) + (0.2 * f.OneYear) - (0.1 * f.VolThreeYears)
+	f.Score = float64(int(score*100)) / 100
 }
