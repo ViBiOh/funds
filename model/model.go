@@ -70,6 +70,9 @@ func refresh() error {
 }
 
 func refreshData() error {
+	log.Printf(`Data refresh started`)
+	defer log.Printf(`Data refresh ended`)
+
 	results, errors := crawler.Crawl(fundsIds, func(ID []byte) (interface{}, error) {
 		return fetchFund(ID)
 	})
@@ -95,6 +98,9 @@ func refreshData() error {
 }
 
 func saveData() (err error) {
+	log.Printf(`Data save started`)
+	defer log.Printf(`Data save ended`)
+
 	var tx *sql.Tx
 	if tx, err = db.GetTx(nil); err != nil {
 		return err
