@@ -117,7 +117,9 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
-		_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+		if err == sql.ErrNoRows {
+			_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+		}
 	} else {
 		_, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin)
 	}
