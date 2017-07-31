@@ -16,7 +16,7 @@ type Fund struct {
 }
 
 // GetID returns Fund's ID
-func (f Fund) GetID() string {
+func (f *Fund) GetID() string {
 	return f.ID
 }
 

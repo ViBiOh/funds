@@ -81,8 +81,9 @@ func refreshData() error {
 		case id := <-errors:
 			errorIds = append(errorIds, id)
 			break
-		case fund := <-results:
-			fundsMap.Push(fund.(tools.MapContent))
+		case result := <-results:
+			content := result.(Fund)
+			fundsMap.Push(&content)
 			break
 		}
 	}
@@ -103,12 +104,12 @@ func saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	var fund Fund
+	var fund *Fund
 
 	for entry := range fundsMap.List() {
 		if err == nil {
-			fund = entry.(Fund)
-			err = SaveFund(&fund, tx)
+			fund = entry.(*Fund)
+			err = SaveFund(fund, tx)
 		}
 	}
 
@@ -117,9 +118,12 @@ func saveData() (err error) {
 
 // ListFunds return content of funds' map
 func ListFunds() []Fund {
+	var fund *Fund
 	funds := make([]Fund, 0, len(fundsIds))
-	for fund := range fundsMap.List() {
-		funds = append(funds, fund.(Fund))
+
+	for entry := range fundsMap.List() {
+		fund = entry.(*Fund)
+		funds = append(funds, *fund)
 	}
 
 	return funds
