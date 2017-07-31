@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var entries = []MapContent{simpleMapContent{`First`}, simpleMapContent{`Second`}, simpleMapContent{`Third`}}
+var entries = []MapContent{&simpleMapContent{`First`}, &simpleMapContent{`Second`}, &simpleMapContent{`Third`}}
 
 func InitConccurentMapWithValues(values []MapContent) *ConcurrentMap {
 	concurrentMap := CreateConcurrentMap(5, 2)
@@ -49,7 +49,7 @@ func TestPush(t *testing.T) {
 		content MapContent
 	}{
 		{
-			simpleMapContent{`Test`},
+			&simpleMapContent{`Test`},
 		},
 	}
 
