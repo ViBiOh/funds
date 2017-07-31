@@ -67,10 +67,10 @@ func EndTx(tx *sql.Tx, err error) error {
 
 // Query wraps https://golang.org/pkg/database/sql/#DB.Query
 func Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return db.Query(query, args)
+	return db.Query(query, args...)
 }
 
 // QueryRow wraps https://golang.org/pkg/database/sql/#DB.QueryRow
 func QueryRow(query string, args ...interface{}) *sql.Row {
-	return db.QueryRow(query, args)
+	return db.QueryRow(query, args...)
 }
