@@ -10,8 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// DB configured or nil if not
-var DB *sql.DB
+var db *sql.DB
 
 // Init start DB connection
 func Init() error {
@@ -35,20 +34,20 @@ func Init() error {
 		return fmt.Errorf(`Error while pinging: %v`, err)
 	}
 
-	DB = database
+	db = database
 
 	return nil
 }
 
-// Ping indicate if DB is ready or not
+// Ping indicate if database is ready or not
 func Ping() bool {
-	return DB != nil && DB.Ping() == nil
+	return db != nil && db.Ping() == nil
 }
 
 // GetTx return given transaction if not nil or create a new one
 func GetTx(tx *sql.Tx) (*sql.Tx, error) {
 	if tx == nil {
-		return DB.Begin()
+		return db.Begin()
 	}
 
 	return tx, nil
@@ -64,4 +63,14 @@ func EndTx(tx *sql.Tx, err error) error {
 	}
 
 	return tx.Commit()
+}
+
+// Query wraps https://golang.org/pkg/database/sql/#DB.Query
+func Query(query string, args ...interface{}) (*sql.Rows, error) {
+	return db.Query(query, args)
+}
+
+// QueryRow wraps https://golang.org/pkg/database/sql/#DB.QueryRow
+func QueryRow(query string, args ...interface{}) *sql.Row {
+	return db.QueryRow(query, args)
 }

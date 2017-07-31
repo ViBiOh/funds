@@ -30,9 +30,23 @@ ORDER BY
   creation_date DESC
 `
 
+const alertsCreateQuery = `
+INSERT INTO
+  alerts
+(
+  isin,
+  score,
+  type
+) VALUES (
+  $1,
+  $2,
+  $3
+)
+`
+
 // ReadAlertsOpened retrieves current Alerts (only one mail sent)
 func ReadAlertsOpened() (alerts []Alert, err error) {
-	rows, err := db.DB.Query(alertsOpenedQuery)
+	rows, err := db.Query(alertsOpenedQuery)
 	if err != nil {
 		return
 	}
@@ -78,7 +92,7 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	_, err = usedTx.Exec(`INSERT INTO alerts (isin, score, type) VALUES ($1, $2, $3)`, alert.Isin, alert.Score, alert.AlertType)
+	_, err = usedTx.Exec(alertsCreateQuery, alert.Isin, alert.Score, alert.AlertType)
 
 	return
 }

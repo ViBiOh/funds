@@ -17,7 +17,7 @@ WHERE
 	isin = $1
 `
 
-const fundsWithScoreAbove = `
+const fundsWithScoreAboveQuery = `
 SELECT
 	isin,
 	label,
@@ -30,13 +30,36 @@ ORDER BY
 	isin ASC
 `
 
+const fundsCreateQuery = `
+INSERT INTO
+	funds
+(
+	isin,
+	label,
+	score
+) VALUES (
+	$1,
+	$2,
+	$3
+)`
+
+const fundsUpdateScoreQuery = `
+UPDATE
+	funds
+SET
+	score = $1,
+	update_date = $2
+WHERE
+	isin = $3
+`
+
 // ReadFundByIsin retrieves Fund by isin
 func ReadFundByIsin(isin string) (*Fund, error) {
 	var (
 		label string
 		score float64
 	)
-	err := db.DB.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
+	err := db.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 
 	if err != nil {
 		return nil, err
@@ -47,7 +70,7 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 
 // ReadFundsWithScoreAbove retrieves Fund with score above given level
 func ReadFundsWithScoreAbove(minScore float64) (funds []Fund, err error) {
-	rows, err := db.DB.Query(fundsWithScoreAbove, minScore)
+	rows, err := db.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}
@@ -94,9 +117,9 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
-		_, err = tx.Exec(`INSERT INTO funds (isin, label, score) VALUES ($1, $2, $3)`, fund.Isin, fund.Label, fund.Score)
+		_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 	} else {
-		_, err = tx.Exec(`UPDATE funds SET score = $1, update_date = $2 WHERE isin = $3`, fund.Score, `now()`, fund.Isin)
+		_, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin)
 	}
 
 	return
