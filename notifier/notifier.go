@@ -91,7 +91,7 @@ func getFundsBelow(currentAlerts map[string]model.Alert) ([]model.Fund, error) {
 
 func saveTypedAlerts(score float64, funds []model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := model.SaveAlert(model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+		if err := model.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
 		}
 	}

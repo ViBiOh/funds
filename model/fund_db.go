@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/ViBiOh/funds/db"
 )
@@ -75,7 +76,11 @@ func ReadFundsWithScoreAbove(minScore float64) (funds []Fund, err error) {
 }
 
 // SaveFund saves Fund
-func SaveFund(fund Fund, tx *sql.Tx) (err error) {
+func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
+	if fund == nil {
+		return fmt.Errorf(`Unable to save nil Fund`)
+	}
+
 	var usedTx *sql.Tx
 
 	if usedTx, err = db.GetTx(tx); err != nil {

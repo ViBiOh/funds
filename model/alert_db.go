@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/ViBiOh/funds/db"
 )
@@ -60,7 +61,11 @@ func ReadAlertsOpened() (alerts []Alert, err error) {
 }
 
 // SaveAlert saves Alert
-func SaveAlert(alert Alert, tx *sql.Tx) (err error) {
+func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
+	if alert == nil {
+		return fmt.Errorf(`Unable to save nil Alert`)
+	}
+
 	var usedTx *sql.Tx
 
 	if usedTx, err = db.GetTx(tx); err != nil {

@@ -103,9 +103,12 @@ func saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	for fund := range fundsMap.List() {
+	var fund Fund
+
+	for entry := range fundsMap.List() {
 		if err == nil {
-			err = SaveFund(fund.(Fund), tx)
+			fund = entry.(Fund)
+			err = SaveFund(&fund, tx)
 		}
 	}
 
