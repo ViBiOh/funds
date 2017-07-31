@@ -31,14 +31,10 @@ func Init(url string) error {
 	fundsMap = tools.CreateConcurrentMap(len(fundsIds), crawler.MaxConcurrentFetcher)
 
 	go func() {
-		if err := refresh(); err != nil {
-			log.Print(err)
-		}
+		refresh()
 		c := time.Tick(refreshDelay)
 		for range c {
-			if err := refresh(); err != nil {
-				log.Print(err)
-			}
+			refresh()
 		}
 	}()
 
@@ -57,15 +53,13 @@ func refresh() error {
 	defer log.Printf(`Refresh ended`)
 
 	if err := refreshData(); err != nil {
-		return fmt.Errorf(`Error while refreshing: %v`, err)
+		log.Printf(`Error while refreshing: %v`, err)
 	}
 
 	if db.Ping() {
 		if err := saveData(); err != nil {
-			return fmt.Errorf(`Error while saving: %v`, err)
+			log.Printf(`Error while saving: %v`, err)
 		}
-	} else {
-		log.Printf(`Database not ready: %v`, db.DB.Ping())
 	}
 
 	return nil
@@ -96,6 +90,7 @@ func refreshData() error {
 	if len(errorIds) > 0 {
 		return fmt.Errorf(`Errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
 	}
+
 	return nil
 }
 
