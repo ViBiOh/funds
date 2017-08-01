@@ -48,12 +48,12 @@ INSERT INTO
 func ReadAlertsOpened() (alerts []Alert, err error) {
 	rows, err := db.Query(alertsOpenedQuery)
 	if err != nil {
-		err = fmt.Errorf(`Error while querying opened alerts: %v`, err)
+		err = fmt.Errorf(`Error while querying alerts opened: %v`, err)
 		return
 	}
 
 	defer func() {
-		err = db.RowsClose(rows, err, `opened alerts`)
+		err = db.RowsClose(rows, err, `alerts opened`)
 	}()
 
 	var (
@@ -64,7 +64,7 @@ func ReadAlertsOpened() (alerts []Alert, err error) {
 
 	for rows.Next() {
 		if err = rows.Scan(&isin, &alertType, &score); err != nil {
-			err = fmt.Errorf(`Error while scanning opened alerts: %v`, err)
+			err = fmt.Errorf(`Error while scanning alerts opened: %v`, err)
 			return
 		}
 
@@ -83,7 +83,7 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	var usedTx *sql.Tx
 
 	if usedTx, err = db.GetTx(tx); err != nil {
-		err = fmt.Errorf(`Error while getting transaction for creating alert: %v`, err)
+		err = fmt.Errorf(`Error while getting transaction for alert creation: %v`, err)
 		return
 	}
 
