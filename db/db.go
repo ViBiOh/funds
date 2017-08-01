@@ -26,12 +26,12 @@ func Init() error {
 
 	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
 	if err != nil {
-		return fmt.Errorf(`Error while opening: %v`, err)
+		return fmt.Errorf(`Error while opening database connection: %v`, err)
 	}
 
 	err = database.Ping()
 	if err != nil {
-		return fmt.Errorf(`Error while pinging: %v`, err)
+		return fmt.Errorf(`Error while pinging database: %v`, err)
 	}
 
 	db = database
@@ -45,41 +45,54 @@ func Ping() bool {
 }
 
 // GetTx return given transaction if not nil or create a new one
-func GetTx(tx *sql.Tx) (*sql.Tx, error) {
+func GetTx(label string, tx *sql.Tx) (*sql.Tx, error) {
 	if tx == nil {
-		return db.Begin()
+		usedTx, err := db.Begin()
+
+		if err != nil {
+			return nil, fmt.Errorf(`Error while getting transaction for %s: %v`, label, err)
+		}
+		return usedTx, nil
 	}
 
 	return tx, nil
 }
 
-// EndTx ends transaction properly according to error
-func EndTx(tx *sql.Tx, err error) error {
+// EndTx ends transaction according error without shadowing given error
+func EndTx(label string, tx *sql.Tx, err error) error {
 	if err != nil {
-		if rollbackErr := tx.Rollback(); rollbackErr != nil {
-			log.Printf(`Error while rolling back transaction: %v`, rollbackErr)
+		if endErr := tx.Rollback(); endErr != nil {
+			log.Printf(`Error while rolling back transaction for %s: %v`, label, endErr)
 		}
-		return err
+	} else if endErr := tx.Commit(); endErr != nil {
+		return fmt.Errorf(`Error while committing transaction for %s: %v`, label, endErr)
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // RowsClose closes rows without shadowing error
-func RowsClose(rows *sql.Rows, err error, label string) error { 
+func RowsClose(label string, rows *sql.Rows, err error) error {
 	if endErr := rows.Close(); endErr != nil {
+		endErr = fmt.Errorf(`Error while closing rows for %s: %v`, label, endErr)
+
 		if err == nil {
 			return endErr
 		}
-		log.Printf(`Error while closing %s: %v`, label, endErr)
+		log.Print(endErr)
 	}
 
 	return err
 }
 
 // Query wraps https://golang.org/pkg/database/sql/#DB.Query
-func Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return db.Query(query, args...)
+func Query(label string, query string, args ...interface{}) (*sql.Rows, error) {
+	rows, err := db.Query(query, args...)
+
+	if err != nil {
+		return rows, fmt.Errorf(`Error while querying %s: %v`, label, err)
+	}
+	return rows, err
 }
 
 // QueryRow wraps https://golang.org/pkg/database/sql/#DB.QueryRow

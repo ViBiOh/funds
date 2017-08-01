@@ -7,6 +7,7 @@ import (
 	"github.com/ViBiOh/funds/db"
 )
 
+const fundByIsinLabel = `fund by isin`
 const fundByIsinQuery = `
 SELECT
   label,
@@ -17,6 +18,7 @@ WHERE
   isin = $1
 `
 
+const fundsWithScoreAboveLabel = `funds with above score`
 const fundsWithScoreAboveQuery = `
 SELECT
   isin,
@@ -30,6 +32,7 @@ ORDER BY
   isin ASC
 `
 
+const fundsSaveLabel = `fund save`
 const fundsCreateQuery = `
 INSERT INTO
   funds
@@ -59,24 +62,24 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 		label string
 		score float64
 	)
-	err := db.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 
+	err := db.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`Error while querying %s: %v`, fundByIsinLabel, err)
 	}
 
 	return &Fund{Isin: isin, Label: label, Score: score}, nil
 }
 
 // ReadFundsWithScoreAbove retrieves Fund with score above given level
-func ReadFundsWithScoreAbove(minScore float64) (funds []Fund, err error) {
-	rows, err := db.Query(fundsWithScoreAboveQuery, minScore)
+func ReadFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
+	rows, err := db.Query(fundsWithScoreAboveLabel, fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}
 
 	defer func() {
-		err = db.RowsClose(rows, err, `funds with above score`)
+		err = db.RowsClose(fundsWithScoreAboveLabel, rows, err)
 	}()
 
 	var (
@@ -90,7 +93,7 @@ func ReadFundsWithScoreAbove(minScore float64) (funds []Fund, err error) {
 			return
 		}
 
-		funds = append(funds, Fund{Isin: isin, Label: label, Score: score})
+		funds = append(funds, &Fund{Isin: isin, Label: label, Score: score})
 	}
 
 	return
@@ -103,23 +106,24 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-
-	if usedTx, err = db.GetTx(tx); err != nil {
+	if usedTx, err = db.GetTx(fundsSaveLabel, tx); err != nil {
 		return
 	}
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(usedTx, err)
+			err = db.EndTx(fundsSaveLabel, usedTx, err)
 		}()
 	}
 
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err == nil {
+				err = fmt.Errorf(`Error while creating fund: %v`, err)
+			}
 		}
-	} else {
-		_, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin)
+	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin); err != nil {
+		err = fmt.Errorf(`Error while updating fund: %v`, err)
 	}
 
 	return

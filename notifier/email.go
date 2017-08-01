@@ -6,12 +6,14 @@ import (
 	"html/template"
 
 	"github.com/ViBiOh/funds/model"
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/html"
 )
 
 const scoreNotificationTemplate = `
 {{ define "main" }}
-<body style="border: 0; margin: 0; padding: 5px;">
-	<h1 style="width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0;">Funds</h1>
+<body style="box-sizing: border-box; width: 100%; border: 0; margin: 0; padding: 5px;">
+	<h1 style="box-sizing: border-box; width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0 5px 0 0;">Funds</h1>
 	<p>Bonjour,</p>
 	{{ if len .AboveFunds }}
 		<p style="color: #4cae4c;">Les fonds suivants viennent de dépasser le score de <strong>{{ .Score }}</strong>.</p>
@@ -42,7 +44,7 @@ const scoreNotificationTemplate = `
 {{ end }}
 
 {{ define "funds" }}
-<table style="border: 0; margin: 0; padding: 0; width: 100%;">
+<table style="box-sizing: border-box; border: 0; margin: 0; padding: 0; width: 100%;">
 	<thead style="border: 0; margin: 0; padding: 0; width: 100%;">
 		<tr style="border: 0; margin: 0; padding: 0; width: 100%;">
 			<td style="padding: 5px; width: 140px;">ISIN</td>
@@ -65,14 +67,15 @@ const scoreNotificationTemplate = `
 
 type scoreTemplateContent struct {
 	Score      float64
-	AboveFunds []model.Fund
-	BelowFunds []model.Fund
+	AboveFunds []*model.Fund
+	BelowFunds []*model.Fund
 }
 
 var mailTmpl *template.Template
+var minifier *minify.M
 
-// Init initialize template from string
-func Init() error {
+// InitEmail initialize template and minifier
+func InitEmail() error {
 	tmpl := template.New(`ScoreNotification`)
 
 	tmpl.Funcs(template.FuncMap{`odd`: func(i int) bool {
@@ -86,15 +89,29 @@ func Init() error {
 
 	mailTmpl = tmpl
 
+	m := minify.New()
+	m.AddFunc("text/html", html.Minify)
+
+	minifier = m
+
 	return nil
 }
 
-func getHTMLContent(scoreLevel float64, above []model.Fund, below []model.Fund) ([]byte, error) {
-	buffer := &bytes.Buffer{}
+func getHTMLContent(scoreLevel float64, above []*model.Fund, below []*model.Fund) ([]byte, error) {
+	if len(above) == 0 && len(below) == 0 {
+		return nil, nil
+	}
 
-	if err := mailTmpl.ExecuteTemplate(buffer, `main`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
+	templateBuffer := &bytes.Buffer{}
+
+	if err := mailTmpl.ExecuteTemplate(templateBuffer, `main`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
 		return nil, fmt.Errorf(`Error while executing template: %v`, err)
 	}
 
-	return buffer.Bytes(), nil
+	minifyBuffer := &bytes.Buffer{}
+	if err := minifier.Minify("text/html", minifyBuffer, templateBuffer); err != nil {
+		return nil, fmt.Errorf(`Error while minifying template: %v`, err)
+	}
+
+	return minifyBuffer.Bytes(), nil
 }

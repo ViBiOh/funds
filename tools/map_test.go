@@ -6,7 +6,7 @@ import (
 
 var entries = []MapContent{simpleMapContent{`First`}, simpleMapContent{`Second`}, simpleMapContent{`Third`}}
 
-func InitConccurentMapWithValues(values []MapContent) *ConcurrentMap {
+func initConccurentMapWithValues(values []MapContent) *ConcurrentMap {
 	concurrentMap := CreateConcurrentMap(5, 2)
 
 	for _, content := range values {
@@ -35,7 +35,7 @@ func TestGet(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		concurrentMap := InitConccurentMapWithValues(test.entries)
+		concurrentMap := initConccurentMapWithValues(test.entries)
 		defer concurrentMap.Close()
 
 		if result := concurrentMap.Get(test.ID); result != test.want {
@@ -84,7 +84,7 @@ func TestRemove(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		concurrentMap := InitConccurentMapWithValues(test.entries)
+		concurrentMap := initConccurentMapWithValues(test.entries)
 		defer concurrentMap.Close()
 
 		initial := concurrentMap.Get(test.ID)
@@ -116,7 +116,7 @@ func TestList(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		concurrentMap := InitConccurentMapWithValues(test.entries)
+		concurrentMap := initConccurentMapWithValues(test.entries)
 		defer concurrentMap.Close()
 
 		result := 0
@@ -150,7 +150,7 @@ func TestClose(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		concurrentMap := InitConccurentMapWithValues(test.entries)
+		concurrentMap := initConccurentMapWithValues(test.entries)
 
 		if result := len(concurrentMap.Close()); result != test.want {
 			t.Errorf("Close() = %v, want %v", result, test.want)

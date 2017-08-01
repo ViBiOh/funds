@@ -94,17 +94,19 @@ func refreshData() error {
 	return nil
 }
 
+const dataSaveLabel = `data save`
+
 func saveData() (err error) {
 	log.Printf(`Data save started`)
 	defer log.Printf(`Data save ended`)
 
 	var tx *sql.Tx
-	if tx, err = db.GetTx(nil); err != nil {
+	if tx, err = db.GetTx(dataSaveLabel, nil); err != nil {
 		return err
 	}
 
 	defer func() {
-		err = db.EndTx(tx, err)
+		err = db.EndTx(dataSaveLabel, tx, err)
 	}()
 
 	for entry := range fundsMap.List() {

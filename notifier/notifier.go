@@ -16,6 +16,15 @@ const name = `Funds App`
 const subject = `[Funds] Score level notification`
 const notificationInterval = 24 * time.Hour
 
+// Init initialize notifier tools
+func Init() error {
+	if err := InitEmail(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, time.UTC)
 	if !nextTime.After(time.Now()) {
@@ -27,9 +36,11 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func getCurrentAlerts() (map[string]model.Alert, error) {
+func getCurrentAlerts() (map[string]*model.Alert, error) {
+	currentAlerts := make(map[string]*model.Alert)
+
 	if !db.Ping() {
-		return make(map[string]model.Alert, 0), nil
+		return currentAlerts, nil
 	}
 
 	alerts, err := model.ReadAlertsOpened()
@@ -37,7 +48,6 @@ func getCurrentAlerts() (map[string]model.Alert, error) {
 		return nil, fmt.Errorf(`Error while reading opened alerts: %v`, err)
 	}
 
-	currentAlerts := make(map[string]model.Alert)
 	for _, alert := range alerts {
 		if _, ok := currentAlerts[alert.Isin]; !ok {
 			currentAlerts[alert.Isin] = alert
@@ -47,9 +57,11 @@ func getCurrentAlerts() (map[string]model.Alert, error) {
 	return currentAlerts, nil
 }
 
-func getFundsAbove(score float64, currentAlerts map[string]model.Alert) ([]model.Fund, error) {
+func getFundsAbove(score float64, currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
+	fundsToAlert := make([]*model.Fund, 0)
+
 	if !db.Ping() {
-		return make([]model.Fund, 0), nil
+		return fundsToAlert, nil
 	}
 
 	funds, err := model.ReadFundsWithScoreAbove(score)
@@ -57,7 +69,6 @@ func getFundsAbove(score float64, currentAlerts map[string]model.Alert) ([]model
 		return nil, fmt.Errorf(`Error while reading funds with score >= %.2f: %v`, score, err)
 	}
 
-	fundsToAlert := make([]model.Fund, 0)
 	for _, fund := range funds {
 		if alert, ok := currentAlerts[fund.Isin]; ok {
 			if alert.AlertType != `above` {
@@ -71,25 +82,25 @@ func getFundsAbove(score float64, currentAlerts map[string]model.Alert) ([]model
 	return fundsToAlert, nil
 }
 
-func getFundsBelow(currentAlerts map[string]model.Alert) ([]model.Fund, error) {
-	if !db.Ping() {
-		return make([]model.Fund, 0), nil
-	}
+func getFundsBelow(currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
+	funds := make([]*model.Fund, 0)
 
-	funds := make([]model.Fund, 0)
+	if !db.Ping() {
+		return funds, nil
+	}
 
 	for _, alert := range currentAlerts {
 		if fund, err := model.ReadFundByIsin(alert.Isin); err != nil {
 			return nil, fmt.Errorf(`Error while reading funds with isin '%s': %v`, alert.Isin, err)
 		} else if fund.Score < alert.Score {
-			funds = append(funds, *fund)
+			funds = append(funds, fund)
 		}
 	}
 
 	return funds, nil
 }
 
-func saveTypedAlerts(score float64, funds []model.Fund, alertType string) error {
+func saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := model.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
@@ -99,7 +110,7 @@ func saveTypedAlerts(score float64, funds []model.Fund, alertType string) error 
 	return nil
 }
 
-func saveAlerts(score float64, above []model.Fund, below []model.Fund) error {
+func saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
 	if err := saveTypedAlerts(score, above, `above`); err != nil {
 		return err
 	}
@@ -127,10 +138,14 @@ func notify(recipients []string, score float64) error {
 		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
 
-	if (len(above) > 0 || len(below) > 0) && len(recipients) > 0 {
+	if len(recipients) > 0 {
 		htmlContent, err := getHTMLContent(score, above, below)
 		if err != nil {
 			return fmt.Errorf(`Error while generating HTML email: %v`, err)
+		}
+
+		if htmlContent == nil {
+			return nil
 		}
 
 		if mailjet.Ping() {
