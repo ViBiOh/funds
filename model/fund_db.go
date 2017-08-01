@@ -9,48 +9,48 @@ import (
 
 const fundByIsinQuery = `
 SELECT
-	label,
-	score
+  label,
+  score
 FROM
-	funds
+  funds
 WHERE
-	isin = $1
+  isin = $1
 `
 
 const fundsWithScoreAboveQuery = `
 SELECT
-	isin,
-	label,
-	score
+  isin,
+  label,
+  score
 FROM
-	funds
+  funds
 WHERE
-	score >= $1
+  score >= $1
 ORDER BY
-	isin ASC
+  isin ASC
 `
 
 const fundsCreateQuery = `
 INSERT INTO
-	funds
+  funds
 (
-	isin,
-	label,
-	score
+  isin,
+  label,
+  score
 ) VALUES (
-	$1,
-	$2,
-	$3
+  $1,
+  $2,
+  $3
 )`
 
 const fundsUpdateScoreQuery = `
 UPDATE
-	funds
+  funds
 SET
-	score = $1,
-	update_date = $2
+  score = $1,
+  update_date = $2
 WHERE
-	isin = $3
+  isin = $3
 `
 
 // ReadFundByIsin retrieves Fund by isin
