@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/ViBiOh/funds/db"
 )
