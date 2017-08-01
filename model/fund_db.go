@@ -76,9 +76,7 @@ func ReadFundsWithScoreAbove(minScore float64) (funds []Fund, err error) {
 	}
 
 	defer func() {
-		if endErr := rows.Close(); err == nil && endErr != nil {
-			err = endErr
-		}
+		err = db.RowsClose(rows, err, `funds with above score`)
 	}()
 
 	var (
