@@ -54,13 +54,7 @@ func ReadAlertsOpened() (alerts []Alert, err error) {
 	}
 
 	defer func() {
-		if endErr := rows.Close(); endErr != nil {
-			if err == nil {
-				err = endErr
-			} else {
-				log.Printf(`Error while closing opened alerts: %v`, endErr)
-			}
-		}
+		err = db.RowsClose(rows, err, `opened alerts`)
 	}()
 
 	var (
