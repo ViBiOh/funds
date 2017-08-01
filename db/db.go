@@ -53,7 +53,7 @@ func GetTx(tx *sql.Tx) (*sql.Tx, error) {
 	return tx, nil
 }
 
-// EndTx end transaction properly according to error
+// EndTx ends transaction properly according to error
 func EndTx(tx *sql.Tx, err error) error {
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -63,6 +63,18 @@ func EndTx(tx *sql.Tx, err error) error {
 	}
 
 	return tx.Commit()
+}
+
+// RowsClose closes rows without shadowing error
+func RowsClose(rows *sql.Rows, err error, label string) error { 
+	if endErr := rows.Close(); endErr != nil {
+		if err == nil {
+			return endErr
+		}
+		log.Printf(`Error while closing %s: %v`, label, endErr)
+	}
+
+	return err
 }
 
 // Query wraps https://golang.org/pkg/database/sql/#DB.Query
