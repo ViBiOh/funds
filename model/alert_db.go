@@ -48,12 +48,17 @@ INSERT INTO
 func ReadAlertsOpened() (alerts []Alert, err error) {
 	rows, err := db.Query(alertsOpenedQuery)
 	if err != nil {
+		err = fmt.Errorf(`Error while querying opened alerts: %v`, err)
 		return
 	}
 
 	defer func() {
-		if endErr := rows.Close(); err == nil && endErr != nil {
-			err = endErr
+		if endErr := rows.Close(); endErr != nil {
+			if err == nil {
+				err = endErr
+			} else {
+				log.Printf(`Error while closing opened alerts: %v`, endErr)
+			}
 		}
 	}()
 
@@ -65,6 +70,7 @@ func ReadAlertsOpened() (alerts []Alert, err error) {
 
 	for rows.Next() {
 		if err = rows.Scan(&isin, &alertType, &score); err != nil {
+			err = fmt.Errorf(`Error while scanning opened alerts: %v`, err)
 			return
 		}
 
@@ -83,6 +89,7 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	var usedTx *sql.Tx
 
 	if usedTx, err = db.GetTx(tx); err != nil {
+		err = fmt.Errorf(`Error while getting transaction for creating alert: %v`, err)
 		return
 	}
 
@@ -92,7 +99,9 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	_, err = usedTx.Exec(alertsCreateQuery, alert.Isin, alert.Score, alert.AlertType)
+	if _, err = usedTx.Exec(alertsCreateQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
+		err = fmt.Errorf(`Error while creating alert for isin=%s: %v`, alert.Isin, err)
+	}
 
 	return
 }
