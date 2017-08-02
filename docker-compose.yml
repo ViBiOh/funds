@@ -61,12 +61,16 @@ services:
     image: vibioh/funds-front
     command:
     - -spa
+    - -env
+    - API_URL
     - -csp
     - default-src 'self'; script-src 'self' 'unsafe-inline' www.google-analytics.com cdn.ravenjs.com; style-src 'self' 'unsafe-inline'; img-src 'self' www.google-analytics.com; connect-src 'self' funds-api.vibioh.fr
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
       traefik.port: '1080'
+    environment:
+      API_URL: 'https://funds-api.vibioh.fr'
     logging:
       driver: json-file
       options:
