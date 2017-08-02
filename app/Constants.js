@@ -6,7 +6,7 @@ function init() {
   return new Promise((resolve) => {
     funtch.get('/env').then((env) => {
       context = env;
-      resolve();
+      resolve(context);
     });
   });
 }
