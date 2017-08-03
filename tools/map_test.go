@@ -39,7 +39,7 @@ func TestGet(t *testing.T) {
 		defer concurrentMap.Close()
 
 		if result := concurrentMap.Get(test.ID); result != test.want {
-			t.Errorf("Get(%v) = %v, want %v", test.ID, result, test.want)
+			t.Errorf(`Get(%v) = %v, want %v`, test.ID, result, test.want)
 		}
 	}
 }
@@ -60,7 +60,7 @@ func TestPush(t *testing.T) {
 		concurrentMap.Push(test.content)
 
 		if result := concurrentMap.Get(test.content.GetID()); test.content != result {
-			t.Errorf("Push(%v) = %v, want %v", test.content, result, test.content)
+			t.Errorf(`Push(%v) = %v, want %v`, test.content, result, test.content)
 		}
 	}
 }
@@ -91,7 +91,7 @@ func TestRemove(t *testing.T) {
 		concurrentMap.Remove(test.ID)
 
 		if result := concurrentMap.Get(test.ID); (test.want && result == initial) || (!test.want && result != initial) {
-			t.Errorf("Remove(%v) = %v, want %v", test.ID, result, initial)
+			t.Errorf(`Remove(%v) = %v, want %v`, test.ID, result, initial)
 		}
 	}
 }
@@ -125,7 +125,7 @@ func TestList(t *testing.T) {
 		}
 
 		if result != test.want {
-			t.Errorf("List() = %v, want %v", result, test.want)
+			t.Errorf(`List() = %v, want %v`, result, test.want)
 		}
 	}
 }
@@ -153,7 +153,7 @@ func TestClose(t *testing.T) {
 		concurrentMap := initConccurentMapWithValues(test.entries)
 
 		if result := len(concurrentMap.Close()); result != test.want {
-			t.Errorf("Close() = %v, want %v", result, test.want)
+			t.Errorf(`Close() = %v, want %v`, result, test.want)
 		}
 	}
 }

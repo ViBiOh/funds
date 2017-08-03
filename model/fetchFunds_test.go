@@ -19,7 +19,7 @@ func TestCleanID(t *testing.T) {
 
 	for _, test := range tests {
 		if got := cleanID(test.fundID); string(got) != test.want {
-			t.Errorf("cleanID(%v) = %v, want %v", test.fundID, got, test.want)
+			t.Errorf(`cleanID(%v) = %v, want %v`, test.fundID, got, test.want)
 		}
 	}
 }
@@ -60,7 +60,7 @@ func TestExtractLabel(t *testing.T) {
 
 	for _, test := range tests {
 		if got := extractLabel(test.extract, test.body, test.defaultValue); string(got) != test.want {
-			t.Errorf("extractLabel(%v, %v, %v) = %v, want %v", test.extract, test.body, test.defaultValue, got, test.want)
+			t.Errorf(`extractLabel(%v, %v, %v) = %v, want %v`, test.extract, test.body, test.defaultValue, got, test.want)
 		}
 	}
 }
@@ -90,7 +90,7 @@ func TestExtractPerformance(t *testing.T) {
 
 	for _, test := range tests {
 		if got := extractPerformance(test.extract, test.body); got != test.want {
-			t.Errorf("extractPerformance(%v, %v) = %v, want %v", test.extract, test.body, got, test.want)
+			t.Errorf(`extractPerformance(%v, %v) = %v, want %v`, test.extract, test.body, got, test.want)
 		}
 	}
 }

@@ -19,7 +19,7 @@ func TestInit(t *testing.T) {
 		result := InitEmail()
 
 		if result != test.wantErr {
-			t.Errorf("InitEmail() = %v, want %v", result, test.wantErr)
+			t.Errorf(`InitEmail() = %v, want %v`, result, test.wantErr)
 		}
 	}
 }
@@ -66,7 +66,7 @@ func TestGetHTMLContent(t *testing.T) {
 		}
 
 		if failed {
-			t.Errorf("getHTMLContent(%.2f, %v, %v) = (%s, %v), want (%s, %v)", test.score, test.above, test.below, result, err, test.want, test.wantErr)
+			t.Errorf(`getHTMLContent(%.2f, %v, %v) = (%s, %v), want (%s, %v)`, test.score, test.above, test.below, result, err, test.want, test.wantErr)
 		}
 	}
 }

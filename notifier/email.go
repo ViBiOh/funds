@@ -109,7 +109,7 @@ func getHTMLContent(scoreLevel float64, above []*model.Fund, below []*model.Fund
 	}
 
 	minifyBuffer := &bytes.Buffer{}
-	if err := minifier.Minify("text/html", minifyBuffer, templateBuffer); err != nil {
+	if err := minifier.Minify(`text/html`, minifyBuffer, templateBuffer); err != nil {
 		return nil, fmt.Errorf(`Error while minifying template: %v`, err)
 	}
 
