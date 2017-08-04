@@ -1,9 +1,9 @@
 package fetch
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 )
 
@@ -18,22 +18,22 @@ func TestGetBody(t *testing.T) {
 	var tests = []struct {
 		url     string
 		want    []byte
-		wantErr error
+		wantErr *regexp.Regexp
 	}{
 		{
 			``,
 			nil,
-			fmt.Errorf(`Error while getting data: Get : unsupported protocol scheme ""`),
+			regexp.MustCompile(`Error while getting data: Get : unsupported protocol scheme ""`),
 		},
 		{
 			`http://localhost/`,
 			nil,
-			fmt.Errorf(`Error while getting data: Get http://localhost/: dial tcp [::1]:80: getsockopt: connection refused`),
+			regexp.MustCompile(`Error while getting data: Get .*? getsockopt: connection refused`),
 		},
 		{
 			testServer.URL + `/error`,
 			nil,
-			fmt.Errorf(`Error status 400`),
+			regexp.MustCompile(`Error status 400`),
 		},
 	}
 
@@ -48,7 +48,7 @@ func TestGetBody(t *testing.T) {
 			failed = true
 		} else if err != nil && test.wantErr == nil {
 			failed = true
-		} else if err != nil && err.Error() != test.wantErr.Error() {
+		} else if err != nil && !test.wantErr.MatchString(err.Error()) {
 			failed = true
 		} else if string(result) != string(test.want) {
 			failed = true
