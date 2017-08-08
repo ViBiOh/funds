@@ -11,8 +11,8 @@ import (
 
 	"github.com/ViBiOh/funds/crawler"
 	"github.com/ViBiOh/funds/db"
-	"github.com/ViBiOh/funds/jsonHttp"
 	"github.com/ViBiOh/funds/tools"
+	"github.com/ViBiOh/httputils"
 )
 
 const refreshDelay = 8 * time.Hour
@@ -20,10 +20,6 @@ const refreshDelay = 8 * time.Hour
 var listRequest = regexp.MustCompile(`^/list$`)
 var fundURL string
 var fundsMap *tools.ConcurrentMap
-
-type results struct {
-	Results interface{} `json:"results"`
-}
 
 // Init start concurrent map and init it from crawling
 func Init(url string) error {
@@ -130,7 +126,7 @@ func ListFunds() []Fund {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	jsonHttp.ResponseJSON(w, results{ListFunds()})
+	httputils.ResponseArrayJSON(w, ListFunds())
 }
 
 // Handler for model request. Should be use with net/http

@@ -1,19 +1,15 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"runtime"
-	"syscall"
-	"time"
 
 	"github.com/ViBiOh/alcotest/alcotest"
 	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/model"
+	"github.com/ViBiOh/httputils"
 )
 
 const port = `1080`
@@ -33,29 +29,6 @@ func fundsHandler(w http.ResponseWriter, r *http.Request) {
 		healthHandler(w, r)
 	} else {
 		modelHandler.ServeHTTP(w, r)
-	}
-}
-
-func handleGracefulClose(server *http.Server) {
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGTERM)
-
-	<-signals
-	log.Print(`SIGTERM received`)
-
-	if server != nil {
-		log.Print(`Shutting down http server`)
-
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		if err := server.Shutdown(ctx); err != nil {
-			log.Print(err)
-		}
-
-		if err := model.Shutdown(); err != nil {
-			log.Print(err)
-		}
 	}
 }
 
@@ -89,5 +62,5 @@ func main() {
 	}
 
 	go server.ListenAndServe()
-	handleGracefulClose(server)
+	httputils.ServerGracefulClose(server, nil)
 }

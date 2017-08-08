@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/ViBiOh/funds/fetch"
+	"github.com/ViBiOh/httputils"
 )
 
 var emptyByte = []byte(``)
@@ -57,7 +57,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(url string, fund *Fund) error {
-	body, err := fetch.GetBody(url + `&tab=1`)
+	body, err := httputils.GetBody(url+`&tab=1`, ``)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
@@ -75,7 +75,7 @@ func fetchInfosAndPerformances(url string, fund *Fund) error {
 }
 
 func fetchVolatilite(url string, fund *Fund) error {
-	body, err := fetch.GetBody(url + `&tab=2`)
+	body, err := httputils.GetBody(url+`&tab=2`, ``)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}

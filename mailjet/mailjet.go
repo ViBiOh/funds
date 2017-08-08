@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ViBiOh/funds/fetch"
+	"github.com/ViBiOh/httputils"
 )
 
 const mailjetSendURL = `https://api.mailjet.com/v3/send`
@@ -49,7 +49,7 @@ func SendMail(fromEmail string, fromName string, subject string, to []string, ht
 	}
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	if _, err := fetch.PostJSONBody(mailjetSendURL, mailjetMail, apiPublicKey, apiPrivateKey); err != nil {
+	if _, err := httputils.PostJSONBody(mailjetSendURL, mailjetMail, httputils.GetBasicAuth(apiPublicKey, apiPrivateKey)); err != nil {
 		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 
