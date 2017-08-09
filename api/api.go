@@ -11,13 +11,12 @@ import (
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
-	"github.com/ViBiOh/httputils/gzip"
 	"github.com/ViBiOh/httputils/owasp"
 )
 
 const port = `1080`
 
-var modelHandler = gzip.Handler{H: owasp.Handler{H: cors.Handler{H: model.Handler{}}}}
+var modelHandler = owasp.Handler{H: cors.Handler{H: model.Handler{}}}
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
