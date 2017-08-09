@@ -10,11 +10,12 @@ import (
 	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
+	"github.com/ViBiOh/httputils/gzip"
 )
 
 const port = `1080`
 
-var modelHandler = model.Handler{}
+var modelHandler = gzip.Handler{H: model.Handler{}}
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
