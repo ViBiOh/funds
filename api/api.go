@@ -16,7 +16,7 @@ import (
 
 const port = `1080`
 
-var modelHandler = owasp.Handler{cors.Handler{model.Handler{}}}
+var modelHandler = owasp.Handler{Handler: cors.Handler{Handler: model.Handler{}}}
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
