@@ -4,7 +4,6 @@ deps:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/ViBiOh/httputils
-	go get -u github.com/ViBiOh/httputils/gzip
 	go get -u github.com/ViBiOh/alcotest/alcotest
 	go get -u github.com/lib/pq
 	go get -u github.com/tdewolff/minify
@@ -21,5 +20,5 @@ tst:
 	script/coverage
 
 build:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds api/api.go
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o funds-notifier alert/alert.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/funds api/api.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/funds-notifier alert/alert.go

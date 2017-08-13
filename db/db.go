@@ -2,9 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
-	"os"
 
 	// Not referenced but needed for database/sql
 	_ "github.com/lib/pq"
@@ -12,25 +12,26 @@ import (
 
 var db *sql.DB
 
+var (
+	dbHost = flag.String(`dbHost`, ``, `Database Host`)
+	dbPort = flag.String(`dbPort`, `5432`, `Database Port`)
+	dbUser = flag.String(`dbUser`, `funds`, `Database User`)
+	dbPass = flag.String(`dbPass`, ``, `Database Pass`)
+	dbName = flag.String(`dbName`, `funds`, `Database Name`)
+)
+
 // Init start DB connection
 func Init() error {
-	dbHost := os.Getenv(`FUNDS_DATABASE_HOST`)
-	dbPort := os.Getenv(`FUNDS_DATABASE_PORT`)
-	dbUser := os.Getenv(`FUNDS_DATABASE_USER`)
-	dbPass := os.Getenv(`FUNDS_DATABASE_PASS`)
-	dbName := os.Getenv(`FUNDS_DATABASE_NAME`)
-
-	if dbHost == `` {
+	if *dbHost == `` {
 		return nil
 	}
 
-	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`, dbHost, dbPort, dbUser, dbPass, dbName))
+	database, err := sql.Open(`postgres`, fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`, *dbHost, *dbPort, *dbUser, *dbPass, *dbName))
 	if err != nil {
 		return fmt.Errorf(`Error while opening database connection: %v`, err)
 	}
 
-	err = database.Ping()
-	if err != nil {
+	if err = database.Ping(); err != nil {
 		return fmt.Errorf(`Error while pinging database: %v`, err)
 	}
 

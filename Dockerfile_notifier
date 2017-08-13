@@ -4,4 +4,4 @@ HEALTHCHECK --retries=10 CMD healthcheck
 
 ENTRYPOINT [ "/bin/sh" ]
 
-COPY funds-notifier /bin/sh
+COPY bin/notifier /bin/sh

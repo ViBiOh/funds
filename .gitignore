@@ -8,6 +8,5 @@ dist/
 package-lock.json
 
 # Go binary
-funds
-funds-notifier
+bin/
 coverage.txt
