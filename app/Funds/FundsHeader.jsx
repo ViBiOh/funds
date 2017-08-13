@@ -45,10 +45,6 @@ export default class FundsHeader extends Component {
     })(e.target.value);
   }
 
-  toggleDisplay(icon, display) {
-    this.setState({ toggleDisplayed: display ? icon : '' });
-  }
-
   get orderDisplayed() {
     return this.state.toggleDisplayed === 'order';
   }
@@ -59,6 +55,10 @@ export default class FundsHeader extends Component {
 
   get filterDisplayed() {
     return this.state.toggleDisplayed === 'filter';
+  }
+
+  toggleDisplay(icon, display) {
+    this.setState({ toggleDisplayed: display ? icon : '' });
   }
 
   render() {
@@ -96,7 +96,7 @@ export default class FundsHeader extends Component {
 }
 
 FundsHeader.propTypes = {
-  orderBy: PropTypes.func.isRequired,
   aggregateBy: PropTypes.func.isRequired,
   filterBy: PropTypes.func.isRequired,
+  orderBy: PropTypes.func.isRequired,
 };
