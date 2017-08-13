@@ -37,7 +37,7 @@ services:
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
     healthcheck:
-      test: [ "CMD", "-dbHost", "db", "-dbPass", "${FUNDS_DATABASE_PASS}" ]
+      test: [ "CMD", "-c", "-dbHost", "db", "-dbPass", "${FUNDS_DATABASE_PASS}" ]
     labels:
       traefik.enable: 'false'
     environment:
