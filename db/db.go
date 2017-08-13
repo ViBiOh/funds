@@ -22,7 +22,6 @@ var (
 
 // Init start DB connection
 func Init() error {
-	log.Printf(`Connecting to %s`, *dbHost)
 	if *dbHost == `` {
 		return nil
 	}
