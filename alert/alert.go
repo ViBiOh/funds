@@ -24,10 +24,14 @@ func main() {
 
 	if err := db.Init(); err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
+	} else {
+		log.Print(`Database ready`)
 	}
 
 	if err := mailjet.Init(); err != nil {
 		log.Printf(`Error while initializing mailjet: %v`, err)
+	} else {
+		log.Print(`Mailjet ready`)
 	}
 
 	if *check {
@@ -35,14 +39,6 @@ func main() {
 			os.Exit(1)
 		}
 		return
-	}
-
-	if db.Ping() {
-		log.Print(`Database ready`)
-	}
-
-	if mailjet.Ping() {
-		log.Print(`Mailjet ready`)
 	}
 
 	log.Printf(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
