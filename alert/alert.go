@@ -28,12 +28,6 @@ func main() {
 		log.Print(`Database ready`)
 	}
 
-	if err := mailjet.Init(); err != nil {
-		log.Printf(`Error while initializing mailjet: %v`, err)
-	} else {
-		log.Print(`Mailjet ready`)
-	}
-
 	if *check {
 		if !healthcheck() {
 			os.Exit(1)

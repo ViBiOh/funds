@@ -1,14 +1,19 @@
 package crawler
 
 import (
-	"log"
 	"sync"
 )
 
 // MaxConcurrentFetcher count in parallel
 const MaxConcurrentFetcher = 32
 
-func concurrentCrawl(ids [][]byte, fetcher func([]byte) (interface{}, error), wg *sync.WaitGroup, results chan<- interface{}, errors chan<- []byte) {
+// Error contains ID in error and error desc
+type Error struct {
+	ID  []byte
+	Err error
+}
+
+func concurrentCrawl(ids [][]byte, fetcher func([]byte) (interface{}, error), wg *sync.WaitGroup, results chan<- interface{}, errors chan<- *Error) {
 	tokens := make(chan int, MaxConcurrentFetcher)
 
 	clearSemaphores := func() {
@@ -25,20 +30,19 @@ func concurrentCrawl(ids [][]byte, fetcher func([]byte) (interface{}, error), wg
 			if result, err := fetcher(ID); err == nil {
 				results <- result
 			} else {
-				log.Print(err)
-				errors <- ID
+				errors <- &Error{ID, err}
 			}
 		}(ID)
 	}
 }
 
 // Crawl retrieve given ids by calling fetcher func in parallel
-func Crawl(ids [][]byte, fetcher func([]byte) (interface{}, error)) (<-chan interface{}, <-chan []byte) {
+func Crawl(ids [][]byte, fetcher func([]byte) (interface{}, error)) (<-chan interface{}, <-chan *Error) {
 	var wgFetch sync.WaitGroup
 	wgFetch.Add(len(ids))
 
 	results := make(chan interface{}, MaxConcurrentFetcher)
-	errors := make(chan []byte, MaxConcurrentFetcher)
+	errors := make(chan *Error, MaxConcurrentFetcher)
 
 	go concurrentCrawl(ids, fetcher, &wgFetch, results, errors)
 

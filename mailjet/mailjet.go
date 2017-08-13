@@ -1,16 +1,18 @@
 package mailjet
 
 import (
+	"flag"
 	"fmt"
-	"os"
 
 	"github.com/ViBiOh/httputils"
 )
 
 const mailjetSendURL = `https://api.mailjet.com/v3/send`
 
-var apiPublicKey string
-var apiPrivateKey string
+var (
+	apiPublicKey  = flag.String(`mailjetPublicKey`, ``, `Mailet Public Key`)
+	apiPrivateKey = flag.String(`mailjetPrivateKey`, ``, `Mailet Private Key`)
+)
 
 type mailjetRecipient struct {
 	Email string `json:"Email"`
@@ -28,17 +30,9 @@ type mailjetResponse struct {
 	Sent []mailjetRecipient `json:"Sent"`
 }
 
-// Init inits API auth tokens
-func Init() error {
-	apiPublicKey = os.Getenv(`MAILJET_APIKEY_PUBLIC`)
-	apiPrivateKey = os.Getenv(`MAILJET_APIKEY_PRIVATE`)
-
-	return nil
-}
-
 // Ping indicate if Mailjet is ready or not
 func Ping() bool {
-	return apiPublicKey != ``
+	return *apiPublicKey != ``
 }
 
 // SendMail send mailjet mail
@@ -49,7 +43,7 @@ func SendMail(fromEmail string, fromName string, subject string, to []string, ht
 	}
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	if _, err := httputils.PostJSONBody(mailjetSendURL, mailjetMail, httputils.GetBasicAuth(apiPublicKey, apiPrivateKey)); err != nil {
+	if _, err := httputils.PostJSONBody(mailjetSendURL, mailjetMail, httputils.GetBasicAuth(*apiPublicKey, *apiPrivateKey)); err != nil {
 		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 

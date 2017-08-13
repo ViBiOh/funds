@@ -73,8 +73,9 @@ func refreshData() error {
 
 	for i := 0; i < len(fundsIds); i++ {
 		select {
-		case id := <-errors:
-			errorIds = append(errorIds, id)
+		case crawlErr := <-errors:
+			log.Print(crawlErr.Err)
+			errorIds = append(errorIds, crawlErr.ID)
 			break
 		case result := <-results:
 			content := result.(Fund)

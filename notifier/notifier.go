@@ -31,7 +31,7 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 		nextTime = nextTime.Add(interval)
 	}
 
-	log.Printf(`First notification at %v`, nextTime)
+	log.Printf(`Next notification at %v`, nextTime)
 
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
