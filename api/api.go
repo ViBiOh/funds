@@ -12,6 +12,7 @@ import (
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
 	"github.com/ViBiOh/httputils/owasp"
+	"github.com/ViBiOh/httputils/prometheus"
 )
 
 const port = `1080`
@@ -60,7 +61,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    `:` + port,
-		Handler: http.HandlerFunc(fundsHandler),
+		Handler: prometheus.NewPrometheusHandler(`http`, http.HandlerFunc(fundsHandler)),
 	}
 
 	go server.ListenAndServe()
