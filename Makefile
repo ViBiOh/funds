@@ -4,6 +4,9 @@ deps:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/ViBiOh/httputils
+	go get -u github.com/ViBiOh/httputils/cors
+	go get -u github.com/ViBiOh/httputils/owasp
+	go get -u github.com/ViBiOh/httputils/prometheus
 	go get -u github.com/ViBiOh/alcotest/alcotest
 	go get -u github.com/lib/pq
 	go get -u github.com/tdewolff/minify
