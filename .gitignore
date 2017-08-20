@@ -6,6 +6,7 @@ coverage/
 tmp/
 dist/
 package-lock.json
+e2e/output
 
 # Go binary
 bin/
