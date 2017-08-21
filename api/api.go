@@ -64,6 +64,6 @@ func main() {
 		Handler: prometheus.NewPrometheusHandler(`http`, http.HandlerFunc(fundsHandler)),
 	}
 
-	go server.ListenAndServe()
+	go log.Print(server.ListenAndServe())
 	httputils.ServerGracefulClose(server, nil)
 }
