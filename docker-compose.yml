@@ -4,6 +4,8 @@ services:
   api:
     image: vibioh/funds-api
     command:
+    - -prometheusMetricsRemoteHost
+    - ^funds-api:1080$$
     - -infos
     - ${PERFORMANCE_URL}
     - -dbHost
@@ -60,6 +62,8 @@ services:
   site:
     image: vibioh/funds-front
     command:
+    - -prometheusMetricsRemoteHost
+    - ^funds:1080$$
     - -spa
     - -env
     - API_URL
