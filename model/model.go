@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ViBiOh/funds/crawler"
 	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/tools"
 )
 
+const maxConcurrentFetcher = 32
 const refreshDelay = 8 * time.Hour
 
 var listRequest = regexp.MustCompile(`^/list$`)
@@ -24,7 +24,7 @@ var fundsMap *tools.ConcurrentMap
 // Init start concurrent map and init it from crawling
 func Init(url string) error {
 	fundURL = url
-	fundsMap = tools.CreateConcurrentMap(len(fundsIds), crawler.MaxConcurrentFetcher)
+	fundsMap = tools.CreateConcurrentMap(len(fundsIds), maxConcurrentFetcher)
 
 	go func() {
 		refresh()
@@ -65,9 +65,17 @@ func refreshData() error {
 	log.Printf(`Data refresh started`)
 	defer log.Printf(`Data refresh ended`)
 
-	results, errors := crawler.Crawl(fundsIds, func(ID []byte) (interface{}, error) {
+	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID []byte) (interface{}, error) {
 		return fetchFund(ID)
 	})
+
+	go func() {
+		defer close(inputs)
+
+		for _, fundID := range fundsIds {
+			inputs <- fundID
+		}
+	}()
 
 	errorIds := make([][]byte, 0)
 
@@ -75,7 +83,7 @@ func refreshData() error {
 		select {
 		case crawlErr := <-errors:
 			log.Print(crawlErr.Err)
-			errorIds = append(errorIds, crawlErr.ID)
+			errorIds = append(errorIds, crawlErr.Input)
 			break
 		case result := <-results:
 			content := result.(Fund)
