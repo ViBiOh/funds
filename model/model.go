@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
+	"strings"
 	"time"
 
 	"github.com/ViBiOh/funds/db"
@@ -16,8 +16,8 @@ import (
 
 const maxConcurrentFetcher = 32
 const refreshDelay = 8 * time.Hour
+const listPrefix = `/list`
 
-var listRequest = regexp.MustCompile(`^/list$`)
 var fundURL string
 var fundsMap *tools.ConcurrentMap
 
@@ -65,8 +65,8 @@ func refreshData() error {
 	log.Printf(`Data refresh started`)
 	defer log.Printf(`Data refresh ended`)
 
-	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID []byte) (interface{}, error) {
-		return fetchFund(ID)
+	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
+		return fetchFund(ID.([]byte))
 	})
 
 	go func() {
@@ -83,7 +83,7 @@ func refreshData() error {
 		select {
 		case crawlErr := <-errors:
 			log.Print(crawlErr.Err)
-			errorIds = append(errorIds, crawlErr.Input)
+			errorIds = append(errorIds, crawlErr.Input.([]byte))
 			break
 		case result := <-results:
 			content := result.(Fund)
@@ -148,9 +148,7 @@ func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	urlPath := []byte(r.URL.Path)
-
-	if listRequest.Match(urlPath) {
+	if strings.HasPrefix(r.URL.Path, listPrefix) {
 		if r.Method == http.MethodGet {
 			listHandler(w, r)
 		} else {
