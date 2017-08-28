@@ -7,6 +7,7 @@ deps:
 	go get -u github.com/ViBiOh/httputils/cors
 	go get -u github.com/ViBiOh/httputils/owasp
 	go get -u github.com/ViBiOh/httputils/prometheus
+	go get -u github.com/ViBiOh/httputils/tools
 	go get -u github.com/ViBiOh/alcotest/alcotest
 	go get -u github.com/lib/pq
 	go get -u github.com/tdewolff/minify

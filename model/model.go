@@ -11,8 +11,8 @@ import (
 
 	"github.com/ViBiOh/funds/crawler"
 	"github.com/ViBiOh/funds/db"
-	"github.com/ViBiOh/funds/tools"
 	"github.com/ViBiOh/httputils"
+	"github.com/ViBiOh/httputils/tools"
 )
 
 const refreshDelay = 8 * time.Hour
