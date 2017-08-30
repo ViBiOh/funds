@@ -64,6 +64,11 @@ func main() {
 		Handler: prometheus.NewPrometheusHandler(`http`, http.HandlerFunc(fundsHandler)),
 	}
 
-	go log.Print(server.ListenAndServe())
-	httputils.ServerGracefulClose(server, nil)
+	var serveError = make(chan error)
+	go func() {
+		defer close(serveError)
+		serveError <- server.ListenAndServe()
+	}()
+
+	httputils.ServerGracefulClose(server, serveError, nil)
 }

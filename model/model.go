@@ -38,8 +38,8 @@ func Init(url string) error {
 }
 
 func refresh() error {
-	log.Printf(`Refresh started`)
-	defer log.Printf(`Refresh ended`)
+	log.Print(`Refresh started`)
+	defer log.Print(`Refresh ended`)
 
 	if err := refreshData(); err != nil {
 		log.Printf(`Error while refreshing: %v`, err)
@@ -55,8 +55,8 @@ func refresh() error {
 }
 
 func refreshData() error {
-	log.Printf(`Data refresh started`)
-	defer log.Printf(`Data refresh ended`)
+	log.Print(`Data refresh started`)
+	defer log.Print(`Data refresh ended`)
 
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ID.([]byte))
@@ -95,8 +95,8 @@ func refreshData() error {
 const dataSaveLabel = `data save`
 
 func saveData() (err error) {
-	log.Printf(`Data save started`)
-	defer log.Printf(`Data save ended`)
+	log.Print(`Data save started`)
+	defer log.Print(`Data save ended`)
 
 	var tx *sql.Tx
 	if tx, err = db.GetTx(dataSaveLabel, nil); err != nil {
