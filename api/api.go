@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"runtime"
 
 	"github.com/ViBiOh/alcotest/alcotest"
 	"github.com/ViBiOh/funds/db"
@@ -44,8 +43,6 @@ func main() {
 		alcotest.Do(url)
 		return
 	}
-
-	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	if err := db.Init(); err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
