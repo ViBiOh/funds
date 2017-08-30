@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ViBiOh/funds/db"
@@ -19,12 +20,11 @@ const refreshDelay = 8 * time.Hour
 const listPrefix = `/list`
 
 var fundURL string
-var fundsMap *tools.ConcurrentMap
+var fundsMap = sync.Map{}
 
 // Init start concurrent map and init it from crawling
 func Init(url string) error {
 	fundURL = url
-	fundsMap = tools.CreateConcurrentMap(len(fundsIds), maxConcurrentFetcher)
 
 	go func() {
 		refresh()
@@ -33,13 +33,6 @@ func Init(url string) error {
 			refresh()
 		}
 	}()
-
-	return nil
-}
-
-// Shutdown close opened ressource
-func Shutdown() error {
-	fundsMap.Close()
 
 	return nil
 }
@@ -87,7 +80,7 @@ func refreshData() error {
 			break
 		case result := <-results:
 			content := result.(Fund)
-			fundsMap.Push(&content)
+			fundsMap.Store(content.ID, content)
 			break
 		}
 	}
@@ -114,11 +107,11 @@ func saveData() (err error) {
 		err = db.EndTx(dataSaveLabel, tx, err)
 	}()
 
-	for entry := range fundsMap.List() {
-		if err == nil {
-			err = SaveFund(entry.(*Fund), tx)
-		}
-	}
+	fundsMap.Range(func(_ interface{}, value interface{}) bool {
+		fund := value.(Fund)
+		err = SaveFund(&fund, tx)
+		return err != nil
+	})
 
 	return
 }
@@ -127,9 +120,10 @@ func saveData() (err error) {
 func ListFunds() []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
-	for entry := range fundsMap.List() {
-		funds = append(funds, *(entry.(*Fund)))
-	}
+	fundsMap.Range(func(_ interface{}, value interface{}) bool {
+		funds = append(funds, value.(Fund))
+		return true
+	})
 
 	return funds
 }
