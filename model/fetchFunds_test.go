@@ -6,7 +6,7 @@ import (
 )
 
 func TestCleanID(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		fundID []byte
 		want   string
 	}{
@@ -17,15 +17,15 @@ func TestCleanID(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		if got := cleanID(test.fundID); string(got) != test.want {
-			t.Errorf(`cleanID(%v) = %v, want %v`, test.fundID, got, test.want)
+	for _, testCase := range cases {
+		if got := cleanID(testCase.fundID); string(got) != testCase.want {
+			t.Errorf(`cleanID(%v) = %v, want %v`, testCase.fundID, got, testCase.want)
 		}
 	}
 }
 
 func TestExtractLabel(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		extract      *regexp.Regexp
 		body         []byte
 		defaultValue []byte
@@ -58,15 +58,15 @@ func TestExtractLabel(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		if got := extractLabel(test.extract, test.body, test.defaultValue); string(got) != test.want {
-			t.Errorf(`extractLabel(%v, %v, %v) = %v, want %v`, test.extract, test.body, test.defaultValue, got, test.want)
+	for _, testCase := range cases {
+		if got := extractLabel(testCase.extract, testCase.body, testCase.defaultValue); string(got) != testCase.want {
+			t.Errorf(`extractLabel(%v, %v, %v) = %v, want %v`, testCase.extract, testCase.body, testCase.defaultValue, got, testCase.want)
 		}
 	}
 }
 
 func TestExtractPerformance(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		extract *regexp.Regexp
 		body    []byte
 		want    float64
@@ -88,9 +88,9 @@ func TestExtractPerformance(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		if got := extractPerformance(test.extract, test.body); got != test.want {
-			t.Errorf(`extractPerformance(%v, %v) = %v, want %v`, test.extract, test.body, got, test.want)
+	for _, testCase := range cases {
+		if got := extractPerformance(testCase.extract, testCase.body); got != testCase.want {
+			t.Errorf(`extractPerformance(%v, %v) = %v, want %v`, testCase.extract, testCase.body, got, testCase.want)
 		}
 	}
 }

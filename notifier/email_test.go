@@ -7,7 +7,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		wantErr error
 	}{
 		{
@@ -15,17 +15,17 @@ func TestInit(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for _, testCase := range cases {
 		result := InitEmail()
 
-		if result != test.wantErr {
-			t.Errorf(`InitEmail() = %v, want %v`, result, test.wantErr)
+		if result != testCase.wantErr {
+			t.Errorf(`InitEmail() = %v, want %v`, result, testCase.wantErr)
 		}
 	}
 }
 
 func TestGetHTMLContent(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		score   float64
 		above   []*model.Fund
 		below   []*model.Fund
@@ -50,23 +50,23 @@ func TestGetHTMLContent(t *testing.T) {
 
 	var failed bool
 
-	for _, test := range tests {
-		result, err := getHTMLContent(test.score, test.above, test.below)
+	for _, testCase := range cases {
+		result, err := getHTMLContent(testCase.score, testCase.above, testCase.below)
 
 		failed = false
 
-		if err == nil && test.wantErr != nil {
+		if err == nil && testCase.wantErr != nil {
 			failed = true
-		} else if err != nil && test.wantErr == nil {
+		} else if err != nil && testCase.wantErr == nil {
 			failed = true
-		} else if err != nil && err.Error() != test.wantErr.Error() {
+		} else if err != nil && err.Error() != testCase.wantErr.Error() {
 			failed = true
-		} else if string(result) != string(test.want) {
+		} else if string(result) != string(testCase.want) {
 			failed = true
 		}
 
 		if failed {
-			t.Errorf(`getHTMLContent(%.2f, %v, %v) = (%s, %v), want (%s, %v)`, test.score, test.above, test.below, result, err, test.want, test.wantErr)
+			t.Errorf(`getHTMLContent(%.2f, %v, %v) = (%s, %v), want (%s, %v)`, testCase.score, testCase.above, testCase.below, result, err, testCase.want, testCase.wantErr)
 		}
 	}
 }

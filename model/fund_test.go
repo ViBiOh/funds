@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetID(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		instance Fund
 		want     string
 	}{
@@ -19,16 +19,16 @@ func TestGetID(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		result := test.instance.GetID()
-		if result != test.want {
-			t.Errorf(`GetID() of %v = %v, want %v`, test.instance, result, test.want)
+	for _, testCase := range cases {
+		result := testCase.instance.GetID()
+		if result != testCase.want {
+			t.Errorf(`GetID() of %v = %v, want %v`, testCase.instance, result, testCase.want)
 		}
 	}
 }
 
 func TestComputeScore(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		instance *Fund
 		want     float64
 	}{
@@ -42,10 +42,10 @@ func TestComputeScore(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		test.instance.ComputeScore()
-		if test.instance.Score != test.want {
-			t.Errorf(`ComputeScore() of %v = %v, want %v`, test.instance, test.instance.Score, test.want)
+	for _, testCase := range cases {
+		testCase.instance.ComputeScore()
+		if testCase.instance.Score != testCase.want {
+			t.Errorf(`ComputeScore() of %v = %v, want %v`, testCase.instance, testCase.instance.Score, testCase.want)
 		}
 	}
 }

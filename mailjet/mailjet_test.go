@@ -5,7 +5,7 @@ import (
 )
 
 func TestPing(t *testing.T) {
-	var tests = []struct {
+	var cases = []struct {
 		apiPublicKey string
 		want         bool
 	}{
@@ -19,11 +19,11 @@ func TestPing(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		apiPublicKey = &test.apiPublicKey
+	for _, testCase := range cases {
+		apiPublicKey = &testCase.apiPublicKey
 
-		if result := Ping(); result != test.want {
-			t.Errorf(`Ping() = %v, want %v, with apiPublicKey=%v`, result, test.want, test.apiPublicKey)
+		if result := Ping(); result != testCase.want {
+			t.Errorf(`Ping() = %v, want %v, with apiPublicKey=%v`, result, testCase.want, testCase.apiPublicKey)
 		}
 	}
 }
