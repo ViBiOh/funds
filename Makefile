@@ -1,4 +1,4 @@
-default: deps lint tst build
+default: deps format lint tst build
 
 deps:
 	go get -u golang.org/x/tools/cmd/goimports
@@ -12,7 +12,7 @@ deps:
 	go get -u github.com/lib/pq
 	go get -u github.com/tdewolff/minify
 
-fmt:
+format:
 	goimports -w **/*.go
 	gofmt -s -w **/*.go
 
