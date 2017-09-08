@@ -67,6 +67,7 @@
     "webpack-dev-server": "latest"
   },
   "dependencies": {
+    "babel-polyfill": "latest",
     "chart.js": "latest",
     "classnames": "latest",
     "funtch": "latest",
