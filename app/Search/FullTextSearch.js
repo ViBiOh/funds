@@ -70,7 +70,7 @@ export function cleanSearchValues(values) {
  */
 export function buildFullTextRegex(value) {
   const wildcard = '[\\s\\S]*';
-  const flags = 'gimy';
+  const flags = 'gim';
   if (value.trim() === '') {
     return new RegExp(wildcard, flags);
   }
