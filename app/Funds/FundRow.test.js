@@ -22,7 +22,10 @@ const defaultProps = {
 test('should always render as a span', (t) => {
   const wrapper = shallow(<FundRow {...defaultProps} />);
 
-  wrapper.find('Button').at(0).simulate('click');
+  wrapper
+    .find('Button')
+    .at(0)
+    .simulate('click');
 
   t.is(wrapper.type(), 'span');
 });
@@ -31,7 +34,10 @@ test('should call given filterBy func on category click', (t) => {
   const filterBy = sinon.spy();
   const wrapper = shallow(<FundRow {...defaultProps} filterBy={filterBy} />);
 
-  wrapper.find('Button').at(0).simulate('click');
+  wrapper
+    .find('Button')
+    .at(0)
+    .simulate('click');
 
   t.truthy(filterBy.calledWith('category', 'Test'));
 });
@@ -40,7 +46,10 @@ test('should call given filterBy func on rating click', (t) => {
   const filterBy = sinon.spy();
   const wrapper = shallow(<FundRow {...defaultProps} filterBy={filterBy} />);
 
-  wrapper.find('Button').at(1).simulate('click');
+  wrapper
+    .find('Button')
+    .at(1)
+    .simulate('click');
 
   t.truthy(filterBy.calledWith('rating', 4));
 });

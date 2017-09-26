@@ -218,13 +218,12 @@ export default class FundsContainer extends Component {
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
         />
-        {this.state.error &&
+        {this.state.error && (
           <div>
             <h2>Erreur rencontée</h2>
-            <pre>
-              {JSON.stringify(this.state.error, null, 2)}
-            </pre>
-          </div>}
+            <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
+          </div>
+        )}
         <article className={style.container}>
           <div className={style.modifiers}>
             <FundsModifiers

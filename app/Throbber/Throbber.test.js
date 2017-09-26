@@ -12,5 +12,10 @@ test('should have no label by default', (t) => {
 });
 
 test('should have label when given', (t) => {
-  t.is(shallow(<Throbber label="test" />).find('span').text(), 'test');
+  t.is(
+    shallow(<Throbber label="test" />)
+      .find('span')
+      .text(),
+    'test',
+  );
 });

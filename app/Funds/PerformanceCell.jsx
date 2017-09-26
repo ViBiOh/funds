@@ -12,10 +12,9 @@ const getValue = (value) => {
   return value < 0 ? style.red : style.green;
 };
 
-const PerformanceCell = ({ type, value }) =>
-  (<span className={`${style.performance} ${style[type]} ${getValue(value)}`}>
-    {value}
-  </span>);
+const PerformanceCell = ({ type, value }) => (
+  <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>{value}</span>
+);
 
 PerformanceCell.propTypes = {
   type: PropTypes.string.isRequired,

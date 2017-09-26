@@ -36,11 +36,12 @@
     "babel-core": "latest",
     "babel-loader": "latest",
     "babel-plugin-transform-object-rest-spread": "latest",
-    "babel-preset-es2015": "latest",
+    "babel-preset-env": "latest",
     "babel-preset-react": "latest",
     "codeceptjs-webdriverio": "latest",
     "css-loader": "latest",
     "enzyme": "latest",
+    "enzyme-adapter-react-15": "latest",
     "eslint": "3",
     "eslint-config-airbnb": "latest",
     "eslint-loader": "latest",
@@ -57,8 +58,8 @@
     "normalize.css": "latest",
     "nyc": "latest",
     "prettier": "latest",
-    "react-addons-test-utils": "latest",
-    "react-test-renderer": "latest",
+    "react-addons-test-utils": "15",
+    "react-test-renderer": "15",
     "sinon": "latest",
     "style-loader": "latest",
     "stylelint": "latest",
@@ -72,8 +73,8 @@
     "classnames": "latest",
     "funtch": "latest",
     "prop-types": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "15",
+    "react-dom": "15",
     "react-icons": "latest"
   },
   "ava": {
@@ -89,7 +90,7 @@
   },
   "babel": {
     "presets": [
-      "es2015",
+      "env",
       "react"
     ],
     "plugins": [

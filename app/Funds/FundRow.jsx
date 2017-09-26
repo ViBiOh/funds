@@ -4,11 +4,9 @@ import Button from '../Button/Button';
 import PerformanceCell from './PerformanceCell';
 import style from './FundRow.less';
 
-const FundRow = ({ fund, filterBy }) =>
-  (<span className={style.row}>
-    <span className={style.isin}>
-      {fund.isin}
-    </span>
+const FundRow = ({ fund, filterBy }) => (
+  <span className={style.row}>
+    <span className={style.isin}>{fund.isin}</span>
     <span className={style.label} title={fund.label}>
       {fund.label}
     </span>
@@ -22,9 +20,7 @@ const FundRow = ({ fund, filterBy }) =>
       </span>
     </Button>
     <Button className={style.rating} type="none" onClick={() => filterBy('rating', fund.rating)}>
-      <span>
-        {fund.rating}
-      </span>
+      <span>{fund.rating}</span>
     </Button>
     <PerformanceCell value={fund['1m']} type="p1m" />
     <PerformanceCell value={fund['3m']} type="p3m" />
@@ -32,7 +28,8 @@ const FundRow = ({ fund, filterBy }) =>
     <PerformanceCell value={fund['1y']} type="p1y" />
     <PerformanceCell value={fund.v3y} type="pvol" />
     <PerformanceCell value={fund.score} type="pscore" />
-  </span>);
+  </span>
+);
 
 FundRow.displayName = 'FundRow';
 

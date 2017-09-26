@@ -22,36 +22,35 @@ function renderCount(fundsSize, initialSize) {
 }
 
 function renderFilters(filters, filterBy) {
-  return Object.keys(filters).filter(filter => filters[filter]).map(filter =>
-    (<span key={filter} className={style.modifier}>
-      <FaFilter />
-      <span>
-        <em> {COLUMNS[filter].label}</em> ≃{' '}
+  return Object.keys(filters)
+    .filter(filter => filters[filter])
+    .map(filter => (
+      <span key={filter} className={style.modifier}>
+        <FaFilter />
+        <span>
+          <em> {COLUMNS[filter].label}</em> ≃{' '}
+        </span>
+        <span>{filters[filter]}</span>
+        <Button type="none" onClick={() => filterBy(filter, '')}>
+          <FaClose />
+        </Button>
       </span>
-      <span>
-        {filters[filter]}
-      </span>
-      <Button type="none" onClick={() => filterBy(filter, '')}>
-        <FaClose />
-      </Button>
-    </span>),
-  );
+    ));
 }
 
 function renderOrder(order, orderBy, reverseOrder) {
   return (
-    order.key &&
-    <span className={style.modifier}>
-      <Button type="none" onClick={reverseOrder}>
-        {order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
-      </Button>
-      <span>
-        {COLUMNS[order.key].label}
+    order.key && (
+      <span className={style.modifier}>
+        <Button type="none" onClick={reverseOrder}>
+          {order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
+        </Button>
+        <span>{COLUMNS[order.key].label}</span>
+        <Button type="none" onClick={() => orderBy('')}>
+          <FaClose />
+        </Button>
       </span>
-      <Button type="none" onClick={() => orderBy('')}>
-        <FaClose />
-      </Button>
-    </span>
+    )
   );
 }
 
@@ -66,11 +65,11 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
     <span className={style.modifier}>
       <FaPieChart />
       <select value={aggregat.size} onChange={onAggregateSizeChange}>
-        {AGGREGATE_SIZES.map(size =>
-          (<option key={size} value={size}>
+        {AGGREGATE_SIZES.map(size => (
+          <option key={size} value={size}>
             {size}
-          </option>),
-        )}
+          </option>
+        ))}
       </select>{' '}
       {label}
       <Button type="none" onClick={() => aggregateBy('')}>
@@ -91,13 +90,14 @@ const FundsModifier = ({
   aggregat,
   aggregateBy,
   onAggregateSizeChange,
-}) =>
-  (<div className={style.list}>
+}) => (
+  <div className={style.list}>
     {renderCount(fundsSize, initialSize)}
     {renderFilters(filters, filterBy)}
     {renderOrder(order, orderBy, reverseOrder)}
     {renderAggregat(aggregat, aggregateBy, onAggregateSizeChange)}
-  </div>);
+  </div>
+);
 
 FundsModifier.displayName = 'FundsModifier';
 
