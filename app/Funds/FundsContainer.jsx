@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import FundsService from '../Service/FundsService';
+import setRef from '../Tools/ref';
 import Throbber from '../Throbber/Throbber';
 import {
   AGGREGATE_SIZES,
@@ -113,6 +114,10 @@ export default class FundsContainer extends Component {
   }
 
   filterBy(filterName, value) {
+    if (value === '') {
+      this.header.resetInput();
+    }
+
     this.setState(
       {
         filters: {
@@ -214,6 +219,7 @@ export default class FundsContainer extends Component {
     return (
       <span>
         <FundsHeader
+          ref={e => setRef(this, 'header', e)}
           orderBy={this.orderBy}
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
