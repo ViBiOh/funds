@@ -11,6 +11,7 @@ test.afterEach(() => {
   funtch.get.restore();
 });
 
-test('should fetch data for funds', t => FundsService.getFunds().then(({ url }) => {
-  t.truthy(/list/i.test(url));
-}));
+test('should fetch data for funds', t =>
+  FundsService.getFunds().then(({ url }) => {
+    t.truthy(/list/i.test(url));
+  }));

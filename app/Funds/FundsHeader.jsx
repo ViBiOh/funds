@@ -36,6 +36,7 @@ export default class FundsHeader extends Component {
   }
 
   onFilterChange(selectedFilter) {
+    this.resetInput();
     this.setState({ selectedFilter, toggleDisplayed: '' });
   }
 
