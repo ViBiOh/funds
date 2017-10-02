@@ -68,7 +68,7 @@ services:
     - -env
     - API_URL
     - -csp
-    - default-src 'self'; script-src 'self' 'unsafe-inline' www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' www.google-analytics.com; connect-src 'self' funds-api.vibioh.fr
+    - default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr;
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
