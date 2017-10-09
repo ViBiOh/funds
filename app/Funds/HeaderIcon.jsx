@@ -4,7 +4,9 @@ import Button from '../Button/Button';
 import { COLUMNS } from './FundsConstantes';
 import style from './HeaderIcon.less';
 
-const HeaderIcon = ({ filter, onClick, icon, displayed }) => {
+const HeaderIcon = ({
+  filter, onClick, icon, displayed,
+}) => {
   const list = Object.keys(COLUMNS)
     .filter(e => COLUMNS[e][filter])
     .map(key => (

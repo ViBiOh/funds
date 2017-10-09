@@ -14,8 +14,7 @@ test.afterEach(() => {
 test.serial('should fetch data from /env', t =>
   Constants.init().then(({ url }) => {
     t.truthy(/env/i.test(url));
-  }),
-);
+  }));
 
 test.serial('should return API_URL from context', (t) => {
   Constants.init();

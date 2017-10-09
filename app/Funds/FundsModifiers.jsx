@@ -59,7 +59,7 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
     return null;
   }
 
-  const label = COLUMNS[aggregat.key].label;
+  const { label } = COLUMNS[aggregat.key];
 
   return (
     <span className={style.modifier}>
