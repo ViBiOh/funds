@@ -33,7 +33,15 @@
 <body>
   <div id="root"></div>
 </body>
-<script async="true" src="static/app.js?v={{version}}"></script>
 
 </html>
-<link rel="stylesheet" media="all" href="static/app.css?v={{version}}">
+<script async="true" src="static/app.js?v={{version}}"></script>
+<noscript>
+  <link rel="stylesheet" href="/static/app.css?v={{version}}">
+</noscript>
+<script type="text/javascript">
+  var asyncAppCss = document.createElement('link');
+  asyncAppCss.rel = 'stylesheet';
+  asyncAppCss.href = '/static/app.css?v={{version}}';
+  document.getElementsByTagName('body')[0].appendChild(asyncAppCss);
+</script>

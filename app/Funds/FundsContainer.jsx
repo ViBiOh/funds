@@ -149,7 +149,9 @@ export default class FundsContainer extends Component {
 
   reverseOrder() {
     this.setState(
-      { order: { ...this.state.order, descending: !this.state.order.descending } },
+      {
+        order: { ...this.state.order, descending: !this.state.order.descending },
+      },
       this.filterOrderData,
     );
   }

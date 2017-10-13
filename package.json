@@ -4,18 +4,21 @@
   "description": "Funds OB",
   "main": "index.js",
   "scripts": {
-    "copy:html": "cp ./app/index.html ./dist/",
-    "copy:web": "cp ./web/* ./dist/",
-    "copy": "mkdir -p ./dist && npm run copy:html && npm run copy:web",
-    "mustache": "./node_modules/js-index-builder/index.js -t \"./app/*.html\" -b `git log --pretty=format:'%h' -n 1` -o ./dist/",
-    "prettier": "./node_modules/.bin/prettier --print-width 100 --single-quote --trailing-comma all --color --write \"./app/**/*.{js,jsx,css,less}\"",
+    "format": "./node_modules/.bin/prettier --write \"./app/**/*.{js,jsx,less}\"",
     "stylelint": "./node_modules/.bin/stylelint \"app/**/*.{css,less}\"",
     "eslint": "./node_modules/.bin/eslint --fix --ext .jsx \"./app/**/*.{js,jsx}\"",
-    "codestyle": "npm run prettier && npm run eslint && npm run stylelint",
+    "lint": "npm run eslint && npm run stylelint",
+    "doc": "./node_modules/.bin/esdoc",
+    "prestart": "mkdir -p ./dist && cp ./app/index.html ./dist/",
     "start": "npm run copy && API_URL=https://funds-api.vibioh.fr ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
     "test": "./node_modules/.bin/nyc --reporter text --reporter lcov --extension .jsx --require babel-core/register ./node_modules/.bin/ava",
     "test:e2e": "./node_modules/.bin/codeceptjs run --steps",
-    "build": "npm run codestyle && npm test && npm run mustache && npm run copy:web && ./node_modules/.bin/webpack --progress -p"
+    "copy:web": "cp ./web/*.txt ./dist/ && cp ./web/favicon/* ./dist/",
+    "mustache": "./node_modules/js-index-builder/index.js --template \"./app/*.html\" --partials \"./web/partials/*.html\" --bust `git log --pretty=format:'%h' -n 1` --output ./tmp/",
+    "html-minify": "./node_modules/.bin/html-minifier --config-file ./html-minifier.json --input-dir ./tmp --output-dir ./dist",
+    "web": "npm run copy:web && npm run mustache && npm run html-minify",
+    "prebuild": "mkdir -p ./dist",
+    "build": "npm run format && npm run lint && npm test && npm run doc && npm run web && ./node_modules/.bin/webpack --progress -p"
   },
   "repository": {
     "type": "git",
@@ -42,6 +45,11 @@
     "css-loader": "latest",
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
+    "esdoc": "latest",
+    "esdoc-coverage-plugin": "latest",
+    "esdoc-ecmascript-proposal-plugin": "latest",
+    "esdoc-jsx-plugin": "latest",
+    "esdoc-publish-html-plugin": "latest",
     "eslint": "latest",
     "eslint-config-airbnb": "latest",
     "eslint-loader": "latest",
@@ -49,6 +57,7 @@
     "eslint-plugin-jsx-a11y": "latest",
     "eslint-plugin-react": "latest",
     "extract-text-webpack-plugin": "latest",
+    "html-minifier": "latest",
     "identity-obj-proxy": "latest",
     "ignore-styles": "latest",
     "js-index-builder": "ViBiOh/js-index-builder",
@@ -97,6 +106,46 @@
       "transform-object-rest-spread"
     ]
   },
+  "esdoc": {
+    "source": "./app",
+    "includes": [
+      ".(js|jsx)$"
+    ],
+    "excludes": [
+      ".test\\.(js|jsx)$"
+    ],
+    "destination": "./doc",
+    "plugins": [
+      {
+        "name": "esdoc-ecmascript-proposal-plugin",
+        "option": {
+          "classProperties": true,
+          "objectRestSpread": true,
+          "decorators": true,
+          "doExpressions": true,
+          "functionBind": true,
+          "asyncGenerators": true,
+          "exportExtensions": true,
+          "dynamicImport": true
+        }
+      },
+      {
+        "name": "esdoc-jsx-plugin",
+        "option": {
+          "enable": true
+        }
+      },
+      {
+        "name": "esdoc-publish-html-plugin"
+      },
+      {
+        "name": "esdoc-coverage-plugin",
+        "option": {
+          "enable": true
+        }
+      }
+    ]
+  },
   "eslintConfig": {
     "extends": "airbnb",
     "env": {
@@ -114,5 +163,10 @@
       "declaration-colon-newline-after": null,
       "value-list-comma-newline-after": null
     }
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }
