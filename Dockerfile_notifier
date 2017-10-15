@@ -2,6 +2,9 @@ FROM scratch
 
 HEALTHCHECK --retries=10 CMD healthcheck
 
+ENV ZONEINFO script/zoneinfo.zip
+COPY script/zoneinfo.zip script/zoneinfo.zip
+
 ENTRYPOINT [ "/bin/sh" ]
 
 COPY bin/notifier /bin/sh

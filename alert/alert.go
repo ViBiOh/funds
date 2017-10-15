@@ -18,7 +18,7 @@ func main() {
 	check := flag.Bool(`c`, false, `Healthcheck (check and exit)`)
 	recipients := flag.String(`recipients`, ``, `Email of notifications recipients`)
 	score := flag.Float64(`score`, 25.0, `Score value to notification when above`)
-	hour := flag.Int(`hour`, 6, `Hour of day for sending notifications in UTC`)
+	hour := flag.Int(`hour`, 8, `Hour of day for sending notifications in Europe/Paris`)
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
 	flag.Parse()
 
