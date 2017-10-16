@@ -5,19 +5,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/ViBiOh/alcotest/alcotest"
 	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
-	"github.com/ViBiOh/httputils/gzip"
 	"github.com/ViBiOh/httputils/owasp"
 	"github.com/ViBiOh/httputils/prometheus"
 )
 
 const port = `1080`
 
-var modelHandler = gzip.Handler{Handler: owasp.Handler{Handler: cors.Handler{Handler: model.Handler{}}}}
+var modelHandler = gziphandler.GzipHandler(owasp.Handler{Handler: cors.Handler{Handler: model.Handler{}}})
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
