@@ -129,7 +129,7 @@ func ListFunds() []Fund {
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {
-	httputils.ResponseArrayJSON(w, ListFunds())
+	httputils.ResponseArrayJSON(w, http.StatusOK, ListFunds())
 }
 
 // Handler for model request. Should be use with net/http
