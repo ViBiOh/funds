@@ -13,11 +13,13 @@ import (
 	"github.com/ViBiOh/httputils/cors"
 	"github.com/ViBiOh/httputils/owasp"
 	"github.com/ViBiOh/httputils/prometheus"
+	"github.com/ViBiOh/httputils/rate"
 )
 
 const port = `1080`
 
-var modelHandler = gziphandler.GzipHandler(owasp.Handler{Handler: cors.Handler{Handler: model.Handler{}}})
+var modelHandler = model.Handler()
+var apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(handler())))))
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
@@ -27,12 +29,14 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fundsHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == `/health` {
-		healthHandler(w, r)
-	} else {
-		modelHandler.ServeHTTP(w, r)
-	}
+func handler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == `/health` {
+			healthHandler(w, r)
+		} else {
+			modelHandler.ServeHTTP(w, r)
+		}
+	})
 }
 
 func main() {
@@ -59,7 +63,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    `:` + port,
-		Handler: prometheus.NewPrometheusHandler(`http`, http.HandlerFunc(fundsHandler)),
+		Handler: apiHandler,
 	}
 
 	var serveError = make(chan error)

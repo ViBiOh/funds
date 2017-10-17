@@ -133,22 +133,21 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler for model request. Should be use with net/http
-type Handler struct {
-}
-
-func (handler Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodOptions {
-		w.Write(nil)
-		return
-	}
-
-	if strings.HasPrefix(r.URL.Path, listPrefix) {
-		if r.Method == http.MethodGet {
-			listHandler(w, r)
-		} else {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+func Handler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			w.Write(nil)
+			return
 		}
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-	}
+
+		if strings.HasPrefix(r.URL.Path, listPrefix) {
+			if r.Method == http.MethodGet {
+				listHandler(w, r)
+			} else {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+			}
+		} else {
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
 }
