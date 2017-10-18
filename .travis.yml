@@ -11,6 +11,7 @@ install:
 - npm run build
 script: |
   bash <(curl -s https://codecov.io/bash) &&
+  curl -o zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip &&
   docker build -t ${DOCKER_USER}/funds-notifier -f Dockerfile_notifier . &&
   docker build -t ${DOCKER_USER}/funds-front -f Dockerfile_front . &&
   docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
