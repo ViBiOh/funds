@@ -5,14 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/ViBiOh/funds/db"
+	dbconfig "github.com/ViBiOh/funds/dbconfig"
 	"github.com/ViBiOh/funds/mailjet"
 	"github.com/ViBiOh/funds/notifier"
+	"github.com/ViBiOh/httputils/db"
 )
-
-func healthcheck() bool {
-	return db.Ping() && mailjet.Ping()
-}
 
 func main() {
 	check := flag.Bool(`c`, false, `Healthcheck (check and exit)`)
@@ -22,14 +19,15 @@ func main() {
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
 	flag.Parse()
 
-	if err := db.Init(); err != nil {
+	fundsDB, err := db.GetDB(*dbconfig.Host, *dbconfig.Port, *dbconfig.User, *dbconfig.Pass, *dbconfig.Name)
+	if err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
 	} else {
 		log.Print(`Database ready`)
 	}
 
 	if *check {
-		if !healthcheck() {
+		if !(db.Ping(fundsDB) && mailjet.Ping()) {
 			os.Exit(1)
 		}
 		return
@@ -37,7 +35,7 @@ func main() {
 
 	log.Printf(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 
-	if err := notifier.Init(); err != nil {
+	if err := notifier.Init(fundsDB); err != nil {
 		log.Printf(`Error while initializing notifier: %v`, err)
 	}
 	notifier.Start(*recipients, *score, *hour, *minute)

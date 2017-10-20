@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/httputils"
+	"github.com/ViBiOh/httputils/db"
 	"github.com/ViBiOh/httputils/tools"
 )
 
@@ -19,12 +19,14 @@ const maxConcurrentFetcher = 32
 const refreshDelay = 8 * time.Hour
 const listPrefix = `/list`
 
+var fundsDB *sql.DB
 var fundURL string
 var fundsMap = sync.Map{}
 
 // Init start concurrent map and init it from crawling
-func Init(url string) error {
+func Init(url string, db *sql.DB) error {
 	fundURL = url
+	fundsDB = db
 
 	go func() {
 		refresh()
@@ -45,7 +47,7 @@ func refresh() error {
 		log.Printf(`Error while refreshing: %v`, err)
 	}
 
-	if db.Ping() {
+	if db.Ping(fundsDB) {
 		if err := saveData(); err != nil {
 			log.Printf(`Error while saving: %v`, err)
 		}
@@ -99,7 +101,7 @@ func saveData() (err error) {
 	defer log.Print(`Data save ended`)
 
 	var tx *sql.Tx
-	if tx, err = db.GetTx(dataSaveLabel, nil); err != nil {
+	if tx, err = db.GetTx(fundsDB, dataSaveLabel, nil); err != nil {
 		return err
 	}
 

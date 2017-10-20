@@ -7,10 +7,11 @@ import (
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/ViBiOh/alcotest/alcotest"
-	"github.com/ViBiOh/funds/db"
+	dbconfig "github.com/ViBiOh/funds/dbconfig"
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
+	"github.com/ViBiOh/httputils/db"
 	"github.com/ViBiOh/httputils/owasp"
 	"github.com/ViBiOh/httputils/prometheus"
 	"github.com/ViBiOh/httputils/rate"
@@ -49,13 +50,14 @@ func main() {
 		return
 	}
 
-	if err := db.Init(); err != nil {
+	fundsDB, err := db.GetDB(*dbconfig.Host, *dbconfig.Port, *dbconfig.User, *dbconfig.Pass, *dbconfig.Name)
+	if err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
-	} else if db.Ping() {
+	} else if db.Ping(fundsDB) {
 		log.Print(`Database ready`)
 	}
 
-	if err := model.Init(*infosURL); err != nil {
+	if err := model.Init(*infosURL, fundsDB); err != nil {
 		log.Printf(`Error while initializing model: %v`, err)
 	}
 

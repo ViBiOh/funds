@@ -8,10 +8,11 @@ deps:
 	go get -u github.com/ViBiOh/alcotest/alcotest
 	go get -u github.com/ViBiOh/httputils
 	go get -u github.com/ViBiOh/httputils/cors
+	go get -u github.com/ViBiOh/httputils/db
 	go get -u github.com/ViBiOh/httputils/owasp
 	go get -u github.com/ViBiOh/httputils/prometheus
-	go get -u github.com/ViBiOh/httputils/tools
 	go get -u github.com/ViBiOh/httputils/rate
+	go get -u github.com/ViBiOh/httputils/tools
 	go get -u golang.org/x/tools/cmd/goimports
 
 format:

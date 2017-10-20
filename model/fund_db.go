@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ViBiOh/funds/db"
+	"github.com/ViBiOh/httputils/db"
 )
 
 const fundByIsinLabel = `fund by isin`
@@ -63,7 +63,7 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 		score float64
 	)
 
-	err := db.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
+	err := fundsDB.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while querying %s: %v`, fundByIsinLabel, err)
 	}
@@ -73,7 +73,7 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 
 // ReadFundsWithScoreAbove retrieves Fund with score above given level
 func ReadFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := db.Query(fundsWithScoreAboveLabel, fundsWithScoreAboveQuery, minScore)
+	rows, err := fundsDB.Query(fundsWithScoreAboveLabel, fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}
@@ -106,7 +106,7 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsSaveLabel, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, fundsSaveLabel, tx); err != nil {
 		return
 	}
 

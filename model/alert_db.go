@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ViBiOh/funds/db"
+	"github.com/ViBiOh/httputils/db"
 )
 
 const alertsOpenedLabel = `alerts opened`
@@ -48,7 +48,7 @@ INSERT INTO
 
 // ReadAlertsOpened retrieves current Alerts (only one mail sent)
 func ReadAlertsOpened() (alerts []*Alert, err error) {
-	rows, err := db.Query(alertsOpenedLabel, alertsOpenedQuery)
+	rows, err := fundsDB.Query(alertsOpenedLabel, alertsOpenedQuery)
 	if err != nil {
 		return
 	}
@@ -82,7 +82,7 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(alertsCreateLabel, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, alertsCreateLabel, tx); err != nil {
 		return
 	}
 

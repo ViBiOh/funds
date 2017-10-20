@@ -1,14 +1,15 @@
 package notifier
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/ViBiOh/funds/db"
 	"github.com/ViBiOh/funds/mailjet"
 	"github.com/ViBiOh/funds/model"
+	"github.com/ViBiOh/httputils/db"
 )
 
 const locationStr = `Europe/Paris`
@@ -18,9 +19,12 @@ const subject = `[Funds] Score level notification`
 const notificationInterval = 24 * time.Hour
 
 var location *time.Location
+var fundsDB *sql.DB
 
 // Init initialize notifier tools
-func Init() error {
+func Init(db *sql.DB) error {
+	fundsDB = db
+
 	loc, err := time.LoadLocation(locationStr)
 	if err != nil {
 		return fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
@@ -45,7 +49,7 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 func getCurrentAlerts() (map[string]*model.Alert, error) {
 	currentAlerts := make(map[string]*model.Alert)
 
-	if !db.Ping() {
+	if !db.Ping(fundsDB) {
 		return currentAlerts, nil
 	}
 
@@ -66,7 +70,7 @@ func getCurrentAlerts() (map[string]*model.Alert, error) {
 func getFundsAbove(score float64, currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
 	fundsToAlert := make([]*model.Fund, 0)
 
-	if !db.Ping() {
+	if !db.Ping(fundsDB) {
 		return fundsToAlert, nil
 	}
 
@@ -91,7 +95,7 @@ func getFundsAbove(score float64, currentAlerts map[string]*model.Alert) ([]*mod
 func getFundsBelow(currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
 	funds := make([]*model.Fund, 0)
 
-	if !db.Ping() {
+	if !db.Ping(fundsDB) {
 		return funds, nil
 	}
 
@@ -157,7 +161,7 @@ func notify(recipients []string, score float64) error {
 			log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 		}
 
-		if db.Ping() {
+		if db.Ping(fundsDB) {
 			if err := saveAlerts(score, above, below); err != nil {
 				return fmt.Errorf(`Error while saving alerts: %v`, err)
 			}
