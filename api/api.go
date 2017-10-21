@@ -7,7 +7,6 @@ import (
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/ViBiOh/alcotest/alcotest"
-	dbconfig "github.com/ViBiOh/funds/dbconfig"
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
@@ -20,7 +19,7 @@ import (
 const port = `1080`
 
 var modelHandler = model.Handler()
-var apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(handler())))))
+var apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(cors.Flags(``), handler())))))
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
@@ -43,6 +42,7 @@ func handler() http.Handler {
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
 	infosURL := flag.String(`infos`, ``, `Informations URL`)
+	dbConfig := db.Flags(``)
 	flag.Parse()
 
 	if *url != `` {
@@ -50,7 +50,7 @@ func main() {
 		return
 	}
 
-	fundsDB, err := db.GetDB(*dbconfig.Host, *dbconfig.Port, *dbconfig.User, *dbconfig.Pass, *dbconfig.Name)
+	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
 	} else if db.Ping(fundsDB) {

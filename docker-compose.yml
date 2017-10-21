@@ -10,8 +10,12 @@ services:
     - ${PERFORMANCE_URL}
     - -dbHost
     - db
+    - -dbUser
+    - funds
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
+    - -dbName
+    - funds
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
@@ -36,8 +40,12 @@ services:
     - ${FUNDS_NOTIFICATION_RECIPIENTS}
     - -dbHost
     - db
+    - -dbUser
+    - funds
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
+    - -dbName
+    - funds
     - -mailjetPublicKey
     - ${MAILJET_APIKEY_PUBLIC}
     - -mailjetPrivateKey
