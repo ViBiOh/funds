@@ -51,7 +51,7 @@ services:
     - -mailjetPrivateKey
     - ${MAILJET_APIKEY_PRIVATE}
     healthcheck:
-      test: [ "CMD-SHELL", "-dbHost", "db", "-dbPass", "${FUNDS_DATABASE_PASS}", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
+      test: [ "CMD-SHELL", "-dbHost", "db", "-dbUser", "funds", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "funds", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
     labels:
       traefik.enable: 'false'
     external_links:
