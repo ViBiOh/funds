@@ -19,7 +19,7 @@ import (
 const port = `1080`
 
 var modelHandler = model.Handler()
-var apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(cors.Flags(``), handler())))))
+var apiHandler http.Handler
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	if len(model.ListFunds()) > 0 {
@@ -43,6 +43,7 @@ func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
 	infosURL := flag.String(`infos`, ``, `Informations URL`)
 	dbConfig := db.Flags(``)
+	corsConfig := cors.Flags(``)
 	flag.Parse()
 
 	if *url != `` {
@@ -63,6 +64,7 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
+	apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(corsConfig, handler())))))
 	server := &http.Server{
 		Addr:    `:` + port,
 		Handler: apiHandler,
