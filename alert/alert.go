@@ -16,7 +16,7 @@ func main() {
 	score := flag.Float64(`score`, 25.0, `Score value to notification when above`)
 	hour := flag.Int(`hour`, 8, `Hour of day for sending notifications in Europe/Paris`)
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
-	dbConfig := db.Flags(``)
+	dbConfig := db.Flags(`db`)
 	flag.Parse()
 
 	fundsDB, err := db.GetDB(dbConfig)

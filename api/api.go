@@ -42,8 +42,11 @@ func handler() http.Handler {
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
 	infosURL := flag.String(`infos`, ``, `Informations URL`)
-	dbConfig := db.Flags(``)
-	corsConfig := cors.Flags(``)
+	prometheusConfig := prometheus.Flags(`prometheus`)
+	rateConfig := rate.Flags(`rate`)
+	owaspConfig := owasp.Flags(``)
+	corsConfig := cors.Flags(`cors`)
+	dbConfig := db.Flags(`db`)
 	flag.Parse()
 
 	if *url != `` {
@@ -64,7 +67,7 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
-	apiHandler = prometheus.Handler(`http`, rate.Handler(gziphandler.GzipHandler(owasp.Handler(cors.Handler(corsConfig, handler())))))
+	apiHandler = prometheus.Handler(prometheusConfig, rate.Handler(rateConfig, gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler())))))
 	server := &http.Server{
 		Addr:    `:` + port,
 		Handler: apiHandler,
