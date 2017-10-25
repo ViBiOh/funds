@@ -25,7 +25,7 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: '50m'
+        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 256
@@ -59,7 +59,7 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: '50m'
+        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 256
@@ -86,7 +86,7 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: '50m'
+        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 128
