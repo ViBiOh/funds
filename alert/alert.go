@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/ViBiOh/funds/mailjet"
+	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/funds/notifier"
 	"github.com/ViBiOh/httputils/db"
 )
@@ -22,7 +23,7 @@ func main() {
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
-	} else {
+	} else if fundsDB != nil {
 		log.Print(`Database ready`)
 	}
 
@@ -35,6 +36,9 @@ func main() {
 
 	log.Printf(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)
 
+	if err := model.Init(``, fundsDB); err != nil {
+		log.Printf(`Error while initializing model: %v`, err)
+	}
 	if err := notifier.Init(fundsDB); err != nil {
 		log.Printf(`Error while initializing notifier: %v`, err)
 	}
