@@ -28,13 +28,15 @@ func Init(url string, db *sql.DB) error {
 	fundURL = url
 	fundsDB = db
 
-	go func() {
-		refresh()
-		c := time.Tick(refreshDelay)
-		for range c {
+	if fundURL != `` {
+		go func() {
 			refresh()
-		}
-	}()
+			c := time.Tick(refreshDelay)
+			for range c {
+				refresh()
+			}
+		}()
+	}
 
 	return nil
 }
