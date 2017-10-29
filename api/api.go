@@ -57,7 +57,7 @@ func main() {
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
 		log.Printf(`Error while initializing database: %v`, err)
-	} else if db.Ping(fundsDB) {
+	} else if fundsDB != nil {
 		log.Print(`Database ready`)
 	}
 
