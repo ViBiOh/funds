@@ -1,12 +1,15 @@
+-- Cleaning
+DROP TABLE IF EXISTS alerts;
+DROP TABLE IF EXISTS funds;
+
 DROP INDEX IF EXISTS alerts_id;
 DROP INDEX IF EXISTS alerts_isin;
-DROP TABLE IF EXISTS alerts;
+DROP INDEX IF EXISTS funds_isin;
+
 DROP SEQUENCE IF EXISTS alerts_id_seq;
 DROP TYPE IF EXISTS alert_type;
 
-DROP INDEX IF EXISTS funds_isin;
-DROP TABLE IF EXISTS funds;
-
+-- Funds
 CREATE TABLE funds (
   isin TEXT NOT NULL,
   label TEXT NOT NULL,
@@ -17,6 +20,7 @@ CREATE TABLE funds (
 
 CREATE UNIQUE INDEX funds_isin ON funds (isin);
 
+-- Alerts
 CREATE TYPE alert_type AS ENUM ('above', 'below');
 
 CREATE SEQUENCE alerts_id_seq;

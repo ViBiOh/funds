@@ -24,6 +24,7 @@ after_success: |
 
     sed \
       -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
+      -e "s|\${FUNDS_DATABASE_DIR}|${FUNDS_DATABASE_DIR}|g" \
       -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" \
       -e "s|\${MAILJET_APIKEY_PUBLIC}|${MAILJET_APIKEY_PUBLIC}|g" \
       -e "s|\${MAILJET_APIKEY_PRIVATE}|${MAILJET_APIKEY_PRIVATE}|g" \
