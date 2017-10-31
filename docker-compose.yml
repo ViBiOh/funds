@@ -1,6 +1,26 @@
 version: '2'
 
 services:
+  db:
+    image: vibioh/postgres
+    labels:
+      traefik.enable: 'false'
+    environment:
+      POSTGRES_DB: 'funds'
+      POSTGRES_USER: 'funds'
+      POSTGRES_PASSWORD: '${FUNDS_DATABASE_PASS}'
+    volumes:
+    - ${FUNDS_DATABASE_DIR}:/var/lib/postgresql/data
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+    restart: on-failure:5
+    cpu_shares: 256
+    mem_limit: 134217728
+    security_opt:
+    - no-new-privileges
+
   api:
     image: vibioh/funds-api
     command:
@@ -20,8 +40,6 @@ services:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
-    external_links:
-    - postgres_db_1:db
     logging:
       driver: json-file
       options:
@@ -54,8 +72,6 @@ services:
       test: [ "CMD-SHELL", "-dbHost", "db", "-dbUser", "funds", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "funds", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
     labels:
       traefik.enable: 'false'
-    external_links:
-    - postgres_db_1:db
     logging:
       driver: json-file
       options:

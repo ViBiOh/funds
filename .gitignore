@@ -13,3 +13,4 @@ zoneinfo.zip
 # Go binary
 bin/
 coverage.txt
+data_*/
