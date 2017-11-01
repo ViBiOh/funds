@@ -1,5 +1,9 @@
 package model
 
+import (
+	"fmt"
+)
+
 // Fund informations
 type Fund struct {
 	ID            string  `json:"id"`
@@ -24,4 +28,41 @@ func (f *Fund) GetID() string {
 func (f *Fund) ComputeScore() {
 	score := (0.25 * f.OneMonth) + (0.3 * f.ThreeMonths) + (0.25 * f.SixMonths) + (0.2 * f.OneYear) - (0.1 * f.VolThreeYears)
 	f.Score = float64(int(score*100)) / 100
+}
+
+// GetFundsAbove retrieves funds above score
+func GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*Fund, error) {
+	fundsToAlert := make([]*Fund, 0)
+
+	funds, err := ReadFundsWithScoreAbove(score)
+	if err != nil {
+		return nil, fmt.Errorf(`Error while reading funds with score >= %.2f: %v`, score, err)
+	}
+
+	for _, fund := range funds {
+		if alert, ok := currentAlerts[fund.Isin]; ok {
+			if alert.AlertType != `above` {
+				fundsToAlert = append(fundsToAlert, fund)
+			}
+		} else {
+			fundsToAlert = append(fundsToAlert, fund)
+		}
+	}
+
+	return fundsToAlert, nil
+}
+
+// GetFundsBelow retrieves funds below score
+func GetFundsBelow(currentAlerts map[string]*Alert) ([]*Fund, error) {
+	funds := make([]*Fund, 0)
+
+	for _, alert := range currentAlerts {
+		if fund, err := ReadFundByIsin(alert.Isin); err != nil {
+			return nil, fmt.Errorf(`Error while reading funds with isin '%s': %v`, alert.Isin, err)
+		} else if fund.Score < alert.Score {
+			funds = append(funds, fund)
+		}
+	}
+
+	return funds, nil
 }

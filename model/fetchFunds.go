@@ -86,7 +86,7 @@ func fetchVolatilite(url string, fund *Fund) error {
 
 func fetchFund(fundID []byte) (Fund, error) {
 	cleanID := cleanID(fundID)
-	url := fundURL + cleanID
+	url := *fundURL + cleanID
 	fund := &Fund{ID: cleanID}
 
 	if err := fetchInfosAndPerformances(url, fund); err != nil {

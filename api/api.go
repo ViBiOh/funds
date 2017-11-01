@@ -10,7 +10,6 @@ import (
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
-	"github.com/ViBiOh/httputils/db"
 	"github.com/ViBiOh/httputils/owasp"
 	"github.com/ViBiOh/httputils/prometheus"
 	"github.com/ViBiOh/httputils/rate"
@@ -41,12 +40,10 @@ func handler() http.Handler {
 
 func main() {
 	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
-	infosURL := flag.String(`infos`, ``, `Informations URL`)
 	prometheusConfig := prometheus.Flags(`prometheus`)
 	rateConfig := rate.Flags(`rate`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
-	dbConfig := db.Flags(`db`)
 	flag.Parse()
 
 	if *url != `` {
@@ -54,14 +51,7 @@ func main() {
 		return
 	}
 
-	fundsDB, err := db.GetDB(dbConfig)
-	if err != nil {
-		log.Printf(`Error while initializing database: %v`, err)
-	} else if fundsDB != nil {
-		log.Print(`Database ready`)
-	}
-
-	if err := model.Init(*infosURL, fundsDB); err != nil {
+	if err := model.Init(); err != nil {
 		log.Printf(`Error while initializing model: %v`, err)
 	}
 

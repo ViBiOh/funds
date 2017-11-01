@@ -1,7 +1,6 @@
 package notifier
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -9,7 +8,6 @@ import (
 
 	"github.com/ViBiOh/funds/mailjet"
 	"github.com/ViBiOh/funds/model"
-	"github.com/ViBiOh/httputils/db"
 )
 
 const locationStr = `Europe/Paris`
@@ -19,20 +17,26 @@ const subject = `[Funds] Score level notification`
 const notificationInterval = 24 * time.Hour
 
 var location *time.Location
-var fundsDB *sql.DB
 
 // Init initialize notifier tools
-func Init(db *sql.DB) error {
-	fundsDB = db
-
-	loc, err := time.LoadLocation(locationStr)
+func Init() (err error) {
+	location, err = time.LoadLocation(locationStr)
 	if err != nil {
-		return fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
+		err = fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
+		return
 	}
 
-	location = loc
+	if err = model.Init(); err != nil {
+		err = fmt.Errorf(`Error while initializing model: %v`, err)
+		return
+	}
 
-	return InitEmail()
+	if err = InitEmail(); err != nil {
+		err = fmt.Errorf(`Error while initializing email: %v`, err)
+		return
+	}
+
+	return
 }
 
 func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
@@ -44,70 +48,6 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	log.Printf(`Next notification at %v`, nextTime)
 
 	return time.NewTimer(nextTime.Sub(time.Now()))
-}
-
-func getCurrentAlerts() (map[string]*model.Alert, error) {
-	currentAlerts := make(map[string]*model.Alert)
-
-	if !db.Ping(fundsDB) {
-		return currentAlerts, nil
-	}
-
-	alerts, err := model.ReadAlertsOpened()
-	if err != nil {
-		return nil, fmt.Errorf(`Error while reading opened alerts: %v`, err)
-	}
-
-	for _, alert := range alerts {
-		if _, ok := currentAlerts[alert.Isin]; !ok {
-			currentAlerts[alert.Isin] = alert
-		}
-	}
-
-	return currentAlerts, nil
-}
-
-func getFundsAbove(score float64, currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
-	fundsToAlert := make([]*model.Fund, 0)
-
-	if !db.Ping(fundsDB) {
-		return fundsToAlert, nil
-	}
-
-	funds, err := model.ReadFundsWithScoreAbove(score)
-	if err != nil {
-		return nil, fmt.Errorf(`Error while reading funds with score >= %.2f: %v`, score, err)
-	}
-
-	for _, fund := range funds {
-		if alert, ok := currentAlerts[fund.Isin]; ok {
-			if alert.AlertType != `above` {
-				fundsToAlert = append(fundsToAlert, fund)
-			}
-		} else {
-			fundsToAlert = append(fundsToAlert, fund)
-		}
-	}
-
-	return fundsToAlert, nil
-}
-
-func getFundsBelow(currentAlerts map[string]*model.Alert) ([]*model.Fund, error) {
-	funds := make([]*model.Fund, 0)
-
-	if !db.Ping(fundsDB) {
-		return funds, nil
-	}
-
-	for _, alert := range currentAlerts {
-		if fund, err := model.ReadFundByIsin(alert.Isin); err != nil {
-			return nil, fmt.Errorf(`Error while reading funds with isin '%s': %v`, alert.Isin, err)
-		} else if fund.Score < alert.Score {
-			funds = append(funds, fund)
-		}
-	}
-
-	return funds, nil
 }
 
 func saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
@@ -129,17 +69,17 @@ func saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
 }
 
 func notify(recipients []string, score float64) error {
-	currentAlerts, err := getCurrentAlerts()
+	currentAlerts, err := model.GetCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
 	}
 
-	above, err := getFundsAbove(score, currentAlerts)
+	above, err := model.GetFundsAbove(score, currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting above funds: %v`, err)
 	}
 
-	below, err := getFundsBelow(currentAlerts)
+	below, err := model.GetFundsBelow(currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
@@ -154,17 +94,13 @@ func notify(recipients []string, score float64) error {
 			return nil
 		}
 
-		if mailjet.Ping() {
-			if err := mailjet.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
-				return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
-			}
-			log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
+		if err := mailjet.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
+			return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 		}
+		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
-		if db.Ping(fundsDB) {
-			if err := saveAlerts(score, above, below); err != nil {
-				return fmt.Errorf(`Error while saving alerts: %v`, err)
-			}
+		if err := saveAlerts(score, above, below); err != nil {
+			return fmt.Errorf(`Error while saving alerts: %v`, err)
 		}
 	}
 

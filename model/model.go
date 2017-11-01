@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,17 +19,22 @@ import (
 const maxConcurrentFetcher = 32
 const refreshDelay = 8 * time.Hour
 const listPrefix = `/list`
+const dataSaveLabel = `data save`
 
+var fundURL = flag.String(`infos`, ``, `Informations URL`)
+var dbConfig = db.Flags(`db`)
 var fundsDB *sql.DB
-var fundURL string
+
 var fundsMap = sync.Map{}
 
 // Init start concurrent map and init it from crawling
-func Init(url string, db *sql.DB) error {
-	fundURL = url
-	fundsDB = db
+func Init() (err error) {
+	fundsDB, err = db.GetDB(dbConfig)
+	if err != nil {
+		err = fmt.Errorf(`Error while initializing database: %v`, err)
+	}
 
-	if fundURL != `` {
+	if *fundURL != `` {
 		go func() {
 			refresh()
 			c := time.Tick(refreshDelay)
@@ -38,7 +44,12 @@ func Init(url string, db *sql.DB) error {
 		}()
 	}
 
-	return nil
+	return
+}
+
+// Health check health
+func Health() bool {
+	return db.Ping(fundsDB)
 }
 
 func refresh() error {
@@ -59,9 +70,6 @@ func refresh() error {
 }
 
 func refreshData() error {
-	log.Print(`Data refresh started`)
-	defer log.Print(`Data refresh ended`)
-
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ID.([]byte))
 	})
@@ -79,7 +87,6 @@ func refreshData() error {
 	for i := 0; i < len(fundsIds); i++ {
 		select {
 		case crawlErr := <-errors:
-			log.Print(crawlErr.Err)
 			errorIds = append(errorIds, crawlErr.Input.([]byte))
 			break
 		case result := <-results:
@@ -96,12 +103,7 @@ func refreshData() error {
 	return nil
 }
 
-const dataSaveLabel = `data save`
-
 func saveData() (err error) {
-	log.Print(`Data save started`)
-	defer log.Print(`Data save ended`)
-
 	var tx *sql.Tx
 	if tx, err = db.GetTx(fundsDB, dataSaveLabel, nil); err != nil {
 		return err
