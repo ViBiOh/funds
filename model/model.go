@@ -112,13 +112,10 @@ func saveData() (err error) {
 	}()
 
 	fundsMap.Range(func(_ interface{}, value interface{}) bool {
-		log.Printf(`loop entry`)
 		fund := value.(Fund)
-		log.Printf(`saving %v`, fund)
 		err = SaveFund(&fund, tx)
-		log.Printf(`result %v`, err)
 
-		return err != nil
+		return err == nil
 	})
 
 	return
