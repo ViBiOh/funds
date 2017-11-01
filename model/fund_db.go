@@ -65,6 +65,9 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 
 	err := fundsDB.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
 		return nil, fmt.Errorf(`Error while querying %s: %v`, fundByIsinLabel, err)
 	}
 

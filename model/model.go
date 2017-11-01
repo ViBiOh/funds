@@ -109,18 +109,15 @@ func saveData() (err error) {
 
 	defer func() {
 		err = db.EndTx(dataSaveLabel, tx, err)
-		log.Printf(`Error defering saving: %v`, err)
 	}()
 
 	fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
 		err = SaveFund(&fund, tx)
-		log.Printf(`Error while saving: %v`, err)
 
 		return err == nil
 	})
 
-	log.Printf(`Error exiting saving: %v`, err)
 	return
 }
 
