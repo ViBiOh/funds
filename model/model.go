@@ -60,10 +60,8 @@ func refresh() error {
 		log.Printf(`Error while refreshing: %v`, err)
 	}
 
-	if db.Ping(fundsDB) {
-		if err := saveData(); err != nil {
-			log.Printf(`Error while saving: %v`, err)
-		}
+	if err := saveData(); err != nil {
+		log.Printf(`Error while saving: %v`, err)
 	}
 
 	return nil

@@ -21,7 +21,7 @@ var modelHandler = model.Handler()
 var apiHandler http.Handler
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if len(model.ListFunds()) > 0 {
+	if len(model.ListFunds()) > 0 && model.Health() {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
