@@ -121,7 +121,7 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err == nil {
+			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
 				err = fmt.Errorf(`Error while creating fund: %v`, err)
 			}
 		}
