@@ -104,7 +104,7 @@ func refreshData() error {
 func saveData() (err error) {
 	var tx *sql.Tx
 	if tx, err = db.GetTx(fundsDB, dataSaveLabel, nil); err != nil {
-		return err
+		return
 	}
 
 	defer func() {
@@ -112,8 +112,12 @@ func saveData() (err error) {
 	}()
 
 	fundsMap.Range(func(_ interface{}, value interface{}) bool {
+		log.Printf(`loop entry`)
 		fund := value.(Fund)
+		log.Printf(`saving %v`, fund)
 		err = SaveFund(&fund, tx)
+		log.Printf(`result %v`, err)
+
 		return err != nil
 	})
 
