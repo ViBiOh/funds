@@ -76,7 +76,7 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 
 // ReadFundsWithScoreAbove retrieves Fund with score above given level
 func ReadFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := fundsDB.Query(fundsWithScoreAboveLabel, fundsWithScoreAboveQuery, minScore)
+	rows, err := fundsDB.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}

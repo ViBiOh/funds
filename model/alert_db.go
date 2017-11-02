@@ -48,7 +48,7 @@ INSERT INTO
 
 // ReadAlertsOpened retrieves current Alerts (only one mail sent)
 func ReadAlertsOpened() (alerts []*Alert, err error) {
-	rows, err := fundsDB.Query(alertsOpenedLabel, alertsOpenedQuery)
+	rows, err := fundsDB.Query(alertsOpenedQuery)
 	if err != nil {
 		return
 	}
