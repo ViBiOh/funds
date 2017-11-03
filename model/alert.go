@@ -15,9 +15,9 @@ type Alert struct {
 func GetCurrentAlerts() (map[string]*Alert, error) {
 	currentAlerts := make(map[string]*Alert)
 
-	alerts, err := ReadAlertsOpened()
+	alerts, err := ListAlertsOpened()
 	if err != nil {
-		return nil, fmt.Errorf(`Error while reading opened alerts: %v`, err)
+		return nil, fmt.Errorf(`Error while listing opened alerts: %v`, err)
 	}
 
 	for _, alert := range alerts {

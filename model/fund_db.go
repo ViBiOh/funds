@@ -7,7 +7,6 @@ import (
 	"github.com/ViBiOh/httputils/db"
 )
 
-const fundByIsinLabel = `fund by isin`
 const fundByIsinQuery = `
 SELECT
   label,
@@ -18,7 +17,6 @@ WHERE
   isin = $1
 `
 
-const fundsWithScoreAboveLabel = `funds with above score`
 const fundsWithScoreAboveQuery = `
 SELECT
   isin,
@@ -32,7 +30,6 @@ ORDER BY
   isin ASC
 `
 
-const fundsSaveLabel = `fund save`
 const fundsCreateQuery = `
 INSERT INTO
   funds
@@ -68,21 +65,21 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		return nil, fmt.Errorf(`Error while querying %s: %v`, fundByIsinLabel, err)
+		return nil, fmt.Errorf(`Error while reading fund by isin: %v`, err)
 	}
 
 	return &Fund{Isin: isin, Label: label, Score: score}, nil
 }
 
-// ReadFundsWithScoreAbove retrieves Fund with score above given level
-func ReadFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
+// ListFundsWithScoreAbove retrieves Fund with score above given level
+func ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 	rows, err := fundsDB.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}
 
 	defer func() {
-		err = db.RowsClose(fundsWithScoreAboveLabel, rows, err)
+		err = db.RowsClose(`list funds with score above`, rows, err)
 	}()
 
 	var (
@@ -109,13 +106,13 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, fundsSaveLabel, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, `save fund`, tx); err != nil {
 		return
 	}
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(fundsSaveLabel, usedTx, err)
+			err = db.EndTx(`save fund`, usedTx, err)
 		}()
 	}
 
@@ -124,6 +121,8 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
 				err = fmt.Errorf(`Error while creating fund: %v`, err)
 			}
+		} else {
+			err = fmt.Errorf(`Error while checking if fund already exist: %v`, err)
 		}
 	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin); err != nil {
 		err = fmt.Errorf(`Error while updating fund: %v`, err)

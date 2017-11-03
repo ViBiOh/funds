@@ -7,8 +7,7 @@ import (
 	"github.com/ViBiOh/httputils/db"
 )
 
-const alertsOpenedLabel = `alerts opened`
-const alertsOpenedQuery = `
+const listAlertsOpenedQuery = `
 SELECT
   isin,
   type,
@@ -31,8 +30,7 @@ ORDER BY
   creation_date DESC
 `
 
-const alertsCreateLabel = `alert creation`
-const alertsCreateQuery = `
+const saveAlertQuery = `
 INSERT INTO
   alerts
 (
@@ -46,15 +44,15 @@ INSERT INTO
 )
 `
 
-// ReadAlertsOpened retrieves current Alerts (only one mail sent)
-func ReadAlertsOpened() (alerts []*Alert, err error) {
-	rows, err := fundsDB.Query(alertsOpenedQuery)
+// ListAlertsOpened retrieves current Alerts (only one mail sent)
+func ListAlertsOpened() (alerts []*Alert, err error) {
+	rows, err := fundsDB.Query(listAlertsOpenedQuery)
 	if err != nil {
 		return
 	}
 
 	defer func() {
-		err = db.RowsClose(alertsOpenedLabel, rows, err)
+		err = db.RowsClose(`list alerts opened`, rows, err)
 	}()
 
 	var (
@@ -82,17 +80,17 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, alertsCreateLabel, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, `save alert`, tx); err != nil {
 		return
 	}
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(alertsCreateLabel, usedTx, err)
+			err = db.EndTx(`save alert`, usedTx, err)
 		}()
 	}
 
-	if _, err = usedTx.Exec(alertsCreateQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
+	if _, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
 		err = fmt.Errorf(`Error while creating alert for isin=%s: %v`, alert.Isin, err)
 	}
 
