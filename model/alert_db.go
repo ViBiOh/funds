@@ -52,7 +52,7 @@ func ListAlertsOpened() (alerts []*Alert, err error) {
 	}
 
 	defer func() {
-		err = db.RowsClose(`list alerts opened`, rows, err)
+		err = db.RowsClose(rows, err)
 	}()
 
 	var (
@@ -80,18 +80,18 @@ func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, `save alert`, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, tx); err != nil {
 		return
 	}
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(`save alert`, usedTx, err)
+			err = db.EndTx(usedTx, err)
 		}()
 	}
 
 	if _, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
-		err = fmt.Errorf(`Error while creating alert for isin=%s: %v`, alert.Isin, err)
+		err = fmt.Errorf(`Error while querying: %v`, err)
 	}
 
 	return

@@ -53,6 +53,26 @@ WHERE
   isin = $3
 `
 
+func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
+	var (
+		isin  string
+		label string
+		score float64
+	)
+
+	list := make([]*Fund, 0, pageSize)
+
+	for rows.Next() {
+		if err := rows.Scan(&isin, &label, &score); err != nil {
+			return nil, fmt.Errorf(`Error while scanning fund line: %v`, err)
+		}
+
+		list = append(list, &Fund{Isin: isin, Label: label, Score: score})
+	}
+
+	return list, nil
+}
+
 // ReadFundByIsin retrieves Fund by isin
 func ReadFundByIsin(isin string) (*Fund, error) {
 	var (
@@ -65,7 +85,7 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		return nil, fmt.Errorf(`Error while reading fund by isin: %v`, err)
+		return nil, fmt.Errorf(`Error while querying: %v`, err)
 	}
 
 	return &Fund{Isin: isin, Label: label, Score: score}, nil
@@ -75,28 +95,15 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 func ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 	rows, err := fundsDB.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
+		err = fmt.Errorf(`Error while querying: %v`, err)
 		return
 	}
 
 	defer func() {
-		err = db.RowsClose(`list funds with score above`, rows, err)
+		err = db.RowsClose(rows, err)
 	}()
 
-	var (
-		isin  string
-		label string
-		score float64
-	)
-
-	for rows.Next() {
-		if err = rows.Scan(&isin, &label, &score); err != nil {
-			return
-		}
-
-		funds = append(funds, &Fund{Isin: isin, Label: label, Score: score})
-	}
-
-	return
+	return scanFunds(rows, 0)
 }
 
 // SaveFund saves Fund
@@ -106,26 +113,26 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, `save fund`, tx); err != nil {
+	if usedTx, err = db.GetTx(fundsDB, tx); err != nil {
 		return
 	}
 
 	if usedTx != tx {
 		defer func() {
-			err = db.EndTx(`save fund`, usedTx, err)
+			err = db.EndTx(usedTx, err)
 		}()
 	}
 
 	if _, err = ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
 			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
-				err = fmt.Errorf(`Error while creating fund: %v`, err)
+				err = fmt.Errorf(`Error while creating: %v`, err)
 			}
 		} else {
-			err = fmt.Errorf(`Error while checking if fund already exist: %v`, err)
+			err = fmt.Errorf(`Error while checking if fund already exists: %v`, err)
 		}
 	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin); err != nil {
-		err = fmt.Errorf(`Error while updating fund: %v`, err)
+		err = fmt.Errorf(`Error while updating: %v`, err)
 	}
 
 	return

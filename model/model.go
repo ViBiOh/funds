@@ -19,7 +19,6 @@ import (
 const maxConcurrentFetcher = 32
 const refreshDelay = 8 * time.Hour
 const listPrefix = `/list`
-const dataSaveLabel = `data save`
 
 var fundURL = flag.String(`infos`, ``, `Informations URL`)
 var dbConfig = db.Flags(`db`)
@@ -103,12 +102,12 @@ func refreshData() error {
 
 func saveData() (err error) {
 	var tx *sql.Tx
-	if tx, err = db.GetTx(fundsDB, dataSaveLabel, nil); err != nil {
+	if tx, err = db.GetTx(fundsDB, nil); err != nil {
 		return
 	}
 
 	defer func() {
-		err = db.EndTx(dataSaveLabel, tx, err)
+		err = db.EndTx(tx, err)
 	}()
 
 	fundsMap.Range(func(_ interface{}, value interface{}) bool {
