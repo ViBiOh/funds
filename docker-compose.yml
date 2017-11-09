@@ -1,8 +1,8 @@
-version: '2'
+version: '2.1'
 
 services:
   db:
-    image: vibioh/postgres
+    image: postgres:10-alpine
     labels:
       traefik.enable: 'false'
     environment:
@@ -11,6 +11,9 @@ services:
       POSTGRES_PASSWORD: '${FUNDS_DATABASE_PASS}'
     volumes:
     - ${FUNDS_DATABASE_DIR}:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "psql", "-q", "-t", "-c", "SELECT now();" ]
+    user: postgres
     logging:
       driver: json-file
       options:
