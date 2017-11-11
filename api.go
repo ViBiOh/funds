@@ -39,17 +39,14 @@ func handler() http.Handler {
 }
 
 func main() {
-	url := flag.String(`c`, ``, `URL to healthcheck (check and exit)`)
+	alcotestConfig := alcotest.Flags(``)
 	prometheusConfig := prometheus.Flags(`prometheus`)
 	rateConfig := rate.Flags(`rate`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
 	flag.Parse()
 
-	if *url != `` {
-		alcotest.Do(url)
-		return
-	}
+	alcotest.DoAndExit(alcotestConfig)
 
 	if err := model.Init(); err != nil {
 		log.Printf(`Error while initializing model: %v`, err)
