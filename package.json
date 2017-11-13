@@ -96,7 +96,17 @@
   },
   "babel": {
     "presets": [
-      "env",
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "> 1%",
+              "last 2 versions"
+            ]
+          }
+        }
+      ],
       "react"
     ],
     "plugins": [
