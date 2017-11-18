@@ -16,7 +16,7 @@ import (
 	"github.com/ViBiOh/httputils/tools"
 )
 
-const maxConcurrentFetcher = 10
+const maxConcurrentFetcher = 24
 const refreshDelay = 8 * time.Hour
 const listPrefix = `/list`
 
