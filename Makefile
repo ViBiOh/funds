@@ -1,20 +1,14 @@
-default: deps dev
+default: go docker
+
+go: deps dev
 
 dev: format lint tst bench build
 
+docker: docker-deps docker-build
+
 deps:
+	go get -t ./...
 	go get -u github.com/golang/lint/golint
-	go get -u github.com/lib/pq
-	go get -u github.com/NYTimes/gziphandler
-	go get -u github.com/tdewolff/minify
-	go get -u github.com/ViBiOh/alcotest/alcotest
-	go get -u github.com/ViBiOh/httputils
-	go get -u github.com/ViBiOh/httputils/cors
-	go get -u github.com/ViBiOh/httputils/db
-	go get -u github.com/ViBiOh/httputils/owasp
-	go get -u github.com/ViBiOh/httputils/prometheus
-	go get -u github.com/ViBiOh/httputils/rate
-	go get -u github.com/ViBiOh/httputils/tools
 	go get -u golang.org/x/tools/cmd/goimports
 
 format:
@@ -34,3 +28,18 @@ bench:
 build:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/funds api.go
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/notifier alert/alert.go
+
+docker-deps:
+	curl -s -o cacert.pem https://curl.haxx.se/ca/cacert.pem
+	curl -s -o zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip
+
+docker-build:
+	docker build -t ${DOCKER_USER}/funds-notifier -f alert/Dockerfile .
+	docker build -t ${DOCKER_USER}/funds-front -f app/Dockerfile .
+	docker build -t ${DOCKER_USER}/ -f Dockerfile .
+
+docker-push:
+	docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+	docker push ${DOCKER_USER}/funds-notifier
+	docker push ${DOCKER_USER}/funds-front
+	docker push ${DOCKER_USER}/funds-api

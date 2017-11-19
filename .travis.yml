@@ -4,23 +4,16 @@ services:
 - docker
 go: 1.9
 install:
-- make
 - nvm install 8
 - npm install -g npm
 - npm i
-- npm run build
 script: |
-  bash <(curl -s https://codecov.io/bash) &&
-  curl -o zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip &&
-  docker build -t ${DOCKER_USER}/funds-notifier -f Dockerfile_notifier . &&
-  docker build -t ${DOCKER_USER}/funds-front -f Dockerfile_front . &&
-  docker build -t ${DOCKER_USER}/funds-api -f Dockerfile_api .
+  make && npm run build
 after_success: |
+  bash <(curl -s https://codecov.io/bash)
+
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
-    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} \
-      && docker push ${DOCKER_USER}/funds-notifier \
-      && docker push ${DOCKER_USER}/funds-front \
-      && docker push ${DOCKER_USER}/funds-api
+    make docker-push
 
     sed \
       -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
