@@ -8,7 +8,7 @@ install:
 - npm install -g npm
 - npm i
 script: |
-  make && npm run build
+  npm run build && make
 after_success: |
   bash <(curl -s https://codecov.io/bash)
 
