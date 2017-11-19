@@ -36,7 +36,7 @@ docker-deps:
 docker-build:
 	docker build -t ${DOCKER_USER}/funds-notifier -f alert/Dockerfile .
 	docker build -t ${DOCKER_USER}/funds-front -f app/Dockerfile .
-	docker build -t ${DOCKER_USER}/ -f Dockerfile .
+	docker build -t ${DOCKER_USER}/funds-api -f Dockerfile .
 
 docker-push:
 	docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
