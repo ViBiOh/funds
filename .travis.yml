@@ -14,6 +14,7 @@ after_success: |
 
   if [ "${TRAVIS_BRANCH}" == "master" ]; then
     make docker-push
+    curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
 
     sed \
       -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
