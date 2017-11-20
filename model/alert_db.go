@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/ViBiOh/httputils/db"
@@ -44,6 +45,8 @@ INSERT INTO
 )
 `
 
+var errNilAlert = errors.New(`Unable to save nil Alert`)
+
 // ListAlertsOpened retrieves current Alerts (only one mail sent)
 func ListAlertsOpened() (alerts []*Alert, err error) {
 	rows, err := fundsDB.Query(listAlertsOpenedQuery)
@@ -76,7 +79,7 @@ func ListAlertsOpened() (alerts []*Alert, err error) {
 // SaveAlert saves Alert
 func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	if alert == nil {
-		return fmt.Errorf(`Unable to save nil Alert`)
+		return errNilAlert
 	}
 
 	var usedTx *sql.Tx

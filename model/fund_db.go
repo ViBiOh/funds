@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/ViBiOh/httputils/db"
@@ -52,6 +53,8 @@ SET
 WHERE
   isin = $3
 `
+
+var errNilFund = errors.New(`Unable to save nil Fund`)
 
 func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 	var (
@@ -109,7 +112,7 @@ func ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 // SaveFund saves Fund
 func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	if fund == nil {
-		return fmt.Errorf(`Unable to save nil Fund`)
+		return errNilFund
 	}
 
 	var usedTx *sql.Tx
