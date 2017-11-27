@@ -8,9 +8,13 @@ dist/
 package-lock.json
 e2e/output
 doc/
-zoneinfo.zip
 
-# Go binary
+# Golang
 bin/
-coverage.txt
+vendor/
+coverage.*
+
+# Docker
+cacert.pem
+zoneinfo.zip
 data_*/
