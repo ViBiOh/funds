@@ -6,6 +6,7 @@ import (
 	"html/template"
 
 	"github.com/ViBiOh/funds/model"
+	"github.com/aymerick/douceur/inliner"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/html"
 )
@@ -21,18 +22,11 @@ var minifier *minify.M
 
 // InitEmail initialize template and minifier
 func InitEmail() error {
-	funcs := template.FuncMap{
+	mailTmpl = template.Must(template.New(`email.html`).Funcs(template.FuncMap{
 		`odd`: func(i int) bool {
 			return i%2 == 0
 		},
-	}
-
-	tmpl, err := template.New(`email.html`).Funcs(funcs).ParseFiles(`email.html`)
-	if err != nil {
-		return fmt.Errorf(`Error while parsing template: %v`, err)
-	}
-
-	mailTmpl = tmpl
+	}).ParseFiles(`email.html`))
 
 	m := minify.New()
 	m.AddFunc("text/html", html.Minify)
@@ -48,9 +42,18 @@ func getHTMLContent(scoreLevel float64, above []*model.Fund, below []*model.Fund
 	}
 
 	templateBuffer := &bytes.Buffer{}
-
 	if err := mailTmpl.ExecuteTemplate(templateBuffer, `main`, scoreTemplateContent{Score: scoreLevel, AboveFunds: above, BelowFunds: below}); err != nil {
 		return nil, fmt.Errorf(`Error while executing template: %v`, err)
+	}
+
+	html, err := inliner.Inline(templateBuffer.String())
+	if err != nil {
+		return nil, fmt.Errorf(`Error while inlining style: %v`, err)
+	}
+
+	templateBuffer.Reset()
+	if _, err = templateBuffer.WriteString(html); err != nil {
+		return nil, fmt.Errorf(`Error while loading buffer: %v`, err)
 	}
 
 	minifyBuffer := &bytes.Buffer{}

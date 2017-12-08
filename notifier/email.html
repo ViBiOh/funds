@@ -1,6 +1,37 @@
 {{ define "main" }}
-<body style="box-sizing: border-box; width: 100%; border: 0; margin: 0; padding: 5px;">
-    <h1 style="box-sizing: border-box; width: 100%; text-align: center; background-color: #3a3a3a; color: #f8f8f8; border: 0; padding: 5px; margin: 0 5px 0 0;">Funds</h1>
+<style type="text/css">
+    *:not(html, head) {
+        box-sizing: border-box;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    .no-space {
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .padding {
+        padding: 5px;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .isin {
+        width: 140px;
+    }
+
+    .score {
+        width: 80px;
+    }
+</style>
+<body class="no-space padding full-width">
+    <h1 class="no-space padding full-width center" style="background-color: #3a3a3a; color: #f8f8f8; margin: 0 5px 0 0;">Funds</h1>
     <p>Bonjour,</p>
     {{ if len .AboveFunds }}
     <p style="color: #4cae4c;">
@@ -29,22 +60,22 @@
 {{ end }}
 
 {{ define "funds" }}
-<table style="box-sizing: border-box; border: 0; margin: 0; padding: 0; width: 100%;">
-    <thead style="border: 0; margin: 0; padding: 0; width: 100%;">
-        <tr style="border: 0; margin: 0; padding: 0; width: 100%;">
-            <td style="padding: 5px; width: 140px;">ISIN</td>
-            <td style="padding: 5px;">Libellé</td>
-            <td style="padding: 5px; width: 80px;">Score</td>
+<table class="no-space full-width">
+    <thead class="no-space full-width">
+        <tr class="no-space full-width">
+            <td class="padding isin" >ISIN</td>
+            <td class="padding">Libellé</td>
+            <td class="padding score">Score</td>
         </tr>
     </thead>
-    <tbody style="border: 0; margin: 0; padding: 0; width: 100%;">
+    <tbody class="no-space full-width">
         {{ range $index, $fund := . }}
         <tr style="{{ if odd $index }}background-color: #e1e1e8;{{ end }}">
-            <td style="padding: 5px; width: 140px;">
+            <td class="padding isin">
                 <a href="https://funds.vibioh.fr/?isin={{ $fund.Isin }}" rel="noopener noreferrer" target="_blank">{{ $fund.Isin }}</a>
             </td>
-            <td style="padding: 5px;">{{ $fund.Label }}</td>
-            <td style="padding: 5px; width: 80px;">{{ $fund.Score }}</td>
+            <td class="padding">{{ $fund.Label }}</td>
+            <td class="padding score">{{ $fund.Score }}</td>
         </tr>
         {{end}}
     </tbody>

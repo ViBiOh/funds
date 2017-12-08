@@ -8,6 +8,12 @@
   revision = "d6f46609c7629af3a02d791a4666866eed3cbd3e"
 
 [[projects]]
+  name = "github.com/PuerkitoBio/goquery"
+  packages = ["."]
+  revision = "e1271ee34c6a305e38566ecd27ae374944907ee9"
+  version = "v1.1.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/ViBiOh/alcotest"
   packages = ["alcotest","httpclient"]
@@ -21,6 +27,18 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "349dd0209470eabd9514242c688c403c0926d266"
+
+[[projects]]
+  name = "github.com/aymerick/douceur"
+  packages = ["css","inliner","parser"]
+  revision = "c5c95ec357c8235fbd7f34e8c843d36783f3fad9"
+  version = "v0.2.0"
+
+[[projects]]
+  branch = "master"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
   revision = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9"
@@ -30,6 +48,12 @@
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/gorilla/css"
+  packages = ["scanner"]
+  revision = "398b0b046082ecb3694c01bec6b336a06a4e530a"
 
 [[projects]]
   branch = "master"
@@ -79,9 +103,15 @@
   revision = "bace4cf682c41e03b154044b561575ff541b83e8"
   version = "v2.3.1"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["html","html/atom"]
+  revision = "dc871a5d77e227f5bbf6545176ef3eeebf87e76e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a7a6a94cf2cc860ad32c62716aac42a329808b4a1b74b7fadd0d41d4a16b35e8"
+  inputs-digest = "212bb2823b446e0b13c9f42203e0aa23c2ed66cb100990a81b84f4cfe621cf00"
   solver-name = "gps-cdcl"
   solver-version = 1
