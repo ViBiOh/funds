@@ -3,6 +3,9 @@ sudo: required
 services:
 - docker
 go: 1.9
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/vendor
 install:
 - nvm install 8
 - npm install -g npm
