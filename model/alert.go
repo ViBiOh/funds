@@ -12,10 +12,10 @@ type Alert struct {
 }
 
 // GetCurrentAlerts retrieves current opened alerts
-func GetCurrentAlerts() (map[string]*Alert, error) {
+func (f *FundApp) GetCurrentAlerts() (map[string]*Alert, error) {
 	currentAlerts := make(map[string]*Alert)
 
-	alerts, err := ListAlertsOpened()
+	alerts, err := f.ListAlertsOpened()
 	if err != nil {
 		return nil, fmt.Errorf(`Error while listing opened alerts: %v`, err)
 	}

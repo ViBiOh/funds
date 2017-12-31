@@ -48,8 +48,8 @@ INSERT INTO
 var errNilAlert = errors.New(`Unable to save nil Alert`)
 
 // ListAlertsOpened retrieves current Alerts (only one mail sent)
-func ListAlertsOpened() (alerts []*Alert, err error) {
-	rows, err := fundsDB.Query(listAlertsOpenedQuery)
+func (f *FundApp) ListAlertsOpened() (alerts []*Alert, err error) {
+	rows, err := f.dbConnexion.Query(listAlertsOpenedQuery)
 	if err != nil {
 		return
 	}
@@ -77,13 +77,13 @@ func ListAlertsOpened() (alerts []*Alert, err error) {
 }
 
 // SaveAlert saves Alert
-func SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
+func (f *FundApp) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	if alert == nil {
 		return errNilAlert
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, tx); err != nil {
+	if usedTx, err = db.GetTx(f.dbConnexion, tx); err != nil {
 		return
 	}
 

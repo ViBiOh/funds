@@ -77,13 +77,13 @@ func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 }
 
 // ReadFundByIsin retrieves Fund by isin
-func ReadFundByIsin(isin string) (*Fund, error) {
+func (f *FundApp) ReadFundByIsin(isin string) (*Fund, error) {
 	var (
 		label string
 		score float64
 	)
 
-	err := fundsDB.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
+	err := f.dbConnexion.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -95,8 +95,8 @@ func ReadFundByIsin(isin string) (*Fund, error) {
 }
 
 // ListFundsWithScoreAbove retrieves Fund with score above given level
-func ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := fundsDB.Query(fundsWithScoreAboveQuery, minScore)
+func (f *FundApp) ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
+	rows, err := f.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		err = fmt.Errorf(`Error while querying: %v`, err)
 		return
@@ -110,13 +110,13 @@ func ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 }
 
 // SaveFund saves Fund
-func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
+func (f *FundApp) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	if fund == nil {
 		return errNilFund
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(fundsDB, tx); err != nil {
+	if usedTx, err = db.GetTx(f.dbConnexion, tx); err != nil {
 		return
 	}
 
@@ -126,7 +126,7 @@ func SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	if _, err = ReadFundByIsin(fund.Isin); err != nil {
+	if _, err = f.ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
 			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
 				err = fmt.Errorf(`Error while creating: %v`, err)

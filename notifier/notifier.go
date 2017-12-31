@@ -10,11 +10,13 @@ import (
 	"github.com/ViBiOh/funds/model"
 )
 
-const locationStr = `Europe/Paris`
-const from = `funds@vibioh.fr`
-const name = `Funds App`
-const subject = `[Funds] Score level notification`
-const notificationInterval = 24 * time.Hour
+const (
+	locationStr          = `Europe/Paris`
+	from                 = `funds@vibioh.fr`
+	name                 = `Funds App`
+	subject              = `[Funds] Score level notification`
+	notificationInterval = 24 * time.Hour
+)
 
 var location *time.Location
 
@@ -23,11 +25,6 @@ func Init() (err error) {
 	location, err = time.LoadLocation(locationStr)
 	if err != nil {
 		err = fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
-		return
-	}
-
-	if err = model.Init(); err != nil {
-		err = fmt.Errorf(`Error while initializing model: %v`, err)
 		return
 	}
 
@@ -50,9 +47,9 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
+func saveTypedAlerts(fundApp *model.FundApp, score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := model.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+		if err := fundApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
 		}
 	}
@@ -60,26 +57,26 @@ func saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error
 	return nil
 }
 
-func saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
-	if err := saveTypedAlerts(score, above, `above`); err != nil {
+func saveAlerts(fundApp *model.FundApp, score float64, above []*model.Fund, below []*model.Fund) error {
+	if err := saveTypedAlerts(fundApp, score, above, `above`); err != nil {
 		return err
 	}
 
-	return saveTypedAlerts(score, below, `below`)
+	return saveTypedAlerts(fundApp, score, below, `below`)
 }
 
-func notify(recipients []string, score float64) error {
-	currentAlerts, err := model.GetCurrentAlerts()
+func notify(fundApp *model.FundApp, recipients []string, score float64) error {
+	currentAlerts, err := fundApp.GetCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
 	}
 
-	above, err := model.GetFundsAbove(score, currentAlerts)
+	above, err := fundApp.GetFundsAbove(score, currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting above funds: %v`, err)
 	}
 
-	below, err := model.GetFundsBelow(currentAlerts)
+	below, err := fundApp.GetFundsBelow(currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
@@ -99,7 +96,7 @@ func notify(recipients []string, score float64) error {
 		}
 		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
-		if err := saveAlerts(score, above, below); err != nil {
+		if err := saveAlerts(fundApp, score, above, below); err != nil {
 			return fmt.Errorf(`Error while saving alerts: %v`, err)
 		}
 	}
@@ -108,7 +105,7 @@ func notify(recipients []string, score float64) error {
 }
 
 // Start the notifier
-func Start(recipients string, score float64, hour int, minute int) {
+func Start(recipients string, score float64, hour int, minute int, fundApp *model.FundApp) {
 	timer := getTimer(hour, minute, notificationInterval)
 
 	recipientsList := strings.Split(recipients, `,`)
@@ -116,7 +113,7 @@ func Start(recipients string, score float64, hour int, minute int) {
 	for {
 		select {
 		case <-timer.C:
-			if err := notify(recipientsList, score); err != nil {
+			if err := notify(fundApp, recipientsList, score); err != nil {
 				log.Print(err)
 			}
 			timer.Reset(notificationInterval)

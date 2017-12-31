@@ -16,59 +16,59 @@ import (
 	"github.com/ViBiOh/httputils/tools"
 )
 
-const maxConcurrentFetcher = 24
-const refreshDelay = 8 * time.Hour
-const listPrefix = `/list`
+const (
+	maxConcurrentFetcher = 24
+	refreshDelay         = 8 * time.Hour
+	listPrefix           = `/list`
+)
 
-var fundURL = flag.String(`infos`, ``, `Informations URL`)
-var dbConfig = db.Flags(`db`)
-var fundsDB *sql.DB
+// FundApp wrap all fund methods
+type FundApp struct {
+	dbConnexion *sql.DB
+	fundsURL    string
+	fundsMap    sync.Map
+}
 
-var fundsMap = sync.Map{}
-
-// Init start concurrent map and init it from crawling
-func Init() (err error) {
-	fundsDB, err = db.GetDB(dbConfig)
+// NewFundApp creates FundApp from Flags
+func NewFundApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, error) {
+	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		err = fmt.Errorf(`Error while initializing database: %v`, err)
+		return nil, fmt.Errorf(`Error while initializing database: %v`, err)
 	}
 
-	if *fundURL != `` {
-		go func() {
-			refresh()
-			c := time.Tick(refreshDelay)
-			for range c {
-				refresh()
-			}
-		}()
+	app := &FundApp{dbConnexion: fundsDB, fundsURL: *config[`infos`], fundsMap: sync.Map{}}
+
+	if app.fundsURL != `` {
+		go app.refreshCron()
 	}
 
-	return
+	return app, nil
 }
 
-// Health check health
-func Health() bool {
-	return db.Ping(fundsDB)
+func (f *FundApp) refreshCron() {
+	f.refresh()
+	c := time.Tick(refreshDelay)
+	for range c {
+		f.refresh()
+	}
 }
 
-func refresh() error {
+func (f *FundApp) refresh() {
 	log.Print(`Refresh started`)
 	defer log.Print(`Refresh ended`)
 
-	if err := refreshData(); err != nil {
+	if err := f.refreshData(); err != nil {
 		log.Printf(`Error while refreshing: %v`, err)
 	}
 
-	if err := saveData(); err != nil {
+	if err := f.saveData(); err != nil {
 		log.Printf(`Error while saving: %v`, err)
 	}
-
-	return nil
 }
 
-func refreshData() error {
+func (f *FundApp) refreshData() error {
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
-		return fetchFund(ID.([]byte))
+		return fetchFund(f.fundsURL, ID.([]byte))
 	})
 
 	go func() {
@@ -88,7 +88,7 @@ func refreshData() error {
 			break
 		case result := <-results:
 			content := result.(Fund)
-			fundsMap.Store(content.ID, content)
+			f.fundsMap.Store(content.ID, content)
 			break
 		}
 	}
@@ -100,9 +100,9 @@ func refreshData() error {
 	return nil
 }
 
-func saveData() (err error) {
+func (f *FundApp) saveData() (err error) {
 	var tx *sql.Tx
-	if tx, err = db.GetTx(fundsDB, nil); err != nil {
+	if tx, err = db.GetTx(f.dbConnexion, nil); err != nil {
 		return
 	}
 
@@ -110,9 +110,9 @@ func saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	f.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err = SaveFund(&fund, tx)
+		err = f.SaveFund(&fund, tx)
 
 		return err == nil
 	})
@@ -120,11 +120,16 @@ func saveData() (err error) {
 	return
 }
 
+// Health check health
+func (f *FundApp) Health() bool {
+	return db.Ping(f.dbConnexion)
+}
+
 // ListFunds return content of funds' map
-func ListFunds() []Fund {
+func (f *FundApp) ListFunds() []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
-	fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	f.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		funds = append(funds, value.(Fund))
 		return true
 	})
@@ -132,12 +137,19 @@ func ListFunds() []Fund {
 	return funds
 }
 
-func listHandler(w http.ResponseWriter, r *http.Request) {
-	httputils.ResponseArrayJSON(w, http.StatusOK, ListFunds(), httputils.IsPretty(r.URL.RawQuery))
+func (f *FundApp) listHandler(w http.ResponseWriter, r *http.Request) {
+	httputils.ResponseArrayJSON(w, http.StatusOK, f.ListFunds(), httputils.IsPretty(r.URL.RawQuery))
+}
+
+// Flags add flags for given prefix
+func Flags(prefix string) map[string]*string {
+	return map[string]*string{
+		`infos`: flag.String(tools.ToCamel(prefix+`Infos`), ``, `[funds] Informations URL`),
+	}
 }
 
 // Handler for model request. Should be use with net/http
-func Handler() http.Handler {
+func Handler(app *FundApp) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			w.Write(nil)
@@ -146,7 +158,7 @@ func Handler() http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, listPrefix) {
 			if r.Method == http.MethodGet {
-				listHandler(w, r)
+				app.listHandler(w, r)
 			} else {
 				w.WriteHeader(http.StatusMethodNotAllowed)
 			}

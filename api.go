@@ -10,6 +10,7 @@ import (
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
+	"github.com/ViBiOh/httputils/db"
 	"github.com/ViBiOh/httputils/owasp"
 	"github.com/ViBiOh/httputils/prometheus"
 	"github.com/ViBiOh/httputils/rate"
@@ -17,21 +18,25 @@ import (
 
 const port = `1080`
 
-var modelHandler = model.Handler()
-var apiHandler http.Handler
+var (
+	modelHandler http.Handler
+	apiHandler   http.Handler
+)
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	if len(model.ListFunds()) > 0 && model.Health() {
+func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.FundApp) {
+	if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
 	}
 }
 
-func handler() http.Handler {
+func handler(fundApp *model.FundApp) http.Handler {
+	modelHandler = model.Handler(fundApp)
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == `/health` {
-			healthHandler(w, r)
+			healthHandler(w, r, fundApp)
 		} else {
 			modelHandler.ServeHTTP(w, r)
 		}
@@ -44,17 +49,20 @@ func main() {
 	rateConfig := rate.Flags(`rate`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
+	fundsConfig := model.Flags(``)
+	dbConfig := db.Flags(`db`)
 	flag.Parse()
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	if err := model.Init(); err != nil {
-		log.Printf(`Error while initializing model: %v`, err)
-	}
-
 	log.Print(`Starting server on port ` + port)
 
-	apiHandler = prometheus.Handler(prometheusConfig, rate.Handler(rateConfig, gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler())))))
+	fundApp, err := model.NewFundApp(fundsConfig, dbConfig)
+	if err != nil {
+		log.Printf(`Error while creating Fund app: %v`, err)
+	}
+
+	apiHandler = prometheus.Handler(prometheusConfig, rate.Handler(rateConfig, gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler(fundApp))))))
 	server := &http.Server{
 		Addr:    `:` + port,
 		Handler: apiHandler,
