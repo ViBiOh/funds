@@ -3,6 +3,7 @@ package mailjet
 import (
 	"flag"
 	"fmt"
+	"net/http"
 
 	"github.com/ViBiOh/httputils"
 )
@@ -43,7 +44,7 @@ func SendMail(fromEmail string, fromName string, subject string, to []string, ht
 	}
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	if _, err := httputils.PostJSONBody(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: httputils.GetBasicAuth(*apiPublicKey, *apiPrivateKey)}); err != nil {
+	if _, err := httputils.RequestJSON(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: httputils.GetBasicAuth(*apiPublicKey, *apiPrivateKey)}, http.MethodPost); err != nil {
 		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 

@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/NYTimes/gziphandler"
   packages = ["."]
-  revision = "d6f46609c7629af3a02d791a4666866eed3cbd3e"
+  revision = "47ca22a0aeea4c9ceddfb935d818d636d934c312"
 
 [[projects]]
   name = "github.com/PuerkitoBio/goquery"
@@ -16,14 +16,25 @@
 [[projects]]
   branch = "master"
   name = "github.com/ViBiOh/alcotest"
-  packages = ["alcotest","httpclient"]
-  revision = "7b22ec944b1338c0a0b3f68c7a07f5ba8648ae58"
+  packages = [
+    "alcotest",
+    "httpclient"
+  ]
+  revision = "7187d04caa2bfd06fc89ca52092c0ff924ff39bc"
 
 [[projects]]
   branch = "master"
   name = "github.com/ViBiOh/httputils"
-  packages = [".","cors","db","owasp","prometheus","rate","tools"]
-  revision = "a6b4cec81a40786b75c67462cb80e4587cfb5aa1"
+  packages = [
+    ".",
+    "cors",
+    "db",
+    "owasp",
+    "prometheus",
+    "rate",
+    "tools"
+  ]
+  revision = "78483570250a7c785bf6b15b68238e5cc3527dff"
 
 [[projects]]
   branch = "master"
@@ -33,7 +44,11 @@
 
 [[projects]]
   name = "github.com/aymerick/douceur"
-  packages = ["css","inliner","parser"]
+  packages = [
+    "css",
+    "inliner",
+    "parser"
+  ]
   revision = "c5c95ec357c8235fbd7f34e8c843d36783f3fad9"
   version = "v0.2.0"
 
@@ -58,7 +73,10 @@
 [[projects]]
   branch = "master"
   name = "github.com/lib/pq"
-  packages = [".","oid"]
+  packages = [
+    ".",
+    "oid"
+  ]
   revision = "83612a56d3dd153a94a629cd64925371c9adad78"
 
 [[projects]]
@@ -70,8 +88,11 @@
 [[projects]]
   branch = "master"
   name = "github.com/prometheus/client_golang"
-  packages = ["prometheus","prometheus/promhttp"]
-  revision = "1cdba8fdde81f444626530cce66e138d2f68ae1c"
+  packages = [
+    "prometheus",
+    "prometheus/promhttp"
+  ]
+  revision = "180b8fdc22b4ea7750bcb43c925277654a1ea2f3"
 
 [[projects]]
   branch = "master"
@@ -82,32 +103,56 @@
 [[projects]]
   branch = "master"
   name = "github.com/prometheus/common"
-  packages = ["expfmt","internal/bitbucket.org/ww/goautoneg","model"]
+  packages = [
+    "expfmt",
+    "internal/bitbucket.org/ww/goautoneg",
+    "model"
+  ]
   revision = "2e54d0b93cba2fd133edc32211dcc32c06ef72ca"
 
 [[projects]]
   branch = "master"
   name = "github.com/prometheus/procfs"
-  packages = [".","xfs"]
-  revision = "a6e9df898b1336106c743392c48ee0b71f5c4efa"
+  packages = [
+    ".",
+    "xfs"
+  ]
+  revision = "b15cd069a83443be3154b719d0cc9fe8117f09fb"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
-  packages = [".","html"]
-  revision = "90df1aae5028a7cbb441bde86e86a55df6b5aa34"
-  version = "v2.3.3"
+  packages = [
+    ".",
+    "css",
+    "html",
+    "js",
+    "xml"
+  ]
+  revision = "222672169d634c440a73abc47685074e1a9daa60"
+  version = "v2.3.4"
 
 [[projects]]
   name = "github.com/tdewolff/parse"
-  packages = [".","buffer","html","strconv"]
-  revision = "bace4cf682c41e03b154044b561575ff541b83e8"
-  version = "v2.3.1"
+  packages = [
+    ".",
+    "buffer",
+    "css",
+    "html",
+    "js",
+    "strconv",
+    "xml"
+  ]
+  revision = "639f6272aec6b52094db77b9ec488214b0b4b1a1"
+  version = "v2.3.2"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["html","html/atom"]
-  revision = "dc871a5d77e227f5bbf6545176ef3eeebf87e76e"
+  packages = [
+    "html",
+    "html/atom"
+  ]
+  revision = "42fe2e1c20de1054d3d30f82cc9fb5b41e2e3767"
 
 [solve-meta]
   analyzer-name = "dep"
