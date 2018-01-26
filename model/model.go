@@ -138,7 +138,9 @@ func (f *FundApp) ListFunds() []Fund {
 }
 
 func (f *FundApp) listHandler(w http.ResponseWriter, r *http.Request) {
-	httputils.ResponseArrayJSON(w, http.StatusOK, f.ListFunds(), httputils.IsPretty(r.URL.RawQuery))
+	if err := httputils.ResponseArrayJSON(w, http.StatusOK, f.ListFunds(), httputils.IsPretty(r.URL.RawQuery)); err != nil {
+		httputils.InternalServerError(w, err)
+	}
 }
 
 // Flags add flags for given prefix
@@ -152,7 +154,9 @@ func Flags(prefix string) map[string]*string {
 func Handler(app *FundApp) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
-			w.Write(nil)
+			if _, err := w.Write(nil); err != nil {
+				httputils.InternalServerError(w, err)
+			}
 			return
 		}
 
