@@ -12,8 +12,6 @@ import (
 	"github.com/ViBiOh/httputils/cors"
 	"github.com/ViBiOh/httputils/db"
 	"github.com/ViBiOh/httputils/owasp"
-	"github.com/ViBiOh/httputils/prometheus"
-	"github.com/ViBiOh/httputils/rate"
 )
 
 const port = `1080`
@@ -45,8 +43,6 @@ func handler(fundApp *model.FundApp) http.Handler {
 
 func main() {
 	alcotestConfig := alcotest.Flags(``)
-	prometheusConfig := prometheus.Flags(`prometheus`)
-	rateConfig := rate.Flags(`rate`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
 	fundsConfig := model.Flags(``)
@@ -62,7 +58,7 @@ func main() {
 		log.Printf(`Error while creating Fund app: %v`, err)
 	}
 
-	apiHandler = prometheus.Handler(prometheusConfig, rate.Handler(rateConfig, gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler(fundApp))))))
+	apiHandler = gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler(fundApp))))
 	server := &http.Server{
 		Addr:    `:` + port,
 		Handler: apiHandler,
