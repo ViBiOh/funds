@@ -42,9 +42,9 @@ services:
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
       traefik.port: '1080'
       traefik.frontend.rateLimit.extractorFunc: 'client.ip'
-      traefik.frontend.rateLimit.rateSet.first.period: 60
-      traefik.frontend.rateLimit.rateSet.first.average: 100
-      traefik.frontend.rateLimit.rateSet.first.burst: 200
+      traefik.frontend.rateLimit.rateSet.first.period: '60'
+      traefik.frontend.rateLimit.rateSet.first.average: '100'
+      traefik.frontend.rateLimit.rateSet.first.burst: '200'
     logging:
       driver: json-file
       options:
@@ -101,9 +101,9 @@ services:
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
       traefik.port: '1080'
       traefik.frontend.rateLimit.extractorFunc: 'client.ip'
-      traefik.frontend.rateLimit.rateSet.first.period: 60
-      traefik.frontend.rateLimit.rateSet.first.average: 100
-      traefik.frontend.rateLimit.rateSet.first.burst: 200
+      traefik.frontend.rateLimit.rateSet.first.period: '60'
+      traefik.frontend.rateLimit.rateSet.first.average: '100'
+      traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
     logging:
