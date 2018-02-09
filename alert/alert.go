@@ -19,19 +19,23 @@ func main() {
 	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
+
+	mailjetConfig := mailjet.Flags(``)
+
 	flag.Parse()
 
-	fundApp, err := model.NewFundApp(fundsConfig, dbConfig)
+	mailjetApp := mailjet.NewApp(mailjetConfig)
+	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
 		log.Printf(`Error while creating Fund app: %v`, err)
 	}
 
-	if err := notifier.Init(); err != nil {
+	if err := notifier.Init(mailjetApp); err != nil {
 		log.Printf(`Error while initializing notifier: %v`, err)
 	}
 
 	if *check {
-		if !fundApp.Health() || !mailjet.Ping() {
+		if !fundApp.Health() || !mailjetApp.Ping() {
 			os.Exit(1)
 		}
 		return

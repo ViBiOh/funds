@@ -29,8 +29,8 @@ type FundApp struct {
 	fundsMap    sync.Map
 }
 
-// NewFundApp creates FundApp from Flags
-func NewFundApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, error) {
+// NewApp creates FundApp from Flags
+func NewApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, error) {
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while initializing database: %v`, err)

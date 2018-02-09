@@ -6,14 +6,10 @@ import (
 	"net/http"
 
 	"github.com/ViBiOh/httputils"
+	"github.com/ViBiOh/httputils/tools"
 )
 
 const mailjetSendURL = `https://api.mailjet.com/v3/send`
-
-var (
-	apiPublicKey  = flag.String(`mailjetPublicKey`, ``, `Mailet Public Key`)
-	apiPrivateKey = flag.String(`mailjetPrivateKey`, ``, `Mailet Private Key`)
-)
 
 type mailjetRecipient struct {
 	Email string `json:"Email"`
@@ -31,20 +27,42 @@ type mailjetResponse struct {
 	Sent []mailjetRecipient `json:"Sent"`
 }
 
+// App stores informations
+type App struct {
+	apiPublicKey  string
+	apiPrivateKey string
+}
+
+// NewApp creates new App from Flags' config
+func NewApp(config map[string]*string) *App {
+	return &App{
+		apiPublicKey:  *config[`apiPublicKey`],
+		apiPrivateKey: *config[`apiPrivateKey`],
+	}
+}
+
+// Flags adds flags for given prefix
+func Flags(prefix string) map[string]*string {
+	return map[string]*string{
+		`apiPublicKey`:  flag.String(tools.ToCamel(fmt.Sprintf(`%sMailjetPublicKey`, prefix)), ``, `Mailjet Public Key`),
+		`apiPrivateKey`: flag.String(tools.ToCamel(fmt.Sprintf(`%sMailjetPrivateKey`, prefix)), ``, `Mailjet Private Key`),
+	}
+}
+
 // Ping indicate if Mailjet is ready or not
-func Ping() bool {
-	return *apiPublicKey != ``
+func (a *App) Ping() bool {
+	return a.apiPublicKey != ``
 }
 
 // SendMail send mailjet mail
-func SendMail(fromEmail string, fromName string, subject string, to []string, html string) error {
+func (a *App) SendMail(fromEmail string, fromName string, subject string, to []string, html string) error {
 	recipients := make([]mailjetRecipient, 0, len(to))
 	for _, rawTo := range to {
 		recipients = append(recipients, mailjetRecipient{Email: rawTo})
 	}
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	if _, err := httputils.RequestJSON(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: httputils.GetBasicAuth(*apiPublicKey, *apiPrivateKey)}, http.MethodPost); err != nil {
+	if _, err := httputils.RequestJSON(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: httputils.GetBasicAuth(a.apiPublicKey, a.apiPrivateKey)}, http.MethodPost); err != nil {
 		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 

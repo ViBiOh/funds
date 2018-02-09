@@ -5,6 +5,8 @@ import (
 )
 
 func TestPing(t *testing.T) {
+	emptyValue := ``
+
 	var cases = []struct {
 		apiPublicKey string
 		want         bool
@@ -20,9 +22,9 @@ func TestPing(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		apiPublicKey = &testCase.apiPublicKey
+		app := NewApp(map[string]*string{`apiPublicKey`: &testCase.apiPublicKey, `apiPrivateKey`: &emptyValue})
 
-		if result := Ping(); result != testCase.want {
+		if result := app.Ping(); result != testCase.want {
 			t.Errorf(`Ping() = %v, want %v, with apiPublicKey=%v`, result, testCase.want, testCase.apiPublicKey)
 		}
 	}

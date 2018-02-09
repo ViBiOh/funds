@@ -53,7 +53,7 @@ func main() {
 
 	log.Print(`Starting server on port ` + port)
 
-	fundApp, err := model.NewFundApp(fundsConfig, dbConfig)
+	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
 		log.Printf(`Error while creating Fund app: %v`, err)
 	}

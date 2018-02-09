@@ -18,10 +18,15 @@ const (
 	notificationInterval = 24 * time.Hour
 )
 
-var location *time.Location
+var (
+	location   *time.Location
+	mailjetApp *mailjet.App
+)
 
 // Init initialize notifier tools
-func Init() (err error) {
+func Init(mailjetAppDep *mailjet.App) (err error) {
+	mailjetApp = mailjetAppDep
+
 	location, err = time.LoadLocation(locationStr)
 	if err != nil {
 		err = fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
@@ -91,7 +96,7 @@ func notify(fundApp *model.FundApp, recipients []string, score float64) error {
 			return nil
 		}
 
-		if err := mailjet.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
+		if err := mailjetApp.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
 			return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 		}
 		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
