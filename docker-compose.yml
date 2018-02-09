@@ -45,7 +45,7 @@ services:
     - -dbHost
     - db
     - -dbUser
-    - funds
+    - funds_db
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
     - -dbName
