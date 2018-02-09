@@ -7,7 +7,7 @@ services:
     - -infos
     - ${PERFORMANCE_URL}
     - -dbHost
-    - db
+    - funds_db
     - -dbUser
     - funds
     - -dbPass

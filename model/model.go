@@ -31,12 +31,14 @@ type FundApp struct {
 
 // NewApp creates FundApp from Flags
 func NewApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, error) {
+	app := &FundApp{fundsURL: *config[`infos`], fundsMap: sync.Map{}}
+
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while initializing database: %v`, err)
 	}
 
-	app := &FundApp{dbConnexion: fundsDB, fundsURL: *config[`infos`], fundsMap: sync.Map{}}
+	app.dbConnexion = fundsDB
 
 	if app.fundsURL != `` {
 		go app.refreshCron()
