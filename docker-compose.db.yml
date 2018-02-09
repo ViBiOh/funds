@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: 'funds'
       POSTGRES_PASSWORD: '${FUNDS_DATABASE_PASS}'
     volumes:
-    - ${EPONAE_DATABASE_DIR}:/var/lib/postgresql/data
+    - ${FUNDS_DATABASE_DIR}:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "psql", "-q", "-t", "-c", "SELECT now();" ]
     user: postgres
