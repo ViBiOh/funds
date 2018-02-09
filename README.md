@@ -16,3 +16,9 @@ sudo chown -R 70:70 ${FUNDS_DATABASE_DIR}
 docker-compose -p funds -f docker-compose.db.yml up -d
 docker exec -it funds_db_1 psql
 ```
+
+### Postgres configuration
+
+```sql
+\c funds
+```
