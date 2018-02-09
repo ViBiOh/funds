@@ -52,9 +52,9 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func saveTypedAlerts(fundApp *model.FundApp, score float64, funds []*model.Fund, alertType string) error {
+func saveTypedAlerts(App *model.App, score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := fundApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+		if err := App.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
 		}
 	}
@@ -62,26 +62,26 @@ func saveTypedAlerts(fundApp *model.FundApp, score float64, funds []*model.Fund,
 	return nil
 }
 
-func saveAlerts(fundApp *model.FundApp, score float64, above []*model.Fund, below []*model.Fund) error {
-	if err := saveTypedAlerts(fundApp, score, above, `above`); err != nil {
+func saveAlerts(App *model.App, score float64, above []*model.Fund, below []*model.Fund) error {
+	if err := saveTypedAlerts(App, score, above, `above`); err != nil {
 		return err
 	}
 
-	return saveTypedAlerts(fundApp, score, below, `below`)
+	return saveTypedAlerts(App, score, below, `below`)
 }
 
-func notify(fundApp *model.FundApp, recipients []string, score float64) error {
-	currentAlerts, err := fundApp.GetCurrentAlerts()
+func notify(App *model.App, recipients []string, score float64) error {
+	currentAlerts, err := App.GetCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
 	}
 
-	above, err := fundApp.GetFundsAbove(score, currentAlerts)
+	above, err := App.GetFundsAbove(score, currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting above funds: %v`, err)
 	}
 
-	below, err := fundApp.GetFundsBelow(currentAlerts)
+	below, err := App.GetFundsBelow(currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
@@ -101,7 +101,7 @@ func notify(fundApp *model.FundApp, recipients []string, score float64) error {
 		}
 		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
-		if err := saveAlerts(fundApp, score, above, below); err != nil {
+		if err := saveAlerts(App, score, above, below); err != nil {
 			return fmt.Errorf(`Error while saving alerts: %v`, err)
 		}
 	}
@@ -110,7 +110,7 @@ func notify(fundApp *model.FundApp, recipients []string, score float64) error {
 }
 
 // Start the notifier
-func Start(recipients string, score float64, hour int, minute int, fundApp *model.FundApp) {
+func Start(recipients string, score float64, hour int, minute int, App *model.App) {
 	timer := getTimer(hour, minute, notificationInterval)
 
 	recipientsList := strings.Split(recipients, `,`)
@@ -118,7 +118,7 @@ func Start(recipients string, score float64, hour int, minute int, fundApp *mode
 	for {
 		select {
 		case <-timer.C:
-			if err := notify(fundApp, recipientsList, score); err != nil {
+			if err := notify(App, recipientsList, score); err != nil {
 				log.Print(err)
 			}
 			timer.Reset(notificationInterval)

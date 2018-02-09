@@ -21,7 +21,7 @@ var (
 	apiHandler   http.Handler
 )
 
-func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.FundApp) {
+func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.App) {
 	if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 		w.WriteHeader(http.StatusOK)
 	} else {
@@ -29,7 +29,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.FundAp
 	}
 }
 
-func handler(fundApp *model.FundApp) http.Handler {
+func handler(fundApp *model.App) http.Handler {
 	modelHandler = model.Handler(fundApp)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

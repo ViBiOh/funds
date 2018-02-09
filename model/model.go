@@ -22,20 +22,20 @@ const (
 	listPrefix           = `/list`
 )
 
-// FundApp wrap all fund methods
-type FundApp struct {
+// App wrap all fund methods
+type App struct {
 	dbConnexion *sql.DB
 	fundsURL    string
 	fundsMap    sync.Map
 }
 
-// NewApp creates FundApp from Flags
-func NewApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, error) {
-	app := &FundApp{fundsURL: *config[`infos`], fundsMap: sync.Map{}}
+// NewApp creates App from Flags
+func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error) {
+	app := &App{fundsURL: *config[`infos`], fundsMap: sync.Map{}}
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		return nil, fmt.Errorf(`Error while initializing database: %v`, err)
+		return app, fmt.Errorf(`Error while initializing database: %v`, err)
 	}
 
 	app.dbConnexion = fundsDB
@@ -47,30 +47,30 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*FundApp, e
 	return app, nil
 }
 
-func (f *FundApp) refreshCron() {
-	f.refresh()
+func (a *App) refreshCron() {
+	a.refresh()
 	c := time.Tick(refreshDelay)
 	for range c {
-		f.refresh()
+		a.refresh()
 	}
 }
 
-func (f *FundApp) refresh() {
+func (a *App) refresh() {
 	log.Print(`Refresh started`)
 	defer log.Print(`Refresh ended`)
 
-	if err := f.refreshData(); err != nil {
+	if err := a.refreshData(); err != nil {
 		log.Printf(`Error while refreshing: %v`, err)
 	}
 
-	if err := f.saveData(); err != nil {
+	if err := a.saveData(); err != nil {
 		log.Printf(`Error while saving: %v`, err)
 	}
 }
 
-func (f *FundApp) refreshData() error {
+func (a *App) refreshData() error {
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
-		return fetchFund(f.fundsURL, ID.([]byte))
+		return fetchFund(a.fundsURL, ID.([]byte))
 	})
 
 	go func() {
@@ -90,7 +90,7 @@ func (f *FundApp) refreshData() error {
 			break
 		case result := <-results:
 			content := result.(Fund)
-			f.fundsMap.Store(content.ID, content)
+			a.fundsMap.Store(content.ID, content)
 			break
 		}
 	}
@@ -102,9 +102,9 @@ func (f *FundApp) refreshData() error {
 	return nil
 }
 
-func (f *FundApp) saveData() (err error) {
+func (a *App) saveData() (err error) {
 	var tx *sql.Tx
-	if tx, err = db.GetTx(f.dbConnexion, nil); err != nil {
+	if tx, err = db.GetTx(a.dbConnexion, nil); err != nil {
 		return
 	}
 
@@ -112,9 +112,9 @@ func (f *FundApp) saveData() (err error) {
 		err = db.EndTx(tx, err)
 	}()
 
-	f.fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err = f.SaveFund(&fund, tx)
+		err = a.SaveFund(&fund, tx)
 
 		return err == nil
 	})
@@ -123,15 +123,15 @@ func (f *FundApp) saveData() (err error) {
 }
 
 // Health check health
-func (f *FundApp) Health() bool {
-	return db.Ping(f.dbConnexion)
+func (a *App) Health() bool {
+	return db.Ping(a.dbConnexion)
 }
 
 // ListFunds return content of funds' map
-func (f *FundApp) ListFunds() []Fund {
+func (a *App) ListFunds() []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
-	f.fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		funds = append(funds, value.(Fund))
 		return true
 	})
@@ -139,8 +139,8 @@ func (f *FundApp) ListFunds() []Fund {
 	return funds
 }
 
-func (f *FundApp) listHandler(w http.ResponseWriter, r *http.Request) {
-	if err := httputils.ResponseArrayJSON(w, http.StatusOK, f.ListFunds(), httputils.IsPretty(r.URL.RawQuery)); err != nil {
+func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
+	if err := httputils.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httputils.IsPretty(r.URL.RawQuery)); err != nil {
 		httputils.InternalServerError(w, err)
 	}
 }
@@ -153,7 +153,7 @@ func Flags(prefix string) map[string]*string {
 }
 
 // Handler for model request. Should be use with net/http
-func Handler(app *FundApp) http.Handler {
+func Handler(app *App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {
