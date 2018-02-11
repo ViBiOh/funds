@@ -7,13 +7,13 @@ services:
     - -infos
     - ${PERFORMANCE_URL}
     - -dbHost
-    - funds_db
+    - ${FUNDS_DATABASE_HOST}
     - -dbUser
-    - funds
+    - ${FUNDS_DATABASE_USER}
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
     - -dbName
-    - funds
+    - ${FUNDS_DATABASE_NAME}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
@@ -22,8 +22,6 @@ services:
       traefik.frontend.rateLimit.rateSet.first.period: '60s'
       traefik.frontend.rateLimit.rateSet.first.average: '100'
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
-    external_links:
-    - funds_db_1:funds_db
     logging:
       driver: json-file
       options:
@@ -41,21 +39,19 @@ services:
     - -recipients
     - ${FUNDS_NOTIFICATION_RECIPIENTS}
     - -dbHost
-    - db
+    - ${FUNDS_DATABASE_HOST}
     - -dbUser
-    - funds_db
+    - ${FUNDS_DATABASE_USER}
     - -dbPass
     - ${FUNDS_DATABASE_PASS}
     - -dbName
-    - funds
+    - ${FUNDS_DATABASE_NAME}
     - -mailjetPublicKey
     - ${MAILJET_APIKEY_PUBLIC}
     - -mailjetPrivateKey
     - ${MAILJET_APIKEY_PRIVATE}
     healthcheck:
-      test: [ "CMD-SHELL", "-dbHost", "db", "-dbUser", "funds", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "funds", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
-    external_links:
-    - funds_db_1:funds_db
+      test: [ "CMD-SHELL", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
     labels:
       traefik.enable: 'false'
     logging:
