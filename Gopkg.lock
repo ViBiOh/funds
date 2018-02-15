@@ -15,25 +15,17 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/ViBiOh/alcotest"
-  packages = [
-    "alcotest",
-    "httpclient"
-  ]
-  revision = "7820b5444e1a46e9edefbc45d504df7723bb0ca8"
-
-[[projects]]
-  branch = "master"
   name = "github.com/ViBiOh/httputils"
   packages = [
     ".",
+    "alcotest",
     "cert",
     "cors",
     "db",
     "owasp",
     "tools"
   ]
-  revision = "288533be2fefec40812d7805b6b5abf603ac283b"
+  revision = "5ba574fa9b59230694a75168d2219f0d7f2f5190"
 
 [[projects]]
   branch = "master"
