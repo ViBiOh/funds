@@ -4,6 +4,7 @@ services:
   api:
     image: vibioh/funds-api
     command:
+    - -tls
     - -infos
     - ${PERFORMANCE_URL}
     - -dbHost
