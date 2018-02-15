@@ -1,12 +1,10 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 
 	"github.com/NYTimes/gziphandler"
-	"github.com/ViBiOh/alcotest/alcotest"
 	"github.com/ViBiOh/funds/model"
 	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/cors"
@@ -14,12 +12,7 @@ import (
 	"github.com/ViBiOh/httputils/owasp"
 )
 
-const port = `1080`
-
-var (
-	modelHandler http.Handler
-	apiHandler   http.Handler
-)
+const healthPrefix = `/health`
 
 func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.App) {
 	if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
@@ -29,46 +22,28 @@ func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.App) {
 	}
 }
 
-func handler(fundApp *model.App) http.Handler {
-	modelHandler = model.Handler(fundApp)
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == `/health` {
-			healthHandler(w, r, fundApp)
-		} else {
-			modelHandler.ServeHTTP(w, r)
-		}
-	})
-}
-
 func main() {
-	alcotestConfig := alcotest.Flags(``)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
-	flag.Parse()
 
-	alcotest.DoAndExit(alcotestConfig)
+	httputils.StartMainServer(func() http.Handler {
+		fundApp, err := model.NewApp(fundsConfig, dbConfig)
+		if err != nil {
+			log.Fatalf(`Error while creating Fund app: %v`, err)
+		}
 
-	log.Print(`Starting server on port ` + port)
+		modelHandler := model.Handler(fundApp)
 
-	fundApp, err := model.NewApp(fundsConfig, dbConfig)
-	if err != nil {
-		log.Printf(`Error while creating Fund app: %v`, err)
-	}
+		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == healthPrefix {
+				healthHandler(w, r, fundApp)
+			} else {
+				modelHandler.ServeHTTP(w, r)
+			}
+		})
 
-	apiHandler = gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler(fundApp))))
-	server := &http.Server{
-		Addr:    `:` + port,
-		Handler: apiHandler,
-	}
-
-	var serveError = make(chan error)
-	go func() {
-		defer close(serveError)
-		serveError <- server.ListenAndServe()
-	}()
-
-	httputils.ServerGracefulClose(server, serveError, nil)
+		return gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler)))
+	})
 }
