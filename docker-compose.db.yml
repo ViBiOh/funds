@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  db:
+  funds_db:
     image: postgres:10-alpine
     labels:
       traefik.enable: 'false'
@@ -11,6 +11,8 @@ services:
       POSTGRES_PASSWORD: '${FUNDS_DATABASE_PASS}'
     volumes:
     - ${FUNDS_DATABASE_DIR}:/var/lib/postgresql/data
+    ports:
+    - ${FUNDS_DATABASE_PORT}:5432/tcp
     healthcheck:
       test: [ "CMD", "psql", "-q", "-t", "-c", "SELECT now();" ]
     user: postgres

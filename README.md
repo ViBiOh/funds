@@ -7,18 +7,15 @@
 ## Postgres installation
 
 ```bash
+read -p "FUNDS_DATABASE_PASS=" FUNDS_DATABASE_PASS
+read -p "FUNDS_DATABASE_PORT=" FUNDS_DATABASE_PORT
+
 export FUNDS_DATABASE_DIR=`realpath ./data`
-export FUNDS_DATABASE_PASS=password
+export FUNDS_DATABASE_PASS=${FUNDS_DATABASE_PASS}
+export FUNDS_DATABASE_PORT=${FUNDS_DATABASE_PORT}
 
 mkdir ${FUNDS_DATABASE_DIR}
 sudo chown -R 70:70 ${FUNDS_DATABASE_DIR}
 
 docker-compose -p funds -f docker-compose.db.yml up -d
-docker exec -it funds_db_1 psql
-```
-
-### Postgres configuration
-
-```sql
-\c funds
 ```

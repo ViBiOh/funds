@@ -2,10 +2,10 @@
 
 
 [[projects]]
-  branch = "master"
   name = "github.com/NYTimes/gziphandler"
   packages = ["."]
-  revision = "289a3b81f5aedc99f8d6eb0f67827c142f1310d8"
+  revision = "d6f46609c7629af3a02d791a4666866eed3cbd3e"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/PuerkitoBio/goquery"
@@ -33,7 +33,7 @@
     "owasp",
     "tools"
   ]
-  revision = "ea8da0656b64e1b5d610eaf6b7dc08f8a69eeb81"
+  revision = "288533be2fefec40812d7805b6b5abf603ac283b"
 
 [[projects]]
   branch = "master"
@@ -104,6 +104,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "58aa5214d076feb922e47c220036fd897a2766f4438fa2de107b5a2667475ebd"
+  inputs-digest = "61970a4a1301e7a7329092a8b348466b4452cb7e65c0006d8cead2aec4399026"
   solver-name = "gps-cdcl"
   solver-version = 1
