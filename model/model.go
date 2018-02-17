@@ -11,8 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils"
 	"github.com/ViBiOh/httputils/db"
+	"github.com/ViBiOh/httputils/httperror"
+	"github.com/ViBiOh/httputils/json"
 	"github.com/ViBiOh/httputils/tools"
 )
 
@@ -140,8 +141,8 @@ func (a *App) ListFunds() []Fund {
 }
 
 func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
-	if err := httputils.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httputils.IsPretty(r.URL.RawQuery)); err != nil {
-		httputils.InternalServerError(w, err)
+	if err := json.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), json.IsPretty(r.URL.RawQuery)); err != nil {
+		httperror.InternalServerError(w, err)
 	}
 }
 
@@ -157,7 +158,7 @@ func Handler(app *App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {
-				httputils.InternalServerError(w, err)
+				httperror.InternalServerError(w, err)
 			}
 			return
 		}

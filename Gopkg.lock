@@ -22,10 +22,13 @@
     "cert",
     "cors",
     "db",
+    "httperror",
+    "json",
     "owasp",
+    "server",
     "tools"
   ]
-  revision = "5ba574fa9b59230694a75168d2219f0d7f2f5190"
+  revision = "2802a9be4581106f0f41023d815ed5239145382d"
 
 [[projects]]
   branch = "master"
@@ -62,10 +65,7 @@
   name = "github.com/tdewolff/minify"
   packages = [
     ".",
-    "css",
-    "html",
-    "js",
-    "xml"
+    "html"
   ]
   revision = "222672169d634c440a73abc47685074e1a9daa60"
   version = "v2.3.4"
@@ -75,11 +75,8 @@
   packages = [
     ".",
     "buffer",
-    "css",
     "html",
-    "js",
-    "strconv",
-    "xml"
+    "strconv"
   ]
   revision = "639f6272aec6b52094db77b9ec488214b0b4b1a1"
   version = "v2.3.2"
@@ -91,11 +88,11 @@
     "html",
     "html/atom"
   ]
-  revision = "f5dfe339be1d06f81b22525fe34671ee7d2c8904"
+  revision = "136a25c244d3019482a795d728110278d6ba09a4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "61970a4a1301e7a7329092a8b348466b4452cb7e65c0006d8cead2aec4399026"
+  inputs-digest = "31f06a8b3d224c6d5427ecc11330da5654ffb3af9f54d094b7705e713de45254"
   solver-name = "gps-cdcl"
   solver-version = 1

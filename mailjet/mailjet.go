@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ViBiOh/httputils"
+	"github.com/ViBiOh/httputils/request"
 	"github.com/ViBiOh/httputils/tools"
 )
 
@@ -62,7 +62,7 @@ func (a *App) SendMail(fromEmail string, fromName string, subject string, to []s
 	}
 
 	mailjetMail := mailjetMail{FromEmail: fromEmail, FromName: fromName, Subject: subject, Recipients: recipients, HTML: html}
-	if _, err := httputils.RequestJSON(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: httputils.GetBasicAuth(a.apiPublicKey, a.apiPrivateKey)}, http.MethodPost); err != nil {
+	if _, err := request.RequestJSON(mailjetSendURL, mailjetMail, map[string]string{`Authorization`: request.GetBasicAuth(a.apiPublicKey, a.apiPrivateKey)}, http.MethodPost); err != nil {
 		return fmt.Errorf(`Error while sending data to %s: %v`, mailjetSendURL, err)
 	}
 
