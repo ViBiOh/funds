@@ -57,7 +57,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(url string, fund *Fund) error {
-	body, err := request.GetRequest(url+`&tab=1`, nil)
+	body, err := request.Get(url+`&tab=1`, nil)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
@@ -75,7 +75,7 @@ func fetchInfosAndPerformances(url string, fund *Fund) error {
 }
 
 func fetchVolatilite(url string, fund *Fund) error {
-	body, err := request.GetRequest(url+`&tab=2`, nil)
+	body, err := request.Get(url+`&tab=2`, nil)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}

@@ -53,7 +53,7 @@ services:
     - -mailjetPrivateKey
     - ${MAILJET_APIKEY_PRIVATE}
     healthcheck:
-      test: [ "CMD-SHELL", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
+      test: [ "CMD", "/notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
     labels:
       traefik.enable: 'false'
     logging:

@@ -1,8 +1,8 @@
 FROM scratch
 
-HEALTHCHECK --retries=10 CMD https://localhost:1080/health
+HEALTHCHECK --retries=10 CMD [ "/funds", "-url", "https://localhost:1080/health" ]
 
 EXPOSE 1080
-ENTRYPOINT [ "/bin/sh" ]
+ENTRYPOINT [ "/funds" ]
 
-COPY bin/funds /bin/sh
+COPY bin/funds /funds
