@@ -70,8 +70,8 @@
     "style-loader": "latest",
     "stylelint": "latest",
     "stylelint-config-standard": "latest",
-    "webpack": "latest",
-    "webpack-dev-server": "latest"
+    "webpack": "3",
+    "webpack-dev-server": "2"
   },
   "dependencies": {
     "babel-polyfill": "latest",
