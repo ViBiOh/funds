@@ -23,13 +23,13 @@
     "cors",
     "db",
     "httperror",
-    "json",
+    "httpjson",
     "owasp",
     "request",
     "server",
     "tools"
   ]
-  revision = "ffedff675f711425bed74940efee7021ba098536"
+  revision = "203b8898ad2677a44cfc79ef8df214e93e7d4899"
 
 [[projects]]
   name = "github.com/andybalholm/cascadia"
@@ -89,11 +89,11 @@
     "html",
     "html/atom"
   ]
-  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
+  revision = "d25186b37f34ebdbbea8f488ef055638dfab272d"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8646b325e1e562648a06f4ccdfacccef93fa3b06aba81a6634b52a556bdaf49e"
+  inputs-digest = "ce10c1f6718d56e69ab95ed72e09631056ca6b15f5287a84b6faf0fc543338eb"
   solver-name = "gps-cdcl"
   solver-version = 1
