@@ -1,3 +1,0 @@
-FROM vibioh/viws:arm64
-
-COPY dist/ /www/
