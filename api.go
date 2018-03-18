@@ -28,7 +28,7 @@ func main() {
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
 
-	httputils.StartMainServer(func() http.Handler {
+	httputils.NewApp(httputils.Flags(``), func() http.Handler {
 		fundApp, err := model.NewApp(fundsConfig, dbConfig)
 		if err != nil {
 			log.Fatalf(`Error while creating Fund app: %v`, err)
@@ -45,5 +45,5 @@ func main() {
 		})
 
 		return gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler)))
-	}, nil)
+	}, nil).ListenAndServe()
 }
