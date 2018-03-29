@@ -62,7 +62,7 @@ docker-push-api: docker-login
 	docker push $(DOCKER_USER)/funds-api
 
 docker-pull-api:
-	docker tag $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
 
 docker-promote-api:
 	docker tag $(DOCKER_USER)/funds-api:$(DOCKER_VERSION) $(DOCKER_USER)/funds-api:latest
@@ -74,7 +74,7 @@ docker-push-ui: docker-login
 	docker push $(DOCKER_USER)/funds-ui
 
 docker-pull-ui:
-	docker tag $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
 
 docker-promote-ui:
 	docker tag $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) $(DOCKER_USER)/funds-ui:latest
@@ -86,7 +86,7 @@ docker-push-notifier: docker-login
 	docker push $(DOCKER_USER)/funds-notifier
 
 docker-pull-notifier:
-	docker tag $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
 
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/funds-notifier:latest
