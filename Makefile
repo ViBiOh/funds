@@ -59,7 +59,7 @@ docker-build-api: docker-deps
 	docker build -t $(DOCKER_USER)/funds-api:$(DOCKER_VERSION) -f Dockerfile .
 
 docker-push-api: docker-login
-	docker push $(DOCKER_USER)/funds-api
+	docker push $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
 
 docker-pull-api:
 	docker pull $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
@@ -71,7 +71,7 @@ docker-build-ui: docker-deps
 	docker build -t $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) -f app/Dockerfile .
 
 docker-push-ui: docker-login
-	docker push $(DOCKER_USER)/funds-ui
+	docker push $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
 
 docker-pull-ui:
 	docker pull $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
@@ -83,7 +83,7 @@ docker-build-notifier: docker-deps
 	docker build -t $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION) -f alert/Dockerfile .
 
 docker-push-notifier: docker-login
-	docker push $(DOCKER_USER)/funds-notifier
+	docker push $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
 
 docker-pull-notifier:
 	docker pull $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
