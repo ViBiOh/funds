@@ -49,7 +49,9 @@ docker-deps:
 docker-login:
 	echo $(DOCKER_PASS) | docker login -u $(DOCKER_USER) --password-stdin
 
-docker-promote: docker-promote-api docker-promote-notifier docker-promote-ui
+docker-pull: docker-pull-api docker-pull-notifier docker-pull-ui
+
+docker-promote: docker-pull docker-promote-api docker-promote-notifier docker-promote-ui
 
 docker-push: docker-push-api docker-push-notifier docker-push-ui
 
@@ -58,6 +60,9 @@ docker-build-api: docker-deps
 
 docker-push-api: docker-login
 	docker push $(DOCKER_USER)/funds-api
+
+docker-pull-api:
+	docker tag $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
 
 docker-promote-api:
 	docker tag $(DOCKER_USER)/funds-api:$(DOCKER_VERSION) $(DOCKER_USER)/funds-api:latest
@@ -68,6 +73,9 @@ docker-build-ui: docker-deps
 docker-push-ui: docker-login
 	docker push $(DOCKER_USER)/funds-ui
 
+docker-pull-ui:
+	docker tag $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
+
 docker-promote-ui:
 	docker tag $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) $(DOCKER_USER)/funds-ui:latest
 
@@ -76,6 +84,9 @@ docker-build-notifier: docker-deps
 
 docker-push-notifier: docker-login
 	docker push $(DOCKER_USER)/funds-notifier
+
+docker-pull-notifier:
+	docker tag $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
 
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/funds-notifier:latest
