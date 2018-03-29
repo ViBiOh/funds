@@ -67,7 +67,7 @@ services:
     - no-new-privileges
 
   site:
-    image: vibioh/funds-front
+    image: vibioh/funds-ui
     command:
     - -spa
     - -env
