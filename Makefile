@@ -65,7 +65,7 @@ docker-promote-api:
 docker-build-ui: docker-deps
 	docker build -t $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) -f app/Dockerfile .
 
-docker-push-ui: docker-deps
+docker-push-ui: docker-login
 	docker push $(DOCKER_USER)/funds-ui
 
 docker-promote-ui:
