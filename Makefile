@@ -9,7 +9,7 @@ api: format lint tst bench build-api
 
 ui: node docker-build-ui docker-push-ui
 
-notifier: deps format lint tst bench build-notifier
+notifier: deps format lint tst bench build-notifier docker-build-notifier docker-push-notifier
 
 deps:
 	go get -u github.com/golang/dep/cmd/dep
