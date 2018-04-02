@@ -26,7 +26,7 @@ func InitEmail() error {
 		`odd`: func(i int) bool {
 			return i%2 == 0
 		},
-	}).ParseFiles(`email.html`))
+	}).ParseFiles(`pkg/notifier/email.html`))
 
 	m := minify.New()
 	m.AddFunc("text/html", html.Minify)
