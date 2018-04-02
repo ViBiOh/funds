@@ -3,7 +3,7 @@ package notifier
 import (
 	"testing"
 
-	"github.com/ViBiOh/funds/model"
+	"github.com/ViBiOh/funds/pkg/model"
 )
 
 func TestInit(t *testing.T) {

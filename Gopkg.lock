@@ -10,26 +10,26 @@
 [[projects]]
   name = "github.com/PuerkitoBio/goquery"
   packages = ["."]
-  revision = "09540e565986583836b5fc792fe951ec5fd201dd"
-  version = "v1.3.0"
+  revision = "a86ea073017a6beddef78c8659e7224e8ca634b0"
+  version = "v1.4.0"
 
 [[projects]]
   branch = "master"
   name = "github.com/ViBiOh/httputils"
   packages = [
-    ".",
-    "alcotest",
-    "cert",
-    "cors",
-    "db",
-    "httperror",
-    "httpjson",
-    "owasp",
-    "request",
-    "server",
-    "tools"
+    "pkg",
+    "pkg/alcotest",
+    "pkg/cert",
+    "pkg/cors",
+    "pkg/db",
+    "pkg/httperror",
+    "pkg/httpjson",
+    "pkg/owasp",
+    "pkg/request",
+    "pkg/server",
+    "pkg/tools"
   ]
-  revision = "9fdf00023e957b3f8b87805f09a4a3f589fa06b7"
+  revision = "fe606d9cdfe10039ae176d5ef70cc5c7015bb0a3"
 
 [[projects]]
   name = "github.com/andybalholm/cascadia"
@@ -48,10 +48,10 @@
   version = "v0.2.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/gorilla/css"
   packages = ["scanner"]
   revision = "398b0b046082ecb3694c01bec6b336a06a4e530a"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -60,7 +60,7 @@
     ".",
     "oid"
   ]
-  revision = "88edab0803230a3898347e77b474f8c1820a1f20"
+  revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
@@ -89,11 +89,11 @@
     "html",
     "html/atom"
   ]
-  revision = "24dd3780ca4f75fed9f321890729414a4b5d3f13"
+  revision = "b68f30494add4df6bd8ef5e82803f308e7f7c59c"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ce10c1f6718d56e69ab95ed72e09631056ca6b15f5287a84b6faf0fc543338eb"
+  inputs-digest = "9abda0143ea6bdf12eab14ae11d346e354c86de2190e343bc9e8de1f18342196"
   solver-name = "gps-cdcl"
   solver-version = 1

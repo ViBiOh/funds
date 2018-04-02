@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/ViBiOh/httputils/request"
+	"github.com/ViBiOh/httputils/pkg/request"
 )
 
 var emptyByte = []byte(``)

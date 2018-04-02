@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/NYTimes/gziphandler"
-	"github.com/ViBiOh/funds/model"
-	"github.com/ViBiOh/httputils"
-	"github.com/ViBiOh/httputils/cors"
-	"github.com/ViBiOh/httputils/db"
-	"github.com/ViBiOh/httputils/owasp"
+	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/httputils/pkg"
+	"github.com/ViBiOh/httputils/pkg/cors"
+	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/owasp"
 )
 
 const healthPrefix = `/health`

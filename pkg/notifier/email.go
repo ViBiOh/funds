@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"html/template"
 
-	"github.com/ViBiOh/funds/model"
+	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/aymerick/douceur/inliner"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/html"

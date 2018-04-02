@@ -5,10 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/ViBiOh/funds/mailjet"
-	"github.com/ViBiOh/funds/model"
-	"github.com/ViBiOh/funds/notifier"
-	"github.com/ViBiOh/httputils/db"
+	"github.com/ViBiOh/funds/pkg/mailjet"
+	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/funds/pkg/notifier"
+	"github.com/ViBiOh/httputils/pkg/db"
 )
 
 func main() {

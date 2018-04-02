@@ -2,7 +2,7 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const config = {
-  context: path.join(__dirname, 'app'),
+  context: path.join(__dirname, 'ui'),
   entry: ['babel-polyfill', './index.jsx', './index.css'],
 
   resolve: {
@@ -42,19 +42,19 @@ const config = {
 
   plugins: [
     new ExtractTextPlugin({
-      filename: 'app.css',
+      filename: 'main.css',
       allChunks: true,
     }),
   ],
 
   output: {
-    filename: 'app.js',
-    path: path.join(__dirname, 'dist/static'),
+    filename: 'index.js',
+    path: path.join(__dirname, 'ui/dist/static'),
   },
 
   devServer: {
-    setup: (app) => {
-      app.get('/env', (req, res) => {
+    setup: (ui) => {
+      ui.get('/env', (req, res) => {
         res.json({ API_URL: process.env.API_URL });
       });
     },

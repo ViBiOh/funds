@@ -11,10 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/db"
-	"github.com/ViBiOh/httputils/httperror"
-	"github.com/ViBiOh/httputils/httpjson"
-	"github.com/ViBiOh/httputils/tools"
+	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/httperror"
+	"github.com/ViBiOh/httputils/pkg/httpjson"
+	"github.com/ViBiOh/httputils/pkg/tools"
 )
 
 const (

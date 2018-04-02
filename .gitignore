@@ -4,10 +4,10 @@ node_modules/
 .nyc_output
 coverage/
 tmp/
-dist/
+ui/dist/
+ui/esdoc/
 package-lock.json
 e2e/output
-doc/
 
 # Golang
 bin/

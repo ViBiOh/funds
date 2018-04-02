@@ -1,11 +1,12 @@
 SHELL := /bin/bash
 DOCKER_VERSION ?= $(shell git log --pretty=format:'%h' -n 1)
+APP_NAME := funds
 
-default: go
+default: api
 
-go: deps api docker-build-api docker-push-api
+api: deps go docker-build-api docker-push-api
 
-api: format lint tst bench build-api
+go: format lint tst bench build-api
 
 ui: node docker-build-ui docker-push-ui
 
@@ -19,8 +20,8 @@ deps:
 	dep ensure
 
 format:
-	goimports -w **/*.go
-	gofmt -s -w **/*.go
+	goimports -w */*/*.go
+	gofmt -s -w */*/*.go
 
 lint:
 	golint `go list ./... | grep -v vendor`
@@ -34,10 +35,10 @@ bench:
 	go test ./... -bench . -benchmem -run Benchmark.*
 
 build-api:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/funds api.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/$(APP_NAME) cmd/api/api.go
 
 build-notifier:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/notifier alert/alert.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/notifier cmd/alert/alert.go
 
 node:
 	npm run build
@@ -56,37 +57,37 @@ docker-promote: docker-pull docker-promote-api docker-promote-notifier docker-pr
 docker-push: docker-push-api docker-push-notifier docker-push-ui
 
 docker-build-api: docker-deps
-	docker build -t $(DOCKER_USER)/funds-api:$(DOCKER_VERSION) -f Dockerfile .
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION) -f Dockerfile .
 
 docker-push-api: docker-login
-	docker push $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION)
 
 docker-pull-api:
-	docker pull $(DOCKER_USER)/funds-api:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION)
 
 docker-promote-api:
-	docker tag $(DOCKER_USER)/funds-api:$(DOCKER_VERSION) $(DOCKER_USER)/funds-api:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-api:latest
 
 docker-build-ui: docker-deps
-	docker build -t $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) -f app/Dockerfile .
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION) -f ui/Dockerfile ./ui/
 
 docker-push-ui: docker-login
-	docker push $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION)
 
 docker-pull-ui:
-	docker pull $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION)
 
 docker-promote-ui:
-	docker tag $(DOCKER_USER)/funds-ui:$(DOCKER_VERSION) $(DOCKER_USER)/funds-ui:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-ui:latest
 
 docker-build-notifier: docker-deps
-	docker build -t $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION) -f alert/Dockerfile .
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION) -f cmd/alert/Dockerfile .
 
 docker-push-notifier: docker-login
-	docker push $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION)
 
 docker-pull-notifier:
-	docker pull $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION)
 
 docker-promote-notifier:
-	docker tag $(DOCKER_USER)/funds-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/funds-notifier:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest

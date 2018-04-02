@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ViBiOh/funds/mailjet"
-	"github.com/ViBiOh/funds/model"
+	"github.com/ViBiOh/funds/pkg/mailjet"
+	"github.com/ViBiOh/funds/pkg/model"
 )
 
 const (
