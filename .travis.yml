@@ -28,8 +28,7 @@ jobs:
     services:
     - docker
     node_js: 8
-    script: |
-      make ui
+    script: make ui
     after_success: |
       if [ "${TRAVIS_BRANCH}" == "master" ]; then
         bash <(curl -s https://codecov.io/bash)
@@ -40,9 +39,7 @@ jobs:
 
     script: |
       make docker-promote
-      DOCKER_VERSION=latest make docker-push
-
-      export COMMIT_SHA=`git log --pretty=format:'%h' -n 1`
+      VERSION=latest make docker-push
 
       sed \
         -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
@@ -53,7 +50,7 @@ jobs:
         -e "s|\${MAILJET_APIKEY_PUBLIC}|${MAILJET_APIKEY_PUBLIC}|g" \
         -e "s|\${MAILJET_APIKEY_PRIVATE}|${MAILJET_APIKEY_PRIVATE}|g" \
         -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
-        -e "s|\${COMMIT_SHA}|${COMMIT_SHA}|g" \
+        -e "s|\${COMMIT_SHA}|`make version`|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
       provider: script

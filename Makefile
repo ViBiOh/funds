@@ -1,5 +1,4 @@
-SHELL := /bin/bash
-DOCKER_VERSION ?= $(shell git log --pretty=format:'%h' -n 1)
+VERSION ?= $(shell git log --pretty=format:'%h' -n 1)
 APP_NAME := funds
 
 default: api
@@ -11,6 +10,9 @@ go: format lint tst bench build-api
 ui: node docker-build-ui docker-push-ui
 
 notifier: deps format lint tst bench build-notifier docker-build-notifier docker-push-notifier
+
+version:
+	@echo -n $(VERSION)
 
 deps:
 	go get -u github.com/golang/dep/cmd/dep
@@ -57,39 +59,39 @@ docker-promote: docker-pull docker-promote-api docker-promote-notifier docker-pr
 docker-push: docker-push-api docker-push-notifier docker-push-ui
 
 docker-build-api: docker-deps
-	docker build -t $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION) -f Dockerfile .
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION) -f Dockerfile .
 
 docker-push-api: docker-login
-	docker push $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION)
 
 docker-pull-api:
-	docker pull $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION)
 
 docker-promote-api:
-	docker tag $(DOCKER_USER)/$(APP_NAME)-api:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-api:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-api:latest
 
 docker-build-ui: docker-deps
-	docker build -t $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION) -f ui/Dockerfile ./ui/
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION) -f ui/Dockerfile ./ui/
 
 docker-push-ui: docker-login
-	docker push $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION)
 
 docker-pull-ui:
-	docker pull $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION)
 
 docker-promote-ui:
-	docker tag $(DOCKER_USER)/$(APP_NAME)-ui:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-ui:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-ui:latest
 
 docker-build-notifier: docker-deps
-	docker build -t $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION) -f cmd/alert/Dockerfile .
+	docker build -t $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) -f cmd/alert/Dockerfile .
 
 docker-push-notifier: docker-login
-	docker push $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION)
+	docker push $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION)
 
 docker-pull-notifier:
-	docker pull $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION)
+	docker pull $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION)
 
 docker-promote-notifier:
-	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
+	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
 
-.PHONY: api go ui notifier deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
+.PHONY: api go ui notifier version deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
