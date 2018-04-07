@@ -19,8 +19,7 @@ jobs:
     services:
     - docker
     go : '1.10'
-    script: |
-      make notifier
+    script: make notifier
 
   - stage: Build
 
