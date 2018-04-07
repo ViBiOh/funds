@@ -73,7 +73,7 @@ services:
     - -env
     - API_URL
     - -csp
-    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
+    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     - -headers
     - X-UA-Compatible:IE=edge,chrome=1
     - -push

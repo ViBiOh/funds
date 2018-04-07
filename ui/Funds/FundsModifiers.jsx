@@ -5,9 +5,9 @@ import FaFilter from 'react-icons/lib/fa/filter';
 import FaSortAmountAsc from 'react-icons/lib/fa/sort-amount-asc';
 import FaSortAmountDesc from 'react-icons/lib/fa/sort-amount-desc';
 import FaPieChart from 'react-icons/lib/fa/pie-chart';
-import Button from '../Button/Button';
+import Button from '../Button';
 import { COLUMNS, AGGREGATE_SIZES } from './FundsConstantes';
-import style from './FundsModifiers.less';
+import style from './FundsModifiers.css';
 
 function renderCount(fundsSize, initialSize) {
   if (fundsSize === initialSize) {

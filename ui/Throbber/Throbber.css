@@ -1,4 +1,4 @@
-@import '../style.less';
+@import '../style.css';
 
 .container {
   margin: auto;
@@ -13,7 +13,7 @@
 
 .throbber > div {
   animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-  background-color: @dark;
+  background-color: var(--dark);
   border-radius: 100%;
   display: inline-block;
   height: 1.4rem;

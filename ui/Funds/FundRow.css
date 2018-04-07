@@ -1,46 +1,21 @@
-@import '../style.less';
-
-.small-padding {
-  padding: 0.5rem;
-}
-
-.round-label {
-  border: 0.1rem solid;
-  border-radius: 0.2rem;
-  flex: none;
-  margin: 0.2rem;
-  max-width: 100%;
-  width: auto;
-}
-
-.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.ellipsis {
-  overflow: hidden;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+@import '../style.css';
 
 .row,
 .isin,
 .label,
 .category,
 .rating {
-  .small-padding;
+  padding: 0.5rem;
 }
 
 .row {
-  .flex-wrap;
-
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 
 .row:nth-child(even) {
-  background-color: @grey;
+  background-color: var(--grey);
 }
 
 .row button {
@@ -52,13 +27,13 @@
 }
 
 .row svg {
-  color: @dark;
+  color: var(--dark);
   height: 2.5rem;
   width: 2.5rem;
 }
 
 .old svg {
-  color: @warning;
+  color: var(--warning);
 }
 
 .isin {
@@ -66,15 +41,19 @@
 }
 
 .label {
-  .ellipsis;
-
   flex: 3;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category {
-  .ellipsis;
-
   flex: 1;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rating > span {
@@ -107,9 +86,13 @@
   }
 
   .isin {
-    .round-label;
-
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
     order: 3;
+    width: auto;
   }
 
   .isin::before {
@@ -117,17 +100,25 @@
   }
 
   button.category {
-    .round-label;
-    .small-padding;
-
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
     order: 1;
+    padding: 0.5rem;
+    width: auto;
   }
 
   button.rating {
-    .round-label;
-    .small-padding;
-
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
     order: 2;
+    padding: 0.5rem;
+    width: auto;
   }
 
   button.rating > span::before {

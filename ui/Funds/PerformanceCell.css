@@ -1,37 +1,27 @@
-@import '../style.less';
-
-.small-padding {
-  padding: 0.5rem;
-}
-
-.round-label {
-  border: 0.1rem solid;
-  border-radius: 0.2rem;
-  flex: none;
-  margin: 0.2rem;
-  max-width: 100%;
-  width: auto;
-}
+@import '../style.css';
 
 .performance {
-  .small-padding;
-
+  padding: 0.5rem;
   width: 8rem;
 }
 
 .red {
-  color: @red;
+  color: var(--red);
 }
 
 .green {
-  color: @green;
+  color: var(--green);
 }
 
 @media screen and (max-width: 1023px) {
   .performance {
-    .round-label;
-
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
     order: 4;
+    width: auto;
   }
 
   .p1m::before {

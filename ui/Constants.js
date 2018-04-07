@@ -12,7 +12,7 @@ function init() {
 }
 
 function getApiUrl() {
-  return context.API_URL;
+  return context.API_URL || 'https://funds-api.vibioh.fr';
 }
 
 /**

@@ -1,8 +1,4 @@
-@import '../style.less';
-
-.small-padding {
-  padding: 0.5rem;
-}
+@import '../style.css';
 
 .header {
   display: flex;
@@ -12,22 +8,20 @@
 }
 
 .header h1 {
-  .small-padding;
-
-  background-color: @dark;
-  color: @clear;
+  background-color: var(--dark);
+  color: var(--clear);
   display: inline-block;
   flex: 1 1 auto;
-  height: @icon-size;
+  height: var(--icon-size);
   margin: 0;
+  padding: 0.5rem;
 }
 
 .header input[type='text'] {
-  .small-padding;
-
   border-radius: 0;
   flex: 1 1 16rem;
-  height: @icon-size;
+  height: var(--icon-size);
+  padding: 0.5rem;
   width: 16rem;
 }
 

@@ -9,15 +9,11 @@
     "eslint": "./node_modules/.bin/eslint --fix --ext .jsx \"ui/**/*.{js,jsx}\"",
     "lint": "npm run eslint && npm run stylelint",
     "doc": "./node_modules/.bin/esdoc",
-    "prestart": "mkdir -p ui/dist && cp ui/index.html ui/dist/",
-    "start": "npm run copy && API_URL=https://funds-api.vibioh.fr ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --content-base dist --history-api-fallback --output-public-path static",
+    "start": "./node_modules/.bin/parcel ui/index.html -d ./ui/dist --open",
     "test": "./node_modules/.bin/nyc --reporter text --reporter lcov --extension .jsx --require babel-core/register ./node_modules/.bin/ava",
-    "copy:web": "cp ui/web/*.txt ui/dist/ && cp ui/web/favicon/* ui/dist/",
-    "mustache": "./node_modules/js-index-builder/index.js --template \"ui/*.html\" --partials \"ui/web/partials/*.html\" --bust `git log --pretty=format:'%h' -n 1` --output tmp/",
-    "html-minify": "./node_modules/.bin/html-minifier --config-file html-minifier.json --input-dir tmp --output-dir ui/dist",
-    "web": "npm run copy:web && npm run mustache && npm run html-minify",
-    "prebuild": "mkdir -p ui/dist",
-    "build": "npm run format && npm run lint && npm test && npm run doc && npm run web && ./node_modules/.bin/webpack -p"
+    "prebuild": "npm run format && npm run lint && npm test",
+    "build": "./node_modules/.bin/parcel build ui/index.html --public-url / -d ./ui/dist",
+    "postbuild": "cp ./ui/robots.txt ./ui/favicon/* ./ui/dist/"
   },
   "repository": {
     "type": "git",
@@ -36,11 +32,9 @@
   "devDependencies": {
     "ava": "latest",
     "babel-core": "latest",
-    "babel-loader": "latest",
     "babel-plugin-transform-object-rest-spread": "latest",
     "babel-preset-env": "latest",
     "babel-preset-react": "latest",
-    "css-loader": "latest",
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
     "esdoc": "latest",
@@ -50,7 +44,6 @@
     "esdoc-publish-html-plugin": "latest",
     "eslint": "latest",
     "eslint-config-airbnb": "latest",
-    "eslint-loader": "latest",
     "eslint-plugin-import": "latest",
     "eslint-plugin-jsx-a11y": "latest",
     "eslint-plugin-react": "latest",
@@ -61,18 +54,15 @@
     "js-index-builder": "ViBiOh/js-index-builder",
     "jsdom": "latest",
     "less": "latest",
-    "less-loader": "latest",
     "normalize.css": "latest",
     "nyc": "latest",
+    "parcel-bundler": "latest",
+    "postcss-modules": "latest",
     "prettier": "latest",
     "react-test-renderer": "latest",
     "sinon": "latest",
-    "style-loader": "latest",
     "stylelint": "latest",
-    "stylelint-config-standard": "latest",
-    "webpack": "latest",
-    "webpack-cli": "latest",
-    "webpack-dev-server": "latest"
+    "stylelint-config-standard": "latest"
   },
   "dependencies": {
     "babel-polyfill": "latest",
@@ -92,27 +82,7 @@
       "ignore-styles",
       "./ui/test/setup.js"
     ],
-    "concurrency": 4,
     "babel": "inherit"
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "browsers": [
-              "> 1%",
-              "last 2 versions"
-            ]
-          }
-        }
-      ],
-      "react"
-    ],
-    "plugins": [
-      "transform-object-rest-spread"
-    ]
   },
   "esdoc": {
     "source": "ui",

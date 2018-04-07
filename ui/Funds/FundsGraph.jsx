@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CHART_COLORS } from './FundsConstantes';
 import Graph from './Graph';
-import style from './FundsGraph.less';
+import style from './FundsGraph.css';
 
 const FundsGraph = ({ aggregat, aggregated }) => {
   if (!aggregat.key) {

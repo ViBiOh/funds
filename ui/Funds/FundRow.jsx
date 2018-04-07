@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button/Button';
+import Button from '../Button';
 import PerformanceCell from './PerformanceCell';
-import style from './FundRow.less';
+import style from './FundRow.css';
 
 const FundRow = ({ fund, filterBy }) => (
   <span className={style.row}>

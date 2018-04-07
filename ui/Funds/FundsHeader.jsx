@@ -6,7 +6,7 @@ import FaFilter from 'react-icons/lib/fa/filter';
 import setRef from '../Tools/ref';
 import { COLUMNS } from './FundsConstantes';
 import HeaderIcon from './HeaderIcon';
-import style from './FundsHeader.less';
+import style from './FundsHeader.css';
 
 export default class FundsHeader extends Component {
   constructor(props) {

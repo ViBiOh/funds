@@ -1,0 +1,15 @@
+:root {
+  --dark: #3a3a3a;
+  --grey: #e1e1e8;
+  --clear: #f8f8f8;
+  --red: #d43f3a;
+  --green: #4cae4c;
+  --primary: #337ab7;
+  --success: #5cb85c;
+  --warning: #f0ad4e;
+  --info: #5bc0de;
+  --danger: #d9534f;
+  --white: #fff;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --icon-size: 5rem;
+}

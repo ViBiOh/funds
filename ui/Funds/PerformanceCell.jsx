@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import style from './PerformanceCell.less';
+import style from './PerformanceCell.css';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 

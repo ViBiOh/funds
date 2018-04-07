@@ -1,7 +1,7 @@
 import test from 'ava';
 import React from 'react';
 import { shallow } from 'enzyme';
-import Button from './Button';
+import Button from './';
 
 test('should always render as a button', (t) => {
   t.is(shallow(<Button />).type(), 'button');

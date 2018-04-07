@@ -15,7 +15,7 @@ import FundsHeader from './FundsHeader';
 import FundsModifiers from './FundsModifiers';
 import FundsGraph from './FundsGraph';
 import FundsList from './FundsList';
-import style from './FundsContainer.less';
+import style from './FundsContainer.css';
 
 export default class FundsContainer extends Component {
   static isUndefined(o, orderKey) {
@@ -100,17 +100,21 @@ export default class FundsContainer extends Component {
   }
 
   fetchPerformances() {
-    return FundsService.getFunds().then((funds) => {
-      this.setState(
-        {
-          funds: funds.results.filter(fund => fund.id),
-          loaded: true,
-        },
-        this.filterOrderData,
-      );
+    return FundsService.getFunds()
+      .then((funds) => {
+        this.setState(
+          {
+            funds: funds.results.filter(fund => fund.id),
+            loaded: true,
+          },
+          this.filterOrderData,
+        );
 
-      return funds;
-    });
+        return funds;
+      })
+      .catch((e) => {
+        console.error('Error while fetching performance:', e);
+      });
   }
 
   filterBy(filterName, value) {

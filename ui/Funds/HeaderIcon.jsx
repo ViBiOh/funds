@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button/Button';
+import Button from '../Button';
 import { COLUMNS } from './FundsConstantes';
-import style from './HeaderIcon.less';
+import style from './HeaderIcon.css';
 
 const HeaderIcon = ({
   filter, onClick, icon, displayed,
