@@ -91,3 +91,5 @@ docker-pull-notifier:
 
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(DOCKER_VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
+
+.PHONY: api go ui notifier deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
