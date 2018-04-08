@@ -5,8 +5,6 @@ default: api
 
 api: deps go docker-api
 
-ui: node docker-ui
-
 go: format lint tst bench build-api
 
 notifier: deps build-notifier docker-notifier
@@ -41,9 +39,6 @@ build-api:
 
 build-notifier:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o bin/notifier cmd/alert/alert.go
-
-node:
-	npm run build
 
 docker-deps:
 	curl -s -o cacert.pem https://curl.haxx.se/ca/cacert.pem
@@ -100,4 +95,4 @@ docker-pull-notifier:
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
 
-.PHONY: api ui go notifier version deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
+.PHONY: api go notifier version deps format lint tst bench build-api build-notifier docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
