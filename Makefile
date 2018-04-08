@@ -3,13 +3,13 @@ APP_NAME := funds
 
 default: api
 
-api: deps go docker-build-api docker-push-api
+api: deps go docker-api
+
+ui: node docker-ui
 
 go: format lint tst bench build-api
 
-ui: node docker-build-ui docker-push-ui
-
-notifier: deps format lint tst bench build-notifier docker-build-notifier docker-push-notifier
+notifier: deps build-notifier docker-notifier
 
 version:
 	@echo -n $(VERSION)
@@ -52,11 +52,17 @@ docker-deps:
 docker-login:
 	echo $(DOCKER_PASS) | docker login -u $(DOCKER_USER) --password-stdin
 
-docker-pull: docker-pull-api docker-pull-notifier docker-pull-ui
+docker-pull: docker-pull-api docker-pull-ui docker-pull-notifier
 
-docker-promote: docker-pull docker-promote-api docker-promote-notifier docker-promote-ui
+docker-promote: docker-pull docker-promote-api docker-promote-ui docker-promote-notifier
 
-docker-push: docker-push-api docker-push-notifier docker-push-ui
+docker-push: docker-push-api docker-push-ui docker-push-notifier
+
+docker-api: docker-build-api docker-push-api
+
+docker-ui: docker-build-ui docker-push-ui
+
+docker-notifier: docker-build-notifier docker-push-notifier
 
 docker-build-api: docker-deps
 	docker build -t $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION) -f Dockerfile .
@@ -94,4 +100,4 @@ docker-pull-notifier:
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
 
-.PHONY: api go ui notifier version deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
+.PHONY: api ui go notifier version deps format lint tst bench build-api build-notifier node docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
