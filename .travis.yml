@@ -41,6 +41,7 @@ jobs:
     script: |
       make docker-promote
       VERSION=latest make docker-push
+      make docker-delete
 
       sed \
         -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \

@@ -51,6 +51,8 @@ docker-pull: docker-pull-api docker-pull-ui docker-pull-notifier
 
 docker-promote: docker-pull docker-promote-api docker-promote-ui docker-promote-notifier
 
+docker-delete: docker-delete-api docker-delete-ui docker-delete-notifier
+
 docker-push: docker-push-api docker-push-ui docker-push-notifier
 
 docker-api: docker-build-api docker-push-api
@@ -71,6 +73,9 @@ docker-pull-api:
 docker-promote-api:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-api:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-api:latest
 
+docker-delete-api:
+	curl -X DELETE -u "$(DOCKER_USER):$(DOCKER_CLOUD_TOKEN)" "https://cloud.docker.com/v2/repositories/$(DOCKER_USER)/$(APP_NAME)-api/tags/$(VERSION)/"
+
 docker-build-ui: docker-deps
 	docker build -t $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION) -f ui/Dockerfile ./ui/
 
@@ -83,6 +88,9 @@ docker-pull-ui:
 docker-promote-ui:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-ui:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-ui:latest
 
+docker-delete-ui:
+	curl -X DELETE -u "$(DOCKER_USER):$(DOCKER_CLOUD_TOKEN)" "https://cloud.docker.com/v2/repositories/$(DOCKER_USER)/$(APP_NAME)-ui/tags/$(VERSION)/"
+
 docker-build-notifier: docker-deps
 	docker build -t $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) -f cmd/alert/Dockerfile .
 
@@ -94,5 +102,8 @@ docker-pull-notifier:
 
 docker-promote-notifier:
 	docker tag $(DOCKER_USER)/$(APP_NAME)-notifier:$(VERSION) $(DOCKER_USER)/$(APP_NAME)-notifier:latest
+
+docker-delete-notifier:
+	curl -X DELETE -u "$(DOCKER_USER):$(DOCKER_CLOUD_TOKEN)" "https://cloud.docker.com/v2/repositories/$(DOCKER_USER)/$(APP_NAME)-notifier/tags/$(VERSION)/"
 
 .PHONY: api go notifier version deps format lint tst bench build-api build-notifier docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
