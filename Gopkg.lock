@@ -29,7 +29,7 @@
     "pkg/server",
     "pkg/tools"
   ]
-  revision = "6e5a7d80a67ed46f5c0be6e632ac5d0c5e20a74b"
+  revision = "7c234234484f8af3ff790763c9e8e13f926e59a8"
 
 [[projects]]
   name = "github.com/andybalholm/cascadia"
@@ -89,7 +89,7 @@
     "html",
     "html/atom"
   ]
-  revision = "61147c48b25b599e5b561d2e9c4f3e1ef489ca41"
+  revision = "d41e8174641f662c5a2d1c7a5f9e828788eb8706"
 
 [solve-meta]
   analyzer-name = "dep"

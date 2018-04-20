@@ -8,6 +8,7 @@ import (
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg"
 	"github.com/ViBiOh/httputils/pkg/cors"
+	"github.com/ViBiOh/httputils/pkg/datadog"
 	"github.com/ViBiOh/httputils/pkg/db"
 	"github.com/ViBiOh/httputils/pkg/owasp"
 )
@@ -27,6 +28,7 @@ func main() {
 	corsConfig := cors.Flags(`cors`)
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
+	datadogConfig := datadog.Flags(`datadog`)
 
 	httputils.NewApp(httputils.Flags(``), func() http.Handler {
 		fundApp, err := model.NewApp(fundsConfig, dbConfig)
@@ -44,6 +46,6 @@ func main() {
 			}
 		})
 
-		return gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler)))
+		return datadog.NewApp(datadogConfig).Handler(gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler))))
 	}, nil).ListenAndServe()
 }

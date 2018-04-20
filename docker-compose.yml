@@ -14,6 +14,8 @@ services:
     - ${FUNDS_DATABASE_PASS}
     - -dbName
     - ${FUNDS_DATABASE_NAME}
+    - -datadogService
+    - funds_api
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
@@ -23,6 +25,8 @@ services:
       traefik.frontend.rateLimit.rateSet.first.period: '60s'
       traefik.frontend.rateLimit.rateSet.first.average: '100'
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
+    external_links:
+    - datadog_agent_1:dd-agent
     logging:
       driver: json-file
       options:
@@ -78,6 +82,8 @@ services:
     - X-UA-Compatible:IE=edge,chrome=1
     - -push
     - /static/app.js?v=${COMMIT_SHA},/static/app.css?v=${COMMIT_SHA}
+    - -datadogService
+    - funds_ui
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
@@ -89,6 +95,8 @@ services:
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
+    external_links:
+    - datadog_agent_1:dd-agent
     logging:
       driver: json-file
       options:
