@@ -55,6 +55,12 @@ services:
     - ${MAILJET_APIKEY_PUBLIC}
     - -mailjetPrivateKey
     - ${MAILJET_APIKEY_PRIVATE}
+    - -mailerURL
+    - https://mailer.vibioh.fr
+    - -mailerUser
+    - ${MAILER_USER}
+    - -mailerPass
+    - ${MAILER_PASS}
     healthcheck:
       test: [ "CMD", "/notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}", "-mailjetPublicKey", "${MAILJET_APIKEY_PUBLIC}", "-mailjetPrivateKey", "${MAILJET_APIKEY_PRIVATE}" ]
     labels:

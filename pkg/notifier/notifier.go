@@ -1,49 +1,73 @@
 package notifier
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/mailjet"
 	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/httputils/pkg/request"
+	"github.com/ViBiOh/httputils/pkg/tools"
 )
 
 const (
-	locationStr          = `Europe/Paris`
 	from                 = `funds@vibioh.fr`
 	name                 = `Funds App`
 	subject              = `[Funds] Score level notification`
 	notificationInterval = 24 * time.Hour
 )
 
-var (
-	location   *time.Location
-	mailjetApp *mailjet.App
-)
-
-// Init initialize notifier tools
-func Init(mailjetAppDep *mailjet.App) (err error) {
-	mailjetApp = mailjetAppDep
-
-	location, err = time.LoadLocation(locationStr)
-	if err != nil {
-		err = fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
-		return
-	}
-
-	if err = InitEmail(); err != nil {
-		err = fmt.Errorf(`Error while initializing email: %v`, err)
-		return
-	}
-
-	return
+type ScoreTemplateContent struct {
+	Score      float64
+	AboveFunds []*model.Fund
+	BelowFunds []*model.Fund
 }
 
-func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
-	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, location)
-	if !nextTime.After(time.Now().In(location)) {
+// App stores informations
+type App struct {
+	mailerURL  string
+	mailerUser string
+	mailerPass string
+	modelApp   *model.App
+	mailjetApp *mailjet.App
+	location   *time.Location
+}
+
+// NewApp creates new App from Flags' config
+func NewApp(config map[string]*string, modelApp *model.App, mailjetApp *mailjet.App) (*App, error) {
+	locationStr := *config[`timezone`]
+	location, err := time.LoadLocation(locationStr)
+	if err != nil {
+		return nil, fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
+	}
+
+	return &App{
+		mailerURL:  *config[`mailerURL`],
+		mailerUser: *config[`mailerUser`],
+		mailerPass: *config[`mailerPass`],
+		modelApp:   modelApp,
+		mailjetApp: mailjetApp,
+		location:   location,
+	}, nil
+}
+
+// Flags adds flags for given prefix
+func Flags(prefix string) map[string]*string {
+	return map[string]*string{
+		`timezone`:   flag.String(tools.ToCamel(fmt.Sprintf(`%sTimezone`, prefix)), `Europe/Paris`, `Timezone`),
+		`mailerURL`:  flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerURL`, prefix)), ``, `Mailer URL`),
+		`mailerUser`: flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerUser`, prefix)), ``, `Mailer User`),
+		`mailerPass`: flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerPass`, prefix)), ``, `Mailer Pass`),
+	}
+}
+
+func (a *App) getTimer(hour int, minute int, interval time.Duration) *time.Timer {
+	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, a.location)
+	if !nextTime.After(time.Now().In(a.location)) {
 		nextTime = nextTime.Add(interval)
 	}
 
@@ -52,9 +76,9 @@ func getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func saveTypedAlerts(App *model.App, score float64, funds []*model.Fund, alertType string) error {
+func (a *App) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := App.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
 		}
 	}
@@ -62,32 +86,32 @@ func saveTypedAlerts(App *model.App, score float64, funds []*model.Fund, alertTy
 	return nil
 }
 
-func saveAlerts(App *model.App, score float64, above []*model.Fund, below []*model.Fund) error {
-	if err := saveTypedAlerts(App, score, above, `above`); err != nil {
+func (a *App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
+	if err := a.saveTypedAlerts(score, above, `above`); err != nil {
 		return err
 	}
 
-	return saveTypedAlerts(App, score, below, `below`)
+	return a.saveTypedAlerts(score, below, `below`)
 }
 
-func notify(App *model.App, recipients []string, score float64) error {
-	currentAlerts, err := App.GetCurrentAlerts()
+func (a *App) notify(recipients []string, score float64) error {
+	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
 	}
 
-	above, err := App.GetFundsAbove(score, currentAlerts)
+	above, err := a.modelApp.GetFundsAbove(score, currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting above funds: %v`, err)
 	}
 
-	below, err := App.GetFundsBelow(currentAlerts)
+	below, err := a.modelApp.GetFundsBelow(currentAlerts)
 	if err != nil {
 		return fmt.Errorf(`Error while getting below funds: %v`, err)
 	}
 
-	if len(recipients) > 0 {
-		htmlContent, err := getHTMLContent(score, above, below)
+	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
+		htmlContent, err := request.DoJSON(a.mailerURL, ScoreTemplateContent{score, above, below}, map[string]string{`Authorization`: request.GetBasicAuth(a.mailerUser, a.mailerPass)}, http.MethodPost)
 		if err != nil {
 			return fmt.Errorf(`Error while generating HTML email: %v`, err)
 		}
@@ -96,12 +120,12 @@ func notify(App *model.App, recipients []string, score float64) error {
 			return nil
 		}
 
-		if err := mailjetApp.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
+		if err := a.mailjetApp.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
 			return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
 		}
 		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
-		if err := saveAlerts(App, score, above, below); err != nil {
+		if err := a.saveAlerts(score, above, below); err != nil {
 			return fmt.Errorf(`Error while saving alerts: %v`, err)
 		}
 	}
@@ -110,15 +134,15 @@ func notify(App *model.App, recipients []string, score float64) error {
 }
 
 // Start the notifier
-func Start(recipients string, score float64, hour int, minute int, App *model.App) {
-	timer := getTimer(hour, minute, notificationInterval)
+func (a *App) Start(recipients string, score float64, hour int, minute int) {
+	timer := a.getTimer(hour, minute, notificationInterval)
 
 	recipientsList := strings.Split(recipients, `,`)
 
 	for {
 		select {
 		case <-timer.C:
-			if err := notify(App, recipientsList, score); err != nil {
+			if err := a.notify(recipientsList, score); err != nil {
 				log.Print(err)
 			}
 			timer.Reset(notificationInterval)

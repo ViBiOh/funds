@@ -52,6 +52,8 @@ jobs:
         -e "s|\${MAILJET_APIKEY_PUBLIC}|${MAILJET_APIKEY_PUBLIC}|g" \
         -e "s|\${MAILJET_APIKEY_PRIVATE}|${MAILJET_APIKEY_PRIVATE}|g" \
         -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
+        -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
+        -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
         -e "s|\${COMMIT_SHA}|`make version`|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
