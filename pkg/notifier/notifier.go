@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ViBiOh/funds/pkg/mailjet"
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg/request"
 	"github.com/ViBiOh/httputils/pkg/tools"
@@ -33,12 +32,11 @@ type App struct {
 	mailerUser string
 	mailerPass string
 	modelApp   *model.App
-	mailjetApp *mailjet.App
 	location   *time.Location
 }
 
 // NewApp creates new App from Flags' config
-func NewApp(config map[string]*string, modelApp *model.App, mailjetApp *mailjet.App) (*App, error) {
+func NewApp(config map[string]*string, modelApp *model.App) (*App, error) {
 	locationStr := *config[`timezone`]
 	location, err := time.LoadLocation(locationStr)
 	if err != nil {
@@ -50,7 +48,6 @@ func NewApp(config map[string]*string, modelApp *model.App, mailjetApp *mailjet.
 		mailerUser: *config[`mailerUser`],
 		mailerPass: *config[`mailerPass`],
 		modelApp:   modelApp,
-		mailjetApp: mailjetApp,
 		location:   location,
 	}, nil
 }
@@ -111,18 +108,11 @@ func (a *App) notify(recipients []string, score float64) error {
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		htmlContent, err := request.DoJSON(a.mailerURL, ScoreTemplateContent{score, above, below}, map[string]string{`Authorization`: request.GetBasicAuth(a.mailerUser, a.mailerPass)}, http.MethodPost)
+		_, err := request.DoJSON(fmt.Sprintf(`%s/render/funds/`, a.mailerURL), ScoreTemplateContent{score, above, below}, map[string]string{`Authorization`: request.GetBasicAuth(a.mailerUser, a.mailerPass)}, http.MethodPost)
 		if err != nil {
-			return fmt.Errorf(`Error while generating HTML email: %v`, err)
+			return fmt.Errorf(`Error while sending email: %v`, err)
 		}
 
-		if htmlContent == nil {
-			return nil
-		}
-
-		if err := a.mailjetApp.SendMail(from, name, subject, recipients, string(htmlContent)); err != nil {
-			return fmt.Errorf(`Error while sending Mailjet mail: %v`, err)
-		}
 		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
 		if err := a.saveAlerts(score, above, below); err != nil {

@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/ViBiOh/funds/pkg/mailjet"
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
 	"github.com/ViBiOh/httputils/pkg/db"
@@ -21,24 +20,22 @@ func main() {
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
 	notifierConfig := notifier.Flags(``)
-	mailjetConfig := mailjet.Flags(``)
 
 	flag.Parse()
 
-	mailjetApp := mailjet.NewApp(mailjetConfig)
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
 		log.Printf(`Error while creating Fund app: %v`, err)
 	}
 
 	if *check {
-		if !fundApp.Health() || !mailjetApp.Ping() {
+		if !fundApp.Health() {
 			os.Exit(1)
 		}
 		return
 	}
 
-	notifierApp, err := notifier.NewApp(notifierConfig, fundApp, mailjetApp)
+	notifierApp, err := notifier.NewApp(notifierConfig, fundApp)
 	if err != nil {
 		log.Printf(`Error while initializing notifier: %v`, err)
 	}
