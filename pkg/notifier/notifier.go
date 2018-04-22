@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -20,7 +21,7 @@ const (
 	notificationInterval = 24 * time.Hour
 )
 
-type ScoreTemplateContent struct {
+type scoreTemplateContent struct {
 	Score      float64
 	AboveFunds []*model.Fund
 	BelowFunds []*model.Fund
@@ -108,7 +109,7 @@ func (a *App) notify(recipients []string, score float64) error {
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		_, err := request.DoJSON(fmt.Sprintf(`%s/render/funds/`, a.mailerURL), ScoreTemplateContent{score, above, below}, map[string]string{`Authorization`: request.GetBasicAuth(a.mailerUser, a.mailerPass)}, http.MethodPost)
+		_, err := request.DoJSON(fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, map[string]string{`Authorization`: request.GetBasicAuth(a.mailerUser, a.mailerPass)}, http.MethodPost)
 		if err != nil {
 			return fmt.Errorf(`Error while sending email: %v`, err)
 		}
