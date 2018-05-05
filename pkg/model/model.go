@@ -149,7 +149,7 @@ func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 // Flags add flags for given prefix
 func Flags(prefix string) map[string]*string {
 	return map[string]*string{
-		`infos`: flag.String(tools.ToCamel(fmt.Sprintf(`%s%s`, prefix, `Infos`)), ``, `[funds] Informations URL`),
+		`infos`: flag.String(tools.ToCamel(fmt.Sprintf(`%sInfos`, prefix)), ``, `[funds] Informations URL`),
 	}
 }
 

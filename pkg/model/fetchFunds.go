@@ -57,7 +57,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(url string, fund *Fund) error {
-	body, err := request.Get(fmt.Sprintf(`%s%s`, url, `&tab=1`), nil)
+	body, err := request.Get(fmt.Sprintf(`%s&tab=1`, url), nil)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
@@ -75,7 +75,7 @@ func fetchInfosAndPerformances(url string, fund *Fund) error {
 }
 
 func fetchVolatilite(url string, fund *Fund) error {
-	body, err := request.Get(fmt.Sprintf(`%s%s`, url, `&tab=2`), nil)
+	body, err := request.Get(fmt.Sprintf(`%s&tab=2`, url), nil)
 	if err != nil {
 		return fmt.Errorf(`Error while fetching: %v`, err)
 	}
