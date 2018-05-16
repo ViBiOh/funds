@@ -10,17 +10,18 @@ import (
 	"github.com/ViBiOh/httputils/pkg/cors"
 	"github.com/ViBiOh/httputils/pkg/datadog"
 	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/healthcheck"
 	"github.com/ViBiOh/httputils/pkg/owasp"
 )
 
-const healthPrefix = `/health`
-
-func healthHandler(w http.ResponseWriter, r *http.Request, fundApp *model.App) {
-	if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
-		w.WriteHeader(http.StatusOK)
-	} else {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	}
+func healthHandler(fundApp *model.App) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}
+	})
 }
 
 func main() {
@@ -30,6 +31,8 @@ func main() {
 	dbConfig := db.Flags(`db`)
 	datadogConfig := datadog.Flags(`datadog`)
 
+	healthcheckApp := healthcheck.NewApp()
+
 	httputils.NewApp(httputils.Flags(``), func() http.Handler {
 		fundApp, err := model.NewApp(fundsConfig, dbConfig)
 		if err != nil {
@@ -37,15 +40,16 @@ func main() {
 		}
 
 		modelHandler := model.Handler(fundApp)
+		healthcheckHandler := healthcheckApp.Handler(healthHandler(fundApp))
 
 		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path == healthPrefix {
-				healthHandler(w, r, fundApp)
+			if r.URL.Path == `/health` {
+				healthcheckHandler.ServeHTTP(w, r)
 			} else {
 				modelHandler.ServeHTTP(w, r)
 			}
 		})
 
 		return datadog.NewApp(datadogConfig).Handler(gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler))))
-	}, nil).ListenAndServe()
+	}, nil, healthcheckApp).ListenAndServe()
 }
