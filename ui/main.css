@@ -27,7 +27,7 @@ input {
 
 @media print {
   body::after {
-    content: 'Save ink, share link.';
+    content: 'Save ink, share link. https://funds.vibioh.fr';
   }
 
   body > * {
