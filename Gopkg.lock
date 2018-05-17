@@ -2,16 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/DataDog/dd-trace-go"
-  packages = [
-    "contrib/net/http",
-    "tracer",
-    "tracer/ext"
-  ]
-  revision = "27617015d45e6cd550b9a7ac7715c37cc2f7d020"
-  version = "v0.6.1"
-
-[[projects]]
   name = "github.com/NYTimes/gziphandler"
   packages = ["."]
   revision = "2600fb119af974220d3916a5916d6e31176aac1b"
@@ -25,7 +15,6 @@
     "pkg/alcotest",
     "pkg/cert",
     "pkg/cors",
-    "pkg/datadog",
     "pkg/db",
     "pkg/healthcheck",
     "pkg/httperror",
@@ -46,20 +35,9 @@
   ]
   revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
-[[projects]]
-  name = "github.com/ugorji/go"
-  packages = ["codec"]
-  revision = "9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6"
-
-[[projects]]
-  branch = "master"
-  name = "golang.org/x/sys"
-  packages = ["windows"]
-  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c806c28e5806a3b8515eebb776da814c7c36760603ea6bf4929d274e4d6a817d"
+  inputs-digest = "4af41a916619f7b0d72ddc80299c520d509a5876acfebe9c85ad174d97445282"
   solver-name = "gps-cdcl"
   solver-version = 1
