@@ -32,7 +32,10 @@ type App struct {
 
 // NewApp creates App from Flags
 func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error) {
-	app := &App{fundsURL: *config[`infos`], fundsMap: sync.Map{}}
+	app := &App{
+		fundsURL: strings.TrimSpace(*config[`infos`]),
+		fundsMap: sync.Map{},
+	}
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
