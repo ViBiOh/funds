@@ -59,9 +59,11 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) error {
-	span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Infos`)
-	defer span.Finish()
-	span.SetTag(`fund.id`, string(fund.ID))
+	if ctx != nil {
+		span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Infos`)
+		defer span.Finish()
+		span.SetTag(`fund.id`, string(fund.ID))
+	}
 
 	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=1`, url), nil)
 	if err != nil {
@@ -81,9 +83,11 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 }
 
 func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
-	span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Volatilite`)
-	defer span.Finish()
-	span.SetTag(`fund.id`, string(fund.ID))
+	if ctx != nil {
+		span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Volatilite`)
+		defer span.Finish()
+		span.SetTag(`fund.id`, string(fund.ID))
+	}
 
 	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=2`, url), nil)
 	if err != nil {
@@ -95,19 +99,22 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 }
 
 func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error) {
-	span, operationCtx := opentracing.StartSpanFromContext(ctx, `Fetch Fund`)
-	defer span.Finish()
-	span.SetTag(`fund.id`, string(fundID))
+	if ctx != nil {
+		var span opentracing.Span
+		span, ctx = opentracing.StartSpanFromContext(ctx, `Fetch Fund`)
+		defer span.Finish()
+		span.SetTag(`fund.id`, string(fundID))
+	}
 
 	cleanID := cleanID(fundID)
 	url := fmt.Sprintf(`%s%s`, fundsURL, cleanID)
 	fund := &Fund{ID: cleanID}
 
-	if err := fetchInfosAndPerformances(operationCtx, url, fund); err != nil {
+	if err := fetchInfosAndPerformances(ctx, url, fund); err != nil {
 		return *fund, fmt.Errorf(`[%s] Error while fetching infos and performances: %v`, fundID, err)
 	}
 
-	if err := fetchVolatilite(operationCtx, url, fund); err != nil {
+	if err := fetchVolatilite(ctx, url, fund); err != nil {
 		return *fund, fmt.Errorf(`[%s] Error while fetching volatilite: %v`, fundID, err)
 	}
 

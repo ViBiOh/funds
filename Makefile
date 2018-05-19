@@ -106,4 +106,10 @@ docker-promote-notifier:
 docker-delete-notifier:
 	curl -X DELETE -u "$(DOCKER_USER):$(DOCKER_CLOUD_TOKEN)" "https://cloud.docker.com/v2/repositories/$(DOCKER_USER)/$(APP_NAME)-notifier/tags/$(VERSION)/"
 
+start-api:
+	go run cmd/api/api.go \
+		-tls=false \
+		-tracingName funds \
+		-tracingAgent vibioh.fr:6831
+
 .PHONY: api go notifier version deps format lint tst bench build-api build-notifier docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier

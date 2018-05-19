@@ -41,10 +41,10 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		return app, fmt.Errorf(`Error while initializing database: %v`, err)
+		log.Printf(`[funds] Error while initializing database: %v`, err)
+	} else {
+		app.dbConnexion = fundsDB
 	}
-
-	app.dbConnexion = fundsDB
 
 	if app.fundsURL != `` {
 		go app.refreshCron()
@@ -69,16 +69,16 @@ func (a *App) refresh() {
 		log.Printf(`Error while refreshing: %v`, err)
 	}
 
-	if err := a.saveData(); err != nil {
-		log.Printf(`Error while saving: %v`, err)
+	if a.dbConnexion != nil {
+		if err := a.saveData(); err != nil {
+			log.Printf(`Error while saving: %v`, err)
+		}
 	}
 }
 
 func (a *App) refreshData() error {
-	span := opentracing.StartSpan(`Fetch Funds`)
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
 	defer span.Finish()
-
-	ctx := opentracing.ContextWithSpan(context.Background(), span)
 
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
