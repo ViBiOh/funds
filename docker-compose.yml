@@ -14,7 +14,7 @@ services:
     - ${FUNDS_DATABASE_PASS}
     - -dbName
     - ${FUNDS_DATABASE_NAME}
-    - tracingName
+    - -tracingName
     - funds_api
     labels:
       traefik.frontend.passHostHeader: 'true'
