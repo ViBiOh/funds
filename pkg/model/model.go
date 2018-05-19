@@ -75,8 +75,10 @@ func (a *App) refresh() {
 }
 
 func (a *App) refreshData() error {
-	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
+	span := opentracing.StartSpan(`Fetch Funds`)
 	defer span.Finish()
+
+	ctx := opentracing.ContextWithSpan(context.Background(), span)
 
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))

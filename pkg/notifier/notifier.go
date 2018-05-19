@@ -1,6 +1,7 @@
 package notifier
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg/request"
 	"github.com/ViBiOh/httputils/pkg/tools"
+	opentracing "github.com/opentracing/opentracing-go"
 )
 
 const (
@@ -93,6 +95,11 @@ func (a *App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund
 }
 
 func (a *App) notify(recipients []string, score float64) error {
+	span := opentracing.StartSpan(`Funds Notify`)
+	defer span.Finish()
+
+	ctx := opentracing.ContextWithSpan(context.Background(), span)
+
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
 		return fmt.Errorf(`Error while getting current alerts: %v`, err)
@@ -109,7 +116,7 @@ func (a *App) notify(recipients []string, score float64) error {
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		_, err := request.DoJSON(nil, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GetBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
+		_, err := request.DoJSON(ctx, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GetBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
 		if err != nil {
 			return fmt.Errorf(`Error while sending email: %v`, err)
 		}

@@ -42,14 +42,14 @@ func main() {
 		modelHandler := model.Handler(fundApp)
 		healthcheckHandler := healthcheckApp.Handler(healthHandler(fundApp))
 
-		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler := opentracing.NewApp(opentracingConfig).Handler(gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, modelHandler))))
+
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.URL.Path == `/health` {
 				healthcheckHandler.ServeHTTP(w, r)
 			} else {
-				modelHandler.ServeHTTP(w, r)
+				handler.ServeHTTP(w, r)
 			}
 		})
-
-		return opentracing.NewApp(opentracingConfig).Handler(gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, handler))))
 	}, nil, healthcheckApp).ListenAndServe()
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
 	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/opentracing"
 )
 
 func main() {
@@ -20,8 +21,11 @@ func main() {
 	fundsConfig := model.Flags(``)
 	dbConfig := db.Flags(`db`)
 	notifierConfig := notifier.Flags(``)
+	opentracingConfig := opentracing.Flags(`tracing`)
 
 	flag.Parse()
+
+	opentracing.NewApp(opentracingConfig)
 
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
