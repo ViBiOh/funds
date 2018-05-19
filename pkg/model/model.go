@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"flag"
 	"fmt"
@@ -15,12 +16,16 @@ import (
 	"github.com/ViBiOh/httputils/pkg/httperror"
 	"github.com/ViBiOh/httputils/pkg/httpjson"
 	"github.com/ViBiOh/httputils/pkg/tools"
+	opentracing "github.com/opentracing/opentracing-go"
 )
 
+type contextKey int
+
 const (
-	maxConcurrentFetcher = 24
-	refreshDelay         = 8 * time.Hour
-	listPrefix           = `/list`
+	maxConcurrentFetcher            = 24
+	refreshDelay                    = 8 * time.Hour
+	listPrefix                      = `/list`
+	spanContext          contextKey = iota
 )
 
 // App wrap all fund methods
@@ -73,8 +78,12 @@ func (a *App) refresh() {
 }
 
 func (a *App) refreshData() error {
+	span := opentracing.StartSpan(`FETCH Funds`)
+	defer span.Finish()
+	ctx := opentracing.ContextWithSpan(context.Background(), span)
+
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
-		return fetchFund(a.fundsURL, ID.([]byte))
+		return fetchFund(ctx, a.fundsURL, ID.([]byte))
 	})
 
 	go func() {

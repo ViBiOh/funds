@@ -24,7 +24,7 @@
     "pkg/server",
     "pkg/tools"
   ]
-  revision = "c31f6daa198242a777750942bd41d092cd438101"
+  revision = "8fd3c51a6af071af372a9bbeab41f5e641b5994b"
 
 [[projects]]
   branch = "master"
@@ -35,9 +35,31 @@
   ]
   revision = "d34b9ff171c21ad295489235aec8b6626023cd04"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/opentracing-contrib/go-stdlib"
+  packages = ["nethttp"]
+  revision = "36723135187404d2f4002f4f189938565e64cc5c"
+
+[[projects]]
+  name = "github.com/opentracing/opentracing-go"
+  packages = [
+    ".",
+    "ext",
+    "log"
+  ]
+  revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
+  version = "v1.0.2"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  revision = "57065200b4b034a1c8ad54ff77069408c2218ae6"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4af41a916619f7b0d72ddc80299c520d509a5876acfebe9c85ad174d97445282"
+  inputs-digest = "17a47bad0dd419cc33e96a220053dd47a9431b255e3e982f5aa058111129180b"
   solver-name = "gps-cdcl"
   solver-version = 1
