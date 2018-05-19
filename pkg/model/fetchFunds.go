@@ -59,7 +59,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) error {
-	span, _ := opentracing.StartSpanFromContext(ctx, `FETCH Infos`)
+	span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Infos`)
 	defer span.Finish()
 	span.SetTag(`fund.id`, string(fund.ID))
 
@@ -81,7 +81,7 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 }
 
 func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
-	span, _ := opentracing.StartSpanFromContext(ctx, `FETCH Volatilite`)
+	span, _ := opentracing.StartSpanFromContext(ctx, `Fetch Fund Volatilite`)
 	defer span.Finish()
 	span.SetTag(`fund.id`, string(fund.ID))
 
@@ -95,7 +95,7 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 }
 
 func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error) {
-	span, operationCtx := opentracing.StartSpanFromContext(ctx, `FETCH Fund`)
+	span, operationCtx := opentracing.StartSpanFromContext(ctx, `Fetch Fund`)
 	defer span.Finish()
 	span.SetTag(`fund.id`, string(fundID))
 

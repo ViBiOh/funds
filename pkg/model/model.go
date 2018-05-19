@@ -19,13 +19,10 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
-type contextKey int
-
 const (
-	maxConcurrentFetcher            = 24
-	refreshDelay                    = 8 * time.Hour
-	listPrefix                      = `/list`
-	spanContext          contextKey = iota
+	maxConcurrentFetcher = 24
+	refreshDelay         = 8 * time.Hour
+	listPrefix           = `/list`
 )
 
 // App wrap all fund methods
@@ -78,9 +75,8 @@ func (a *App) refresh() {
 }
 
 func (a *App) refreshData() error {
-	span := opentracing.StartSpan(`FETCH Funds`)
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
 	defer span.Finish()
-	ctx := opentracing.ContextWithSpan(context.Background(), span)
 
 	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
