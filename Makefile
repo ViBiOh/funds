@@ -107,7 +107,7 @@ docker-delete-notifier:
 	curl -X DELETE -u "$(DOCKER_USER):$(DOCKER_CLOUD_TOKEN)" "https://cloud.docker.com/v2/repositories/$(DOCKER_USER)/$(APP_NAME)-notifier/tags/$(VERSION)/"
 
 start-api:
-	go run cmd/api/api.go \
+	go run -race cmd/api/api.go \
 		-tls=false \
 		-tracingName funds \
 		-tracingAgent vibioh.fr:6831
