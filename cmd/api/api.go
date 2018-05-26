@@ -1,55 +1,57 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg"
+	"github.com/ViBiOh/httputils/pkg/alcotest"
 	"github.com/ViBiOh/httputils/pkg/cors"
 	"github.com/ViBiOh/httputils/pkg/db"
 	"github.com/ViBiOh/httputils/pkg/healthcheck"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
+	"github.com/ViBiOh/httputils/pkg/server"
 )
 
-func healthHandler(fundApp *model.App) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func main() {
+	serverConfig := httputils.Flags(``)
+	alcotestConfig := alcotest.Flags(``)
+	opentracingConfig := opentracing.Flags(`tracing`)
+	owaspConfig := owasp.Flags(``)
+	corsConfig := cors.Flags(`cors`)
+
+	fundsConfig := model.Flags(``)
+	dbConfig := db.Flags(`db`)
+
+	flag.Parse()
+
+	alcotest.DoAndExit(alcotestConfig)
+
+	serverApp := httputils.NewApp(serverConfig)
+	healthcheckApp := healthcheck.NewApp()
+	opentracingApp := opentracing.NewApp(opentracingConfig)
+	owaspApp := owasp.NewApp(owaspConfig)
+	corsApp := cors.NewApp(corsConfig)
+
+	fundApp, err := model.NewApp(fundsConfig, dbConfig)
+	if err != nil {
+		log.Fatalf(`Error while creating Fund app: %v`, err)
+	}
+
+	modelHandler := model.Handler(fundApp)
+	healthcheckApp.NextHealthcheck(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusServiceUnavailable)
 		}
-	})
-}
+	}))
 
-func main() {
-	owaspConfig := owasp.Flags(``)
-	corsConfig := cors.Flags(`cors`)
-	fundsConfig := model.Flags(``)
-	dbConfig := db.Flags(`db`)
-	opentracingConfig := opentracing.Flags(`tracing`)
+	handler := server.ChainMiddlewares(gziphandler.GzipHandler(modelHandler), opentracingApp, owaspApp, corsApp)
 
-	healthcheckApp := healthcheck.NewApp()
-
-	httputils.NewApp(httputils.Flags(``), func() http.Handler {
-		fundApp, err := model.NewApp(fundsConfig, dbConfig)
-		if err != nil {
-			log.Fatalf(`Error while creating Fund app: %v`, err)
-		}
-
-		modelHandler := model.Handler(fundApp)
-		healthcheckHandler := healthcheckApp.Handler(healthHandler(fundApp))
-
-		handler := opentracing.NewApp(opentracingConfig).Handler(gziphandler.GzipHandler(owasp.Handler(owaspConfig, cors.Handler(corsConfig, modelHandler))))
-
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path == `/health` {
-				healthcheckHandler.ServeHTTP(w, r)
-			} else {
-				handler.ServeHTTP(w, r)
-			}
-		})
-	}, nil, healthcheckApp).ListenAndServe()
+	serverApp.ListenAndServe(handler, nil, healthcheckApp)
 }
