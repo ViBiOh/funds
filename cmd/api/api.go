@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/NYTimes/gziphandler"
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg"
 	"github.com/ViBiOh/httputils/pkg/alcotest"
 	"github.com/ViBiOh/httputils/pkg/cors"
 	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/gzip"
 	"github.com/ViBiOh/httputils/pkg/healthcheck"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
@@ -36,6 +36,7 @@ func main() {
 	opentracingApp := opentracing.NewApp(opentracingConfig)
 	owaspApp := owasp.NewApp(owaspConfig)
 	corsApp := cors.NewApp(corsConfig)
+	gzipApp := gzip.NewApp()
 
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
@@ -51,7 +52,7 @@ func main() {
 		}
 	}))
 
-	handler := server.ChainMiddlewares(gziphandler.GzipHandler(modelHandler), opentracingApp, owaspApp, corsApp)
+	handler := server.ChainMiddlewares(modelHandler, opentracingApp, gzipApp, owaspApp, corsApp)
 
 	serverApp.ListenAndServe(handler, nil, healthcheckApp)
 }
