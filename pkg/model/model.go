@@ -53,7 +53,7 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error
 	return app, nil
 }
 
-func (a App) refreshCron() {
+func (a *App) refreshCron() {
 	a.refresh()
 	c := time.Tick(refreshDelay)
 	for range c {
@@ -61,7 +61,7 @@ func (a App) refreshCron() {
 	}
 }
 
-func (a App) refresh() {
+func (a *App) refresh() {
 	log.Print(`Refresh started`)
 	defer log.Print(`Refresh ended`)
 
@@ -76,7 +76,7 @@ func (a App) refresh() {
 	}
 }
 
-func (a App) refreshData() error {
+func (a *App) refreshData() error {
 	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
 	defer span.Finish()
 
@@ -113,7 +113,7 @@ func (a App) refreshData() error {
 	return nil
 }
 
-func (a App) saveData() (err error) {
+func (a *App) saveData() (err error) {
 	var tx *sql.Tx
 	if tx, err = db.GetTx(a.dbConnexion, nil); err != nil {
 		return
@@ -134,12 +134,12 @@ func (a App) saveData() (err error) {
 }
 
 // Health check health
-func (a App) Health() bool {
+func (a *App) Health() bool {
 	return db.Ping(a.dbConnexion)
 }
 
 // ListFunds return content of funds' map
-func (a App) ListFunds() []Fund {
+func (a *App) ListFunds() []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
@@ -150,7 +150,7 @@ func (a App) ListFunds() []Fund {
 	return funds
 }
 
-func (a App) listHandler(w http.ResponseWriter, r *http.Request) {
+func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r.URL.RawQuery)); err != nil {
 		httperror.InternalServerError(w, err)
 	}
