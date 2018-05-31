@@ -65,7 +65,7 @@ func Flags(prefix string) map[string]*string {
 	}
 }
 
-func (a *App) getTimer(hour int, minute int, interval time.Duration) *time.Timer {
+func (a App) getTimer(hour int, minute int, interval time.Duration) *time.Timer {
 	nextTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), hour, minute, 0, 0, a.location)
 	if !nextTime.After(time.Now().In(a.location)) {
 		nextTime = nextTime.Add(interval)
@@ -76,7 +76,7 @@ func (a *App) getTimer(hour int, minute int, interval time.Duration) *time.Timer
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
 
-func (a *App) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
+func (a App) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return fmt.Errorf(`Error while saving %s alerts: %v`, alertType, err)
@@ -86,7 +86,7 @@ func (a *App) saveTypedAlerts(score float64, funds []*model.Fund, alertType stri
 	return nil
 }
 
-func (a *App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
+func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
 	if err := a.saveTypedAlerts(score, above, `above`); err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (a *App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund
 	return a.saveTypedAlerts(score, below, `below`)
 }
 
-func (a *App) notify(recipients []string, score float64) error {
+func (a App) notify(recipients []string, score float64) error {
 	span := opentracing.StartSpan(`Funds Notify`)
 	defer span.Finish()
 
@@ -132,7 +132,7 @@ func (a *App) notify(recipients []string, score float64) error {
 }
 
 // Start the notifier
-func (a *App) Start(recipients string, score float64, hour int, minute int) {
+func (a App) Start(recipients string, score float64, hour int, minute int) {
 	timer := a.getTimer(hour, minute, notificationInterval)
 
 	recipientsList := strings.Split(recipients, `,`)
