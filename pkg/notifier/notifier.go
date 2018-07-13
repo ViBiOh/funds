@@ -40,16 +40,16 @@ type App struct {
 
 // NewApp creates new App from Flags' config
 func NewApp(config map[string]*string, modelApp *model.App) (*App, error) {
-	locationStr := *config[`timezone`]
+	locationStr := strings.TrimSpace(*config[`timezone`])
 	location, err := time.LoadLocation(locationStr)
 	if err != nil {
 		return nil, fmt.Errorf(`Error while loading location %s: %v`, locationStr, err)
 	}
 
 	return &App{
-		mailerURL:  *config[`mailerURL`],
-		mailerUser: *config[`mailerUser`],
-		mailerPass: *config[`mailerPass`],
+		mailerURL:  strings.TrimSpace(*config[`mailerURL`]),
+		mailerUser: strings.TrimSpace(*config[`mailerUser`]),
+		mailerPass: strings.TrimSpace(*config[`mailerPass`]),
 		modelApp:   modelApp,
 		location:   location,
 	}, nil
