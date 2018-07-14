@@ -6,7 +6,6 @@ node_modules/
 coverage/
 ui/dist/
 ui/esdoc/
-package-lock.json
 e2e/output
 
 # Golang
