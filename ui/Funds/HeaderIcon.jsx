@@ -19,8 +19,12 @@ const HeaderIcon = ({
 
   return (
     <span className={style.icon}>
-      <span className={displayed ? style.active : ''}>{icon}</span>
-      <ol className={displayed ? style.displayed : style.hidden}>{list}</ol>
+      <span className={displayed ? style.active : ''}>
+        {icon}
+      </span>
+      <ol className={displayed ? style.displayed : style.hidden}>
+        {list}
+      </ol>
     </span>
   );
 };

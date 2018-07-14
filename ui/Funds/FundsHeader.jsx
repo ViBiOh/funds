@@ -26,12 +26,14 @@ export default class FundsHeader extends Component {
   }
 
   onOrderBy(...args) {
-    this.props.orderBy(...args);
+    const { orderBy } = this.props;
+    orderBy(...args);
     this.setState({ toggleDisplayed: '' });
   }
 
   onAggregateBy(...args) {
-    this.props.aggregateBy(...args);
+    const { aggregateBy } = this.props;
+    aggregateBy(...args);
     this.setState({ toggleDisplayed: '' });
   }
 
@@ -43,21 +45,30 @@ export default class FundsHeader extends Component {
   onTextChangeDebounce(e) {
     clearTimeout(this.timeout);
     ((text) => {
-      this.timeout = setTimeout(() => this.props.filterBy(this.state.selectedFilter, text), 300);
+      const { filterBy } = this.props;
+      const { selectedFilter } = this.state;
+
+      this.timeout = setTimeout(() => filterBy(selectedFilter, text), 300);
       return undefined;
     })(e.target.value);
   }
 
   get orderDisplayed() {
-    return this.state.toggleDisplayed === 'order';
+    const { toggleDisplayed } = this.state;
+
+    return toggleDisplayed === 'order';
   }
 
   get sigmaDisplayed() {
-    return this.state.toggleDisplayed === 'sigma';
+    const { toggleDisplayed } = this.state;
+
+    return toggleDisplayed === 'sigma';
   }
 
   get filterDisplayed() {
-    return this.state.toggleDisplayed === 'filter';
+    const { toggleDisplayed } = this.state;
+
+    return toggleDisplayed === 'filter';
   }
 
   toggleDisplay(icon, display) {
@@ -69,9 +80,13 @@ export default class FundsHeader extends Component {
   }
 
   render() {
+    const { selectedFilter } = this.state;
+
     return (
       <header className={style.header}>
-        <h1>Funds</h1>
+        <h1>
+Funds
+        </h1>
         <HeaderIcon
           filter="sortable"
           onClick={this.onOrderBy}
@@ -95,7 +110,7 @@ export default class FundsHeader extends Component {
         <input
           type="text"
           ref={e => setRef(this, 'filter', e)}
-          placeholder={`Fitre sur ${COLUMNS[this.state.selectedFilter].label}`}
+          placeholder={`Fitre sur ${COLUMNS[selectedFilter].label}`}
           onChange={this.onTextChangeDebounce}
         />
       </header>

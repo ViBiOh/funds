@@ -35,11 +35,14 @@ export default class FundsContainer extends Component {
     funds.sort((o1, o2) => {
       if (FundsContainer.isUndefined(o1, orderKey)) {
         return -1 * compareMultiplier;
-      } else if (FundsContainer.isUndefined(o2, orderKey)) {
+      }
+      if (FundsContainer.isUndefined(o2, orderKey)) {
         return 1 * compareMultiplier;
-      } else if (o1[orderKey] < o2[orderKey]) {
+      }
+      if (o1[orderKey] < o2[orderKey]) {
         return -1 * compareMultiplier;
-      } else if (o1[orderKey] > o2[orderKey]) {
+      }
+      if (o1[orderKey] > o2[orderKey]) {
         return 1 * compareMultiplier;
       }
       return 0;
@@ -91,9 +94,11 @@ export default class FundsContainer extends Component {
   }
 
   onAggregateSizeChange(value) {
+    const { aggregat } = this.state;
+
     this.setState(
       {
-        aggregat: { ...this.state.aggregat, size: value.target.value },
+        aggregat: { ...aggregat, size: value.target.value },
       },
       this.filterOrderData,
     );
@@ -122,10 +127,12 @@ export default class FundsContainer extends Component {
       this.header.resetInput();
     }
 
+    const { filters } = this.state;
+
     this.setState(
       {
         filters: {
-          ...this.state.filters,
+          ...filters,
           [filterName]: value,
         },
       },
@@ -152,19 +159,23 @@ export default class FundsContainer extends Component {
   }
 
   reverseOrder() {
+    const { order } = this.state;
+
     this.setState(
       {
-        order: { ...this.state.order, descending: !this.state.order.descending },
+        order: { ...order, descending: !order.descending },
       },
       this.filterOrderData,
     );
   }
 
   filterOrderData() {
-    const displayed = FundsContainer.filterFunds(this.state.funds, this.state.filters);
+    const { funds, filters, order } = this.state;
 
-    if (this.state.order.key) {
-      FundsContainer.orderFunds(displayed, this.state.order.key, this.state.order.descending);
+    const displayed = FundsContainer.filterFunds(funds, filters);
+
+    if (order.key) {
+      FundsContainer.orderFunds(displayed, order.key, order.descending);
     }
 
     this.setState(
@@ -177,18 +188,19 @@ export default class FundsContainer extends Component {
   }
 
   aggregateData(displayed) {
-    const { key } = this.state.aggregat;
-    if (!key) {
+    const { aggregat } = this.state;
+
+    if (!aggregat.key) {
       return [];
     }
 
     const aggregate = {};
-    const size = Math.min(displayed.length, this.state.aggregat.size);
+    const size = Math.min(displayed.length, aggregat.size);
     for (let i = 0; i < size; i += 1) {
-      if (typeof aggregate[displayed[i][key]] === 'undefined') {
-        aggregate[displayed[i][key]] = 0;
+      if (typeof aggregate[displayed[i][aggregat.key]] === 'undefined') {
+        aggregate[displayed[i][aggregat.key]] = 0;
       }
-      aggregate[displayed[i][key]] += 1;
+      aggregate[displayed[i][aggregat.key]] += 1;
     }
 
     const aggregated = Object.keys(aggregate).map(label => ({
@@ -201,27 +213,33 @@ export default class FundsContainer extends Component {
   }
 
   updateUrl() {
-    const params = Object.keys(this.state.filters)
-      .filter(filter => this.state.filters[filter])
-      .map(filter => `${filter}=${encodeURIComponent(this.state.filters[filter])}`);
+    const { filters, order, aggregat } = this.state;
 
-    if (this.state.order.key) {
-      params.push(`${ORDER_PARAM}=${this.state.order.key}`);
+    const params = Object.keys(filters)
+      .filter(filter => filters[filter])
+      .map(filter => `${filter}=${encodeURIComponent(filters[filter])}`);
 
-      if (!this.state.order.descending) {
+    if (order.key) {
+      params.push(`${ORDER_PARAM}=${order.key}`);
+
+      if (!order.descending) {
         params.push(ASCENDING_ORDER_PARAM);
       }
     }
 
-    if (this.state.aggregat.key) {
-      params.push(`${AGGREGAT_PARAM}=${this.state.aggregat.key}`);
-      params.push(`${AGGREGAT_SIZE_PARAM}=${this.state.aggregat.size}`);
+    if (aggregat.key) {
+      params.push(`${AGGREGAT_PARAM}=${aggregat.key}`);
+      params.push(`${AGGREGAT_SIZE_PARAM}=${aggregat.size}`);
     }
 
     window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
   }
 
   render() {
+    const {
+      error, displayed, funds, order, filters, aggregat, aggregated, loaded,
+    } = this.state;
+
     return (
       <span>
         <FundsHeader
@@ -230,30 +248,34 @@ export default class FundsContainer extends Component {
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
         />
-        {this.state.error && (
+        {error && (
           <div>
-            <h2>Erreur rencontée</h2>
-            <pre>{JSON.stringify(this.state.error, null, 2)}</pre>
+            <h2>
+Erreur rencontée
+            </h2>
+            <pre>
+              {JSON.stringify(error, null, 2)}
+            </pre>
           </div>
         )}
         <article className={style.container}>
           <div className={style.modifiers}>
             <FundsModifiers
-              fundsSize={this.state.displayed.length}
-              initialSize={this.state.funds.length}
+              fundsSize={displayed.length}
+              initialSize={funds.length}
               orderBy={this.orderBy}
-              order={this.state.order}
+              order={order}
               filterBy={this.filterBy}
-              filters={this.state.filters}
+              filters={filters}
               reverseOrder={this.reverseOrder}
               aggregateBy={this.aggregateBy}
-              aggregat={this.state.aggregat}
+              aggregat={aggregat}
               onAggregateSizeChange={this.onAggregateSizeChange}
             />
-            <FundsGraph aggregat={this.state.aggregat} aggregated={this.state.aggregated} />
+            <FundsGraph aggregat={aggregat} aggregated={aggregated} />
           </div>
-          {!this.state.loaded && <Throbber label="Chargement des fonds" />}
-          {this.state.loaded && <FundsList funds={this.state.displayed} filterBy={this.filterBy} />}
+          {!loaded && <Throbber label="Chargement des fonds" />}
+          {loaded && <FundsList funds={displayed} filterBy={this.filterBy} />}
         </article>
       </span>
     );

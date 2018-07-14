@@ -16,7 +16,10 @@ function renderCount(fundsSize, initialSize) {
 
   return (
     <span key="count" className={style.modifier}>
-      {fundsSize} / {initialSize}
+      {fundsSize}
+      {' '}
+/
+      {initialSize}
     </span>
   );
 }
@@ -28,9 +31,17 @@ function renderFilters(filters, filterBy) {
       <span key={filter} className={style.modifier}>
         <FaFilter />
         <span>
-          <em> {COLUMNS[filter].label}</em> ≃{' '}
+          <em>
+            {' '}
+            {COLUMNS[filter].label}
+          </em>
+          {' '}
+≃
+          {' '}
         </span>
-        <span>{filters[filter]}</span>
+        <span>
+          {filters[filter]}
+        </span>
         <Button type="none" onClick={() => filterBy(filter, '')}>
           <FaClose />
         </Button>
@@ -45,7 +56,9 @@ function renderOrder(order, orderBy, reverseOrder) {
         <Button type="none" onClick={reverseOrder}>
           {order.descending ? <FaSortAmountDesc /> : <FaSortAmountAsc />}
         </Button>
-        <span>{COLUMNS[order.key].label}</span>
+        <span>
+          {COLUMNS[order.key].label}
+        </span>
         <Button type="none" onClick={() => orderBy('')}>
           <FaClose />
         </Button>
@@ -70,7 +83,8 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
             {size}
           </option>
         ))}
-      </select>{' '}
+      </select>
+      {' '}
       {label}
       <Button type="none" onClick={() => aggregateBy('')}>
         <FaClose />

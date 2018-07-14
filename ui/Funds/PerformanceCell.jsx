@@ -13,7 +13,9 @@ const getValue = (value) => {
 };
 
 const PerformanceCell = ({ type, value }) => (
-  <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>{value}</span>
+  <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>
+    {value}
+  </span>
 );
 
 PerformanceCell.propTypes = {
