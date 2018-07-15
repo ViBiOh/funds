@@ -79,7 +79,7 @@ services:
     - -env
     - API_URL
     - -csp
-    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
+    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' fathom.vibioh.fr; style-src 'self' 'unsafe-inline'; img-src 'self' fathom.vibioh.fr; connect-src 'self' funds-api.vibioh.fr
     - -headers
     - X-UA-Compatible:ie=edge
     - -push
@@ -97,6 +97,7 @@ services:
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
+      FATHOM_URL: 'https://fathom.vibioh.fr'
     logging:
       driver: json-file
       options:
