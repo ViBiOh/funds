@@ -5,9 +5,10 @@ function insertScript(url) {
   const trackerScript = `${url}/tracker.js`;
 
   return new Promise((resolve) => {
-    global.fathom = global.fathom || function initQ() {
-      (global.fathom.q = global.fathom.q || []).push(document, global, trackerScript, 'fathom');
-    };
+    global.fathom = global.fathom
+      || function initQ() {
+        (global.fathom.q = global.fathom.q || []).push(document, global, trackerScript, 'fathom');
+      };
 
     const script = document.createElement('script');
     script.id = 'fathom-script';
@@ -30,7 +31,16 @@ function init(config) {
   });
 }
 
+/**
+ * Track page view.
+ */
+function track() {
+  if (global.fathom) {
+    global.fathom('trackPageview');
+  }
+}
+
 export default {
   init,
-  insertScript,
+  track,
 };
