@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Fathom from '../external/fathom';
 import { buildFullTextRegex, fullTextRegexFilter } from '../Search/FullTextSearch';
 import FundsService from '../Service/FundsService';
 import setRef from '../Tools/ref';
@@ -234,7 +233,6 @@ export default class FundsContainer extends Component {
     }
 
     window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
-    Fathom.track();
   }
 
   render() {
