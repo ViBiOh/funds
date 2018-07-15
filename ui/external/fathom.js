@@ -2,11 +2,17 @@
  * Insert Fathom script into DOM.
  */
 function insertScript(url) {
+  const trackerScript = `${url}/tracker.js`;
+
   return new Promise((resolve) => {
+    global.fathom = global.fathom || function initQ() {
+      (global.fathom.q = global.fathom.q || []).push(document, global, trackerScript, 'fathom');
+    };
+
     const script = document.createElement('script');
     script.id = 'fathom-script';
     script.type = 'text/javascript';
-    script.src = `${url}/tracker.js`;
+    script.src = trackerScript;
     script.async = 'true';
     script.onload = resolve;
 
