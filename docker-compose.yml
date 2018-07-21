@@ -14,6 +14,11 @@ services:
     - ${FUNDS_DATABASE_PASS}
     - -dbName
     - ${FUNDS_DATABASE_NAME}
+    - -rollbarToken
+    - ${ROLLBAR_TOKEN}
+    - -rollbarServerRoot
+    - github.com/ViBiOh/funds
+    - -rollbarWelcome
     - -tracingName
     - funds_api
     labels:
