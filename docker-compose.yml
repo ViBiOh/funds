@@ -18,7 +18,6 @@ services:
     - ${ROLLBAR_TOKEN}
     - -rollbarServerRoot
     - github.com/ViBiOh/funds
-    - -rollbarWelcome
     - -tracingName
     - funds_api
     labels:
