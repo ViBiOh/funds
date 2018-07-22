@@ -57,5 +57,5 @@ func main() {
 
 	handler := server.ChainMiddlewares(modelHandler, opentracingApp, rollbarApp, gzipApp, owaspApp, corsApp)
 
-	serverApp.ListenAndServe(handler, nil, healthcheckApp)
+	serverApp.ListenAndServe(handler, nil, healthcheckApp, rollbarApp)
 }
