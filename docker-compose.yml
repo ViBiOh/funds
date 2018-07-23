@@ -20,6 +20,8 @@ services:
     - ${ROLLBAR_TOKEN}
     - -rollbarServerRoot
     - github.com/ViBiOh/funds
+    - -rollbarEnv
+    - ${ENVIRONMENT}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
@@ -81,9 +83,9 @@ services:
     command:
     - -spa
     - -env
-    - API_URL
+    - API_URL,ENVIRONMENT,ROLLBAR_TOKEN
     - -csp
-    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
+    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com/ajax/libs/rollbar.js/; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr api.rollbar.com
     - -headers
     - X-UA-Compatible:ie=edge
     - -push
@@ -94,6 +96,8 @@ services:
     - ${ROLLBAR_TOKEN}
     - -rollbarServerRoot
     - github.com/ViBiOh/viws
+    - -rollbarEnv
+    - ${ENVIRONMENT}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
@@ -105,6 +109,8 @@ services:
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
+      ENVIRONMENT: '${ENVIRONMENT}'
+      ROLLBAR_TOKEN: '${ROLLBAR_CLIENT_TOKEN}'
     logging:
       driver: json-file
       options:

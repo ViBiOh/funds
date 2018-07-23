@@ -53,6 +53,8 @@ jobs:
         -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
         -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
         -e "s|\${ROLLBAR_TOKEN}|${ROLLBAR_TOKEN}|g" \
+        -e "s|\${ROLLBAR_CLIENT_TOKEN}|${ROLLBAR_CLIENT_TOKEN}|g" \
+        -e "s|\${ENVIRONMENT}|prod|g" \
         -e "s|\${COMMIT_SHA}|`make version`|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
