@@ -15,6 +15,7 @@ import (
 	"github.com/ViBiOh/httputils/pkg/db"
 	"github.com/ViBiOh/httputils/pkg/httperror"
 	"github.com/ViBiOh/httputils/pkg/httpjson"
+	"github.com/ViBiOh/httputils/pkg/rollbar"
 	"github.com/ViBiOh/httputils/pkg/tools"
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -41,7 +42,7 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		log.Printf(`[funds] Error while initializing database: %v`, err)
+		rollbar.LogError(`[funds] Error while initializing database: %v`, err)
 	} else {
 		app.dbConnexion = fundsDB
 	}
@@ -66,12 +67,12 @@ func (a *App) refresh() {
 	defer log.Print(`Refresh ended`)
 
 	if err := a.refreshData(); err != nil {
-		log.Printf(`Error while refreshing: %v`, err)
+		rollbar.LogError(`Error while refreshing: %v`, err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			log.Printf(`Error while saving: %v`, err)
+			rollbar.LogError(`Error while saving: %v`, err)
 		}
 	}
 }
