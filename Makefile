@@ -1,4 +1,5 @@
 VERSION ?= $(shell git log --pretty=format:'%h' -n 1)
+AUTHOR ?= $(shell git log --pretty=format:'%an' -n 1)
 APP_NAME := funds
 
 default: api
@@ -12,11 +13,14 @@ notifier: deps build-notifier docker-notifier
 version:
 	@echo -n $(VERSION)
 
+author:
+	@echo -n $(AUTHOR)
+
 deps:
-	go get -u github.com/golang/dep/cmd/dep
-	go get -u github.com/golang/lint/golint
-	go get -u github.com/kisielk/errcheck
-	go get -u golang.org/x/tools/cmd/goimports
+	go get github.com/golang/dep/cmd/dep
+	go get github.com/golang/lint/golint
+	go get github.com/kisielk/errcheck
+	go get golang.org/x/tools/cmd/goimports
 	dep ensure
 
 format:
@@ -112,4 +116,4 @@ start-api:
 		-tracingName funds \
 		-tracingAgent vibioh.fr:6831
 
-.PHONY: api go notifier version deps format lint tst bench build-api build-notifier docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
+.PHONY: api go notifier version author deps format lint tst bench build-api build-notifier docker-deps docker-login docker-pull docker-promote docker-push docker-api docker-ui docker-notifier docker-build-api docker-push-api docker-pull-api docker-promote-api docker-build-ui docker-push-ui docker-pull-ui docker-promote-ui docker-build-notifier docker-push-notifier docker-pull-notifier docker-promote-notifier
