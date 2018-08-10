@@ -9,7 +9,6 @@
 ```bash
 export FUNDS_DATABASE_DIR=`realpath ./data`
 export FUNDS_DATABASE_PASS=password
-export FUNDS_DATABASE_PORT=5432
 
 mkdir ${FUNDS_DATABASE_DIR}
 sudo chown -R 70:70 ${FUNDS_DATABASE_DIR}
