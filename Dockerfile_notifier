@@ -1,0 +1,24 @@
+FROM golang:1.10 as builder
+
+ENV APP_NAME funds
+ENV WORKDIR ${GOPATH}/src/github.com/ViBiOh/funds
+
+WORKDIR ${WORKDIR}
+COPY ./ ${WORKDIR}/
+
+RUN make ${APP_NAME} \
+ && mkdir -p /app \
+ && curl -s -o /app/cacert.pem https://curl.haxx.se/ca/cacert.pem \
+ && curl -s -o /app/zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip \
+ && cp bin/${APP_NAME} /app/
+
+FROM scratch
+
+ENV APP_NAME funds
+ENV ZONEINFO /zoneinfo.zip
+
+HEALTHCHECK --retries=10 CMD [ "/funds-notifier", "-c" ]
+ENTRYPOINT [ "/funds-notifier" ]
+
+COPY --from=builder /app/cacert.pem /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /app/zoneinfo.zip /app/${APP_NAME}-notifier /
