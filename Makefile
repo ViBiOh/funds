@@ -5,6 +5,9 @@ AUTHOR ?= $(shell git log --pretty=format:'%an' -n 1)
 default:
 	docker build -t vibioh/$(APP_NAME)-api:$(VERSION) .
 
+notifier:
+	docker build -t vibioh/$(APP_NAME)-notifier:$(VERSION) -f Dockerfile_notifier .
+
 $(APP_NAME)-api: deps go
 
 $(APP_NAME)-notifier: deps build-notifier

@@ -5,18 +5,17 @@ jobs:
     sudo: required
     services:
     - docker
-    script: make funds-api
+    script: make
     after_success: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
       docker push vibioh/`make name`-api:`make version`
 
-  include:
   - stage: Build
 
     sudo: required
     services:
     - docker
-    script: make funds-notifier
+    script: make notifier
     after_success: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
       docker push vibioh/`make name`-notifier:`make version`
