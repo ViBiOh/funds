@@ -2,24 +2,24 @@ jobs:
   include:
   - stage: Build
 
-    language: go
     sudo: required
     services:
     - docker
-    go : '1.10'
+    script: make funds-api
     after_success: |
-      if [ "${TRAVIS_BRANCH}" == "master" ]; then
-        curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
-      fi
+      echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
+      docker push vibioh/`make name`-api:`make version`
 
+  include:
   - stage: Build
 
-    language: go
     sudo: required
     services:
     - docker
-    go : '1.10'
-    script: make notifier
+    script: make funds-notifier
+    after_success: |
+      echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
+      docker push vibioh/`make name`-notifier:`make version`
 
   - stage: Build
 
@@ -29,20 +29,34 @@ jobs:
     - docker
     node_js: 10
     script: |
-      npm run build && make docker-ui
+      npm run build
     after_success: |
-      if [ "${TRAVIS_BRANCH}" == "master" ]; then
-        bash <(curl -s https://codecov.io/bash)
-        curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
-      fi
+      docker build -t vibioh/`make name`-ui:`make version` ./ui/
+
+  - stage: Publish
+
+    sudo: required
+    services:
+    - docker
+    script: |
+      echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
+      docker pull vibioh/`make name`-api:`make version`
+      docker pull vibioh/`make name`-notifier:`make version`
+      docker pull vibioh/`make name`-ui:`make version`
+      docker tag vibioh/`make name`-api:`make version` vibioh/`make name`-api:latest
+      docker tag vibioh/`make name`-notifier:`make version` vibioh/`make name`-notifier:latest
+      docker tag vibioh/`make name`-ui:`make version` vibioh/`make name`-ui:latest
+      docker push vibioh/`make name`-api:latest
+      docker push vibioh/`make name`-notifier:latest
+      docker push vibioh/`make name`-ui:latest
+    after_success: |
+      curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
+      curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
+
 
   - stage: Deploy
 
     script: |
-      make docker-promote
-      VERSION=latest make docker-push
-      make docker-delete
-
       sed \
         -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
         -e "s|\${FUNDS_DATABASE_HOST}|${FUNDS_DATABASE_HOST}|g" \
@@ -64,6 +78,8 @@ jobs:
 
 stages:
   - Build
+  - name: Publish
+    if: branch = master
   - name: Deploy
     if: branch = master
 

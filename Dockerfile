@@ -1,9 +1,23 @@
+FROM golang:1.10 as builder
+
+ENV APP_NAME funds
+ENV WORKDIR ${GOPATH}/src/github.com/ViBiOh/funds
+
+WORKDIR ${WORKDIR}
+COPY ./ ${WORKDIR}/
+
+RUN make ${APP_NAME} \
+ && mkdir -p /app \
+ && curl -s -o /app/cacert.pem https://curl.haxx.se/ca/cacert.pem \
+ && cp bin/${APP_NAME} /app/
+
 FROM scratch
 
-HEALTHCHECK --retries=10 CMD [ "/funds", "-url", "https://localhost:1080/health" ]
+ENV APP_NAME funds
+HEALTHCHECK --retries=10 CMD [ "/fund-api", "-url", "https://localhost:1080/health" ]
 
 EXPOSE 1080
-ENTRYPOINT [ "/funds" ]
+ENTRYPOINT [ "/funds-api" ]
 
-COPY cacert.pem /etc/ssl/certs/ca-certificates.crt
-COPY bin/funds /funds
+COPY --from=builder /app/cacert.pem /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /app/${APP_NAME}-api /

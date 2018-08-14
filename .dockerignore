@@ -1,6 +1,4 @@
-app/
-test/
-web/
-node_modules/
+bin/
+vendor/
 
-**/*.go
+node_modules/
