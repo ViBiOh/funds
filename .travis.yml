@@ -31,6 +31,7 @@ jobs:
       npm run build
     after_success: |
       docker build -t vibioh/`make name`-ui:`make version` ./ui/
+      echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
       docker push vibioh/`make name`-ui:`make version`
 
   - stage: Publish
@@ -52,7 +53,6 @@ jobs:
     after_success: |
       curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
       curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
-
 
   - stage: Deploy
 
