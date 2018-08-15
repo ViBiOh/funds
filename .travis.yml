@@ -31,7 +31,7 @@ jobs:
       npm run build
     after_success: |
       docker build -t vibioh/`make name`-ui:`make version` ./ui/
-      docker push -t vibioh/`make name`-ui:`make version`
+      docker push vibioh/`make name`-ui:`make version`
 
   - stage: Publish
 
