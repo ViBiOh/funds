@@ -2,7 +2,7 @@ APP_NAME := funds
 VERSION ?= $(shell git log --pretty=format:'%h' -n 1)
 AUTHOR ?= $(shell git log --pretty=format:'%an' -n 1)
 
-default:
+docker:
 	docker build -t vibioh/$(APP_NAME)-api:$(VERSION) .
 
 notifier:
