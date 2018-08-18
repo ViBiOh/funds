@@ -53,8 +53,6 @@ build-notifier:
 
 start:
 	go run cmd/api/api.go \
-		-tls=false \
-		-tracingName funds \
-		-tracingAgent vibioh.fr:6831
+		-tls=false
 
-.PHONY: $(APP_NAME)-api $(APP_NAME)-notifier go notifier name version author deps format lint tst bench build-api build-notifier start
+.PHONY: docker $(APP_NAME)-api $(APP_NAME)-notifier go notifier name version author deps format lint tst bench build-api build-notifier start
