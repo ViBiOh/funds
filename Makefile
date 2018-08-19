@@ -8,6 +8,9 @@ docker:
 notifier:
 	docker build -t vibioh/$(APP_NAME)-notifier:$(VERSION) -f Dockerfile_notifier .
 
+ui:
+	docker build -t vibioh/$(APP_NAME)-ui:$(VERSION) -f Dockerfile_ui .
+
 $(APP_NAME)-api: deps go
 
 $(APP_NAME)-notifier: deps build-notifier
@@ -55,4 +58,4 @@ start:
 	go run cmd/api/api.go \
 		-tls=false
 
-.PHONY: docker $(APP_NAME)-api $(APP_NAME)-notifier go notifier name version author deps format lint tst bench build-api build-notifier start
+.PHONY: docker notifier ui $(APP_NAME)-api $(APP_NAME)-notifier go name version author deps format lint tst bench build-api build-notifier start
