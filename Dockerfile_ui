@@ -8,7 +8,7 @@ COPY ./ ${WORKDIR}/
 RUN npm ci \
  && npm run build \
  && mkdir -p /app \
- && cp -r dist/ /app/
+ && cp -r ui/dist/ /app/
 
 FROM vibioh/viws
 
