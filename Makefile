@@ -6,7 +6,7 @@ $(APP_NAME)-api: deps go build-api
 
 $(APP_NAME)-notifier: deps go build-notifier
 
-$(APP_NAME)-ui: ui
+$(APP_NAME)-ui: build-ui
 
 go: format lint tst bench
 
