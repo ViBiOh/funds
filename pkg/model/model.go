@@ -152,7 +152,7 @@ func (a *App) ListFunds() []Fund {
 }
 
 func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
-	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r.URL.RawQuery)); err != nil {
+	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r)); err != nil {
 		httperror.InternalServerError(w, err)
 	}
 }
