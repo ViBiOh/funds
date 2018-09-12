@@ -116,7 +116,7 @@ func (a App) notify(recipients []string, score float64) error {
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		_, err := request.DoJSON(ctx, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GetBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
+		_, err := request.DoJSON(ctx, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GenerateBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
 		if err != nil {
 			return fmt.Errorf(`Error while sending email: %v`, err)
 		}
