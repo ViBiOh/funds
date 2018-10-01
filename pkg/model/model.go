@@ -108,7 +108,7 @@ func (a *App) refreshData() error {
 	}
 
 	if len(errorIds) > 0 {
-		return fmt.Errorf(`Errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
+		return fmt.Errorf(`errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
 	}
 
 	return nil

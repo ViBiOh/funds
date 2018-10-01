@@ -17,7 +17,7 @@ func (f *App) GetCurrentAlerts() (map[string]*Alert, error) {
 
 	alerts, err := f.ListAlertsOpened()
 	if err != nil {
-		return nil, fmt.Errorf(`Error while listing opened alerts: %v`, err)
+		return nil, fmt.Errorf(`error while listing opened alerts: %v`, err)
 	}
 
 	for _, alert := range alerts {

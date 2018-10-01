@@ -54,7 +54,7 @@ WHERE
   isin = $3
 `
 
-var errNilFund = errors.New(`Unable to save nil Fund`)
+var errNilFund = errors.New(`unable to save nil Fund`)
 
 func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 	var (
@@ -67,7 +67,7 @@ func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&isin, &label, &score); err != nil {
-			return nil, fmt.Errorf(`Error while scanning fund line: %v`, err)
+			return nil, fmt.Errorf(`error while scanning fund line: %v`, err)
 		}
 
 		list = append(list, &Fund{Isin: isin, Label: label, Score: score})
@@ -88,7 +88,7 @@ func (f *App) ReadFundByIsin(isin string) (*Fund, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		return nil, fmt.Errorf(`Error while querying: %v`, err)
+		return nil, fmt.Errorf(`error while querying: %v`, err)
 	}
 
 	return &Fund{Isin: isin, Label: label, Score: score}, nil
@@ -98,7 +98,7 @@ func (f *App) ReadFundByIsin(isin string) (*Fund, error) {
 func (f *App) ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 	rows, err := f.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
-		err = fmt.Errorf(`Error while querying: %v`, err)
+		err = fmt.Errorf(`error while querying: %v`, err)
 		return
 	}
 
@@ -129,13 +129,13 @@ func (f *App) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	if _, err = f.ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
 			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
-				err = fmt.Errorf(`Error while creating: %v`, err)
+				err = fmt.Errorf(`error while creating: %v`, err)
 			}
 		} else {
-			err = fmt.Errorf(`Error while checking if fund already exists: %v`, err)
+			err = fmt.Errorf(`error while checking if fund already exists: %v`, err)
 		}
 	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin); err != nil {
-		err = fmt.Errorf(`Error while updating: %v`, err)
+		err = fmt.Errorf(`error while updating: %v`, err)
 	}
 
 	return

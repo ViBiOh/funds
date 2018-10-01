@@ -45,7 +45,7 @@ INSERT INTO
 )
 `
 
-var errNilAlert = errors.New(`Unable to save nil Alert`)
+var errNilAlert = errors.New(`unable to save nil Alert`)
 
 // ListAlertsOpened retrieves current Alerts (only one mail sent)
 func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
@@ -66,7 +66,7 @@ func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
 
 	for rows.Next() {
 		if err = rows.Scan(&isin, &alertType, &score); err != nil {
-			err = fmt.Errorf(`Error while scanning alerts opened: %v`, err)
+			err = fmt.Errorf(`error while scanning alerts opened: %v`, err)
 			return
 		}
 
@@ -94,7 +94,7 @@ func (f *App) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	}
 
 	if _, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
-		err = fmt.Errorf(`Error while querying: %v`, err)
+		err = fmt.Errorf(`error while querying: %v`, err)
 	}
 
 	return

@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5ad887063206a4ef96aeeb0fdb9e8f47718e7f80fc420209fb78824ba1058c1b"
+  digest = "1:6b7ea6ae783a0627a23cd135a1f55d42cc3ff11a10c234cbb50de471cf552241"
   name = "github.com/ViBiOh/httputils"
   packages = [
     "pkg",
@@ -33,7 +33,7 @@
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "462fc2b0349c2706e4aaa2f3ae86c1be3d2c83fe"
+  revision = "b6d3cd35d8be695407c488c7142e582a1e626ebc"
 
 [[projects]]
   branch = "master"
@@ -197,7 +197,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "2f5d2388922f370f4355f327fcf4cfe9f5583908"
+  revision = "4dfa2610cdf3b287375bbba5b8f2a14d3b01d8de"
 
 [solve-meta]
   analyzer-name = "dep"
