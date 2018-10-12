@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:027275ea12bf4a9d30b5f267ab61bcd517ee9135770fd6ad36993d92a1cfa672"
+  digest = "1:8e2ab2bfaa1238f8c91337aa4ebd4a11b03c5779b9b828bf08b9bbcff4bc0890"
   name = "github.com/ViBiOh/httputils"
   packages = [
     "pkg",
@@ -33,7 +33,7 @@
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "6aaed6f8179e7957c965027b2ed5831e151a4bd9"
+  revision = "fd50c443407db1c331917bcaa769fa78261d71bc"
 
 [[projects]]
   branch = "master"
@@ -159,7 +159,7 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:104a2d7446f4628e4663d7c029b18da1aad4313735de775f37b6e7720b1d0aa7"
+  digest = "1:ac6f26e917fd2fb3194a7ebe2baf6fb32de2f2fbfed130c18aac0e758a6e1d22"
   name = "github.com/uber/jaeger-client-go"
   packages = [
     ".",
@@ -177,11 +177,12 @@
     "thrift-gen/jaeger",
     "thrift-gen/sampling",
     "thrift-gen/zipkincore",
+    "transport",
     "utils",
   ]
   pruneopts = "UT"
-  revision = "b043381d944715b469fd6b37addfd30145ca1758"
-  version = "v2.14.0"
+  revision = "1a782e2da844727691fef1757c72eb190c2909f0"
+  version = "v2.15.0"
 
 [[projects]]
   digest = "1:0f09db8429e19d57c8346ad76fbbc679341fa86073d3b8fb5ac919f0357d8f4c"
@@ -197,7 +198,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "146acd28ed5894421fb5aac80ca93bc1b1f46f87"
+  revision = "49bb7cea24b1df9410e1712aa6433dae904ff66a"
 
 [solve-meta]
   analyzer-name = "dep"
