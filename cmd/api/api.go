@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
 
 	"github.com/ViBiOh/funds/pkg/model"
@@ -12,8 +11,10 @@ import (
 	"github.com/ViBiOh/httputils/pkg/db"
 	"github.com/ViBiOh/httputils/pkg/gzip"
 	"github.com/ViBiOh/httputils/pkg/healthcheck"
+	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
+	"github.com/ViBiOh/httputils/pkg/prometheus"
 	"github.com/ViBiOh/httputils/pkg/rollbar"
 	"github.com/ViBiOh/httputils/pkg/server"
 )
@@ -24,6 +25,7 @@ func main() {
 	opentracingConfig := opentracing.Flags(`tracing`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
+	prometheusConfig := prometheus.Flags(`prometheus`)
 	rollbarConfig := rollbar.Flags(`rollbar`)
 
 	fundsConfig := model.Flags(``)
@@ -38,12 +40,13 @@ func main() {
 	opentracingApp := opentracing.NewApp(opentracingConfig)
 	owaspApp := owasp.NewApp(owaspConfig)
 	corsApp := cors.NewApp(corsConfig)
+	prometheusApp := prometheus.NewApp(prometheusConfig)
 	rollbarApp := rollbar.NewApp(rollbarConfig)
 	gzipApp := gzip.NewApp()
 
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
-		log.Fatalf(`Error while creating Fund app: %v`, err)
+		logger.Error(`Error while creating Fund app: %v`, err)
 	}
 
 	modelHandler := model.Handler(fundApp)
@@ -55,7 +58,7 @@ func main() {
 		}
 	}))
 
-	handler := server.ChainMiddlewares(modelHandler, opentracingApp, rollbarApp, gzipApp, owaspApp, corsApp)
+	handler := server.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, rollbarApp, gzipApp, owaspApp, corsApp)
 
 	serverApp.ListenAndServe(handler, nil, healthcheckApp, rollbarApp)
 }

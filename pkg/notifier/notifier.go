@@ -4,13 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/request"
 	"github.com/ViBiOh/httputils/pkg/tools"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -71,7 +71,7 @@ func (a App) getTimer(hour int, minute int, interval time.Duration) *time.Timer 
 		nextTime = nextTime.Add(interval)
 	}
 
-	log.Printf(`Next notification at %v`, nextTime)
+	logger.Info(`Next notification at %v`, nextTime)
 
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
@@ -121,7 +121,7 @@ func (a App) notify(recipients []string, score float64) error {
 			return fmt.Errorf(`error while sending email: %v`, err)
 		}
 
-		log.Printf(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
+		logger.Info(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
 		if err := a.saveAlerts(score, above, below); err != nil {
 			return fmt.Errorf(`error while saving alerts: %v`, err)
@@ -141,10 +141,10 @@ func (a App) Start(recipients string, score float64, hour int, minute int) {
 		select {
 		case <-timer.C:
 			if err := a.notify(recipientsList, score); err != nil {
-				log.Print(err)
+				logger.Error(`%v`, err)
 			}
 			timer.Reset(notificationInterval)
-			log.Printf(`Next notification in %v`, notificationInterval)
+			logger.Info(`Next notification in %v`, notificationInterval)
 		}
 	}
 }

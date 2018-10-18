@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -15,7 +14,7 @@ import (
 	"github.com/ViBiOh/httputils/pkg/db"
 	"github.com/ViBiOh/httputils/pkg/httperror"
 	"github.com/ViBiOh/httputils/pkg/httpjson"
-	"github.com/ViBiOh/httputils/pkg/rollbar"
+	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/tools"
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -42,7 +41,7 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		rollbar.LogError(`[funds] Error while initializing database: %v`, err)
+		logger.Error(`[funds] Error while initializing database: %v`, err)
 	} else {
 		app.dbConnexion = fundsDB
 	}
@@ -63,16 +62,16 @@ func (a *App) refreshCron() {
 }
 
 func (a *App) refresh() {
-	log.Print(`Refresh started`)
-	defer log.Print(`Refresh ended`)
+	logger.Info(`Refresh started`)
+	defer logger.Info(`Refresh ended`)
 
 	if err := a.refreshData(); err != nil {
-		rollbar.LogError(`Error while refreshing: %v`, err)
+		logger.Error(`Error while refreshing: %v`, err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			rollbar.LogError(`Error while saving: %v`, err)
+			logger.Error(`Error while saving: %v`, err)
 		}
 	}
 }
