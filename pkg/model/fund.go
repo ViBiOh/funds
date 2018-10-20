@@ -1,9 +1,5 @@
 package model
 
-import (
-	"fmt"
-)
-
 // Fund informations
 type Fund struct {
 	ID            string  `json:"id"`
@@ -36,7 +32,7 @@ func (f *App) GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*
 
 	funds, err := f.ListFundsWithScoreAbove(score)
 	if err != nil {
-		return nil, fmt.Errorf(`error while listing funds with score >= %.2f: %v`, score, err)
+		return nil, err
 	}
 
 	for _, fund := range funds {
@@ -58,7 +54,7 @@ func (f *App) GetFundsBelow(currentAlerts map[string]*Alert) ([]*Fund, error) {
 
 	for _, alert := range currentAlerts {
 		if fund, err := f.ReadFundByIsin(alert.Isin); err != nil {
-			return nil, fmt.Errorf(`error while reading fund with isin '%s': %v`, alert.Isin, err)
+			return nil, err
 		} else if fund.Score < alert.Score {
 			funds = append(funds, fund)
 		}

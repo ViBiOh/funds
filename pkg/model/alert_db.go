@@ -2,10 +2,9 @@ package model
 
 import (
 	"database/sql"
-	"errors"
-	"fmt"
 
 	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/errors"
 )
 
 const listAlertsOpenedQuery = `
@@ -45,8 +44,6 @@ INSERT INTO
 )
 `
 
-var errNilAlert = errors.New(`unable to save nil Alert`)
-
 // ListAlertsOpened retrieves current Alerts (only one mail sent)
 func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
 	rows, err := f.dbConnexion.Query(listAlertsOpenedQuery)
@@ -66,7 +63,7 @@ func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
 
 	for rows.Next() {
 		if err = rows.Scan(&isin, &alertType, &score); err != nil {
-			err = fmt.Errorf(`error while scanning alerts opened: %v`, err)
+			err = errors.WithStack(err)
 			return
 		}
 
@@ -79,7 +76,7 @@ func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
 // SaveAlert saves Alert
 func (f *App) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	if alert == nil {
-		return errNilAlert
+		return errors.New(`cannot save nil`)
 	}
 
 	var usedTx *sql.Tx
@@ -94,7 +91,7 @@ func (f *App) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	}
 
 	if _, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
-		err = fmt.Errorf(`error while querying: %v`, err)
+		err = errors.WithStack(err)
 	}
 
 	return

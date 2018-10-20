@@ -67,7 +67,7 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 
 	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=1`, url), nil)
 	if err != nil {
-		return fmt.Errorf(`error while fetching: %v`, err)
+		return err
 	}
 
 	fund.Isin = string(extractLabel(isinRegex, body, emptyByte))
@@ -91,7 +91,7 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 
 	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=2`, url), nil)
 	if err != nil {
-		return fmt.Errorf(`error while fetching: %v`, err)
+		return err
 	}
 
 	fund.VolThreeYears = extractPerformance(volThreeYearRegex, body)
@@ -111,11 +111,11 @@ func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error
 	fund := &Fund{ID: cleanID}
 
 	if err := fetchInfosAndPerformances(ctx, url, fund); err != nil {
-		return *fund, fmt.Errorf(`[%s] Error while fetching infos and performances: %v`, fundID, err)
+		return *fund, err
 	}
 
 	if err := fetchVolatilite(ctx, url, fund); err != nil {
-		return *fund, fmt.Errorf(`[%s] Error while fetching volatilite: %v`, fundID, err)
+		return *fund, err
 	}
 
 	fund.ComputeScore()

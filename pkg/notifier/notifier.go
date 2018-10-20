@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/httputils/pkg/errors"
 	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/request"
 	"github.com/ViBiOh/httputils/pkg/tools"
@@ -43,7 +44,7 @@ func NewApp(config map[string]*string, modelApp *model.App) (*App, error) {
 	locationStr := strings.TrimSpace(*config[`timezone`])
 	location, err := time.LoadLocation(locationStr)
 	if err != nil {
-		return nil, fmt.Errorf(`error while loading location %s: %v`, locationStr, err)
+		return nil, errors.WithStack(err)
 	}
 
 	return &App{
@@ -79,7 +80,7 @@ func (a App) getTimer(hour int, minute int, interval time.Duration) *time.Timer 
 func (a App) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
-			return fmt.Errorf(`error while saving %s alerts: %v`, alertType, err)
+			return err
 		}
 	}
 
@@ -102,29 +103,29 @@ func (a App) notify(recipients []string, score float64) error {
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
-		return fmt.Errorf(`error while getting current alerts: %v`, err)
+		return err
 	}
 
 	above, err := a.modelApp.GetFundsAbove(score, currentAlerts)
 	if err != nil {
-		return fmt.Errorf(`error while getting above funds: %v`, err)
+		return err
 	}
 
 	below, err := a.modelApp.GetFundsBelow(currentAlerts)
 	if err != nil {
-		return fmt.Errorf(`error while getting below funds: %v`, err)
+		return err
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
 		_, err := request.DoJSON(ctx, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GenerateBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
 		if err != nil {
-			return fmt.Errorf(`error while sending email: %v`, err)
+			return err
 		}
 
 		logger.Info(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
 
 		if err := a.saveAlerts(score, above, below); err != nil {
-			return fmt.Errorf(`error while saving alerts: %v`, err)
+			return err
 		}
 	}
 
@@ -141,7 +142,7 @@ func (a App) Start(recipients string, score float64, hour int, minute int) {
 		select {
 		case <-timer.C:
 			if err := a.notify(recipientsList, score); err != nil {
-				logger.Error(`%v`, err)
+				logger.Error(`%+v`, err)
 			}
 			timer.Reset(notificationInterval)
 			logger.Info(`Next notification in %v`, notificationInterval)

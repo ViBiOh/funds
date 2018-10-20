@@ -43,7 +43,7 @@ func main() {
 
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Error(`Error while creating Fund app: %v`, err)
+		logger.Error(`%+v`, err)
 	}
 
 	modelHandler := model.Handler(fundApp)

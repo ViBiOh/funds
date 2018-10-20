@@ -32,12 +32,12 @@ func main() {
 
 	fundApp, err := model.NewApp(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Error(`error while creating Fund app: %v`, err)
+		logger.Error(`%+v`, err)
 	}
 
 	notifierApp, err := notifier.NewApp(notifierConfig, fundApp)
 	if err != nil {
-		logger.Error(`error while initializing notifier: %v`, err)
+		logger.Error(`%+v`, err)
 	}
 
 	logger.Info(`Notification to %s at %02d:%02d for score above %.2f`, *recipients, *hour, *minute, *score)

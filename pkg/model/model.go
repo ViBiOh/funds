@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/httputils/pkg/db"
+	"github.com/ViBiOh/httputils/pkg/errors"
 	"github.com/ViBiOh/httputils/pkg/httperror"
 	"github.com/ViBiOh/httputils/pkg/httpjson"
 	"github.com/ViBiOh/httputils/pkg/logger"
@@ -41,7 +42,7 @@ func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error
 
 	fundsDB, err := db.GetDB(dbConfig)
 	if err != nil {
-		logger.Error(`[funds] Error while initializing database: %v`, err)
+		logger.Error(`%+v`, errors.WithStack(err))
 	} else {
 		app.dbConnexion = fundsDB
 	}
@@ -66,12 +67,12 @@ func (a *App) refresh() {
 	defer logger.Info(`Refresh ended`)
 
 	if err := a.refreshData(); err != nil {
-		logger.Error(`Error while refreshing: %v`, err)
+		logger.Error(`%+v`, err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			logger.Error(`Error while saving: %v`, err)
+			logger.Error(`%+v`, err)
 		}
 	}
 }
@@ -80,7 +81,7 @@ func (a *App) refreshData() error {
 	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
 	defer span.Finish()
 
-	inputs, results, errors := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
+	inputs, results, errs := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
 	})
 
@@ -96,7 +97,7 @@ func (a *App) refreshData() error {
 
 	for i := 0; i < len(fundsIds); i++ {
 		select {
-		case crawlErr := <-errors:
+		case crawlErr := <-errs:
 			errorIds = append(errorIds, crawlErr.Input.([]byte))
 			break
 		case result := <-results:
@@ -107,7 +108,7 @@ func (a *App) refreshData() error {
 	}
 
 	if len(errorIds) > 0 {
-		return fmt.Errorf(`errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
+		return errors.New(`errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
 	}
 
 	return nil
