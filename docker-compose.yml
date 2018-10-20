@@ -16,12 +16,6 @@ services:
     - ${FUNDS_DATABASE_NAME}
     - -tracingName
     - funds_api
-    - -rollbarToken
-    - ${ROLLBAR_TOKEN}
-    - -rollbarServerRoot
-    - github.com/ViBiOh/funds
-    - -rollbarEnv
-    - ${ENVIRONMENT}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'

@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bdd0167ce0ea6aaf9f8f135e20e1e4f94b5cf903d592c8596f463357139c5d40"
+  digest = "1:18c73ed078f39c1b28b83f9dee6d76e82f87ba464da51e4c9b4dcbcf82cf57d2"
   name = "github.com/ViBiOh/httputils"
   packages = [
     "pkg",
@@ -19,6 +19,7 @@
     "pkg/cert",
     "pkg/cors",
     "pkg/db",
+    "pkg/errors",
     "pkg/gzip",
     "pkg/healthcheck",
     "pkg/httperror",
@@ -30,12 +31,11 @@
     "pkg/prometheus",
     "pkg/query",
     "pkg/request",
-    "pkg/rollbar",
     "pkg/server",
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "2fa55f3c04629fa0b3a5be6a2efba29137fddaaa"
+  revision = "a147310fb9a8c422292a2d6f7fe4781eda74919d"
 
 [[projects]]
   branch = "master"
@@ -129,7 +129,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c0d39a0cad193ac49b6e24516e0f994b241d7c27142e5a58e8bd13defb2d9ac8"
+  digest = "1:1261069fb38fbe59aba55117ee39c59814f211c027d66d59ed1c60e5c11b377c"
   name = "github.com/prometheus/common"
   packages = [
     "expfmt",
@@ -137,7 +137,7 @@
     "model",
   ]
   pruneopts = "UT"
-  revision = "bcb74de08d37a417cb6789eec1d6c810040f0470"
+  revision = "16b4535ad14a9ef20a9d9fd8055143c5faa15224"
 
 [[projects]]
   branch = "master"
@@ -151,14 +151,6 @@
   ]
   pruneopts = "UT"
   revision = "185b4288413d2a0dd0806f78c90dde719829e5ae"
-
-[[projects]]
-  digest = "1:8b6db3b490230af0836cd57f2da94e092ac0c2837fe24e762458006531749b53"
-  name = "github.com/rollbar/rollbar-go"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "5f41889d7c6a59e4add07998cf776b1d335d287f"
-  version = "v1.0.1"
 
 [[projects]]
   digest = "1:ac6f26e917fd2fb3194a7ebe2baf6fb32de2f2fbfed130c18aac0e758a6e1d22"
@@ -219,7 +211,6 @@
     "github.com/ViBiOh/httputils/pkg/owasp",
     "github.com/ViBiOh/httputils/pkg/prometheus",
     "github.com/ViBiOh/httputils/pkg/request",
-    "github.com/ViBiOh/httputils/pkg/rollbar",
     "github.com/ViBiOh/httputils/pkg/server",
     "github.com/ViBiOh/httputils/pkg/tools",
     "github.com/opentracing/opentracing-go",
