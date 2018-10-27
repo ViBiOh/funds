@@ -8,8 +8,8 @@ export default class Graph extends Component {
     this.updateChart(this.props);
   }
 
-  componentWillReceiveProps(newProps) {
-    this.updateChart(newProps);
+  componentDidUpdate() {
+    this.updateChart(this.props);
   }
 
   componentWillUnmount() {
