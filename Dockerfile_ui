@@ -8,8 +8,8 @@ COPY ./ ${WORKDIR}/
 
 RUN make ${APP_NAME}-ui \
  && mkdir -p /app \
- && cp -r ui/dist/ /app/
+ && cp -r build/ /app/
 
 FROM vibioh/viws:light
 
-COPY --from=builder /app/dist/ /www/
+COPY --from=builder /app/build/ /www/
