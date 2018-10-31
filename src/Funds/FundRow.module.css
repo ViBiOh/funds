@@ -1,0 +1,134 @@
+.row,
+.isin,
+.label,
+.category,
+.rating {
+  padding: 0.5rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.row:nth-child(even) {
+  background-color: var(--grey);
+}
+
+.row button {
+  background-color: inherit;
+  border: 0;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  padding: 0;
+}
+
+.row svg {
+  color: var(--dark);
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
+.old svg {
+  color: var(--warning);
+}
+
+.isin {
+  width: 14rem;
+}
+
+.label {
+  flex: 3;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category {
+  flex: 1;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rating > span {
+  text-align: center;
+  width: 4rem;
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+}
+
+@media screen and (max-width: 1023px) {
+  .row {
+    padding: 0.2rem;
+  }
+
+  .row:first-child {
+    display: none;
+  }
+
+  .row svg {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  .label {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .isin {
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
+    order: 3;
+    width: auto;
+  }
+
+  .isin::before {
+    content: 'ISIN | ';
+  }
+
+  button.category {
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
+    order: 1;
+    padding: 0.5rem;
+    width: auto;
+  }
+
+  button.rating {
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
+    order: 2;
+    padding: 0.5rem;
+    width: auto;
+  }
+
+  button.rating > span::before {
+    content: 'Note | ';
+  }
+
+  button.rating > span {
+    width: auto;
+  }
+
+  .icon {
+    margin: 0.2rem;
+    order: 5;
+  }
+}

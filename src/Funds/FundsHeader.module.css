@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  width: 100%;
+}
+
+.header h1 {
+  background-color: var(--dark);
+  color: var(--clear);
+  display: inline-block;
+  flex: 1 1 auto;
+  height: var(--icon-size);
+  margin: 0;
+  padding: 0.5rem;
+}
+
+.header input[type='text'] {
+  border-radius: 0;
+  flex: 1 1 16rem;
+  height: var(--icon-size);
+  padding: 0.5rem;
+  width: 16rem;
+}
+
+@media screen and (min-width: 1024px) {
+  .header input[type='text'] {
+    flex: 5;
+  }
+}

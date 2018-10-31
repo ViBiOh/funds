@@ -1,0 +1,48 @@
+.performance {
+  padding: 0.5rem;
+  width: 8rem;
+}
+
+.red {
+  color: var(--red);
+}
+
+.green {
+  color: var(--green);
+}
+
+@media screen and (max-width: 1023px) {
+  .performance {
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
+    order: 4;
+    width: auto;
+  }
+
+  .p1m::before {
+    content: '1m | ';
+  }
+
+  .p3m::before {
+    content: '3m | ';
+  }
+
+  .p6m::before {
+    content: '6m | ';
+  }
+
+  .p1y::before {
+    content: '1y | ';
+  }
+
+  .pvol::before {
+    content: 'Vol. | ';
+  }
+
+  .pscore::before {
+    content: 'Score | ';
+  }
+}

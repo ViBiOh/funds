@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+:root {
+  --dark: #3a3a3a;
+  --grey: #e1e1e8;
+  --clear: #f8f8f8;
+  --red: #d43f3a;
+  --green: #4cae4c;
+  --primary: #337ab7;
+  --success: #5cb85c;
+  --warning: #f0ad4e;
+  --info: #5bc0de;
+  --danger: #d9534f;
+  --white: #fff;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --icon-size: 5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+}
+
+body,
+button,
+input {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
+    'Cantarell', 'Helvetica Nue', sans-serif;
+  font-size: 1.6rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@media print {
+  body::after {
+    content: 'Save ink, share link. https://funds.vibioh.fr';
+  }
+
+  body > * {
+    display: none;
+  }
+}
+

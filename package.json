@@ -2,152 +2,41 @@
   "name": "funds",
   "version": "0.0.1",
   "description": "Funds OB",
-  "main": "index.js",
-  "scripts": {
-    "format": "prettier --write \"ui/**/*.{js,jsx,less}\"",
-    "stylelint": "stylelint \"ui/**/*.{css,less}\"",
-    "eslint": "eslint --fix --ext .jsx \"ui/**/*.{js,jsx}\"",
-    "lint": "npm run eslint && npm run stylelint",
-    "doc": "esdoc",
-    "start": "parcel ui/index.html -d ./ui/dist --open",
-    "test": "nyc --reporter text --reporter lcov --extension .jsx --require babel-core/register ava",
-    "prebuild": "npm run format && npm run lint && npm test",
-    "build": "parcel build ui/index.html --public-url / -d ./ui/dist",
-    "postbuild": "cp ./ui/robots.txt ./ui/favicon/* ./ui/dist/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/ViBiOh/funds.git"
-  },
-  "keywords": [
-    "react",
-    "boilerplate"
-  ],
+  "private": true,
   "author": "Vincent Boutour",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ViBiOh/funds/issues"
   },
   "homepage": "https://github.com/ViBiOh/funds",
-  "devDependencies": {
-    "ava": "latest",
-    "babel-core": "latest",
-    "babel-plugin-transform-object-rest-spread": "latest",
-    "babel-preset-env": "latest",
-    "babel-preset-react": "latest",
-    "enzyme": "latest",
-    "enzyme-adapter-react-16": "latest",
-    "esdoc": "latest",
-    "esdoc-coverage-plugin": "latest",
-    "esdoc-ecmascript-proposal-plugin": "latest",
-    "esdoc-jsx-plugin": "latest",
-    "esdoc-publish-html-plugin": "latest",
-    "eslint": "latest",
-    "eslint-config-airbnb": "latest",
-    "eslint-plugin-import": "latest",
-    "eslint-plugin-jsx-a11y": "latest",
-    "eslint-plugin-react": "latest",
-    "html-minifier": "latest",
-    "identity-obj-proxy": "latest",
-    "ignore-styles": "latest",
-    "js-index-builder": "ViBiOh/js-index-builder",
-    "jsdom": "latest",
-    "less": "latest",
-    "normalize.css": "latest",
-    "nyc": "latest",
-    "parcel-bundler": "latest",
-    "postcss-modules": "latest",
-    "prettier": "latest",
-    "react-test-renderer": "latest",
-    "sinon": "latest",
-    "stylelint": "latest",
-    "stylelint-config-standard": "latest"
-  },
   "dependencies": {
-    "babel-polyfill": "latest",
-    "chart.js": "latest",
-    "classnames": "latest",
-    "funtch": "latest",
-    "prop-types": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-icons": "latest"
+    "chart.js": "2.7.3",
+    "classnames": "2.2.6",
+    "funtch": "1.5.7",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-icons": "3.2.2",
+    "react-scripts": "2.1.0"
   },
-  "ava": {
-    "files": [
-      "ui/**/*.test.js"
-    ],
-    "require": [
-      "ignore-styles",
-      "./ui/test/setup.js"
-    ],
-    "babel": "inherit"
-  },
-  "esdoc": {
-    "source": "ui",
-    "includes": [
-      ".(js|jsx)$"
-    ],
-    "excludes": [
-      ".test\\.(js|jsx)$",
-      "dist/.*$",
-      "test/setup.js$",
-      "esdoc/.*$"
-    ],
-    "destination": "ui/esdoc",
-    "plugins": [
-      {
-        "name": "esdoc-ecmascript-proposal-plugin",
-        "option": {
-          "classProperties": true,
-          "objectRestSpread": true,
-          "decorators": true,
-          "doExpressions": true,
-          "functionBind": true,
-          "asyncGenerators": true,
-          "exportExtensions": true,
-          "dynamicImport": true
-        }
-      },
-      {
-        "name": "esdoc-jsx-plugin",
-        "option": {
-          "enable": true
-        }
-      },
-      {
-        "name": "esdoc-publish-html-plugin"
-      },
-      {
-        "name": "esdoc-coverage-plugin",
-        "option": {
-          "enable": true
-        }
-      }
-    ]
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "postbuild": "cp ./src/robots.txt ./src/favicon/* ./build/",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "airbnb",
-    "env": {
-      "browser": true
-    },
-    "rules": {
-      "react/jsx-filename-extension": 1,
-      "react/jsx-closing-tag-location": 1,
-      "react/jsx-indent": 1
-    }
+    "extends": "react-app"
   },
-  "stylelint": {
-    "extends": "stylelint-config-standard",
-    "rules": {
-      "selector-list-comma-newline-after": null,
-      "declaration-colon-newline-after": null,
-      "value-list-comma-newline-after": null
-    }
-  },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "trailingComma": "all"
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "enzyme": "3.7.0",
+    "enzyme-adapter-react-16": "1.6.0",
+    "react-test-renderer": "16.6.0"
   }
 }
