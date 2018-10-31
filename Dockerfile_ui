@@ -1,6 +1,7 @@
 FROM node:10 as builder
 
 ENV APP_NAME funds
+ENV CI true
 ENV WORKDIR /usr/src/app
 
 WORKDIR ${WORKDIR}
