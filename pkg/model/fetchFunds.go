@@ -65,7 +65,7 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 		span.SetTag(`fund.id`, string(fund.ID))
 	}
 
-	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=1`, url), nil)
+	body, _, _, err := request.Get(nil, fmt.Sprintf(`%s&tab=1`, url), nil)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 		span.SetTag(`fund.id`, string(fund.ID))
 	}
 
-	body, err := request.Get(nil, fmt.Sprintf(`%s&tab=2`, url), nil)
+	body, _, _, err := request.Get(nil, fmt.Sprintf(`%s&tab=2`, url), nil)
 	if err != nil {
 		return err
 	}
