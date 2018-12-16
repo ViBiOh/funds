@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	"github.com/ViBiOh/httputils/pkg"
+	httputils "github.com/ViBiOh/httputils/pkg"
 	"github.com/ViBiOh/httputils/pkg/alcotest"
 	"github.com/ViBiOh/httputils/pkg/cors"
 	"github.com/ViBiOh/httputils/pkg/db"
