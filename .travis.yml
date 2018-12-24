@@ -50,34 +50,34 @@ jobs:
       curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
       curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
 
-#  - stage: Deploy
-#
-#    script: |
-#      sed \
-#        -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
-#        -e "s|\${FUNDS_DATABASE_HOST}|${FUNDS_DATABASE_HOST}|g" \
-#        -e "s|\${FUNDS_DATABASE_USER}|${FUNDS_DATABASE_USER}|g" \
-#        -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" \
-#        -e "s|\${FUNDS_DATABASE_NAME}|${FUNDS_DATABASE_NAME}|g" \
-#        -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
-#        -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
-#        -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
-#        -e "s|\${ROLLBAR_TOKEN}|${ROLLBAR_TOKEN}|g" \
-#        -e "s|\${ROLLBAR_CLIENT_TOKEN}|${ROLLBAR_CLIENT_TOKEN}|g" \
-#        -e "s|\${ENVIRONMENT}|prod|g" \
-#        -e "s|\${COMMIT_SHA}|`make version`|g" \
-#        docker-compose.yml > docker-compose-env.yml
-#    deploy:
-#      provider: script
-#      skip_cleanup: true
-#      script: 'curl -H "Authorization: GitHub ${GITHUB_OAUTH_TOKEN}" -X POST "https://dashboard-api.vibioh.fr/deploy/funds/?rollbar_token=${ROLLBAR_TOKEN}&user=`make author`&revision=`make version`&environment=prod" --data-binary @docker-compose-env.yml'
+  - stage: Deploy
+
+    script: |
+      sed \
+        -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
+        -e "s|\${FUNDS_DATABASE_HOST}|${FUNDS_DATABASE_HOST}|g" \
+        -e "s|\${FUNDS_DATABASE_USER}|${FUNDS_DATABASE_USER}|g" \
+        -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" \
+        -e "s|\${FUNDS_DATABASE_NAME}|${FUNDS_DATABASE_NAME}|g" \
+        -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
+        -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
+        -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
+        -e "s|\${ROLLBAR_TOKEN}|${ROLLBAR_TOKEN}|g" \
+        -e "s|\${ROLLBAR_CLIENT_TOKEN}|${ROLLBAR_CLIENT_TOKEN}|g" \
+        -e "s|\${ENVIRONMENT}|prod|g" \
+        -e "s|\${COMMIT_SHA}|`make version`|g" \
+        docker-compose.yml > docker-compose-env.yml
+    deploy:
+      provider: script
+      skip_cleanup: true
+      script: 'curl -H "Authorization: GitHub ${GITHUB_OAUTH_TOKEN}" -X POST "https://dashboard-api.vibioh.fr/deploy/funds/?rollbar_token=${ROLLBAR_TOKEN}&user=`make author`&revision=`make version`&environment=prod" --data-binary @docker-compose-env.yml'
 
 stages:
   - Build
   - name: Publish
     if: branch = master
-#  - name: Deploy
-#    if: branch = master
+  - name: Deploy
+    if: branch = master
 
 notifications:
   email: false
