@@ -14,14 +14,12 @@ import (
 	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
-	"github.com/ViBiOh/httputils/pkg/prometheus"
 	"github.com/ViBiOh/httputils/pkg/server"
 )
 
 func main() {
 	serverConfig := httputils.Flags(``)
 	alcotestConfig := alcotest.Flags(``)
-	prometheusConfig := prometheus.Flags(`prometheus`)
 	opentracingConfig := opentracing.Flags(`tracing`)
 	owaspConfig := owasp.Flags(``)
 	corsConfig := cors.Flags(`cors`)
@@ -35,7 +33,6 @@ func main() {
 
 	serverApp := httputils.NewApp(serverConfig)
 	healthcheckApp := healthcheck.NewApp()
-	prometheusApp := prometheus.NewApp(prometheusConfig)
 	opentracingApp := opentracing.NewApp(opentracingConfig)
 	gzipApp := gzip.NewApp()
 	owaspApp := owasp.NewApp(owaspConfig)
@@ -55,7 +52,7 @@ func main() {
 		}
 	}))
 
-	handler := server.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, gzipApp, owaspApp, corsApp)
+	handler := server.ChainMiddlewares(modelHandler, opentracingApp, gzipApp, owaspApp, corsApp)
 
 	serverApp.ListenAndServe(handler, nil, healthcheckApp)
 }
