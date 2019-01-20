@@ -34,7 +34,7 @@
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "3f0cae087df3b059952133aa2654747ab94382d0"
+  revision = "f34a4b0c6f552c687db14b15c1a88111f8c40419"
 
 [[projects]]
   branch = "master"
@@ -123,7 +123,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "915654e7eabcea33ae277abbecf52f0d8b7a9fdc"
+  revision = "ed066c81e75eba56dd9bd2139ade88125b855585"
 
 [solve-meta]
   analyzer-name = "dep"
