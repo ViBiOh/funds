@@ -26,21 +26,33 @@ const (
 	listPrefix           = `/list`
 )
 
-// App wrap all fund methods
+// Config of package
+type Config struct {
+	infos *string
+}
+
+// App of package
 type App struct {
 	dbConnexion *sql.DB
 	fundsURL    string
 	fundsMap    sync.Map
 }
 
-// NewApp creates App from Flags
-func NewApp(config map[string]*string, dbConfig map[string]*string) (*App, error) {
+// Flags adds flags for configuring package
+func Flags(fs *flag.FlagSet, prefix string) Config {
+	return Config{
+		infos: fs.String(tools.ToCamel(fmt.Sprintf(`%sInfos`, prefix)), ``, `[funds] Informations URL`),
+	}
+}
+
+// New creates new App from Config
+func New(config Config, dbConfig db.Config) (*App, error) {
 	app := &App{
-		fundsURL: strings.TrimSpace(*config[`infos`]),
+		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 	}
 
-	fundsDB, err := db.GetDB(dbConfig)
+	fundsDB, err := db.New(dbConfig)
 	if err != nil {
 		logger.Error(`%+v`, errors.WithStack(err))
 	} else {
@@ -154,13 +166,6 @@ func (a *App) ListFunds() []Fund {
 func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r)); err != nil {
 		httperror.InternalServerError(w, err)
-	}
-}
-
-// Flags add flags for given prefix
-func Flags(prefix string) map[string]*string {
-	return map[string]*string{
-		`infos`: flag.String(tools.ToCamel(fmt.Sprintf(`%sInfos`, prefix)), ``, `[funds] Informations URL`),
 	}
 }
 

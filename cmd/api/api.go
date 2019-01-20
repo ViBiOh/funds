@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	"os"
 
 	"github.com/ViBiOh/funds/pkg/model"
 	httputils "github.com/ViBiOh/httputils/pkg"
@@ -18,27 +19,31 @@ import (
 )
 
 func main() {
-	serverConfig := httputils.Flags(``)
-	alcotestConfig := alcotest.Flags(``)
-	opentracingConfig := opentracing.Flags(`tracing`)
-	owaspConfig := owasp.Flags(``)
-	corsConfig := cors.Flags(`cors`)
+	fs := flag.NewFlagSet(`api`, flag.ExitOnError)
 
-	fundsConfig := model.Flags(``)
-	dbConfig := db.Flags(`db`)
+	serverConfig := httputils.Flags(fs, ``)
+	alcotestConfig := alcotest.Flags(fs, ``)
+	opentracingConfig := opentracing.Flags(fs, `tracing`)
+	owaspConfig := owasp.Flags(fs, ``)
+	corsConfig := cors.Flags(fs, `cors`)
 
-	flag.Parse()
+	fundsConfig := model.Flags(fs, ``)
+	dbConfig := db.Flags(fs, `db`)
+
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		logger.Fatal(`%+v`, err)
+	}
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	serverApp := httputils.NewApp(serverConfig)
-	healthcheckApp := healthcheck.NewApp()
-	opentracingApp := opentracing.NewApp(opentracingConfig)
-	gzipApp := gzip.NewApp()
-	owaspApp := owasp.NewApp(owaspConfig)
-	corsApp := cors.NewApp(corsConfig)
+	serverApp := httputils.New(serverConfig)
+	healthcheckApp := healthcheck.New()
+	opentracingApp := opentracing.New(opentracingConfig)
+	gzipApp := gzip.New()
+	owaspApp := owasp.New(owaspConfig)
+	corsApp := cors.New(corsConfig)
 
-	fundApp, err := model.NewApp(fundsConfig, dbConfig)
+	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
 		logger.Error(`%+v`, err)
 	}

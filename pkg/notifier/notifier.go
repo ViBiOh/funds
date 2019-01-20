@@ -30,7 +30,15 @@ type scoreTemplateContent struct {
 	BelowFunds []*model.Fund
 }
 
-// App stores informations
+// Config of package
+type Config struct {
+	timezone   *string
+	mailerURL  *string
+	mailerUser *string
+	mailerPass *string
+}
+
+// App of package
 type App struct {
 	mailerURL  string
 	mailerUser string
@@ -39,31 +47,31 @@ type App struct {
 	location   *time.Location
 }
 
-// NewApp creates new App from Flags' config
-func NewApp(config map[string]*string, modelApp *model.App) (*App, error) {
-	locationStr := strings.TrimSpace(*config[`timezone`])
+// Flags adds flags for configuring package
+func Flags(fs *flag.FlagSet, prefix string) Config {
+	return Config{
+		timezone:   fs.String(tools.ToCamel(fmt.Sprintf(`%sTimezone`, prefix)), `Europe/Paris`, `Timezone`),
+		mailerURL:  fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerURL`, prefix)), ``, `Mailer URL`),
+		mailerUser: fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerUser`, prefix)), ``, `Mailer User`),
+		mailerPass: fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerPass`, prefix)), ``, `Mailer Pass`),
+	}
+}
+
+// New creates new App from Config
+func New(config Config, modelApp *model.App) (*App, error) {
+	locationStr := strings.TrimSpace(*config.timezone)
 	location, err := time.LoadLocation(locationStr)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	return &App{
-		mailerURL:  strings.TrimSpace(*config[`mailerURL`]),
-		mailerUser: strings.TrimSpace(*config[`mailerUser`]),
-		mailerPass: strings.TrimSpace(*config[`mailerPass`]),
+		mailerURL:  strings.TrimSpace(*config.mailerURL),
+		mailerUser: strings.TrimSpace(*config.mailerUser),
+		mailerPass: strings.TrimSpace(*config.mailerPass),
 		modelApp:   modelApp,
 		location:   location,
 	}, nil
-}
-
-// Flags adds flags for given prefix
-func Flags(prefix string) map[string]*string {
-	return map[string]*string{
-		`timezone`:   flag.String(tools.ToCamel(fmt.Sprintf(`%sTimezone`, prefix)), `Europe/Paris`, `Timezone`),
-		`mailerURL`:  flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerURL`, prefix)), ``, `Mailer URL`),
-		`mailerUser`: flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerUser`, prefix)), ``, `Mailer User`),
-		`mailerPass`: flag.String(tools.ToCamel(fmt.Sprintf(`%sMailerPass`, prefix)), ``, `Mailer Pass`),
-	}
 }
 
 func (a App) getTimer(hour int, minute int, interval time.Duration) *time.Timer {

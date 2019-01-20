@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
@@ -11,31 +12,35 @@ import (
 )
 
 func main() {
-	check := flag.Bool(`c`, false, `Healthcheck (check and exit)`)
-	recipients := flag.String(`recipients`, ``, `Email of notifications recipients`)
-	score := flag.Float64(`score`, 25.0, `Score value to notification when above`)
-	hour := flag.Int(`hour`, 8, `Hour of day for sending notifications`)
-	minute := flag.Int(`minute`, 0, `Minute of hour for sending notifications`)
+	fs := flag.NewFlagSet(`alert`, flag.ExitOnError)
 
-	fundsConfig := model.Flags(``)
-	dbConfig := db.Flags(`db`)
-	notifierConfig := notifier.Flags(``)
-	opentracingConfig := opentracing.Flags(`tracing`)
+	check := fs.Bool(`c`, false, `Healthcheck (check and exit)`)
+	recipients := fs.String(`recipients`, ``, `Email of notifications recipients`)
+	score := fs.Float64(`score`, 25.0, `Score value to notification when above`)
+	hour := fs.Int(`hour`, 8, `Hour of day for sending notifications`)
+	minute := fs.Int(`minute`, 0, `Minute of hour for sending notifications`)
 
-	flag.Parse()
+	fundsConfig := model.Flags(fs, ``)
+	dbConfig := db.Flags(fs, `db`)
+	notifierConfig := notifier.Flags(fs, ``)
+	opentracingConfig := opentracing.Flags(fs, `tracing`)
+
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		logger.Fatal(`%+v`, err)
+	}
 
 	if *check {
 		return
 	}
 
-	opentracing.NewApp(opentracingConfig)
+	opentracing.New(opentracingConfig)
 
-	fundApp, err := model.NewApp(fundsConfig, dbConfig)
+	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
 		logger.Error(`%+v`, err)
 	}
 
-	notifierApp, err := notifier.NewApp(notifierConfig, fundApp)
+	notifierApp, err := notifier.New(notifierConfig, fundApp)
 	if err != nil {
 		logger.Error(`%+v`, err)
 	}

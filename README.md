@@ -21,7 +21,7 @@ docker-compose -p funds -f docker-compose.db.yml up -d
 ### API
 
 ```bash
-Usage of api
+Usage of api:
   -corsCredentials
       [cors] Access-Control-Allow-Credentials
   -corsExpose string
@@ -52,8 +52,6 @@ Usage of api
       [funds] Informations URL
   -port int
       Listen port (default 1080)
-  -prometheusPath string
-      [prometheus] Path for exposing metrics (default "/metrics")
   -tls
       Serve TLS content (default true)
   -tlsCert string
