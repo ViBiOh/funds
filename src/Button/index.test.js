@@ -2,11 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Button from '.';
 
-test('should always render as a button', () => {
+it('should always render as a button', () => {
   expect(shallow(<Button />).type()).toEqual('button');
 });
 
-test('should not wrap child', () => {
+it('should not wrap child', () => {
   const wrapper = shallow(
     <Button>
       <span>
@@ -18,7 +18,7 @@ First
   expect(wrapper.find('span').length).toEqual(1);
 });
 
-test('should wrap children in div', () => {
+it('should wrap children in div', () => {
   const wrapper = shallow(
     <Button>
       <span>

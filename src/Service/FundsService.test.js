@@ -5,7 +5,7 @@ import FundsService from './FundsService';
 jest.mock('funtch');
 jest.mock('../Constants');
 
-test('should fetch data for funds', () => {
+it('should fetch data for funds', () => {
   Constants.getApiUrl.mockReturnValue('localhost');
   funtch.get.mockResolvedValue({});
 

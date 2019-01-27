@@ -17,7 +17,7 @@ const defaultProps = {
   },
 };
 
-test('should always render as a span', () => {
+it('should always render as a span', () => {
   const wrapper = shallow(<FundRow {...defaultProps} />);
 
   wrapper
@@ -28,7 +28,7 @@ test('should always render as a span', () => {
   expect(wrapper.type()).toEqual('span');
 });
 
-test('should call given filterBy func on category click', () => {
+it('should call given filterBy func on category click', () => {
   const filterBy = jest.fn();
   const wrapper = shallow(<FundRow {...defaultProps} filterBy={filterBy} />);
 
@@ -40,7 +40,7 @@ test('should call given filterBy func on category click', () => {
   expect(filterBy).toHaveBeenCalledWith('category', 'Test');
 });
 
-test('should call given filterBy func on rating click', () => {
+it('should call given filterBy func on rating click', () => {
   const filterBy = jest.fn();
   const wrapper = shallow(<FundRow {...defaultProps} filterBy={filterBy} />);
 
