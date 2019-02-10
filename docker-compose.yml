@@ -58,8 +58,8 @@ services:
     - -mailerPass
     - ${MAILER_PASS}
     - -tracingAgent
-  - monitoring_jaeger:6831
-  - -tracingName
+    - monitoring_jaeger:6831
+    - -tracingName
     - funds_notifier
     healthcheck:
       test: [ "CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}" ]
