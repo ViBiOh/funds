@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:8e53ab383e902619948eecae0c5e328057905a9a7abbe34ea178fe0a9157a918"
+  digest = "1:af6e785bedb62fc2abb81977c58a7a44e5cf9f7e41b8d3c8dd4d872edea0ce08"
   name = "github.com/NYTimes/gziphandler"
   packages = ["."]
   pruneopts = "UT"
-  revision = "b8a1976e622c1b8052c79219930d64a340ac5fcd"
-  version = "v1.1.0"
+  revision = "dd0439581c7657cb652dfe5c71d7d48baf39541d"
+  version = "v1.1.1"
 
 [[projects]]
   branch = "master"
@@ -35,7 +35,7 @@
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "8db5456bcd622608cae6d1ccd1081460ed31ccc9"
+  revision = "9dfd599fe510ee361516657fe3579ba2533d4e69"
 
 [[projects]]
   branch = "master"
