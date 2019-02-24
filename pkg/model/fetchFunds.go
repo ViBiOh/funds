@@ -70,14 +70,19 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 		return err
 	}
 
-	fund.Isin = string(extractLabel(isinRegex, body, emptyByte))
-	fund.Label = string(extractLabel(labelRegex, body, emptyByte))
-	fund.Category = string(extractLabel(categoryRegex, body, emptyByte))
-	fund.Rating = string(extractLabel(ratingRegex, body, zeroByte))
-	fund.OneMonth = extractPerformance(perfOneMonthRegex, body)
-	fund.ThreeMonths = extractPerformance(perfThreeMonthRegex, body)
-	fund.SixMonths = extractPerformance(perfSixMonthRegex, body)
-	fund.OneYear = extractPerformance(perfOneYearRegex, body)
+	result, err := request.ReadBody(body)
+	if err != nil {
+		return err
+	}
+
+	fund.Isin = string(extractLabel(isinRegex, result, emptyByte))
+	fund.Label = string(extractLabel(labelRegex, result, emptyByte))
+	fund.Category = string(extractLabel(categoryRegex, result, emptyByte))
+	fund.Rating = string(extractLabel(ratingRegex, result, zeroByte))
+	fund.OneMonth = extractPerformance(perfOneMonthRegex, result)
+	fund.ThreeMonths = extractPerformance(perfThreeMonthRegex, result)
+	fund.SixMonths = extractPerformance(perfSixMonthRegex, result)
+	fund.OneYear = extractPerformance(perfOneYearRegex, result)
 
 	return nil
 }
@@ -94,7 +99,12 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 		return err
 	}
 
-	fund.VolThreeYears = extractPerformance(volThreeYearRegex, body)
+	result, err := request.ReadBody(body)
+	if err != nil {
+		return err
+	}
+
+	fund.VolThreeYears = extractPerformance(volThreeYearRegex, result)
 	return nil
 }
 
