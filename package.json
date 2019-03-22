@@ -10,11 +10,11 @@
   },
   "homepage": "https://funds.vibioh.fr",
   "dependencies": {
-    "chart.js": "2.7.3",
+    "chart.js": "2.8.0",
     "classnames": "2.2.6",
-    "funtch": "1.5.9",
-    "react": "16.8.4",
-    "react-dom": "16.8.4",
+    "funtch": "1.5.10",
+    "react": "16.8.5",
+    "react-dom": "16.8.5",
     "react-icons": "3.5.0",
     "react-scripts": "2.1.8"
   },
@@ -36,7 +36,7 @@
   ],
   "devDependencies": {
     "enzyme": "3.9.0",
-    "enzyme-adapter-react-16": "1.10.0",
-    "react-test-renderer": "16.8.4"
+    "enzyme-adapter-react-16": "1.11.2",
+    "react-test-renderer": "16.8.5"
   }
 }
