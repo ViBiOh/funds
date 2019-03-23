@@ -6,6 +6,12 @@ PACKAGES ?= ./...
 GOBIN=bin
 BINARY_PATH=$(GOBIN)/$(APP_NAME)
 
+SERVER_SOURCE = cmd/api/api.go
+SERVER_RUNNER = go run $(SERVER_SOURCE)
+ifeq ($(DEBUG), true)
+	SERVER_RUNNER = dlv debug $(SERVER_SOURCE) --
+endif
+
 ## help: Display list of commands
 .PHONY: help
 help: Makefile
@@ -95,5 +101,5 @@ build-ui:
 ## start: Start app
 .PHONY: start
 start:
-	go run cmd/api/api.go \
+	$(SERVER_RUNNER) \
 		-tls=false
