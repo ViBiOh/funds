@@ -81,9 +81,9 @@ services:
     command:
     - -spa
     - -env
-    - API_URL,ENVIRONMENT,ROLLBAR_TOKEN
+    - API_URL
     - -csp
-    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com/ajax/libs/rollbar.js/; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr api.rollbar.com
+    - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     - -headers
     - X-UA-Compatible:ie=edge
     - -push
@@ -99,8 +99,6 @@ services:
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
-      ENVIRONMENT: '${ENVIRONMENT}'
-      ROLLBAR_TOKEN: '${ROLLBAR_CLIENT_TOKEN}'
     logging:
       driver: json-file
       options:

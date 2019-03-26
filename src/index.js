@@ -1,16 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import rollbar from './externals/rollbar';
 import Constants from './Constants';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 Constants.init().then((config) => {
-  if (config.ROLLBAR_TOKEN) {
-    rollbar(config.ROLLBAR_TOKEN, config.ENVIRONMENT);
-  }
-
   ReactDOM.render(<App />, document.getElementById('root'));
 });
 
