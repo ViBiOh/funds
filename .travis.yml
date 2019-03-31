@@ -5,30 +5,30 @@ jobs:
     sudo: required
     services:
     - docker
-    script: docker build -t vibioh/`make name`-api:`make version` -f Dockerfile_api .
+    script: docker build -t vibioh/$(make name)-api:$(make version) -f Dockerfile_api .
     after_success: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
-      docker push vibioh/`make name`-api:`make version`
+      docker push vibioh/$(make name)-api:$(make version)
 
   - stage: Build
 
     sudo: required
     services:
     - docker
-    script: docker build -t vibioh/`make name`-notifier:`make version` -f Dockerfile_notifier .
+    script: docker build -t vibioh/$(make name)-notifier:$(make version) -f Dockerfile_notifier .
     after_success: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
-      docker push vibioh/`make name`-notifier:`make version`
+      docker push vibioh/$(make name)-notifier:$(make version)
 
   - stage: Build
 
     sudo: required
     services:
     - docker
-    script: docker build -t vibioh/`make name`-ui:`make version` -f Dockerfile_ui .
+    script: docker build -t vibioh/$(make name)-ui:$(make version) -f Dockerfile_ui .
     after_success: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
-      docker push vibioh/`make name`-ui:`make version`
+      docker push vibioh/$(make name)-ui:$(make version)
 
   - stage: Publish
 
@@ -37,15 +37,15 @@ jobs:
     - docker
     script: |
       echo ${DOCKER_PASS} | docker login -u vibioh --password-stdin
-      docker pull vibioh/`make name`-api:`make version`
-      docker tag vibioh/`make name`-api:`make version` vibioh/`make name`-api:latest
-      docker push vibioh/`make name`-api:latest
-      docker pull vibioh/`make name`-notifier:`make version`
-      docker tag vibioh/`make name`-notifier:`make version` vibioh/`make name`-notifier:latest
-      docker push vibioh/`make name`-notifier:latest
-      docker pull vibioh/`make name`-ui:`make version`
-      docker tag vibioh/`make name`-ui:`make version` vibioh/`make name`-ui:latest
-      docker push vibioh/`make name`-ui:latest
+      docker pull vibioh/$(make name)-api:$(make version)
+      docker tag vibioh/$(make name)-api:$(make version) vibioh/$(make name)-api:latest
+      docker push vibioh/$(make name)-api:latest
+      docker pull vibioh/$(make name)-notifier:$(make version)
+      docker tag vibioh/$(make name)-notifier:$(make version) vibioh/$(make name)-notifier:latest
+      docker push vibioh/$(make name)-notifier:latest
+      docker pull vibioh/$(make name)-ui:$(make version)
+      docker tag vibioh/$(make name)-ui:$(make version) vibioh/$(make name)-ui:latest
+      docker push vibioh/$(make name)-ui:latest
     after_success: |
       curl -s -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
       curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
@@ -65,12 +65,12 @@ jobs:
         -e "s|\${ROLLBAR_TOKEN}|${ROLLBAR_TOKEN}|g" \
         -e "s|\${ROLLBAR_CLIENT_TOKEN}|${ROLLBAR_CLIENT_TOKEN}|g" \
         -e "s|\${ENVIRONMENT}|prod|g" \
-        -e "s|\${COMMIT_SHA}|`make version`|g" \
+        -e "s|\${COMMIT_SHA}|$(make version)|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
       provider: script
       skip_cleanup: true
-      script: 'curl -H "Authorization: GitHub ${GITHUB_OAUTH_TOKEN}" -X POST "https://dashboard-api.vibioh.fr/deploy/funds/?rollbar_token=${ROLLBAR_TOKEN}&user=`make author`&revision=`make version`&environment=prod" --data-binary @docker-compose-env.yml'
+      script: 'curl -H "Authorization: GitHub ${GITHUB_OAUTH_TOKEN}" -X POST "https://dashboard-api.vibioh.fr/deploy/funds/?rollbar_token=${ROLLBAR_TOKEN}&user=$(make author)&revision=$(make version)&environment=prod" --data-binary @docker-compose-env.yml'
 
 stages:
   - Build
