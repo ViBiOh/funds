@@ -62,15 +62,14 @@ jobs:
         -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
         -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
         -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
-        -e "s|\${ROLLBAR_TOKEN}|${ROLLBAR_TOKEN}|g" \
-        -e "s|\${ROLLBAR_CLIENT_TOKEN}|${ROLLBAR_CLIENT_TOKEN}|g" \
         -e "s|\${ENVIRONMENT}|prod|g" \
         -e "s|\${COMMIT_SHA}|$(make version)|g" \
+        -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
       provider: script
       skip_cleanup: true
-      script: 'curl -H "Authorization: GitHub ${GITHUB_OAUTH_TOKEN}" -X POST "https://dashboard-api.vibioh.fr/deploy/funds/?rollbar_token=${ROLLBAR_TOKEN}&user=$(make author)&revision=$(make version)&environment=prod" --data-binary @docker-compose-env.yml'
+      script: 'curl -X POST -u "${DEPLOY_CREDENTIALS}" "https://deploy.vibioh.fr/?project=$(make name)&version=$(make version)" --data-binary @docker-compose-env.yml'
 
 stages:
   - Build
