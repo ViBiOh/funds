@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	from                 = `funds@vibioh.fr`
-	name                 = `Funds App`
-	subject              = `[Funds] Score level notification`
+	from                 = "funds@vibioh.fr"
+	name                 = "Funds App"
+	subject              = "[Funds] Score level notification"
 	notificationInterval = 24 * time.Hour
 )
 
@@ -50,10 +50,10 @@ type App struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		timezone:   fs.String(tools.ToCamel(fmt.Sprintf(`%sTimezone`, prefix)), `Europe/Paris`, `Timezone`),
-		mailerURL:  fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerURL`, prefix)), ``, `Mailer URL`),
-		mailerUser: fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerUser`, prefix)), ``, `Mailer User`),
-		mailerPass: fs.String(tools.ToCamel(fmt.Sprintf(`%sMailerPass`, prefix)), ``, `Mailer Pass`),
+		timezone:   fs.String(tools.ToCamel(fmt.Sprintf("%sTimezone", prefix)), "Europe/Paris", "Timezone"),
+		mailerURL:  fs.String(tools.ToCamel(fmt.Sprintf("%sMailerURL", prefix)), "", "Mailer URL"),
+		mailerUser: fs.String(tools.ToCamel(fmt.Sprintf("%sMailerUser", prefix)), "", "Mailer User"),
+		mailerPass: fs.String(tools.ToCamel(fmt.Sprintf("%sMailerPass", prefix)), "", "Mailer Pass"),
 	}
 }
 
@@ -80,7 +80,7 @@ func (a App) getTimer(hour int, minute int, interval time.Duration) *time.Timer 
 		nextTime = nextTime.Add(interval)
 	}
 
-	logger.Info(`Next notification at %v`, nextTime)
+	logger.Info("Next notification at %v", nextTime)
 
 	return time.NewTimer(nextTime.Sub(time.Now()))
 }
@@ -96,15 +96,15 @@ func (a App) saveTypedAlerts(score float64, funds []*model.Fund, alertType strin
 }
 
 func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
-	if err := a.saveTypedAlerts(score, above, `above`); err != nil {
+	if err := a.saveTypedAlerts(score, above, "above"); err != nil {
 		return err
 	}
 
-	return a.saveTypedAlerts(score, below, `below`)
+	return a.saveTypedAlerts(score, below, "below")
 }
 
 func (a App) notify(recipients []string, score float64) error {
-	span := opentracing.StartSpan(`Funds Notify`)
+	span := opentracing.StartSpan("Funds Notify")
 	defer span.Finish()
 
 	ctx := opentracing.ContextWithSpan(context.Background(), span)
@@ -125,12 +125,12 @@ func (a App) notify(recipients []string, score float64) error {
 	}
 
 	if len(recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		_, _, _, err := request.DoJSON(ctx, fmt.Sprintf(`%s/render/funds?from=%s&sender=%s&to=%s&subject=%s`, a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, `,`)), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{`Authorization`: []string{request.GenerateBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
+		_, _, _, err := request.DoJSON(ctx, fmt.Sprintf("%s/render/funds?from=%s&sender=%s&to=%s&subject=%s", a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(recipients, ",")), url.QueryEscape(subject)), scoreTemplateContent{score, above, below}, http.Header{"Authorization": []string{request.GenerateBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
 		if err != nil {
 			return err
 		}
 
-		logger.Info(`Mail notification sent to %d recipients for %d funds`, len(recipients), len(above)+len(below))
+		logger.Info("Mail notification sent to %d recipients for %d funds", len(recipients), len(above)+len(below))
 
 		if err := a.saveAlerts(score, above, below); err != nil {
 			return err
@@ -144,16 +144,16 @@ func (a App) notify(recipients []string, score float64) error {
 func (a App) Start(recipients string, score float64, hour int, minute int) {
 	timer := a.getTimer(hour, minute, notificationInterval)
 
-	recipientsList := strings.Split(recipients, `,`)
+	recipientsList := strings.Split(recipients, ",")
 
 	for {
 		select {
 		case <-timer.C:
 			if err := a.notify(recipientsList, score); err != nil {
-				logger.Error(`%+v`, err)
+				logger.Error("%+v", err)
 			}
 			timer.Reset(notificationInterval)
-			logger.Info(`Next notification in %v`, notificationInterval)
+			logger.Info("Next notification in %v", notificationInterval)
 		}
 	}
 }

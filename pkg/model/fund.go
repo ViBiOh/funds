@@ -37,7 +37,7 @@ func (f *App) GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*
 
 	for _, fund := range funds {
 		if alert, ok := currentAlerts[fund.Isin]; ok {
-			if alert.AlertType != `above` {
+			if alert.AlertType != "above" {
 				fundsToAlert = append(fundsToAlert, fund)
 			}
 		} else {

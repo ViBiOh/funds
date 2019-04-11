@@ -76,7 +76,7 @@ func (f *App) ListAlertsOpened() (alerts []*Alert, err error) {
 // SaveAlert saves Alert
 func (f *App) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	if alert == nil {
-		return errors.New(`cannot save nil`)
+		return errors.New("cannot save nil")
 	}
 
 	var usedTx *sql.Tx

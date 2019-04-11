@@ -41,7 +41,8 @@ INSERT INTO
   $1,
   $2,
   $3
-)`
+)
+`
 
 const fundsUpdateScoreQuery = `
 UPDATE
@@ -53,7 +54,7 @@ WHERE
   isin = $3
 `
 
-var errNilFund = errors.New(`unable to save nil Fund`)
+var errNilFund = errors.New("unable to save nil Fund")
 
 func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 	var (
@@ -133,7 +134,7 @@ func (f *App) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 		} else {
 			err = errors.WithStack(err)
 		}
-	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, `now()`, fund.Isin); err != nil {
+	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin); err != nil {
 		err = errors.WithStack(err)
 	}
 

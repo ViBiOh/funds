@@ -23,7 +23,7 @@ import (
 const (
 	maxConcurrentFetcher = 24
 	refreshDelay         = 8 * time.Hour
-	listPrefix           = `/list`
+	listPrefix           = "/list"
 )
 
 // Config of package
@@ -41,7 +41,7 @@ type App struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		infos: fs.String(tools.ToCamel(fmt.Sprintf(`%sInfos`, prefix)), ``, `[funds] Informations URL`),
+		infos: fs.String(tools.ToCamel(fmt.Sprintf("%sInfos", prefix)), "", "[funds] Informations URL"),
 	}
 }
 
@@ -54,12 +54,12 @@ func New(config Config, dbConfig db.Config) (*App, error) {
 
 	fundsDB, err := db.New(dbConfig)
 	if err != nil {
-		logger.Error(`%+v`, errors.WithStack(err))
+		logger.Error("%+v", errors.WithStack(err))
 	} else {
 		app.dbConnexion = fundsDB
 	}
 
-	if app.fundsURL != `` {
+	if app.fundsURL != "" {
 		go app.refreshCron()
 	}
 
@@ -75,22 +75,22 @@ func (a *App) refreshCron() {
 }
 
 func (a *App) refresh() {
-	logger.Info(`Refresh started`)
-	defer logger.Info(`Refresh ended`)
+	logger.Info("Refresh started")
+	defer logger.Info("Refresh ended")
 
 	if err := a.refreshData(); err != nil {
-		logger.Error(`%+v`, err)
+		logger.Error("%+v", err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			logger.Error(`%+v`, err)
+			logger.Error("%+v", err)
 		}
 	}
 }
 
 func (a *App) refreshData() error {
-	span, ctx := opentracing.StartSpanFromContext(context.Background(), `Fetch Funds`)
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), "Fetch Funds")
 	defer span.Finish()
 
 	inputs, results, errs := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
@@ -120,7 +120,7 @@ func (a *App) refreshData() error {
 	}
 
 	if len(errorIds) > 0 {
-		return errors.New(`errors with ids %s`, bytes.Join(errorIds, []byte(`,`)))
+		return errors.New("errors with ids %s", bytes.Join(errorIds, []byte(",")))
 	}
 
 	return nil

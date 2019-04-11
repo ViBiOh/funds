@@ -20,20 +20,20 @@ import (
 )
 
 func main() {
-	fs := flag.NewFlagSet(`api`, flag.ExitOnError)
+	fs := flag.NewFlagSet("api", flag.ExitOnError)
 
-	serverConfig := httputils.Flags(fs, ``)
-	alcotestConfig := alcotest.Flags(fs, ``)
-	prometheusConfig := prometheus.Flags(fs, `prometheus`)
-	opentracingConfig := opentracing.Flags(fs, `tracing`)
-	owaspConfig := owasp.Flags(fs, ``)
-	corsConfig := cors.Flags(fs, `cors`)
+	serverConfig := httputils.Flags(fs, "")
+	alcotestConfig := alcotest.Flags(fs, "")
+	prometheusConfig := prometheus.Flags(fs, "prometheus")
+	opentracingConfig := opentracing.Flags(fs, "tracing")
+	owaspConfig := owasp.Flags(fs, "")
+	corsConfig := cors.Flags(fs, "cors")
 
-	fundsConfig := model.Flags(fs, ``)
-	dbConfig := db.Flags(fs, `db`)
+	fundsConfig := model.Flags(fs, "")
+	dbConfig := db.Flags(fs, "db")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
-		logger.Fatal(`%+v`, err)
+		logger.Fatal("%+v", err)
 	}
 
 	alcotest.DoAndExit(alcotestConfig)
@@ -48,7 +48,7 @@ func main() {
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Error(`%+v`, err)
+		logger.Error("%+v", err)
 	}
 
 	modelHandler := model.Handler(fundApp)

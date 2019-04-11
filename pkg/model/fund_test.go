@@ -11,18 +11,18 @@ func TestGetID(t *testing.T) {
 	}{
 		{
 			Fund{},
-			``,
+			"",
 		},
 		{
-			Fund{ID: `test`},
-			`test`,
+			Fund{ID: "test"},
+			"test",
 		},
 	}
 
 	for _, testCase := range cases {
 		result := testCase.instance.GetID()
 		if result != testCase.want {
-			t.Errorf(`GetID() of %v = %v, want %v`, testCase.instance, result, testCase.want)
+			t.Errorf("GetID() of %v = %v, want %v", testCase.instance, result, testCase.want)
 		}
 	}
 }
@@ -45,7 +45,7 @@ func TestComputeScore(t *testing.T) {
 	for _, testCase := range cases {
 		testCase.instance.ComputeScore()
 		if testCase.instance.Score != testCase.want {
-			t.Errorf(`ComputeScore() of %v = %v, want %v`, testCase.instance, testCase.instance.Score, testCase.want)
+			t.Errorf("ComputeScore() of %v = %v, want %v", testCase.instance, testCase.instance.Score, testCase.want)
 		}
 	}
 }
