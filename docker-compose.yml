@@ -27,10 +27,6 @@ services:
       traefik.frontend.rateLimit.rateSet.first.period: '60s'
       traefik.frontend.rateLimit.rateSet.first.average: '100'
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 256
@@ -65,10 +61,6 @@ services:
       test: [ "CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}" ]
     labels:
       traefik.enable: 'false'
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 256
@@ -99,10 +91,6 @@ services:
       traefik.frontend.rateLimit.rateSet.first.burst: '200'
     environment:
       API_URL: 'https://funds-api.vibioh.fr'
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
     restart: on-failure:5
     read_only: true
     cpu_shares: 128
