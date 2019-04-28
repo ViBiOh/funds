@@ -88,7 +88,7 @@ bench:
 ## build-api: Build binary for api
 .PHONY: build-api
 build-api:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-api cmd/api/api.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-api $(SERVER_SOURCE)
 
 ## build-notifier: Build binary for notifier
 .PHONY: build-notifier
@@ -105,5 +105,4 @@ build-ui:
 ## start: Start app
 .PHONY: start
 start:
-	$(SERVER_RUNNER) \
-		-tls=false
+	$(SERVER_RUNNER)

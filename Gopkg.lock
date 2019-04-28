@@ -11,12 +11,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a017f2304a931ea6530dbec2a61649e507f01c071ae706eac49c7239031af40c"
+  digest = "1:79ba16eb71c5f79a1bdd345f464236a1f8ec2e92915435e3607622a447af3be1"
   name = "github.com/ViBiOh/httputils"
   packages = [
     "pkg",
     "pkg/alcotest",
-    "pkg/cert",
     "pkg/cors",
     "pkg/db",
     "pkg/errors",
@@ -35,7 +34,7 @@
     "pkg/tools",
   ]
   pruneopts = "UT"
-  revision = "7eafccefb8a03c28c29b284fba75e00137747bc8"
+  revision = "7f155d4514001316eedafe5a74a3a52659a2fb5c"
 
 [[projects]]
   digest = "1:d6afaeed1502aa28e80a4ed0981d570ad91b2579193404256ce672ed0a609e0d"
