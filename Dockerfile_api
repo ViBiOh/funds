@@ -14,7 +14,7 @@ RUN make ${APP_NAME}-api \
 FROM scratch
 
 ENV APP_NAME funds
-HEALTHCHECK --retries=10 CMD [ "/funds-api", "-url", "https://localhost:1080/health" ]
+HEALTHCHECK --retries=10 CMD [ "/funds-api", "-url", "http://localhost:1080/health" ]
 
 EXPOSE 1080
 ENTRYPOINT [ "/funds-api" ]
