@@ -6,10 +6,4 @@ build/
 
 # Golang
 bin/
-vendor/
 coverage.*
-
-# Docker
-cacert.pem
-zoneinfo.zip
-data/
