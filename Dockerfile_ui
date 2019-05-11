@@ -9,6 +9,6 @@ RUN make funds-ui \
 
 FROM vibioh/viws:light
 
-ARG VERSION
-ENV VERSION=${VERSION}
+ARG APP_VERSION
+ENV VERSION=${APP_VERSION}
 COPY --from=builder /usr/src/app/build/ /www/
