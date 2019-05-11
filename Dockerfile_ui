@@ -1,16 +1,14 @@
 FROM node:11 as builder
 
-ENV APP_NAME funds
-ENV CI true
-ENV WORKDIR /usr/src/app
+ARG CODECOV_TOKEN
+WORKDIR /usr/src/app
+COPY . .
 
-WORKDIR ${WORKDIR}
-COPY ./ ${WORKDIR}/
-
-RUN make ${APP_NAME}-ui \
- && mkdir -p /app \
- && cp -r build/ /app/
+RUN make funds-ui \
+ && curl -s https://codecov.io/bash | bash
 
 FROM vibioh/viws:light
 
-COPY --from=builder /app/build/ /www/
+ARG VERSION
+ENV VERSION=${VERSION}
+COPY --from=builder /usr/src/app/build/ /www/

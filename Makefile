@@ -95,7 +95,7 @@ build-notifier:
 .PHONY: build-ui
 build-ui:
 	npm ci
-	npm test
+	CI=true npm test
 	npm run build
 
 ## start: Start app

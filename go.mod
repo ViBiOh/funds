@@ -3,8 +3,6 @@ module github.com/ViBiOh/funds
 go 1.12
 
 require (
-	github.com/ViBiOh/httputils v0.0.0-20190508152348-be16ede80742
+	github.com/ViBiOh/httputils v0.0.0-20190511183233-cd8835aea919
 	github.com/opentracing/opentracing-go v1.1.0
-	github.com/prometheus/common v0.4.0 // indirect
-	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
 )
