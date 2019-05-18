@@ -85,8 +85,6 @@ Usage of alert:
         [db] Port (default "5432")
   -dbUser string
         [db] User
-  -hour int
-        Hour of day for sending notifications (default 8)
   -infos string
         [funds] Informations URL
   -mailerPass string
@@ -95,14 +93,20 @@ Usage of alert:
         Mailer URL
   -mailerUser string
         Mailer User
-  -minute int
-        Minute of hour for sending notifications
   -recipients string
         Email of notifications recipients
+  -schedulerHour int
+        [scheduler] Hour of running (default 8)
+  -schedulerInterval string
+        [scheduler] Duration between two runs (default "24h")
+  -schedulerMinute int
+        [scheduler] Minute of running
+  -schedulerRetry string
+        [scheduler] Duration between two retries (default "10m")
+  -schedulerTimezone string
+        [scheduler] Timezone of running (default "Europe/Paris")
   -score float
         Score value to notification when above (default 25)
-  -timezone string
-        Timezone (default "Europe/Paris")
   -tracingAgent string
         [tracing] Jaeger Agent (e.g. host:port) (default "jaeger:6831")
   -tracingName string

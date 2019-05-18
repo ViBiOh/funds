@@ -12,20 +12,26 @@ ifeq ($(DEBUG), true)
 	SERVER_RUNNER = dlv debug $(SERVER_SOURCE) --
 endif
 
+.DEFAULT_GOAL := app
+
 ## help: Display list of commands
 .PHONY: help
 help: Makefile
 	@sed -n 's|^##||p' $< | column -t -s ':' | sed -e 's|^| |'
 
-## $(APP_NAME)-api: Build app API with dependencies download
-$(APP_NAME)-api: deps go build-api
+## app: Build app API with dependencies download
+.PHONY: app
+app: deps go build-api
 
 ## $(APP_NAME)-notifier: Build app Notifier with dependencies download
+.PHONY: $(APP_NAME)-notifier
 $(APP_NAME)-notifier: deps go build-notifier
 
 ## $(APP_NAME)-ui: Build app UI with dependencies download
+.PHONY: $(APP_NAME)-ui
 $(APP_NAME)-ui: build-ui
 
+## go: Build Golang app
 .PHONY: go
 go: format lint test bench
 
