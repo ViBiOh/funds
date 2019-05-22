@@ -14,8 +14,8 @@ CREATE TABLE funds (
   isin TEXT NOT NULL,
   label TEXT NOT NULL,
   score NUMERIC(5,2) NOT NULL,
-  creation_date TIMESTAMP DEFAULT now(),
-  update_date TIMESTAMP
+  creation_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  update_date TIMESTAMP WITH TIME ZONE
 );
 
 CREATE UNIQUE INDEX funds_isin ON funds (isin);
@@ -30,7 +30,7 @@ CREATE TABLE alerts (
   isin TEXT NOT NULL REFERENCES funds(isin),
   score NUMERIC(5,2) NOT NULL,
   type alert_type NOT NULL,
-  creation_date TIMESTAMP DEFAULT now()
+  creation_date TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 CREATE UNIQUE INDEX alerts_id ON alerts (id);
