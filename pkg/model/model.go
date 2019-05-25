@@ -174,7 +174,7 @@ func Handler(app *App) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {
-				httperror.InternalServerError(w, err)
+				httperror.InternalServerError(w, errors.WithStack(err))
 			}
 			return
 		}
