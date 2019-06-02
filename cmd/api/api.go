@@ -33,14 +33,14 @@ func main() {
 	dbConfig := db.Flags(fs, "db")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
-		logger.Fatal("%+v", err)
+		logger.Fatal("%#v", err)
 	}
 
 	alcotest.DoAndExit(alcotestConfig)
 
 	serverApp, err := httputils.New(serverConfig)
 	if err != nil {
-		logger.Fatal("%+v", err)
+		logger.Fatal("%#v", err)
 	}
 
 	healthcheckApp := healthcheck.New()
@@ -52,7 +52,7 @@ func main() {
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Error("%+v", err)
+		logger.Error("%#v", err)
 	}
 
 	modelHandler := model.Handler(fundApp)

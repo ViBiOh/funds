@@ -24,7 +24,7 @@ func main() {
 	notifierConfig := notifier.Flags(fs, "")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
-		logger.Fatal("%+v", err)
+		logger.Fatal("%#v", err)
 	}
 
 	if *check {
@@ -35,13 +35,13 @@ func main() {
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Fatal("%+v", err)
+		logger.Fatal("%#v", err)
 	}
 
 	notifierApp := notifier.New(notifierConfig, fundApp)
 	schedulerApp, err := scheduler.New(schedulerConfig, notifierApp)
 	if err != nil {
-		logger.Fatal("%+v", err)
+		logger.Fatal("%#v", err)
 	}
 
 	schedulerApp.Start()

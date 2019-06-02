@@ -54,7 +54,7 @@ func New(config Config, dbConfig db.Config) (*App, error) {
 
 	fundsDB, err := db.New(dbConfig)
 	if err != nil {
-		logger.Error("%+v", errors.WithStack(err))
+		logger.Error("%#v", errors.WithStack(err))
 	} else {
 		app.dbConnexion = fundsDB
 	}
@@ -79,12 +79,12 @@ func (a *App) refresh() {
 	defer logger.Info("Refresh ended")
 
 	if err := a.refreshData(); err != nil {
-		logger.Error("%+v", err)
+		logger.Error("%#v", err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			logger.Error("%+v", err)
+			logger.Error("%#v", err)
 		}
 	}
 }
