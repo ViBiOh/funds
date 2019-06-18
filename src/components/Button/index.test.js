@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Button from '.';
+import Button from './index';
 
 it('should always render as a button', () => {
   expect(shallow(<Button />).type()).toEqual('button');

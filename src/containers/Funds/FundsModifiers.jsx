@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaWindowClose, FaFilter, FaSortAmountUp, FaSortAmountDown, FaChartPie } from 'react-icons/fa';
-import Button from '../Button';
-import { COLUMNS, AGGREGATE_SIZES } from './FundsConstantes';
+import Button from 'components/Button';
+import { COLUMNS, AGGREGATE_SIZES } from 'containers/Funds/FundsConstantes';
 import style from './FundsModifiers.module.css';
 
 function renderCount(fundsSize, initialSize) {

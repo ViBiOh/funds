@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CHART_COLORS } from './FundsConstantes';
-import Graph from './Graph';
+import { CHART_COLORS } from 'containers/Funds/FundsConstantes';
+import Graph from 'containers/Funds/Graph';
 import style from './FundsGraph.module.css';
 
 const FundsGraph = ({ aggregat, aggregated }) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button';
-import { COLUMNS } from './FundsConstantes';
+import Button from 'components/Button';
+import { COLUMNS } from 'containers/Funds/FundsConstantes';
 import style from './HeaderIcon.module.css';
 
 const HeaderIcon = ({

@@ -1,4 +1,4 @@
-import { fullTextRegexFilter } from './FullTextSearch';
+import { fullTextRegexFilter } from './index';
 
 it('should use given regex if provided', () => {
   expect(fullTextRegexFilter('test unit dashboard', /unit/)).toEqual(true);

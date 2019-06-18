@@ -1,4 +1,4 @@
-import { replaceAccentedChar } from './FullTextSearch';
+import { replaceAccentedChar } from './index';
 
 it('should deal with undefined param', () => {
   expect(replaceAccentedChar()).toEqual('');

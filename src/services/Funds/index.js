@@ -1,5 +1,5 @@
 import funtch from 'funtch';
-import Constants from '../Constants';
+import Constants from 'Constants';
 
 export default class FundsService {
   static getFunds() {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FaSortAmountDown, FaChartPie, FaFilter } from 'react-icons/fa';
-import setRef from '../Tools/ref';
-import { COLUMNS } from './FundsConstantes';
-import HeaderIcon from './HeaderIcon';
+import setRef from 'helpers/ref';
+import { COLUMNS } from 'containers/Funds/FundsConstantes';
+import HeaderIcon from 'containers/Funds/HeaderIcon';
 import style from './FundsHeader.module.css';
 
 export default class FundsHeader extends Component {

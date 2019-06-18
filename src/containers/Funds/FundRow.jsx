@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../Button';
-import PerformanceCell from './PerformanceCell';
+import Button from 'components/Button';
+import PerformanceCell from 'containers/Funds/PerformanceCell';
 import style from './FundRow.module.css';
 
 const FundRow = ({ fund, filterBy }) => (

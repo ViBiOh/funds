@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLUMNS_HEADER } from './FundsConstantes';
-import FundRow from './FundRow';
+import { COLUMNS_HEADER } from 'containers/Funds/FundsConstantes';
+import FundRow from 'containers/Funds/FundRow';
 
 const FundsList = ({ funds, filterBy }) => (
   <div key="list">

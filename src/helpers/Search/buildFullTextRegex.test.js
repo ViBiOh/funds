@@ -1,4 +1,4 @@
-import { buildFullTextRegex } from './FullTextSearch';
+import { buildFullTextRegex } from './index';
 
 it('should have wildcard if value is empty', () => {
   expect(buildFullTextRegex(' ')).toEqual(new RegExp('[\\s\\S]*', 'gim'));

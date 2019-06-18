@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import FundRow from './FundRow';
+import FundRow from 'containers/Funds/FundRow';
 
 const defaultProps = {
   fund: {

@@ -1,4 +1,4 @@
-import { cleanSearchValues } from './FullTextSearch';
+import { cleanSearchValues } from './index';
 
 it('should handle undefined param', () => {
   expect(cleanSearchValues()).toEqual([]);

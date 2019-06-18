@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { buildFullTextRegex, fullTextRegexFilter } from './Search/FullTextSearch';
-import FundsService from './Service/FundsService';
-import setRef from './Tools/ref';
-import Throbber from './Throbber';
+import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
+import FundsService from 'services/Funds';
+import setRef from 'helpers/ref';
+import Throbber from 'components/Throbber';
 import {
   AGGREGATE_SIZES,
   AGGREGAT_PARAM,
@@ -10,11 +10,11 @@ import {
   ORDER_PARAM,
   ASCENDING_ORDER_PARAM,
   RESERVED_PARAM,
-} from './Funds/FundsConstantes';
-import FundsHeader from './Funds/FundsHeader';
-import FundsModifiers from './Funds/FundsModifiers';
-import FundsGraph from './Funds/FundsGraph';
-import FundsList from './Funds/FundsList';
+} from 'containers/Funds/FundsConstantes';
+import FundsHeader from 'containers/Funds/FundsHeader';
+import FundsModifiers from 'containers/Funds/FundsModifiers';
+import FundsGraph from 'containers/Funds/FundsGraph';
+import FundsList from 'containers/Funds/FundsList';
 import style from './App.module.css';
 
 export default class FundsContainer extends Component {
