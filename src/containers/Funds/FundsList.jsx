@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { COLUMNS_HEADER } from 'containers/Funds/FundsConstantes';
-import FundRow from 'containers/Funds/FundRow';
+import Row from 'components/Fund/Row';
 
 const FundsList = ({ funds, filterBy }) => (
   <div key="list">
-    <FundRow key="header" fund={COLUMNS_HEADER} />
-    {funds.map(fund => <FundRow key={fund.id} fund={fund} filterBy={filterBy} />)}
+    <Row key="header" fund={COLUMNS_HEADER} />
+    {funds.map(fund => (
+      <Row key={fund.id} fund={fund} filterBy={filterBy} />
+    ))}
   </div>
 );
 

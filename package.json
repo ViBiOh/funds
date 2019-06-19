@@ -31,16 +31,17 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "devDependencies": {
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
     "react-scripts": "3.0.1",
     "react-test-renderer": "16.8.6"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ]
   }
 }
