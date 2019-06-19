@@ -2,6 +2,7 @@ SHELL = /bin/sh
 
 APP_NAME = funds
 PACKAGES ?= ./...
+GO_FILES ?= */*/*.go
 
 GOBIN=bin
 BINARY_PATH=$(GOBIN)/$(APP_NAME)
@@ -26,10 +27,6 @@ app: deps go build-api
 ## $(APP_NAME)-notifier: Build app Notifier with dependencies download
 .PHONY: $(APP_NAME)-notifier
 $(APP_NAME)-notifier: deps go build-notifier
-
-## $(APP_NAME)-ui: Build app UI with dependencies download
-.PHONY: $(APP_NAME)-ui
-$(APP_NAME)-ui: build-ui
 
 ## go: Build Golang app
 .PHONY: go
@@ -65,8 +62,8 @@ deps:
 ## format: Format code
 .PHONY: format
 format:
-	goimports -w */*/*.go
-	gofmt -s -w */*/*.go
+	goimports -w $(GO_FILES)
+	gofmt -s -w $(GO_FILES)
 
 ## lint: Lint code
 .PHONY: lint
@@ -94,13 +91,6 @@ build-api:
 .PHONY: build-notifier
 build-notifier:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-notifier cmd/alert/alert.go
-
-## build-ui: Build bundle for ui
-.PHONY: build-ui
-build-ui:
-	npm ci
-	CI=true npm test
-	npm run build
 
 ## start: Start app
 .PHONY: start

@@ -14,7 +14,7 @@ import {
 import FundsHeader from 'containers/Funds/FundsHeader';
 import FundsModifiers from 'containers/Funds/FundsModifiers';
 import FundsGraph from 'containers/Funds/FundsGraph';
-import FundsList from 'containers/Funds/FundsList';
+import List from 'components/Funds/List';
 import style from './App.module.css';
 
 export default class FundsContainer extends Component {
@@ -269,7 +269,7 @@ export default class FundsContainer extends Component {
             <FundsGraph aggregat={aggregat} aggregated={aggregated} />
           </div>
           {!loaded && <Throbber label="Chargement des fonds" />}
-          {loaded && <FundsList funds={displayed} filterBy={this.filterBy} />}
+          {loaded && <List funds={displayed} filterBy={this.filterBy} />}
         </article>
       </>
     );

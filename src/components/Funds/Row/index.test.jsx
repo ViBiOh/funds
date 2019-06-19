@@ -4,18 +4,7 @@ import Row from './index';
 
 function defaultProps() {
   return {
-    fund: {
-      isin: 'ABCDEFG',
-      label: 'Fund with high risk',
-      category: 'Test',
-      rating: 4,
-      '1m': 2.4,
-      '3m': 3.4,
-      '6m': 4.4,
-      '1y': 5.5,
-      v3y: 6.6,
-      score: 25,
-    },
+    fund: { category: 'Test', rating: 4, '1m': 0.0, '3m': 0.0, '6m': 0.0, '1y': 0.0, v3y: 0.0, score: 0.0 },
   };
 }
 
