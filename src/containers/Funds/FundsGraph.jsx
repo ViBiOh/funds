@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CHART_COLORS } from 'containers/Funds/FundsConstantes';
+import { CHART_COLORS } from 'components/Funds/Constants';
 import Graph from 'containers/Funds/Graph';
 import style from './FundsGraph.module.css';
 

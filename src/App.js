@@ -10,7 +10,7 @@ import {
   ORDER_PARAM,
   ASCENDING_ORDER_PARAM,
   RESERVED_PARAM,
-} from 'containers/Funds/FundsConstantes';
+} from 'components/Funds/Constants';
 import FundsHeader from 'containers/Funds/FundsHeader';
 import FundsModifiers from 'containers/Funds/FundsModifiers';
 import FundsGraph from 'containers/Funds/FundsGraph';

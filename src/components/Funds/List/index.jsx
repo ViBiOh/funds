@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { COLUMNS_HEADER } from 'containers/Funds/FundsConstantes';
+import { COLUMNS_HEADER } from 'components/Funds/Constants';
 import Row from 'components/Funds/Row';
 
 /**

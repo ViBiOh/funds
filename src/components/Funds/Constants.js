@@ -1,3 +1,7 @@
+/**
+ * Columns description.
+ * @type {Object}
+ */
 export const COLUMNS = {
   isin: {
     label: 'ISIN',
@@ -61,12 +65,20 @@ export const COLUMNS = {
   },
 };
 
-export const COLUMNS_HEADER = Object.keys(COLUMNS).reduce((previous, current) => {
+/**
+ * Columns header label.
+ * @type {Object}
+ */
+export const COLUMNS_HEADER = Object.entries(COLUMNS).reduce((previous, [key, value]) => {
   // eslint-disable-next-line no-param-reassign
-  previous[current] = COLUMNS[current].label;
+  previous[key] = value.label;
   return previous;
 }, {});
 
+/**
+ * Color cycle for charts.
+ * @type {Array}
+ */
 export const CHART_COLORS = [
   '#1f77b4',
   '#e377c2',
@@ -81,6 +93,10 @@ export const CHART_COLORS = [
   '#3366cc',
 ];
 
+/**
+ * Default aggregate size.
+ * @type {Array}
+ */
 export const AGGREGATE_SIZES = [25, 50, 100];
 
 export const AGGREGAT_PARAM = 'a';
