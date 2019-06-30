@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import pending from './pending';
 import funds from './funds';
 
 /**
@@ -6,5 +7,6 @@ import funds from './funds';
  * @type {Function}
  */
 export default combineReducers({
+  pending,
   funds,
 });

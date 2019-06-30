@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import actions from 'actions';
 import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
-import FundsService from 'services/Funds';
 import setRef from 'helpers/ref';
 import Throbber from 'components/Throbber';
 import {
@@ -17,7 +18,7 @@ import Graph from 'components/Funds/Graph';
 import List from 'components/Funds/List';
 import style from './App.module.css';
 
-export default class FundsContainer extends Component {
+export class FundsContainer extends Component {
   static isUndefined(o, orderKey) {
     return !o || typeof o[orderKey] === 'undefined';
   }
@@ -61,8 +62,6 @@ export default class FundsContainer extends Component {
     RESERVED_PARAM.forEach(param => delete filters[param]);
 
     this.state = {
-      loaded: false,
-      funds: [],
       displayed: [],
       aggregated: [],
       aggregat: {
@@ -76,7 +75,6 @@ export default class FundsContainer extends Component {
       filters,
     };
 
-    this.fetchPerformances = this.fetchPerformances.bind(this);
     this.onAggregateSizeChange = this.onAggregateSizeChange.bind(this);
 
     this.filterBy = this.filterBy.bind(this);
@@ -90,7 +88,17 @@ export default class FundsContainer extends Component {
   }
 
   componentDidMount() {
-    this.fetchPerformances();
+    this.props.getFunds();
+  }
+
+  /**
+   * React lifecycle.
+   * @param {Object} prevProps Previous props
+   */
+  componentDidUpdate({ funds }) {
+    if (this.props.funds !== funds) {
+      this.filterOrderData();
+    }
   }
 
   onAggregateSizeChange(value) {
@@ -102,24 +110,6 @@ export default class FundsContainer extends Component {
       },
       this.filterOrderData,
     );
-  }
-
-  fetchPerformances() {
-    return FundsService.getFunds()
-      .then(funds => {
-        this.setState(
-          {
-            funds: funds.results.filter(fund => fund.id),
-            loaded: true,
-          },
-          this.filterOrderData,
-        );
-
-        return funds;
-      })
-      .catch(e => {
-        global.console.error('Error while fetching performance:', e);
-      });
   }
 
   filterBy(filterName, value) {
@@ -170,7 +160,8 @@ export default class FundsContainer extends Component {
   }
 
   filterOrderData() {
-    const { funds, filters, order } = this.state;
+    const { funds } = this.props;
+    const { filters, order } = this.state;
 
     const displayed = FundsContainer.filterFunds(funds, filters);
 
@@ -236,7 +227,8 @@ export default class FundsContainer extends Component {
   }
 
   render() {
-    const { error, displayed, funds, order, filters, aggregat, aggregated, loaded } = this.state;
+    const { funds, pending } = this.props;
+    const { error, displayed, order, filters, aggregat, aggregated } = this.state;
 
     return (
       <>
@@ -268,10 +260,37 @@ export default class FundsContainer extends Component {
             />
             <Graph aggregat={aggregat} aggregated={aggregated} />
           </div>
-          {!loaded && <Throbber label="Chargement des fonds" />}
-          {loaded && <List funds={displayed} filterBy={this.filterBy} />}
+          {pending && <Throbber label="Chargement des fonds" />}
+          {!pending && <List funds={displayed} filterBy={this.filterBy} />}
         </article>
       </>
     );
   }
 }
+
+/**
+ * Select props from Redux state.
+ * @param {Object} state Current state
+ */
+function mapStateToProps(state) {
+  return {
+    pending: state.pending[actions.GET_FUNDS],
+    funds: state.funds.funds,
+  };
+}
+
+/**
+ * Provide actions to dispatch.
+ * @type {Object}
+ */
+const mapDispatchToProps = {
+  getFunds: actions.getFunds,
+};
+
+/**
+ * FundsContainer connected.
+ */
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(FundsContainer);

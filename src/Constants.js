@@ -2,13 +2,11 @@ import funtch from 'funtch';
 
 let context = {};
 
-function init() {
-  return new Promise((resolve) => {
-    funtch.get('/env').then((env) => {
-      context = env;
-      resolve(context);
-    });
-  });
+async function init() {
+  const env = await funtch.get('/env');
+
+  context = env;
+  return env;
 }
 
 function getApiUrl() {

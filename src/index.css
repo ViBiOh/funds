@@ -21,6 +21,7 @@
 }
 
 html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Nue", sans-serif;
   font-size: 62.5%;
 }
 
@@ -31,8 +32,6 @@ body {
 body,
 button,
 input {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-    'Cantarell', 'Helvetica Nue', sans-serif;
   font-size: 1.6rem;
   font-style: normal;
   font-weight: 400;
@@ -40,11 +39,11 @@ input {
 }
 
 @media print {
-  body::after {
-    content: 'Save ink, share link. https://funds.vibioh.fr';
+  .body::after {
+    content: 'Save ink, share link. Save paper, use browser. https://funds.vibioh.fr';
   }
 
-  body > * {
+  .body > * {
     display: none;
   }
 }
