@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { STRING_OR_NUMBER } from 'helpers/Props';
 import Button from 'components/Button';
-import PerformanceCell from 'containers/Funds/PerformanceCell';
+import PerformanceCell from 'components/Funds/PerformanceCell';
 import style from './index.module.css';
 
 /**

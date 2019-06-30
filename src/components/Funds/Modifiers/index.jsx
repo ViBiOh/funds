@@ -1,9 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FaWindowClose, FaFilter, FaSortAmountUp, FaSortAmountDown, FaChartPie } from 'react-icons/fa';
+import {
+  FaWindowClose,
+  FaFilter,
+  FaSortAmountUp,
+  FaSortAmountDown,
+  FaChartPie,
+} from 'react-icons/fa';
 import Button from 'components/Button';
 import { COLUMNS, AGGREGATE_SIZES } from 'components/Funds/Constants';
-import style from './FundsModifiers.module.css';
+import style from './index.module.css';
 
 function renderCount(fundsSize, initialSize) {
   if (fundsSize === initialSize) {
@@ -75,7 +81,7 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
   );
 }
 
-const FundsModifier = ({
+export default function Modifiers({
   fundsSize,
   initialSize,
   filters,
@@ -86,18 +92,20 @@ const FundsModifier = ({
   aggregat,
   aggregateBy,
   onAggregateSizeChange,
-}) => (
-  <div className={style.list}>
-    {renderCount(fundsSize, initialSize)}
-    {renderFilters(filters, filterBy)}
-    {renderOrder(order, orderBy, reverseOrder)}
-    {renderAggregat(aggregat, aggregateBy, onAggregateSizeChange)}
-  </div>
-);
+}) {
+  return (
+    <div className={style.list}>
+      {renderCount(fundsSize, initialSize)}
+      {renderFilters(filters, filterBy)}
+      {renderOrder(order, orderBy, reverseOrder)}
+      {renderAggregat(aggregat, aggregateBy, onAggregateSizeChange)}
+    </div>
+  );
+}
 
-FundsModifier.displayName = 'FundsModifier';
+Modifiers.displayName = 'Modifiers';
 
-FundsModifier.propTypes = {
+Modifiers.propTypes = {
   fundsSize: PropTypes.number.isRequired,
   initialSize: PropTypes.number.isRequired,
   filters: PropTypes.shape({}).isRequired,
@@ -109,5 +117,3 @@ FundsModifier.propTypes = {
   aggregateBy: PropTypes.func.isRequired,
   onAggregateSizeChange: PropTypes.func.isRequired,
 };
-
-export default FundsModifier;

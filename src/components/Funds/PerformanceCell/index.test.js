@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import PerformanceCell from './PerformanceCell';
+import PerformanceCell from './index';
 
 const defaultProps = {
   type: '1y',

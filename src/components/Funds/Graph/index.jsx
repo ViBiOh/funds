@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CHART_COLORS } from 'components/Funds/Constants';
-import Graph from 'containers/Funds/Graph';
-import style from './FundsGraph.module.css';
+import ChartGraph from 'components/Graph';
+import style from './index.module.css';
 
-const FundsGraph = ({ aggregat, aggregated }) => {
+export default function Graph({ aggregat, aggregated }) {
   if (!aggregat.key) {
     return null;
   }
@@ -21,7 +21,7 @@ const FundsGraph = ({ aggregat, aggregated }) => {
   };
 
   let i = 0;
-  aggregated.forEach((entry) => {
+  aggregated.forEach(entry => {
     data.labels.push(entry.label);
     data.datasets[0].data.push(entry.count);
     data.datasets[0].backgroundColor.push(CHART_COLORS[i]);
@@ -29,14 +29,12 @@ const FundsGraph = ({ aggregat, aggregated }) => {
     i = (i + 1) % CHART_COLORS.length;
   });
 
-  return <Graph type="bar" data={data} className={style.container} />;
-};
+  return <ChartGraph type="bar" data={data} className={style.container} />;
+}
 
-FundsGraph.displayName = 'FundsGraph';
+Graph.displayName = 'Graph';
 
-FundsGraph.propTypes = {
+Graph.propTypes = {
   aggregat: PropTypes.shape({}).isRequired,
   aggregated: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
-
-export default FundsGraph;

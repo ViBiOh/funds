@@ -4,7 +4,7 @@ import { FaSortAmountDown, FaChartPie, FaFilter } from 'react-icons/fa';
 import setRef from 'helpers/ref';
 import { COLUMNS } from 'components/Funds/Constants';
 import HeaderIcon from 'components/Funds/HeaderIcon';
-import style from './FundsHeader.module.css';
+import style from './index.module.css';
 
 export default class FundsHeader extends Component {
   constructor(props) {

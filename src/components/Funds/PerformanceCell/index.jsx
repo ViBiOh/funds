@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import style from './PerformanceCell.module.css';
+import style from './index.module.css';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 
-const getValue = (value) => {
+const getValue = value => {
   if (!NUMBER_PATTERN.test(value)) {
     return '';
   }
@@ -12,11 +12,9 @@ const getValue = (value) => {
   return value < 0 ? style.red : style.green;
 };
 
-const PerformanceCell = ({ type, value }) => (
-  <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>
-    {value}
-  </span>
-);
+export default function PerformanceCell({ type, value }) {
+  return <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>{value}</span>;
+}
 
 PerformanceCell.propTypes = {
   type: PropTypes.string.isRequired,
@@ -28,5 +26,3 @@ PerformanceCell.defaultProps = {
 };
 
 PerformanceCell.displayName = 'PerformanceCell';
-
-export default PerformanceCell;

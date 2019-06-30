@@ -11,9 +11,9 @@ import {
   ASCENDING_ORDER_PARAM,
   RESERVED_PARAM,
 } from 'components/Funds/Constants';
-import FundsHeader from 'containers/Funds/FundsHeader';
-import FundsModifiers from 'containers/Funds/FundsModifiers';
-import FundsGraph from 'containers/Funds/FundsGraph';
+import Header from 'components/Funds/Header';
+import Modifiers from 'components/Funds/Modifiers';
+import Graph from 'components/Funds/Graph';
 import List from 'components/Funds/List';
 import style from './App.module.css';
 
@@ -240,7 +240,7 @@ export default class FundsContainer extends Component {
 
     return (
       <>
-        <FundsHeader
+        <Header
           ref={e => setRef(this, 'header', e)}
           orderBy={this.orderBy}
           aggregateBy={this.aggregateBy}
@@ -254,7 +254,7 @@ export default class FundsContainer extends Component {
         )}
         <article className={style.container}>
           <div className={style.modifiers}>
-            <FundsModifiers
+            <Modifiers
               fundsSize={displayed.length}
               initialSize={funds.length}
               orderBy={this.orderBy}
@@ -266,7 +266,7 @@ export default class FundsContainer extends Component {
               aggregat={aggregat}
               onAggregateSizeChange={this.onAggregateSizeChange}
             />
-            <FundsGraph aggregat={aggregat} aggregated={aggregated} />
+            <Graph aggregat={aggregat} aggregated={aggregated} />
           </div>
           {!loaded && <Throbber label="Chargement des fonds" />}
           {loaded && <List funds={displayed} filterBy={this.filterBy} />}
