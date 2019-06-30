@@ -1,13 +1,14 @@
 FROM node:12 as builder
 
-ARG CODECOV_TOKEN
 WORKDIR /usr/src/app
 COPY . .
 
 RUN npm ci \
  && npm test \
- && npm run build \
- && curl -s https://codecov.io/bash | bash
+ && npm run build
+
+ARG CODECOV_TOKEN
+RUN curl -s https://codecov.io/bash | bash
 
 FROM vibioh/viws:light
 
