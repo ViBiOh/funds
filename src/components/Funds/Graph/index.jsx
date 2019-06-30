@@ -19,7 +19,6 @@ export default function Graph({ aggregat, aggregated }) {
       },
     ],
   };
-
   let i = 0;
   aggregated.forEach(entry => {
     data.labels.push(entry.label);
@@ -35,6 +34,13 @@ export default function Graph({ aggregat, aggregated }) {
 Graph.displayName = 'Graph';
 
 Graph.propTypes = {
-  aggregat: PropTypes.shape({}).isRequired,
-  aggregated: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  aggregat: PropTypes.shape({
+    key: PropTypes.string,
+  }).isRequired,
+  aggregated: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+    }),
+  ),
 };
