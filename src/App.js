@@ -19,30 +19,6 @@ import List from 'components/Funds/List';
 import style from './App.module.css';
 
 export class FundsContainer extends Component {
-  static isUndefined(o, orderKey) {
-    return !o || typeof o[orderKey] === 'undefined';
-  }
-
-  static orderFunds(funds, orderKey, reverse) {
-    const compareMultiplier = reverse ? -1 : 1;
-
-    funds.sort((o1, o2) => {
-      if (FundsContainer.isUndefined(o1, orderKey)) {
-        return -1 * compareMultiplier;
-      }
-      if (FundsContainer.isUndefined(o2, orderKey)) {
-        return 1 * compareMultiplier;
-      }
-      if (o1[orderKey] < o2[orderKey]) {
-        return -1 * compareMultiplier;
-      }
-      if (o1[orderKey] > o2[orderKey]) {
-        return 1 * compareMultiplier;
-      }
-      return 0;
-    });
-  }
-
   constructor(props) {
     super(props);
 
@@ -54,10 +30,6 @@ export class FundsContainer extends Component {
         key: params[AGGREGAT_PARAM] || '',
         size: params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0],
       },
-      order: {
-        key: params[ORDER_PARAM] || '',
-        descending: typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
-      },
     };
 
     this.onAggregateSizeChange = this.onAggregateSizeChange.bind(this);
@@ -66,16 +38,21 @@ export class FundsContainer extends Component {
     this.aggregateBy = this.aggregateBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
-
-    this.updateUrl = this.updateUrl.bind(this);
   }
 
   componentDidMount() {
     this.props.getFunds();
 
-    Object.entries(getSearchParamsAsObject())
+    const params = getSearchParamsAsObject();
+
+    Object.entries(params)
       .filter(([key]) => !RESERVED_PARAM.includes(key))
       .forEach(([key, value]) => this.props.setFilter(key, value));
+
+    this.props.setOrder(
+      params[ORDER_PARAM] || '',
+      typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
+    );
   }
 
   onAggregateSizeChange(value) {
@@ -101,17 +78,14 @@ export class FundsContainer extends Component {
   }
 
   orderBy(order) {
-    this.setState({
-      order: { key: order, descending: true },
-    });
+    this.props.setOrder(order, true);
   }
 
   reverseOrder() {
-    const { order } = this.state;
-
-    this.setState({
-      order: { ...order, descending: !order.descending },
-    });
+    const {
+      order: { key, descending },
+    } = this.props.funds;
+    this.props.setOrder(key, !descending);
   }
 
   aggregateData(displayed) {
@@ -139,35 +113,12 @@ export class FundsContainer extends Component {
     return aggregated;
   }
 
-  updateUrl() {
-    const { filters, order, aggregat } = this.state;
-
-    const params = Object.keys(filters)
-      .filter(filter => filters[filter])
-      .map(filter => `${filter}=${encodeURIComponent(filters[filter])}`);
-
-    if (order.key) {
-      params.push(`${ORDER_PARAM}=${order.key}`);
-
-      if (!order.descending) {
-        params.push(ASCENDING_ORDER_PARAM);
-      }
-    }
-
-    if (aggregat.key) {
-      params.push(`${AGGREGAT_PARAM}=${aggregat.key}`);
-      params.push(`${AGGREGAT_SIZE_PARAM}=${aggregat.size}`);
-    }
-
-    window.history.pushState(null, null, `/${params.length > 0 ? '?' : ''}${params.join('&')}`);
-  }
-
   render() {
     const {
-      funds: { filters, all, displayed },
+      funds: { filters, all, displayed, order },
       pending,
     } = this.props;
-    const { error, order, aggregat, aggregated } = this.state;
+    const { error, aggregat, aggregated } = this.state;
 
     return (
       <>
@@ -177,12 +128,14 @@ export class FundsContainer extends Component {
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
         />
+
         {error && (
           <div>
             <h2>Erreur rencontée</h2>
             <pre>{JSON.stringify(error, null, 2)}</pre>
           </div>
         )}
+
         <article className={style.container}>
           <div className={style.modifiers}>
             <Modifiers
@@ -225,6 +178,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   getFunds: actions.getFunds,
   setFilter: actions.setFilter,
+  setOrder: actions.setOrder,
 };
 
 /**
