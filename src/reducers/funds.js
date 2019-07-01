@@ -19,7 +19,7 @@ export default function(state = initialState, action) {
     case actions.GET_FUNDS_SUCCEEDED:
       return {
         ...state,
-        funds: action.funds,
+        funds: action.funds.filter(e => Boolean(e.id)),
       };
     default:
       return state;
