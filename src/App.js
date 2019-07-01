@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from 'actions';
-import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
+import { getSearchParamsAsObject } from 'helpers/URL';
 import setRef from 'helpers/ref';
 import Throbber from 'components/Throbber';
 import {
@@ -21,13 +21,6 @@ import style from './App.module.css';
 export class FundsContainer extends Component {
   static isUndefined(o, orderKey) {
     return !o || typeof o[orderKey] === 'undefined';
-  }
-
-  static filterFunds(funds, filters) {
-    return Object.keys(filters).reduce((previous, filter) => {
-      const regex = buildFullTextRegex(filters[filter]);
-      return previous.filter(fund => fullTextRegexFilter(fund[filter], regex));
-    }, funds.slice());
   }
 
   static orderFunds(funds, orderKey, reverse) {
@@ -53,16 +46,9 @@ export class FundsContainer extends Component {
   constructor(props) {
     super(props);
 
-    const params = {};
-    window.location.search.replace(/([^?&=]+)(?:=([^?&=]*))?/g, (match, key, value) => {
-      params[key] = typeof value === 'undefined' ? true : decodeURIComponent(value);
-    });
-
-    const filters = { ...params };
-    RESERVED_PARAM.forEach(param => delete filters[param]);
+    const params = getSearchParamsAsObject();
 
     this.state = {
-      displayed: [],
       aggregated: [],
       aggregat: {
         key: params[AGGREGAT_PARAM] || '',
@@ -72,7 +58,6 @@ export class FundsContainer extends Component {
         key: params[ORDER_PARAM] || '',
         descending: typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
       },
-      filters,
     };
 
     this.onAggregateSizeChange = this.onAggregateSizeChange.bind(this);
@@ -82,34 +67,23 @@ export class FundsContainer extends Component {
     this.orderBy = this.orderBy.bind(this);
     this.reverseOrder = this.reverseOrder.bind(this);
 
-    this.filterOrderData = this.filterOrderData.bind(this);
-    this.aggregateData = this.aggregateData.bind(this);
     this.updateUrl = this.updateUrl.bind(this);
   }
 
   componentDidMount() {
     this.props.getFunds();
-  }
 
-  /**
-   * React lifecycle.
-   * @param {Object} prevProps Previous props
-   */
-  componentDidUpdate({ funds }) {
-    if (this.props.funds !== funds) {
-      this.filterOrderData();
-    }
+    Object.entries(getSearchParamsAsObject())
+      .filter(([key]) => !RESERVED_PARAM.includes(key))
+      .forEach(([key, value]) => this.props.setFilter(key, value));
   }
 
   onAggregateSizeChange(value) {
     const { aggregat } = this.state;
 
-    this.setState(
-      {
-        aggregat: { ...aggregat, size: value.target.value },
-      },
-      this.filterOrderData,
-    );
+    this.setState({
+      aggregat: { ...aggregat, size: value.target.value },
+    });
   }
 
   filterBy(filterName, value) {
@@ -117,65 +91,27 @@ export class FundsContainer extends Component {
       this.header.resetInput();
     }
 
-    const { filters } = this.state;
-
-    this.setState(
-      {
-        filters: {
-          ...filters,
-          [filterName]: value,
-        },
-      },
-      this.filterOrderData,
-    );
+    this.props.setFilter(filterName, value);
   }
 
   aggregateBy(aggregat) {
-    this.setState(
-      {
-        aggregat: { key: aggregat, size: 25 },
-      },
-      this.filterOrderData,
-    );
+    this.setState({
+      aggregat: { key: aggregat, size: 25 },
+    });
   }
 
   orderBy(order) {
-    this.setState(
-      {
-        order: { key: order, descending: true },
-      },
-      this.filterOrderData,
-    );
+    this.setState({
+      order: { key: order, descending: true },
+    });
   }
 
   reverseOrder() {
     const { order } = this.state;
 
-    this.setState(
-      {
-        order: { ...order, descending: !order.descending },
-      },
-      this.filterOrderData,
-    );
-  }
-
-  filterOrderData() {
-    const { funds } = this.props;
-    const { filters, order } = this.state;
-
-    const displayed = FundsContainer.filterFunds(funds, filters);
-
-    if (order.key) {
-      FundsContainer.orderFunds(displayed, order.key, order.descending);
-    }
-
-    this.setState(
-      {
-        displayed,
-        aggregated: this.aggregateData(displayed),
-      },
-      this.updateUrl,
-    );
+    this.setState({
+      order: { ...order, descending: !order.descending },
+    });
   }
 
   aggregateData(displayed) {
@@ -227,8 +163,11 @@ export class FundsContainer extends Component {
   }
 
   render() {
-    const { funds, pending } = this.props;
-    const { error, displayed, order, filters, aggregat, aggregated } = this.state;
+    const {
+      funds: { filters, all, displayed },
+      pending,
+    } = this.props;
+    const { error, order, aggregat, aggregated } = this.state;
 
     return (
       <>
@@ -248,7 +187,7 @@ export class FundsContainer extends Component {
           <div className={style.modifiers}>
             <Modifiers
               fundsSize={displayed.length}
-              initialSize={funds.length}
+              initialSize={all.length}
               orderBy={this.orderBy}
               order={order}
               filterBy={this.filterBy}
@@ -275,7 +214,7 @@ export class FundsContainer extends Component {
 function mapStateToProps(state) {
   return {
     pending: state.pending[actions.GET_FUNDS],
-    funds: state.funds.funds,
+    funds: state.funds,
   };
 }
 
@@ -285,6 +224,7 @@ function mapStateToProps(state) {
  */
 const mapDispatchToProps = {
   getFunds: actions.getFunds,
+  setFilter: actions.setFilter,
 };
 
 /**
