@@ -22,18 +22,7 @@ export class FundsContainer extends Component {
   constructor(props) {
     super(props);
 
-    const params = getSearchParamsAsObject();
-
-    this.state = {
-      aggregated: [],
-      aggregat: {
-        key: params[AGGREGAT_PARAM] || '',
-        size: params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0],
-      },
-    };
-
     this.onAggregateSizeChange = this.onAggregateSizeChange.bind(this);
-
     this.filterBy = this.filterBy.bind(this);
     this.aggregateBy = this.aggregateBy.bind(this);
     this.orderBy = this.orderBy.bind(this);
@@ -53,14 +42,19 @@ export class FundsContainer extends Component {
       params[ORDER_PARAM] || '',
       typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
     );
+
+    this.props.setAggregat(
+      params[AGGREGAT_PARAM] || '',
+      params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0],
+    );
   }
 
   onAggregateSizeChange(value) {
-    const { aggregat } = this.state;
+    const {
+      funds: { aggregat },
+    } = this.props;
 
-    this.setState({
-      aggregat: { ...aggregat, size: value.target.value },
-    });
+    this.props.setAggregat(aggregat.key, value.target.value);
   }
 
   filterBy(filterName, value) {
@@ -72,9 +66,7 @@ export class FundsContainer extends Component {
   }
 
   aggregateBy(aggregat) {
-    this.setState({
-      aggregat: { key: aggregat, size: 25 },
-    });
+    this.props.setAggregat(aggregat, 25);
   }
 
   orderBy(order) {
@@ -88,37 +80,19 @@ export class FundsContainer extends Component {
     this.props.setOrder(key, !descending);
   }
 
-  aggregateData(displayed) {
-    const { aggregat } = this.state;
-
-    if (!aggregat.key) {
-      return [];
-    }
-
-    const aggregate = {};
-    const size = Math.min(displayed.length, aggregat.size);
-    for (let i = 0; i < size; i += 1) {
-      if (typeof aggregate[displayed[i][aggregat.key]] === 'undefined') {
-        aggregate[displayed[i][aggregat.key]] = 0;
-      }
-      aggregate[displayed[i][aggregat.key]] += 1;
-    }
-
-    const aggregated = Object.keys(aggregate).map(label => ({
-      label,
-      count: aggregate[label],
-    }));
-    aggregated.sort((o1, o2) => o2.count - o1.count);
-
-    return aggregated;
-  }
-
   render() {
     const {
-      funds: { filters, all, displayed, order },
+      funds: { all, displayed, aggregated, filters, order, aggregat },
       pending,
+      error,
     } = this.props;
-    const { error, aggregat, aggregated } = this.state;
+
+    let content;
+    if (pending) {
+      content = <Throbber label="Chargement des fonds" />;
+    } else {
+      content = <List funds={displayed} filterBy={this.filterBy} />;
+    }
 
     return (
       <>
@@ -152,8 +126,8 @@ export class FundsContainer extends Component {
             />
             <Graph aggregat={aggregat} aggregated={aggregated} />
           </div>
-          {pending && <Throbber label="Chargement des fonds" />}
-          {!pending && <List funds={displayed} filterBy={this.filterBy} />}
+
+          {content}
         </article>
       </>
     );
@@ -179,6 +153,7 @@ const mapDispatchToProps = {
   getFunds: actions.getFunds,
   setFilter: actions.setFilter,
   setOrder: actions.setOrder,
+  setAggregat: actions.setAggregat,
 };
 
 /**

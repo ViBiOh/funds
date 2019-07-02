@@ -2,7 +2,12 @@ import 'regenerator-runtime/runtime';
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from 'actions';
 import History from 'AppHistory';
-import { ORDER_PARAM, ASCENDING_ORDER_PARAM } from 'components/Funds/Constants';
+import {
+  ORDER_PARAM,
+  ASCENDING_ORDER_PARAM,
+  AGGREGAT_PARAM,
+  AGGREGAT_SIZE_PARAM,
+} from 'components/Funds/Constants';
 import Funds from 'services/Funds';
 
 /**
@@ -23,7 +28,7 @@ export function* getFundsSaga() {
  * @yield {Function} Saga effects to sequence flow of work
  */
 export function* updateUrlSaga() {
-  const { filters, order } = yield select(state => state.funds);
+  const { filters, order, aggregat } = yield select(state => state.funds);
 
   const params = Object.entries(filters)
     .filter(([, value]) => Boolean(value))
@@ -37,10 +42,10 @@ export function* updateUrlSaga() {
     }
   }
 
-  // if (aggregat.key) {
-  //   params.push(`${AGGREGAT_PARAM}=${aggregat.key}`);
-  //   params.push(`${AGGREGAT_SIZE_PARAM}=${aggregat.size}`);
-  // }
+  if (aggregat.key) {
+    params.push(`${AGGREGAT_PARAM}=${encodeURIComponent(aggregat.key)}`);
+    params.push(`${AGGREGAT_SIZE_PARAM}=${encodeURIComponent(aggregat.size)}`);
+  }
 
   let query = '';
   if (params.length) {
@@ -56,5 +61,5 @@ export function* updateUrlSaga() {
  */
 export default function* appSaga() {
   yield takeLatest(actions.GET_FUNDS_REQUEST, getFundsSaga);
-  yield takeLatest([actions.SET_FILTER, actions.SET_ORDER], updateUrlSaga);
+  yield takeLatest([actions.SET_FILTER, actions.SET_ORDER, actions.SET_AGGREGAT], updateUrlSaga);
 }

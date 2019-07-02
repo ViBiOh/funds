@@ -8,10 +8,15 @@ import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
 export const initialState = {
   all: [],
   displayed: [],
+  aggregated: [],
   filters: {},
   order: {
     key: '',
     descending: true,
+  },
+  aggregat: {
+    key: '',
+    size: 0,
   },
 };
 
@@ -52,8 +57,36 @@ function orderFunds(funds, { key, descending }) {
   return funds;
 }
 
-function updateList(funds, filters, order) {
-  return orderFunds(filterFunds(funds, filters), order);
+function aggregateFunds(funds, aggregat) {
+  if (!aggregat.key) {
+    return [];
+  }
+
+  const aggregate = {};
+  const size = Math.min(funds.length, aggregat.size);
+  for (let i = 0; i < size; i += 1) {
+    if (typeof aggregate[funds[i][aggregat.key]] === 'undefined') {
+      aggregate[funds[i][aggregat.key]] = 0;
+    }
+    aggregate[funds[i][aggregat.key]] += 1;
+  }
+
+  const aggregated = Object.keys(aggregate).map(label => ({
+    label,
+    count: aggregate[label],
+  }));
+  aggregated.sort((o1, o2) => o2.count - o1.count);
+
+  return aggregated;
+}
+
+function updateList(funds, filters, order, aggregat) {
+  const displayed = orderFunds(filterFunds(funds, filters), order);
+
+  return {
+    displayed,
+    aggregated: aggregateFunds(displayed, aggregat),
+  };
 }
 
 /**
@@ -70,7 +103,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         all,
-        displayed: updateList(all, state.filters, state.order),
+        ...updateList(all, state.filters, state.order, state.aggregat),
       };
 
     case actions.SET_FILTER:
@@ -82,7 +115,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         filters,
-        displayed: updateList(state.all, filters, state.order),
+        ...updateList(state.all, filters, state.order, state.aggregat),
       };
 
     case actions.SET_ORDER:
@@ -94,8 +127,21 @@ export default function(state = initialState, action) {
       return {
         ...state,
         order,
-        displayed: updateList(state.all, state.filters, order),
+        ...updateList(state.all, state.filters, order, state.aggregat),
       };
+
+    case actions.SET_AGGREGAT:
+      const aggregat = {
+        key: action.key,
+        size: action.size,
+      };
+
+      return {
+        ...state,
+        aggregat,
+        ...updateList(state.all, state.filters, state.order, aggregat),
+      };
+
     default:
       return state;
   }
