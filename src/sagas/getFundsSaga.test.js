@@ -1,7 +1,7 @@
 import { call, put } from 'redux-saga/effects';
 import Funds from 'services/Funds';
 import actions from 'actions';
-import { getFundsSaga } from './index';
+import getFundsSaga from './getFundsSaga';
 
 it('should call Funds.getFunds', () => {
   const iterator = getFundsSaga();

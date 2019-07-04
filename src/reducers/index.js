@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import config from './config';
+import error from './error';
 import funds from './funds';
 import pending from './pending';
 
@@ -9,6 +10,7 @@ import pending from './pending';
  */
 export default combineReducers({
   config,
+  error,
   funds,
   pending,
 });
