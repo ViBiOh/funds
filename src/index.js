@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import Constants from 'Constants';
-import App from 'App';
+import App from 'containers/App';
 import appStore from 'Store';
 import './index.css';
 

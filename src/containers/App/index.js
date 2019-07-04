@@ -16,9 +16,9 @@ import Header from 'components/Funds/Header';
 import Modifiers from 'components/Funds/Modifiers';
 import Graph from 'components/Funds/Graph';
 import List from 'components/Funds/List';
-import style from './App.module.css';
+import style from './index.module.css';
 
-export class FundsContainer extends Component {
+export class App extends Component {
   constructor(props) {
     super(props);
 
@@ -66,7 +66,7 @@ export class FundsContainer extends Component {
   }
 
   aggregateBy(aggregat) {
-    this.props.setAggregat(aggregat, 25);
+    this.props.setAggregat(aggregat, AGGREGATE_SIZES[0]);
   }
 
   orderBy(order) {
@@ -157,9 +157,9 @@ const mapDispatchToProps = {
 };
 
 /**
- * FundsContainer connected.
+ * App connected.
  */
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FundsContainer);
+)(App);

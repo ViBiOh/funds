@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
-import pending from './pending';
+import config from './pending';
 import funds from './funds';
+import pending from './pending';
 
 /**
  * Combined reducers of app.
  * @type {Function}
  */
 export default combineReducers({
-  pending,
+  config,
   funds,
+  pending,
 });
