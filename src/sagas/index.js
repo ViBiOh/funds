@@ -8,7 +8,21 @@ import {
   AGGREGAT_PARAM,
   AGGREGAT_SIZE_PARAM,
 } from 'components/Funds/Constants';
+import Config from 'services/Config';
 import Funds from 'services/Funds';
+
+/**
+ * Saga of for retrieving config
+ * @yield {Function} Saga effects to sequence flow of work
+ */
+export function* getConfigSaga() {
+  try {
+    const config = yield call(Config.getConfig);
+    yield put(actions.getConfigSucceeded(config));
+  } catch (e) {
+    yield put(actions.getConfigFailed(e));
+  }
+}
 
 /**
  * Saga of getFunds action
@@ -60,6 +74,7 @@ export function* updateUrlSaga() {
  * @yield {Function} Sagas
  */
 export default function* appSaga() {
+  yield takeLatest(actions.INIT, getConfigSaga);
   yield takeLatest(actions.GET_FUNDS_REQUEST, getFundsSaga);
   yield takeLatest([actions.SET_FILTER, actions.SET_ORDER, actions.SET_AGGREGAT], updateUrlSaga);
 }

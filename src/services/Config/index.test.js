@@ -1,10 +1,10 @@
 import funtch from 'funtch';
-import FundsService from './index';
+import ConfigService from './index';
 
 jest.mock('funtch');
 
 it('should fetch config from env', () => {
-  return FundsService.getFunds().then(() => {
+  return ConfigService.getConfig().then(() => {
     expect(funtch.get).toHaveBeenCalledWith('/env');
   });
 });

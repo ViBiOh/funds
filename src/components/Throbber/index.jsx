@@ -14,6 +14,7 @@ export default function Throbber({ label, title, className }) {
   return (
     <div className={style.container} title={title}>
       {label && <span>{label}</span>}
+
       <div className={classes}>
         <div className={style.bounce1} />
         <div className={style.bounce2} />

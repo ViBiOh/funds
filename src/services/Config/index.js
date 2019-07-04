@@ -8,7 +8,7 @@ export default class ConfigService {
    * Retrieve config from environment.
    * @return {Object} Config environment
    */
-  static async getFunds() {
+  static async getConfig() {
     const config = await funtch.get('/env');
     return config;
   }
