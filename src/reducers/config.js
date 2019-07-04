@@ -4,7 +4,9 @@ import actions from 'actions';
  * Config reducer initial state.
  * @type {Object}
  */
-export const initialState = {};
+export const initialState = {
+  ready: false,
+};
 
 /**
  * Config reducer.
@@ -15,7 +17,12 @@ export const initialState = {};
 export default function(state = initialState, action) {
   switch (action.type) {
     case actions.GET_CONFIG_SUCCEEDED:
-      return action.config;
+      return {
+        ...initialState,
+        ...action.config,
+        ready: true,
+      };
+
     default:
       return state;
   }

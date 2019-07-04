@@ -1,20 +1,10 @@
-import funtch from 'funtch';
-
-let context = {};
-
-async function init() {
-  const env = await funtch.get('/env');
-
-  context = env;
-  return env;
-}
-
-function getApiUrl() {
-  return context.API_URL || 'https://funds-api.vibioh.fr';
-}
+import store from 'AppStore';
 
 /**
- * URL for API requests
- * @type {String}
+ * Retrieve API URL from store
+ * @return {String} API URL
  */
-export default { init, getApiUrl };
+export function getApiUrl() {
+  const { config: { API_URL = 'https://funds-api.vibioh.fr' } = {} } = store.getState();
+  return API_URL;
+}

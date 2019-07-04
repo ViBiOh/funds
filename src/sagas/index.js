@@ -15,7 +15,7 @@ import Funds from 'services/Funds';
  * Saga of for retrieving config
  * @yield {Function} Saga effects to sequence flow of work
  */
-export function* getConfigSaga() {
+export function* initSaga() {
   try {
     const config = yield call(Config.getConfig);
     yield put(actions.getConfigSucceeded(config));
@@ -74,7 +74,7 @@ export function* updateUrlSaga() {
  * @yield {Function} Sagas
  */
 export default function* appSaga() {
-  yield takeLatest(actions.INIT, getConfigSaga);
+  yield takeLatest(actions.INIT, initSaga);
   yield takeLatest(actions.GET_FUNDS_REQUEST, getFundsSaga);
   yield takeLatest([actions.SET_FILTER, actions.SET_ORDER, actions.SET_AGGREGAT], updateUrlSaga);
 }

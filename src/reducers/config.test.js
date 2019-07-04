@@ -7,6 +7,7 @@ it('should return initial state', () => {
 
 it('should shotre given config', () => {
   expect(reducer(initialState, actions.getConfigSucceeded({ url: 'localhost' }))).toEqual({
+    ready: true,
     url: 'localhost',
   });
 });
