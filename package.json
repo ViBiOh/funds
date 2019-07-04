@@ -35,7 +35,8 @@
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
     "react-scripts": "3.0.1",
-    "react-test-renderer": "16.8.6"
+    "react-test-renderer": "16.8.6",
+    "sinon": "7.3.2"
   },
   "browserslist": {
     "production": [
