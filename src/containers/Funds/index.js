@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from 'actions';
+import { isUndefined } from 'helpers/Object';
 import { getSearchParamsAsObject } from 'helpers/URL';
 import setRef from 'helpers/ref';
 import Throbber from 'components/Throbber';
@@ -38,10 +39,7 @@ export class Funds extends Component {
       .filter(([key]) => !RESERVED_PARAM.includes(key))
       .forEach(([key, value]) => this.props.setFilter(key, value));
 
-    this.props.setOrder(
-      params[ORDER_PARAM] || '',
-      typeof params[ASCENDING_ORDER_PARAM] === 'undefined',
-    );
+    this.props.setOrder(params[ORDER_PARAM] || '', isUndefined(params, ASCENDING_ORDER_PARAM));
 
     this.props.setAggregat(
       params[AGGREGAT_PARAM] || '',
