@@ -6,7 +6,7 @@ it('should return initial state', () => {
 });
 
 it('should update with given funds on fetch succeed', () => {
-  const all = [{ id: 8000 }];
+  const all = [{ isin: 8000 }];
 
   expect(reducer(initialState, actions.getFundsSucceeded(all))).toEqual({
     ...initialState,
@@ -16,12 +16,12 @@ it('should update with given funds on fetch succeed', () => {
 });
 
 it('should remove funds without id', () => {
-  const all = [{ id: 8000 }, { name: 'test' }];
+  const all = [{ isin: 8000 }, { name: 'test' }];
 
   expect(reducer(initialState, actions.getFundsSucceeded(all))).toEqual({
     ...initialState,
-    all: [{ id: 8000 }],
-    displayed: [{ id: 8000 }],
+    all: [{ isin: 8000 }],
+    displayed: [{ isin: 8000 }],
   });
 });
 
@@ -52,14 +52,14 @@ it('should concat filters', () => {
 });
 
 it('should apply filters', () => {
-  const all = [{ id: 8, name: 'Vite' }, { id: 1000, name: 'Emile' }];
+  const all = [{ isin: 8, name: 'Vite' }, { isin: 1000, name: 'Emile' }];
 
   expect(
     reducer({ ...initialState, all, displayed: all }, actions.setFilter('name', 'ite')),
   ).toEqual({
     ...initialState,
     all,
-    displayed: [{ id: 8, name: 'Vite' }],
+    displayed: [{ isin: 8, name: 'Vite' }],
     filters: {
       name: 'ite',
     },
