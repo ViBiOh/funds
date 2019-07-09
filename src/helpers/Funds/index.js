@@ -1,7 +1,11 @@
 import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
 import { isUndefined } from 'helpers/Object';
 
-export function filterFunds(funds, filters) {
+export function filterFunds(funds, filters = {}) {
+  if (!Array.isArray(funds)) {
+    return [];
+  }
+
   return Object.keys(filters).reduce((previous, filter) => {
     const regex = buildFullTextRegex(String(filters[filter]));
     return previous.filter(fund => fullTextRegexFilter(fund[filter], regex));
