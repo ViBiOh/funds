@@ -54,7 +54,7 @@ services:
     - -mailerPass
     - ${MAILER_PASS}
     - -score
-    - 20
+    - '20'
     - -tracingAgent
     - monitoring_jaeger:6831
     - -tracingName
