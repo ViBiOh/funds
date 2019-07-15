@@ -3,7 +3,7 @@ FROM golang:1.12 as builder
 WORKDIR /app
 COPY . .
 
-RUN make funds-notifier \
+RUN make app-notifier \
  && curl -s -o /app/cacert.pem https://curl.haxx.se/ca/cacert.pem \
  && curl -s -o /app/zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip
 

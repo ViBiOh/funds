@@ -13,7 +13,18 @@ ifeq ($(DEBUG), true)
 	SERVER_RUNNER = dlv debug $(SERVER_SOURCE) --
 endif
 
+NOTIFIER_SOURCE = cmd/alert/alert.go
+NOTIFIER_RUNNER = go run $(NOTIFIER_SOURCE)
+ifeq ($(DEBUG), true)
+	NOTIFIER_RUNNER = dlv debug $(NOTIFIER_SOURCE) --
+endif
+
 .DEFAULT_GOAL := app
+
+ifneq ("$(wildcard .env)","")
+	include .env
+	export
+endif
 
 ## help: Display list of commands
 .PHONY: help
@@ -22,11 +33,11 @@ help: Makefile
 
 ## app: Build app API with dependencies download
 .PHONY: app
-app: deps go build-api
+app: deps go build
 
 ## $(APP_NAME)-notifier: Build app Notifier with dependencies download
-.PHONY: $(APP_NAME)-notifier
-$(APP_NAME)-notifier: deps go build-notifier
+.PHONY: app-notifier
+app-notifier: deps go build-notifier
 
 ## go: Build Golang app
 .PHONY: go
@@ -82,17 +93,33 @@ test:
 bench:
 	go test $(PACKAGES) -bench . -benchmem -run Benchmark.*
 
-## build-api: Build binary for api
-.PHONY: build-api
-build-api:
+## build: Build binary for api
+.PHONY: build
+build:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-api $(SERVER_SOURCE)
 
 ## build-notifier: Build binary for notifier
 .PHONY: build-notifier
 build-notifier:
-	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-notifier cmd/alert/alert.go
+	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-notifier $(NOTIFIER_SOURCE)
 
 ## start: Start app
 .PHONY: start
 start:
 	$(SERVER_RUNNER)
+
+## start: Start notifier
+.PHONY: start-notifier
+start-notifier:
+	$(NOTIFIER_RUNNER) \
+		-dbHost $(DATABASE_HOST) \
+		-dbUser $(DATABASE_USER) \
+		-dbPass $(DATABASE_PASS) \
+		-dbName $(DATABASE_NAME) \
+		-mailerURL https://mailer.vibioh.fr \
+		-mailerUser $(MAILER_USER) \
+		-mailerPass $(MAILER_PASS) \
+		-recipients $(RECIPIENTS) \
+		-score 20 \
+		-schedulerHour 13 \
+		-schedulerMinute 41

@@ -16,18 +16,17 @@ import (
 )
 
 const (
-	from                 = "funds@vibioh.fr"
-	name                 = "Funds App"
-	subject              = "[Funds] Score level notification"
-	notificationInterval = 24 * time.Hour
+	from    = "funds@vibioh.fr"
+	name    = "Funds App"
+	subject = "[Funds] Score level notification"
 )
 
 var _ scheduler.Task = &App{}
 
 type scoreTemplateContent struct {
-	Score      float64
-	AboveFunds []*model.Fund
-	BelowFunds []*model.Fund
+	Score      float64       `json:"score"`
+	AboveFunds []*model.Fund `json:"aboveFunds"`
+	BelowFunds []*model.Fund `json:"belowFunds"`
 }
 
 // Config of package
@@ -41,9 +40,6 @@ type Config struct {
 
 // App of package
 type App struct {
-	mailerURL  string
-	mailerUser string
-	mailerPass string
 	recipients []string
 	score      float64
 
@@ -64,9 +60,6 @@ func New(config Config, modelApp *model.App, mailerApp client.App) *App {
 	logger.Info("Notification to %s for score above %.2f", *config.recipients, *config.score)
 
 	return &App{
-		mailerURL:  strings.TrimSpace(*config.mailerURL),
-		mailerUser: strings.TrimSpace(*config.mailerUser),
-		mailerPass: strings.TrimSpace(*config.mailerPass),
 		recipients: strings.Split(*config.recipients, ","),
 		score:      *config.score,
 		modelApp:   modelApp,
@@ -115,7 +108,7 @@ func (a App) Do(ctx context.Context, currentTime time.Time) error {
 	}
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Send(usedCtx); err != nil {
+		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(usedCtx); err != nil {
 			return err
 		}
 
