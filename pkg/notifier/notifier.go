@@ -4,16 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/pkg/logger"
-	"github.com/ViBiOh/httputils/pkg/request"
 	"github.com/ViBiOh/httputils/pkg/scheduler"
 	"github.com/ViBiOh/httputils/pkg/tools"
+	"github.com/ViBiOh/mailer/pkg/client"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
@@ -48,22 +46,21 @@ type App struct {
 	mailerPass string
 	recipients []string
 	score      float64
-	modelApp   *model.App
+
+	modelApp  *model.App
+	mailerApp client.App
 }
 
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		mailerURL:  fs.String(tools.ToCamel(fmt.Sprintf("%sMailerURL", prefix)), "", "Mailer URL"),
-		mailerUser: fs.String(tools.ToCamel(fmt.Sprintf("%sMailerUser", prefix)), "", "Mailer User"),
-		mailerPass: fs.String(tools.ToCamel(fmt.Sprintf("%sMailerPass", prefix)), "", "Mailer Pass"),
 		recipients: fs.String(tools.ToCamel(fmt.Sprintf("%sRecipients", prefix)), "", "Email of notifications recipients"),
 		score:      fs.Float64(tools.ToCamel(fmt.Sprintf("%sScore", prefix)), 25.0, "Score value to notification when above"),
 	}
 }
 
 // New creates new App from Config
-func New(config Config, modelApp *model.App) *App {
+func New(config Config, modelApp *model.App, mailerApp client.App) *App {
 	logger.Info("Notification to %s for score above %.2f", *config.recipients, *config.score)
 
 	return &App{
@@ -73,6 +70,7 @@ func New(config Config, modelApp *model.App) *App {
 		recipients: strings.Split(*config.recipients, ","),
 		score:      *config.score,
 		modelApp:   modelApp,
+		mailerApp:  mailerApp,
 	}
 }
 
@@ -117,8 +115,7 @@ func (a App) Do(ctx context.Context, currentTime time.Time) error {
 	}
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		_, _, _, err := request.DoJSON(usedCtx, fmt.Sprintf("%s/render/funds?from=%s&sender=%s&to=%s&subject=%s", a.mailerURL, url.QueryEscape(from), url.QueryEscape(name), url.QueryEscape(strings.Join(a.recipients, ",")), url.QueryEscape(subject)), scoreTemplateContent{a.score, above, below}, http.Header{"Authorization": []string{request.GenerateBasicAuth(a.mailerUser, a.mailerPass)}}, http.MethodPost)
-		if err != nil {
+		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Send(usedCtx); err != nil {
 			return err
 		}
 

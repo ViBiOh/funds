@@ -10,6 +10,7 @@ import (
 	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/scheduler"
+	"github.com/ViBiOh/mailer/pkg/client"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 
 	opentracingConfig := opentracing.Flags(fs, "tracing")
 	schedulerConfig := scheduler.Flags(fs, "scheduler")
+	mailerConfig := client.Flags(fs, "mailer")
 	fundsConfig := model.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
 	notifierConfig := notifier.Flags(fs, "")
@@ -38,7 +40,9 @@ func main() {
 		logger.Fatal("%#v", err)
 	}
 
-	notifierApp := notifier.New(notifierConfig, fundApp)
+	mailerApp := client.New(mailerConfig)
+
+	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	schedulerApp, err := scheduler.New(schedulerConfig, notifierApp)
 	if err != nil {
 		logger.Fatal("%#v", err)

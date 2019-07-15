@@ -76,17 +76,19 @@ Usage of alert:
   -infos string
         [funds] Informations URL
   -mailerPass string
-        Mailer Pass
+        [mailer] Mailer Pass
   -mailerURL string
-        Mailer URL
+        [mailer] Mailer URL (default "https://mailer.vibioh.fr")
   -mailerUser string
-        Mailer User
+        [mailer] Mailer User
   -recipients string
         Email of notifications recipients
   -schedulerHour int
         [scheduler] Hour of running (default 8)
   -schedulerInterval string
         [scheduler] Duration between two runs (default "24h")
+  -schedulerMaxRetry int
+        [scheduler] Max retry (default 10)
   -schedulerMinute int
         [scheduler] Minute of running
   -schedulerRetry string
