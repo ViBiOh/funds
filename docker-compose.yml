@@ -15,7 +15,7 @@ services:
     - -dbName
     - ${FUNDS_DATABASE_NAME}
     - -tracingAgent
-    - monitoring_jaeger:6831
+    - monitoring_jaeger_1:6831
     - -tracingName
     - funds_api
     labels:
@@ -56,7 +56,7 @@ services:
     - -score
     - '20'
     - -tracingAgent
-    - monitoring_jaeger:6831
+    - monitoring_jaeger_1:6831
     - -tracingName
     - funds_notifier
     healthcheck:
