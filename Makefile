@@ -120,6 +120,4 @@ start-notifier:
 		-mailerUser $(MAILER_USER) \
 		-mailerPass $(MAILER_PASS) \
 		-recipients $(RECIPIENTS) \
-		-score 20 \
-		-schedulerHour 13 \
-		-schedulerMinute 41
+		-score 20
