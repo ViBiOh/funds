@@ -45,6 +45,10 @@ version:
 .PHONY: app
 app: deps go
 
+## app-notifier: Build app Notifier with dependencies download
+.PHONY: app-notifier
+app-notifier: deps go build-notifier
+
 ## go: Build app
 .PHONY: go
 go: format lint test bench build
