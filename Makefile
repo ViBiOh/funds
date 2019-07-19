@@ -1,5 +1,10 @@
 SHELL = /bin/sh
 
+ifneq ("$(wildcard .env)","")
+	include .env
+	export
+endif
+
 APP_NAME = funds
 PACKAGES ?= ./...
 GO_FILES ?= */*/*.go
@@ -21,47 +26,28 @@ endif
 
 .DEFAULT_GOAL := app
 
-ifneq ("$(wildcard .env)","")
-	include .env
-	export
-endif
-
 ## help: Display list of commands
 .PHONY: help
 help: Makefile
 	@sed -n 's|^##||p' $< | column -t -s ':' | sed -e 's|^| |'
 
-## app: Build app API with dependencies download
-.PHONY: app
-app: deps go build
-
-## $(APP_NAME)-notifier: Build app Notifier with dependencies download
-.PHONY: app-notifier
-app-notifier: deps go build-notifier
-
-## go: Build Golang app
-.PHONY: go
-go: format lint test bench
-
-## name: Output name
+## name: Output app name
 .PHONY: name
 name:
 	@echo -n $(APP_NAME)
 
-## dist: Output build output path
-.PHONY: dist
-dist:
-	@echo -n $(BINARY_PATH)
-
-## version: Output sha1 of last commit
+## version: Output last commit sha1
 .PHONY: version
 version:
 	@echo -n $(shell git rev-parse --short HEAD)
 
-## author: Output author's name of last commit
-.PHONY: author
-author:
-	@python -c 'import sys; import urllib; sys.stdout.write(urllib.quote_plus(sys.argv[1]))' "$(shell git log --pretty=format:'%an' -n 1)"
+## app: Build app with dependencies download
+.PHONY: app
+app: deps go
+
+## go: Build app
+.PHONY: go
+go: format lint test bench build
 
 ## deps: Download dependencies
 .PHONY: deps
@@ -83,7 +69,7 @@ lint:
 	errcheck -ignoretests $(PACKAGES)
 	go vet $(PACKAGES)
 
-## test: Test code with coverage
+## test: Test with coverage
 .PHONY: test
 test:
 	script/coverage
@@ -93,7 +79,7 @@ test:
 bench:
 	go test $(PACKAGES) -bench . -benchmem -run Benchmark.*
 
-## build: Build binary for api
+## build: Build binary
 .PHONY: build
 build:
 	CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix nocgo -o $(BINARY_PATH)-api $(SERVER_SOURCE)
