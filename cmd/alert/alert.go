@@ -25,9 +25,7 @@ func main() {
 	dbConfig := db.Flags(fs, "db")
 	notifierConfig := notifier.Flags(fs, "")
 
-	if err := fs.Parse(os.Args[1:]); err != nil {
-		logger.Fatal("%#v", err)
-	}
+	logger.Fatal(fs.Parse(os.Args[1:]))
 
 	if *check {
 		return
@@ -36,17 +34,13 @@ func main() {
 	opentracing.New(opentracingConfig)
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
-	if err != nil {
-		logger.Fatal("%#v", err)
-	}
+	logger.Fatal(err)
 
 	mailerApp := client.New(mailerConfig)
 
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	schedulerApp, err := scheduler.New(schedulerConfig, notifierApp)
-	if err != nil {
-		logger.Fatal("%#v", err)
-	}
+	logger.Fatal(err)
 
 	schedulerApp.Start()
 }

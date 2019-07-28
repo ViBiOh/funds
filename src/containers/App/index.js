@@ -21,8 +21,7 @@ export class AppComponent extends Component {
    * React lifecycle.
    */
   render() {
-    const { ready } = this.props;
-    if (!ready) {
+    if (!this.props.ready) {
       return (
         <div className={style.loader}>
           <Throbber label="Loading environment" />
