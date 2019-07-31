@@ -14,10 +14,6 @@ services:
     - ${FUNDS_DATABASE_PASS}
     - -dbName
     - ${FUNDS_DATABASE_NAME}
-    - -tracingAgent
-    - monitoring_jaeger_1:6831
-    - -tracingName
-    - funds_api
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
@@ -55,10 +51,6 @@ services:
     - ${MAILER_PASS}
     - -score
     - '20'
-    - -tracingAgent
-    - monitoring_jaeger_1:6831
-    - -tracingName
-    - funds_notifier
     healthcheck:
       test: [ "CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}" ]
     labels:
