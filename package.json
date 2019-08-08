@@ -26,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --coverage",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src/**/*.js src/**/*.jsx"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,7 +37,7 @@
     "enzyme-adapter-react-16": "1.14.0",
     "react-scripts": "3.0.1",
     "react-test-renderer": "16.8.6",
-    "sinon": "7.3.2"
+    "sinon": "7.4.1"
   },
   "browserslist": {
     "production": [
