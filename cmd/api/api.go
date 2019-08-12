@@ -10,7 +10,6 @@ import (
 	"github.com/ViBiOh/httputils/pkg/alcotest"
 	"github.com/ViBiOh/httputils/pkg/cors"
 	"github.com/ViBiOh/httputils/pkg/db"
-	"github.com/ViBiOh/httputils/pkg/gzip"
 	"github.com/ViBiOh/httputils/pkg/logger"
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
@@ -39,7 +38,6 @@ func main() {
 
 	prometheusApp := prometheus.New(prometheusConfig)
 	opentracingApp := opentracing.New(opentracingConfig)
-	gzipApp := gzip.New()
 	owaspApp := owasp.New(owaspConfig)
 	corsApp := cors.New(corsConfig)
 
@@ -49,7 +47,7 @@ func main() {
 	}
 
 	modelHandler := model.Handler(fundApp)
-	handler := httputils.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, gzipApp, owaspApp, corsApp)
+	handler := httputils.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, owaspApp, corsApp)
 
 	serverApp.ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
