@@ -1,4 +1,6 @@
 import funtch from 'funtch';
+import urljoin from 'url-join';
+import store from 'AppStore';
 
 /**
  * Service for dealing with Config.
@@ -11,5 +13,15 @@ export default class ConfigService {
   static async getConfig() {
     const config = await funtch.get('/env');
     return config;
+  }
+
+  /**
+   * Retrieve API URL from store
+   * @param  {String} Path wanted
+   * @return {String} API URL
+   */
+  static getApiUrl(path = '') {
+    const { config: { API_URL = '' } = {} } = store.getState();
+    return urljoin(API_URL, path);
   }
 }

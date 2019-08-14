@@ -1,5 +1,5 @@
 import funtch from 'funtch';
-import { getApiUrl } from 'Constants';
+import ConfigService from 'services/Config';
 
 /**
  * Service for dealing with Funds.
@@ -10,7 +10,7 @@ export default class FundsService {
    * @return {Array} List of funds
    */
   static async getFunds() {
-    const list = await funtch.get(`${getApiUrl()}/list`);
+    const list = await funtch.get(ConfigService.getApiUrl('list'));
     return list.results;
   }
 }
