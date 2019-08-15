@@ -17,8 +17,8 @@ function renderCount(fundsSize, initialSize) {
   }
 
   return (
-    <span key="count" className={style.modifier}>
-      {fundsSize} /{initialSize}
+    <span key="count" className={style.modifier} data-funds-count>
+      {fundsSize} / {initialSize}
     </span>
   );
 }
@@ -27,13 +27,14 @@ function renderFilters(filters, filterBy) {
   return Object.keys(filters)
     .filter(filter => filters[filter])
     .map(filter => (
-      <span key={filter} className={style.modifier}>
+      <span key={filter} className={style.modifier} data-funds-filter>
         <FaFilter />
         <span>
           <em> {COLUMNS[filter].label}</em> ≃{' '}
         </span>
+
         <span>{filters[filter]}</span>
-        <Button type="none" onClick={() => filterBy(filter, '')}>
+        <Button type="none" onClick={() => filterBy(filter, '')} data-funds-filter-clear>
           <FaWindowClose />
         </Button>
       </span>
@@ -41,18 +42,21 @@ function renderFilters(filters, filterBy) {
 }
 
 function renderOrder(order, orderBy, reverseOrder) {
+  if (order.key) {
+    return null;
+  }
+
   return (
-    order.key && (
-      <span className={style.modifier}>
-        <Button type="none" onClick={reverseOrder}>
-          {order.descending ? <FaSortAmountDown /> : <FaSortAmountUp />}
-        </Button>
-        <span>{COLUMNS[order.key].label}</span>
-        <Button type="none" onClick={() => orderBy('')}>
-          <FaWindowClose />
-        </Button>
-      </span>
-    )
+    <span className={style.modifier} data-funds-order>
+      <Button type="none" onClick={reverseOrder}>
+        {order.descending ? <FaSortAmountDown /> : <FaSortAmountUp />}
+      </Button>
+
+      <span>{COLUMNS[order.key].label}</span>
+      <Button type="none" onClick={() => orderBy('')} data-funds-order-clear>
+        <FaWindowClose />
+      </Button>
+    </span>
   );
 }
 
