@@ -42,7 +42,7 @@ function renderFilters(filters, filterBy) {
 }
 
 function renderOrder(order, orderBy, reverseOrder) {
-  if (order.key) {
+  if (!order.key) {
     return null;
   }
 
@@ -68,7 +68,7 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
   const { label } = COLUMNS[aggregat.key];
 
   return (
-    <span className={style.modifier}>
+    <span className={style.modifier} data-funds-aggregat>
       <FaChartPie />
       <select value={aggregat.size} onChange={onAggregateSizeChange}>
         {AGGREGATE_SIZES.map(size => (
@@ -78,7 +78,7 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
         ))}
       </select>{' '}
       {label}
-      <Button type="none" onClick={() => aggregateBy('')}>
+      <Button type="none" onClick={() => aggregateBy('')} data-funds-aggregat-clear>
         <FaWindowClose />
       </Button>
     </span>

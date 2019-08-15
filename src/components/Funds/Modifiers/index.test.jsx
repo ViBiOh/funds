@@ -110,3 +110,26 @@ it('should call given callback for removing order', () => {
 
   expect(props.orderBy).toHaveBeenCalledWith('');
 });
+
+it('should render aggregat if specified', () => {
+  const props = defaultProps();
+  props.aggregat = {
+    key: 'score',
+  };
+
+  const wrapper = shallow(<Modifiers {...props} />);
+  expect(wrapper.find('span[data-funds-aggregat]').length).toEqual(1);
+});
+
+it('should call given callback for removing order', () => {
+  const props = defaultProps();
+  props.aggregat = {
+    key: 'score',
+  };
+  props.aggregateBy = jest.fn();
+
+  const wrapper = shallow(<Modifiers {...props} />);
+  wrapper.find('span[data-funds-aggregat] Button[data-funds-aggregat-clear]').simulate('click');
+
+  expect(props.aggregateBy).toHaveBeenCalledWith('');
+});
