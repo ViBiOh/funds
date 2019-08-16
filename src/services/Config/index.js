@@ -21,7 +21,7 @@ export default class ConfigService {
    * @return {String} API URL
    */
   static getApiUrl(path = '') {
-    const { config: { API_URL = '' } = {} } = store.getState();
+    const { config: { API_URL = 'https://funds-api.vibioh.fr' } = {} } = store.getState();
     return urljoin(API_URL, path);
   }
 }

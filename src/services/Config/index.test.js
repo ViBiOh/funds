@@ -14,7 +14,7 @@ it('should fetch config from env', () => {
 it('should handle null config from store', () => {
   store.getState.mockReturnValue({});
 
-  expect(ConfigService.getApiUrl()).toEqual('');
+  expect(ConfigService.getApiUrl()).toEqual('https://funds-api.vibioh.fr');
 });
 
 it('should concat given path to API url', () => {
