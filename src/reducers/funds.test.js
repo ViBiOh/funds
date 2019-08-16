@@ -65,3 +65,36 @@ it('should apply filters', () => {
     },
   });
 });
+
+it('should apply order', () => {
+  const all = [{ isin: 8, name: 'Vite' }, { isin: 1000, name: 'Emile' }];
+
+  expect(reducer({ ...initialState, all }, actions.setOrder('isin', true))).toEqual({
+    ...initialState,
+    all,
+    displayed: [{ isin: 1000, name: 'Emile' }, { isin: 8, name: 'Vite' }],
+    order: {
+      key: 'isin',
+      descending: true,
+    },
+  });
+});
+
+it('should apply aggregat', () => {
+  const all = [
+    { isin: 8, name: 'Vite', score: 1 },
+    { isin: 1000, name: 'Emile', score: 1 },
+    { isin: 2000, name: 'Huit', score: 2 },
+  ];
+
+  expect(reducer({ ...initialState, all }, actions.setAggregat('score', 25))).toEqual({
+    ...initialState,
+    all,
+    displayed: all,
+    aggregated: [{ label: '1', count: 2 }, { label: '2', count: 1 }],
+    aggregat: {
+      key: 'score',
+      size: 25,
+    },
+  });
+});
