@@ -5,6 +5,7 @@ import List from './index';
 function defaultProps() {
   return {
     funds: [],
+    filterBy: () => null,
   };
 }
 

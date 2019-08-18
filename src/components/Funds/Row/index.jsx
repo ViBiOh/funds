@@ -54,7 +54,7 @@ Row.propTypes = {
     v3y: STRING_OR_NUMBER.isRequired,
     score: STRING_OR_NUMBER.isRequired,
   }).isRequired,
-  filterBy: PropTypes.func,
+  filterBy: PropTypes.func.isRequired,
 };
 
 Row.defaultProps = {

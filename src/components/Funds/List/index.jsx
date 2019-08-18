@@ -27,9 +27,5 @@ List.propTypes = {
       id: PropTypes.string.isRequired,
     }),
   ).isRequired,
-  filterBy: PropTypes.func,
-};
-
-List.defaultProps = {
-  filterBy: () => null,
+  filterBy: PropTypes.func.isRequired,
 };
