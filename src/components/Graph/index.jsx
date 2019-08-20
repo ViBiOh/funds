@@ -4,18 +4,32 @@ import Chart from 'chart.js';
 import setRef from 'helpers/ref';
 
 export default class Graph extends Component {
+  /**
+   * React lifecycle.
+   */
   componentDidMount() {
     this.updateChart(this.props);
   }
 
+  /**
+   * React lifecycle.
+   */
   componentDidUpdate() {
     this.updateChart(this.props);
   }
 
+  /**
+   * React lifecycle.
+   */
   componentWillUnmount() {
     this.clearChart();
   }
 
+  /**
+   * Update chart value.
+   * @param  {Object} config Chart configuration
+   * @return {Object}        Chart value
+   */
   updateChart(config) {
     const { type, data } = config;
 
@@ -69,6 +83,10 @@ export default class Graph extends Component {
 
 Graph.propTypes = {
   className: PropTypes.string,
+  data: PropTypes.shape({
+    datasets: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+    labels: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  }).isRequired,
 };
 
 Graph.defaultProps = {
