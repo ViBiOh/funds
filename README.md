@@ -36,6 +36,20 @@ Usage of api:
         [db] User
   -frameOptions string
         [owasp] X-Frame-Options (default "deny")
+  -fundsHour int
+        [funds] Hour of running (default 8)
+  -fundsInterval string
+        [funds] Duration between two runs (default "24h")
+  -fundsMaxRetry int
+        [funds] Max retry (default 10)
+  -fundsMinute int
+        [funds] Minute of running
+  -fundsOnStart
+        [funds] Start scheduler on start
+  -fundsRetry string
+        [funds] Duration between two retries (default "10m")
+  -fundsTimezone string
+        [funds] Timezone of running (default "Europe/Paris")
   -graceful string
         [http] Graceful close duration (default "35s")
   -hsts

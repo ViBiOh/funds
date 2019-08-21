@@ -14,6 +14,7 @@ import (
 	"github.com/ViBiOh/httputils/pkg/opentracing"
 	"github.com/ViBiOh/httputils/pkg/owasp"
 	"github.com/ViBiOh/httputils/pkg/prometheus"
+	"github.com/ViBiOh/httputils/pkg/scheduler"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 	opentracingConfig := opentracing.Flags(fs, "tracing")
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
+	schedulerConfig := scheduler.Flags(fs, "funds")
 
 	fundsConfig := model.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
@@ -43,12 +45,18 @@ func main() {
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
-		logger.Error("%#v", err)
+		logger.Fatal(err)
+	}
+
+	schedulerApp, err := scheduler.New(schedulerConfig, fundApp)
+	if err != nil {
+		logger.Fatal(err)
 	}
 
 	modelHandler := model.Handler(fundApp)
 	handler := httputils.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, owaspApp, corsApp)
 
+	schedulerApp.Start()
 	serverApp.ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)

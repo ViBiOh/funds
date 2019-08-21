@@ -21,8 +21,7 @@ import (
 )
 
 const (
-	maxConcurrentFetcher = 24
-	refreshDelay         = 8 * time.Hour
+	maxConcurrentFetcher = 20
 	listPrefix           = "/list"
 )
 
@@ -59,38 +58,33 @@ func New(config Config, dbConfig db.Config) (*App, error) {
 		app.dbConnexion = fundsDB
 	}
 
-	if app.fundsURL != "" {
-		go app.refreshCron()
-	}
-
 	return app, nil
 }
 
-func (a *App) refreshCron() {
-	a.refresh()
-	c := time.Tick(refreshDelay)
-	for range c {
-		a.refresh()
+// Do do scheduler task of refreshing data
+func (a *App) Do(ctx context.Context, _ time.Time) error {
+	if a.fundsURL == "" {
+		return nil
 	}
-}
 
-func (a *App) refresh() {
 	logger.Info("Refresh started")
 	defer logger.Info("Refresh ended")
 
-	if err := a.refreshData(); err != nil {
+	if err := a.refreshData(ctx); err != nil {
 		logger.Error("%#v", err)
 	}
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
-			logger.Error("%#v", err)
+			return err
 		}
 	}
+
+	return nil
 }
 
-func (a *App) refreshData() error {
-	span, ctx := opentracing.StartSpanFromContext(context.Background(), "Fetch Funds")
+func (a *App) refreshData(ctx context.Context) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
 	defer span.Finish()
 
 	inputs, results, errs := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {

@@ -14,6 +14,9 @@ services:
     - ${FUNDS_DATABASE_PASS}
     - -dbName
     - ${FUNDS_DATABASE_NAME}
+    - -fundsOnStart
+    - -fundsInterval
+    - 8h
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds-api.vibioh.fr'
