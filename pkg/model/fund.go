@@ -27,10 +27,10 @@ func (f *Fund) ComputeScore() {
 }
 
 // GetFundsAbove retrieves funds above score
-func (f *App) GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*Fund, error) {
+func (a *App) GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*Fund, error) {
 	fundsToAlert := make([]*Fund, 0)
 
-	funds, err := f.ListFundsWithScoreAbove(score)
+	funds, err := a.ListFundsWithScoreAbove(score)
 	if err != nil {
 		return nil, err
 	}
@@ -49,11 +49,11 @@ func (f *App) GetFundsAbove(score float64, currentAlerts map[string]*Alert) ([]*
 }
 
 // GetFundsBelow retrieves funds below score
-func (f *App) GetFundsBelow(currentAlerts map[string]*Alert) ([]*Fund, error) {
+func (a *App) GetFundsBelow(currentAlerts map[string]*Alert) ([]*Fund, error) {
 	funds := make([]*Fund, 0)
 
 	for _, alert := range currentAlerts {
-		if fund, err := f.ReadFundByIsin(alert.Isin); err != nil {
+		if fund, err := a.ReadFundByIsin(alert.Isin); err != nil {
 			return nil, err
 		} else if fund.Score < alert.Score {
 			funds = append(funds, fund)

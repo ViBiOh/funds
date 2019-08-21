@@ -77,13 +77,13 @@ func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 }
 
 // ReadFundByIsin retrieves Fund by isin
-func (f *App) ReadFundByIsin(isin string) (*Fund, error) {
+func (a *App) ReadFundByIsin(isin string) (*Fund, error) {
 	var (
 		label string
 		score float64
 	)
 
-	err := f.dbConnexion.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
+	err := a.dbConnexion.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -95,8 +95,8 @@ func (f *App) ReadFundByIsin(isin string) (*Fund, error) {
 }
 
 // ListFundsWithScoreAbove retrieves Fund with score above given level
-func (f *App) ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := f.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
+func (a *App) ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
+	rows, err := a.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		err = errors.WithStack(err)
 		return
@@ -110,13 +110,13 @@ func (f *App) ListFundsWithScoreAbove(minScore float64) (funds []*Fund, err erro
 }
 
 // SaveFund saves Fund
-func (f *App) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
+func (a *App) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 	if fund == nil {
 		return errNilFund
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(f.dbConnexion, tx); err != nil {
+	if usedTx, err = db.GetTx(a.dbConnexion, tx); err != nil {
 		return
 	}
 
@@ -126,7 +126,7 @@ func (f *App) SaveFund(fund *Fund, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	if _, err = f.ReadFundByIsin(fund.Isin); err != nil {
+	if _, err = a.ReadFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
 			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
 				err = errors.WithStack(err)
