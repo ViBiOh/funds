@@ -56,7 +56,7 @@ func main() {
 	modelHandler := model.Handler(fundApp)
 	handler := httputils.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, owaspApp, corsApp)
 
-	schedulerApp.Start()
+	go schedulerApp.Start()
 	serverApp.ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
