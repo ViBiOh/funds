@@ -44,8 +44,7 @@ INSERT INTO
 )
 `
 
-// ListAlertsOpened retrieves current Alerts (only one mail sent)
-func (a *App) ListAlertsOpened() (alerts []*Alert, err error) {
+func (a *app) listAlertsOpened() (alerts []*Alert, err error) {
 	rows, err := a.dbConnexion.Query(listAlertsOpenedQuery)
 	if err != nil {
 		return
@@ -74,7 +73,7 @@ func (a *App) ListAlertsOpened() (alerts []*Alert, err error) {
 }
 
 // SaveAlert saves Alert
-func (a *App) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
+func (a *app) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 	if alert == nil {
 		return errors.New("cannot save nil")
 	}

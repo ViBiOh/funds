@@ -8,10 +8,10 @@ type Alert struct {
 }
 
 // GetCurrentAlerts retrieves current opened alerts
-func (a *App) GetCurrentAlerts() (map[string]*Alert, error) {
+func (a *app) GetCurrentAlerts() (map[string]*Alert, error) {
 	currentAlerts := make(map[string]*Alert)
 
-	alerts, err := a.ListAlertsOpened()
+	alerts, err := a.listAlertsOpened()
 	if err != nil {
 		return nil, err
 	}

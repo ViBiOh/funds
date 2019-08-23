@@ -31,7 +31,18 @@ type Config struct {
 }
 
 // App of package
-type App struct {
+type App interface {
+	Health() bool
+	Handler() http.Handler
+	ListFunds() []Fund
+	GetFundsAbove(float64, map[string]*Alert) ([]*Fund, error)
+	GetFundsBelow(map[string]*Alert) ([]*Fund, error)
+	GetCurrentAlerts() (map[string]*Alert, error)
+	SaveAlert(*Alert, *sql.Tx) error
+	Do(context.Context, time.Time) error
+}
+
+type app struct {
 	dbConnexion *sql.DB
 	fundsURL    string
 	fundsMap    sync.Map
@@ -45,8 +56,8 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, dbConfig db.Config) (*App, error) {
-	app := &App{
+func New(config Config, dbConfig db.Config) (App, error) {
+	app := &app{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 	}
@@ -62,7 +73,7 @@ func New(config Config, dbConfig db.Config) (*App, error) {
 }
 
 // Do do scheduler task of refreshing data
-func (a *App) Do(ctx context.Context, _ time.Time) error {
+func (a *app) Do(ctx context.Context, _ time.Time) error {
 	if a.fundsURL == "" {
 		return nil
 	}
@@ -83,7 +94,7 @@ func (a *App) Do(ctx context.Context, _ time.Time) error {
 	return nil
 }
 
-func (a *App) refreshData(ctx context.Context) error {
+func (a *app) refreshData(ctx context.Context) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
 	defer span.Finish()
 
@@ -120,7 +131,7 @@ func (a *App) refreshData(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) saveData() (err error) {
+func (a *app) saveData() (err error) {
 	var tx *sql.Tx
 	if tx, err = db.GetTx(a.dbConnexion, nil); err != nil {
 		return
@@ -132,7 +143,7 @@ func (a *App) saveData() (err error) {
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err = a.SaveFund(&fund, tx)
+		err = a.saveFund(&fund, tx)
 
 		return err == nil
 	})
@@ -141,12 +152,12 @@ func (a *App) saveData() (err error) {
 }
 
 // Health check health
-func (a *App) Health() bool {
+func (a *app) Health() bool {
 	return db.Ping(a.dbConnexion)
 }
 
 // ListFunds return content of funds' map
-func (a *App) ListFunds() []Fund {
+func (a *app) ListFunds() []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
@@ -157,14 +168,14 @@ func (a *App) ListFunds() []Fund {
 	return funds
 }
 
-func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
+func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
 	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r)); err != nil {
 		httperror.InternalServerError(w, err)
 	}
 }
 
 // Handler for model request. Should be use with net/http
-func Handler(app *App) http.Handler {
+func (a *app) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {
@@ -175,7 +186,7 @@ func Handler(app *App) http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, listPrefix) {
 			if r.Method == http.MethodGet {
-				app.listHandler(w, r)
+				a.listHandler(w, r)
 			} else {
 				w.WriteHeader(http.StatusMethodNotAllowed)
 			}

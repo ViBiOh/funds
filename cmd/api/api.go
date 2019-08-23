@@ -53,8 +53,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	modelHandler := model.Handler(fundApp)
-	handler := httputils.ChainMiddlewares(modelHandler, prometheusApp, opentracingApp, owaspApp, corsApp)
+	handler := httputils.ChainMiddlewares(fundApp.Handler(), prometheusApp, opentracingApp, owaspApp, corsApp)
 
 	go schedulerApp.Start()
 	serverApp.ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
