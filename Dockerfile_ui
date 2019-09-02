@@ -8,7 +8,7 @@ RUN npm ci \
  && npm run build
 
 ARG CODECOV_TOKEN
-RUN curl -s https://codecov.io/bash | bash
+RUN curl -q -sS https://codecov.io/bash | bash
 
 FROM vibioh/viws:light
 
