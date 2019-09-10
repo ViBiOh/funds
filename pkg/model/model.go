@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	maxConcurrentFetcher = 20
+	maxConcurrentFetcher = 8
 	listPrefix           = "/list"
 )
 
@@ -98,7 +98,7 @@ func (a *app) refreshData(ctx context.Context) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
 	defer span.Finish()
 
-	inputs, results := tools.ConcurrentAction(0, func(ID interface{}) (interface{}, error) {
+	inputs, results := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
 	})
 
