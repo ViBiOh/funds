@@ -98,7 +98,7 @@ func (a *app) refreshData(ctx context.Context) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
 	defer span.Finish()
 
-	inputs, results, errs := tools.ConcurrentAction(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
+	inputs, results := tools.ConcurrentAction(0, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
 	})
 
@@ -112,15 +112,18 @@ func (a *app) refreshData(ctx context.Context) error {
 
 	errorIds := make([][]byte, 0)
 
-	for i := 0; i < len(fundsIds); i++ {
-		select {
-		case crawlErr := <-errs:
-			errorIds = append(errorIds, crawlErr.Input.([]byte))
+	for {
+		result, ok := <-results
+
+		if !ok {
 			break
-		case result := <-results:
-			content := result.(Fund)
+		}
+
+		if result.Err != nil {
+			errorIds = append(errorIds, result.Input.([]byte))
+		} else {
+			content := result.Output.(Fund)
 			a.fundsMap.Store(content.ID, content)
-			break
 		}
 	}
 

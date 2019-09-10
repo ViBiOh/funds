@@ -2,6 +2,10 @@ github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cq
 github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
 github.com/ViBiOh/httputils v1.6.6 h1:pu+a8XYSxE+R1pfGzlzYkiECSHZv4HmdeRv6N4Kxro8=
 github.com/ViBiOh/httputils v1.6.6/go.mod h1:c9lr/PcCTWSYEgiKLyxEtL3qDXqQhteJzKH4vc17WAU=
+github.com/ViBiOh/httputils v1.7.0 h1:z3GrrX0qDGPce4Rqfc7BzvqSnGaAISQo/rDtGw7AfH0=
+github.com/ViBiOh/httputils v1.7.0/go.mod h1:c9lr/PcCTWSYEgiKLyxEtL3qDXqQhteJzKH4vc17WAU=
+github.com/ViBiOh/httputils v1.7.1 h1:GAajRsVloHVt22C4coIxmfQsl/NMmKg5jY4Rwy+xx0A=
+github.com/ViBiOh/httputils v1.7.1/go.mod h1:EpzzrRrshDdFyXT0V9t7JQa4vWDXifgpDvA/Bbtci14=
 github.com/ViBiOh/mailer v1.1.2 h1:wpKg5dl61svJn529sn5kmgWrswXQju4ILYCXIphnCXo=
 github.com/ViBiOh/mailer v1.1.2/go.mod h1:JHizr4JpPwvBDvWfKeyceNzcu5Zy9Dl7S7uKUjBcbZc=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
@@ -125,6 +129,8 @@ golang.org/x/sys v0.0.0-20190830142957-1e83adbbebd0 h1:7z820YPX9pxWR59qM7BE5+fgl
 golang.org/x/sys v0.0.0-20190830142957-1e83adbbebd0/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190904154756-749cb33beabd h1:DBH9mDw0zluJT/R+nGuV3jWFWLFaHyYZWD4tOT+cjn0=
 golang.org/x/sys v0.0.0-20190904154756-749cb33beabd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20190910064555-bbd175535a8b h1:3S2h5FadpNr0zUUCVZjlKIEYF+KaX/OBplTGo89CYHI=
+golang.org/x/sys v0.0.0-20190910064555-bbd175535a8b/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
