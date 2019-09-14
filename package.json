@@ -12,8 +12,8 @@
   "dependencies": {
     "chart.js": "2.8.0",
     "classnames": "2.2.6",
-    "funtch": "2.0.5",
-    "history": "4.9.0",
+    "funtch": "2.0.6",
+    "history": "4.10.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-icons": "3.7.0",
