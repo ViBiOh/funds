@@ -75,8 +75,6 @@ services:
     - default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     - -headers
     - X-UA-Compatible:ie=edge
-    - -push
-    - /static/app.js?v=${COMMIT_SHA},/static/app.css?v=${COMMIT_SHA}
     labels:
       traefik.frontend.passHostHeader: 'true'
       traefik.frontend.rule: 'Host: funds.vibioh.fr'
