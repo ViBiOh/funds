@@ -35,9 +35,6 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	serverApp, err := httputils.New(serverConfig)
-	logger.Fatal(err)
-
 	prometheusApp := prometheus.New(prometheusConfig)
 	opentracingApp := opentracing.New(opentracingConfig)
 	owaspApp := owasp.New(owaspConfig)
@@ -56,7 +53,7 @@ func main() {
 	handler := httputils.ChainMiddlewares(fundApp.Handler(), prometheusApp, opentracingApp, owaspApp, corsApp)
 
 	go schedulerApp.Start()
-	serverApp.ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	httputils.New(serverConfig).ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
 		} else {

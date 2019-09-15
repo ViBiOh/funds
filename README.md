@@ -50,8 +50,6 @@ Usage of api:
         [funds] Duration between two retries (default "10m")
   -fundsTimezone string
         [funds] Timezone of running (default "Europe/Paris")
-  -graceful string
-        [http] Graceful close duration (default "35s")
   -hsts
         [owasp] Indicate Strict Transport Security (default true)
   -infos string
@@ -105,6 +103,8 @@ Usage of alert:
         [scheduler] Max retry (default 10)
   -schedulerMinute int
         [scheduler] Minute of running
+  -schedulerOnStart
+        [scheduler] Start scheduler on start
   -schedulerRetry string
         [scheduler] Duration between two retries (default "10m")
   -schedulerTimezone string
