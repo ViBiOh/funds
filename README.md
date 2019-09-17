@@ -10,6 +10,8 @@
 
 ```bash
 Usage of api:
+  -address string
+        [http] Listen address
   -cert string
         [http] Certificate file
   -corsCredentials
