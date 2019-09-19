@@ -23,13 +23,11 @@ services:
       traefik.http.routers.funds-api-http.middlewares: redirect@file
       traefik.http.routers.funds-api-https.rule: Host(`funds-api.vibioh.fr`)
       traefik.http.routers.funds-api-https.entrypoints: https
-      traefik.http.routers.funds-api-https.middlewares: compress@file
+      traefik.http.routers.funds-api-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-api-https.tls: true
       traefik.http.routers.funds-api-https.tls.certResolver: default
       traefik.http.services.funds-api-service.loadbalancer.passhostheader: true
       traefik.http.services.funds-api-service.loadbalancer.server.port: '1080'
-      traefik.http.middlewares.funds-api-rate-limit.ratelimit.average: '10'
-      traefik.http.middlewares.funds-api-rate-limit.ratelimit.burst: '50'
     restart: on-failure:5
     read_only: true
     cpu_shares: 256
@@ -85,7 +83,7 @@ services:
       traefik.http.routers.funds-ui-http.middlewares: redirect@file
       traefik.http.routers.funds-ui-https.rule: Host(`funds.vibioh.fr`)
       traefik.http.routers.funds-ui-https.entrypoints: https
-      traefik.http.routers.funds-ui-https.middlewares: compress@file
+      traefik.http.routers.funds-ui-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-ui-https.tls: true
       traefik.http.routers.funds-ui-https.tls.certResolver: default
       traefik.http.services.funds-ui-service.loadbalancer.passhostheader: true
