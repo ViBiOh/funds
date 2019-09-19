@@ -3,7 +3,7 @@ package model
 import (
 	"testing"
 
-	"github.com/ViBiOh/httputils/pkg/errors"
+	"github.com/ViBiOh/httputils/v2/pkg/errors"
 )
 
 func TestSaveAlert(t *testing.T) {

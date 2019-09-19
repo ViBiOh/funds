@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/ViBiOh/httputils/pkg/request"
+	"github.com/ViBiOh/httputils/v2/pkg/request"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 

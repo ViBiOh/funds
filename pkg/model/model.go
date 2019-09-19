@@ -5,18 +5,17 @@ import (
 	"context"
 	"database/sql"
 	"flag"
-	"fmt"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/pkg/db"
-	"github.com/ViBiOh/httputils/pkg/errors"
-	"github.com/ViBiOh/httputils/pkg/httperror"
-	"github.com/ViBiOh/httputils/pkg/httpjson"
-	"github.com/ViBiOh/httputils/pkg/logger"
-	"github.com/ViBiOh/httputils/pkg/tools"
+	"github.com/ViBiOh/httputils/v2/pkg/db"
+	"github.com/ViBiOh/httputils/v2/pkg/errors"
+	"github.com/ViBiOh/httputils/v2/pkg/httperror"
+	"github.com/ViBiOh/httputils/v2/pkg/httpjson"
+	"github.com/ViBiOh/httputils/v2/pkg/logger"
+	"github.com/ViBiOh/httputils/v2/pkg/tools"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 
@@ -51,7 +50,7 @@ type app struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		infos: fs.String(tools.ToCamel(fmt.Sprintf("%sInfos", prefix)), "", "[funds] Informations URL"),
+		infos: tools.NewFlag(prefix, "funds").Name("Infos").Default("").Label("Informations URL").ToString(fs),
 	}
 }
 

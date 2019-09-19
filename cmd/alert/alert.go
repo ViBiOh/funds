@@ -6,10 +6,10 @@ import (
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
-	"github.com/ViBiOh/httputils/pkg/db"
-	"github.com/ViBiOh/httputils/pkg/logger"
-	"github.com/ViBiOh/httputils/pkg/opentracing"
-	"github.com/ViBiOh/httputils/pkg/scheduler"
+	"github.com/ViBiOh/httputils/v2/pkg/db"
+	"github.com/ViBiOh/httputils/v2/pkg/logger"
+	"github.com/ViBiOh/httputils/v2/pkg/opentracing"
+	"github.com/ViBiOh/httputils/v2/pkg/scheduler"
 	"github.com/ViBiOh/mailer/pkg/client"
 )
 

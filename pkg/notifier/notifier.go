@@ -3,14 +3,13 @@ package notifier
 import (
 	"context"
 	"flag"
-	"fmt"
 	"strings"
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	"github.com/ViBiOh/httputils/pkg/logger"
-	"github.com/ViBiOh/httputils/pkg/scheduler"
-	"github.com/ViBiOh/httputils/pkg/tools"
+	"github.com/ViBiOh/httputils/v2/pkg/logger"
+	"github.com/ViBiOh/httputils/v2/pkg/scheduler"
+	"github.com/ViBiOh/httputils/v2/pkg/tools"
 	"github.com/ViBiOh/mailer/pkg/client"
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -50,8 +49,8 @@ type App struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		recipients: fs.String(tools.ToCamel(fmt.Sprintf("%sRecipients", prefix)), "", "Email of notifications recipients"),
-		score:      fs.Float64(tools.ToCamel(fmt.Sprintf("%sScore", prefix)), 25.0, "Score value to notification when above"),
+		recipients: tools.NewFlag(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
+		score:      tools.NewFlag(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
 	}
 }
 

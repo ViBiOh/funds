@@ -3,8 +3,8 @@ package model
 import (
 	"database/sql"
 
-	"github.com/ViBiOh/httputils/pkg/db"
-	"github.com/ViBiOh/httputils/pkg/errors"
+	"github.com/ViBiOh/httputils/v2/pkg/db"
+	"github.com/ViBiOh/httputils/v2/pkg/errors"
 )
 
 const listAlertsOpenedQuery = `
