@@ -11,7 +11,7 @@ services:
       traefik.http.routers.funds-api-https.entrypoints: https
       traefik.http.routers.funds-api-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-api-https.tls: true
-      traefik.http.routers.funds-api-https.tls.certResolver: default
+      traefik.http.routers.funds-api-https.tls.certresolver: default
       traefik.http.services.funds-api-service.loadbalancer.passhostheader: true
       traefik.http.services.funds-api-service.loadbalancer.server.port: '1080'
     environment:
@@ -62,7 +62,7 @@ services:
       traefik.http.routers.funds-ui-https.entrypoints: https
       traefik.http.routers.funds-ui-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-ui-https.tls: true
-      traefik.http.routers.funds-ui-https.tls.certResolver: default
+      traefik.http.routers.funds-ui-https.tls.certresolver: default
       traefik.http.services.funds-ui-service.loadbalancer.passhostheader: true
       traefik.http.services.funds-ui-service.loadbalancer.server.port: '1080'
     environment:
