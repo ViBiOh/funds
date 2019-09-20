@@ -20,7 +20,7 @@ services:
       API_DB_USER: ${FUNDS_DATABASE_USER}
       API_DB_PASS: ${FUNDS_DATABASE_PASS}
       API_DB_NAME: ${FUNDS_DATABASE_NAME}
-      API_FUNDS_ON_START: true
+      API_FUNDS_ON_START: 'true'
       API_FUNDS_INTERVAL: 8h
     restart: on-failure:5
     read_only: true
@@ -69,7 +69,7 @@ services:
       API_URL: 'https://funds-api.vibioh.fr'
       VIWS_HEADERS: X-UA-Compatible:ie=edge
       VIWS_ENV: API_URL
-      VIWS_SPA: true
+      VIWS_SPA: 'true'
       VIWS_CSP: default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     restart: on-failure:5
     read_only: true
