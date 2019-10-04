@@ -42,7 +42,7 @@ Usage of api:
         [funds] Hour of running {API_FUNDS_HOUR} (default 8)
   -fundsInterval string
         [funds] Duration between two runs {API_FUNDS_INTERVAL} (default "24h")
-  -fundsMaxRetry int
+  -fundsMaxRetry uint
         [funds] Max retry {API_FUNDS_MAX_RETRY} (default 10)
   -fundsMinute int
         [funds] Minute of running {API_FUNDS_MINUTE}
@@ -90,18 +90,18 @@ Usage of alert:
   -infos string
         [funds] Informations URL {ALERT_INFOS}
   -mailerPass string
-        [mailer] Mailer Pass {ALERT_MAILER_PASS}
+        [mailer] Pass {ALERT_MAILER_PASS}
   -mailerURL string
-        [mailer] Mailer URL {ALERT_MAILER_URL} (default "https://mailer.vibioh.fr")
+        [mailer] URL (an instance of github.com/ViBiOh/mailer) {ALERT_MAILER_URL}
   -mailerUser string
-        [mailer] Mailer User {ALERT_MAILER_USER}
+        [mailer] User {ALERT_MAILER_USER}
   -recipients string
         [notifier] Email of notifications recipients {ALERT_RECIPIENTS}
   -schedulerHour int
         [scheduler] Hour of running {ALERT_SCHEDULER_HOUR} (default 8)
   -schedulerInterval string
         [scheduler] Duration between two runs {ALERT_SCHEDULER_INTERVAL} (default "24h")
-  -schedulerMaxRetry int
+  -schedulerMaxRetry uint
         [scheduler] Max retry {ALERT_SCHEDULER_MAX_RETRY} (default 10)
   -schedulerMinute int
         [scheduler] Minute of running {ALERT_SCHEDULER_MINUTE}
