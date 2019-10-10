@@ -1,4 +1,4 @@
-version: '2.1'
+version: "2.1"
 
 services:
   api:
@@ -12,14 +12,14 @@ services:
       traefik.http.routers.funds-api-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-api-https.tls: true
       traefik.http.routers.funds-api-https.tls.certresolver: default
-      traefik.http.services.funds-api-service.loadbalancer.server.port: '1080'
+      traefik.http.services.funds-api-service.loadbalancer.server.port: "1080"
     environment:
-      API_INFOS: ${PERFORMANCE_URL}
-      API_DB_HOST: ${FUNDS_DATABASE_HOST}
-      API_DB_USER: ${FUNDS_DATABASE_USER}
-      API_DB_PASS: ${FUNDS_DATABASE_PASS}
-      API_DB_NAME: ${FUNDS_DATABASE_NAME}
-      API_FUNDS_ON_START: 'true'
+      API_INFOS: "${PERFORMANCE_URL}"
+      API_DB_HOST: "${FUNDS_DATABASE_HOST}"
+      API_DB_USER: "${FUNDS_DATABASE_USER}"
+      API_DB_PASS: "${FUNDS_DATABASE_PASS}"
+      API_DB_NAME: "${FUNDS_DATABASE_NAME}"
+      API_FUNDS_ON_START: "true"
       API_FUNDS_INTERVAL: 8h
     restart: on-failure:5
     read_only: true
@@ -33,16 +33,16 @@ services:
     healthcheck:
       test: [ "CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}" ]
     labels:
-      traefik.enable: 'false'
+      traefik.enable: "false"
     environment:
-      ALERT_RECIPIENTS: ${FUNDS_NOTIFICATION_RECIPIENTS}
-      ALERT_DB_HOST: ${FUNDS_DATABASE_HOST}
-      ALERT_DB_USER: ${FUNDS_DATABASE_USER}
-      ALERT_DB_PASS: ${FUNDS_DATABASE_PASS}
-      ALERT_DB_NAME: ${FUNDS_DATABASE_NAME}
-      ALERT_MAILER_URL: https://mailer.vibioh.fr
-      ALERT_MAILER_USER: ${MAILER_USER}
-      ALERT_MAILER_PASS: ${MAILER_PASS}
+      ALERT_RECIPIENTS: "${FUNDS_NOTIFICATION_RECIPIENTS}"
+      ALERT_DB_HOST: "${FUNDS_DATABASE_HOST}"
+      ALERT_DB_USER: "${FUNDS_DATABASE_USER}"
+      ALERT_DB_PASS: "${FUNDS_DATABASE_PASS}"
+      ALERT_DB_NAME: "${FUNDS_DATABASE_NAME}"
+      ALERT_MAILER_URL: "https://mailer.vibioh.fr"
+      ALERT_MAILER_USER: "${MAILER_USER}"
+      ALERT_MAILER_PASS: "${MAILER_PASS}"
       ALERT_SCORE: 20
     restart: on-failure:5
     read_only: true
@@ -62,12 +62,12 @@ services:
       traefik.http.routers.funds-ui-https.middlewares: compress@file, web-limit@file
       traefik.http.routers.funds-ui-https.tls: true
       traefik.http.routers.funds-ui-https.tls.certresolver: default
-      traefik.http.services.funds-ui-service.loadbalancer.server.port: '1080'
+      traefik.http.services.funds-ui-service.loadbalancer.server.port: "1080"
     environment:
-      API_URL: 'https://funds-api.vibioh.fr'
+      API_URL: https://funds-api.vibioh.fr
       VIWS_HEADERS: X-UA-Compatible:ie=edge
       VIWS_ENV: API_URL
-      VIWS_SPA: 'true'
+      VIWS_SPA: "true"
       VIWS_CSP: default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' funds-api.vibioh.fr
     restart: on-failure:5
     read_only: true
