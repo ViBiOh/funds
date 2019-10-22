@@ -40,7 +40,6 @@ type App interface {
 	GetFundsBelow(map[string]*Alert) ([]*Fund, error)
 	GetCurrentAlerts() (map[string]*Alert, error)
 	SaveAlert(*Alert, *sql.Tx) error
-	Do(time.Time) error
 }
 
 type app struct {
@@ -74,23 +73,19 @@ func New(config Config, dbConfig db.Config) (App, error) {
 }
 
 func (a *app) Start() {
-	if err := a.Do(time.Now()); err != nil {
+	if err := a.refresh(time.Now()); err != nil {
 		logger.Error("%+v", err)
 	}
 
-	cron.NewCron().Each(time.Hour*8).Start(a.Do, func(err error) {
+	cron.NewCron().Each(time.Hour*8).Start(a.refresh, func(err error) {
 		logger.Error("%+v", err)
 	})
 }
 
-// Do do scheduler task of refreshing data
-func (a *app) Do(_ time.Time) error {
+func (a *app) refresh(_ time.Time) error {
 	if a.fundsURL == "" {
 		return nil
 	}
-
-	logger.Info("Refresh started")
-	defer logger.Info("Refresh ended")
 
 	if err := a.refreshData(context.Background()); err != nil {
 		logger.Error("%#v", err)
