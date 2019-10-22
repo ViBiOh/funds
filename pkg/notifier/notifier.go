@@ -8,7 +8,6 @@ import (
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/scheduler"
 	"github.com/ViBiOh/httputils/v2/pkg/tools"
 	"github.com/ViBiOh/mailer/pkg/client"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -19,8 +18,6 @@ const (
 	name    = "Funds App"
 	subject = "[Funds] Score level notification"
 )
-
-var _ scheduler.Task = &App{}
 
 type scoreTemplateContent struct {
 	Score      float64       `json:"score"`
@@ -85,11 +82,11 @@ func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund)
 }
 
 // Do send notification to users
-func (a App) Do(ctx context.Context, currentTime time.Time) error {
+func (a App) Do(currentTime time.Time) error {
 	span := opentracing.StartSpan("Funds Notify")
 	defer span.Finish()
 
-	usedCtx := opentracing.ContextWithSpan(ctx, span)
+	usedCtx := opentracing.ContextWithSpan(context.Background(), span)
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ViBiOh/httputils/v2/pkg/cron"
 	"github.com/ViBiOh/httputils/v2/pkg/db"
 	"github.com/ViBiOh/httputils/v2/pkg/errors"
 	"github.com/ViBiOh/httputils/v2/pkg/httperror"
@@ -32,13 +33,14 @@ type Config struct {
 // App of package
 type App interface {
 	Health() bool
+	Start()
 	Handler() http.Handler
 	ListFunds() []Fund
 	GetFundsAbove(float64, map[string]*Alert) ([]*Fund, error)
 	GetFundsBelow(map[string]*Alert) ([]*Fund, error)
 	GetCurrentAlerts() (map[string]*Alert, error)
 	SaveAlert(*Alert, *sql.Tx) error
-	Do(context.Context, time.Time) error
+	Do(time.Time) error
 }
 
 type app struct {
@@ -71,8 +73,18 @@ func New(config Config, dbConfig db.Config) (App, error) {
 	return app, nil
 }
 
+func (a *app) Start() {
+	if err := a.Do(time.Now()); err != nil {
+		logger.Error("%+v", err)
+	}
+
+	cron.NewCron().Each(time.Hour*8).Start(a.Do, func(err error) {
+		logger.Error("%+v", err)
+	})
+}
+
 // Do do scheduler task of refreshing data
-func (a *app) Do(ctx context.Context, _ time.Time) error {
+func (a *app) Do(_ time.Time) error {
 	if a.fundsURL == "" {
 		return nil
 	}
@@ -80,7 +92,7 @@ func (a *app) Do(ctx context.Context, _ time.Time) error {
 	logger.Info("Refresh started")
 	defer logger.Info("Refresh ended")
 
-	if err := a.refreshData(ctx); err != nil {
+	if err := a.refreshData(context.Background()); err != nil {
 		logger.Error("%#v", err)
 	}
 

@@ -39,20 +39,6 @@ Usage of api:
         [db] User {API_DB_USER}
   -frameOptions string
         [owasp] X-Frame-Options {API_FRAME_OPTIONS} (default "deny")
-  -fundsHour int
-        [funds] Hour of running {API_FUNDS_HOUR} (default 8)
-  -fundsInterval string
-        [funds] Duration between two runs {API_FUNDS_INTERVAL} (default "24h")
-  -fundsMaxRetry uint
-        [funds] Max retry {API_FUNDS_MAX_RETRY} (default 10)
-  -fundsMinute int
-        [funds] Minute of running {API_FUNDS_MINUTE}
-  -fundsOnStart
-        [funds] Start scheduler on start {API_FUNDS_ON_START}
-  -fundsRetry string
-        [funds] Duration between two retries {API_FUNDS_RETRY} (default "10m")
-  -fundsTimezone string
-        [funds] Timezone of running {API_FUNDS_TIMEZONE} (default "Europe/Paris")
   -hsts
         [owasp] Indicate Strict Transport Security {API_HSTS} (default true)
   -infos string
@@ -98,20 +84,6 @@ Usage of alert:
         [mailer] User {ALERT_MAILER_USER}
   -recipients string
         [notifier] Email of notifications recipients {ALERT_RECIPIENTS}
-  -schedulerHour int
-        [scheduler] Hour of running {ALERT_SCHEDULER_HOUR} (default 8)
-  -schedulerInterval string
-        [scheduler] Duration between two runs {ALERT_SCHEDULER_INTERVAL} (default "24h")
-  -schedulerMaxRetry uint
-        [scheduler] Max retry {ALERT_SCHEDULER_MAX_RETRY} (default 10)
-  -schedulerMinute int
-        [scheduler] Minute of running {ALERT_SCHEDULER_MINUTE}
-  -schedulerOnStart
-        [scheduler] Start scheduler on start {ALERT_SCHEDULER_ON_START}
-  -schedulerRetry string
-        [scheduler] Duration between two retries {ALERT_SCHEDULER_RETRY} (default "10m")
-  -schedulerTimezone string
-        [scheduler] Timezone of running {ALERT_SCHEDULER_TIMEZONE} (default "Europe/Paris")
   -score float
         [notifier] Score value to notification when above {ALERT_SCORE} (default 25)
   -tracingAgent string
