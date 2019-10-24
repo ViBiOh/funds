@@ -2,10 +2,8 @@ github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cq
 github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
 github.com/ViBiOh/httputils/v2 v2.0.11 h1:Wgr3KPa7SGKjOrdDhzLuzOE7DiMsteJfzLZ74nUA9h4=
 github.com/ViBiOh/httputils/v2 v2.0.11/go.mod h1:bn0Zl0jTa4is6ND61MzNs3iCcS4vBh9BHxEvAWZATsc=
-github.com/ViBiOh/httputils/v2 v2.2.3 h1:VgADs16xajHXAzYLY0iNvYhIf4OwvmNGMlIh/2b2Tso=
-github.com/ViBiOh/httputils/v2 v2.2.3/go.mod h1:bn0Zl0jTa4is6ND61MzNs3iCcS4vBh9BHxEvAWZATsc=
-github.com/ViBiOh/httputils/v2 v2.2.4 h1:jIA93Pj/oUBj+2JE6FGflQY598sIN7BvnWUU4IPBzcs=
-github.com/ViBiOh/httputils/v2 v2.2.4/go.mod h1:bn0Zl0jTa4is6ND61MzNs3iCcS4vBh9BHxEvAWZATsc=
+github.com/ViBiOh/httputils/v2 v2.2.5 h1:9eLDpqfM9W/StVLgZ9XXy1S2tBlTbYBriz8pp6rG/K4=
+github.com/ViBiOh/httputils/v2 v2.2.5/go.mod h1:bn0Zl0jTa4is6ND61MzNs3iCcS4vBh9BHxEvAWZATsc=
 github.com/ViBiOh/mailer v1.3.7 h1:Pkujsdh+4K2HU5bosB6oqSkKDeZj7mfto66QmROfbjc=
 github.com/ViBiOh/mailer v1.3.7/go.mod h1:dlt+509DnNiP7knA/kOeBModyi5sAtWpJoH+S1bXrnc=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
