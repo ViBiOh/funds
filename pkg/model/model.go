@@ -73,11 +73,7 @@ func New(config Config, dbConfig db.Config) (App, error) {
 }
 
 func (a *app) Start() {
-	if err := a.refresh(time.Now()); err != nil {
-		logger.Error("%+v", err)
-	}
-
-	cron.New().Each(time.Hour*8).Start(a.refresh, func(err error) {
+	cron.New().Each(time.Hour*8).Now().Start(a.refresh, func(err error) {
 		logger.Error("%+v", err)
 	})
 }
