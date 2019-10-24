@@ -40,7 +40,7 @@ func main() {
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
 
-	cron.NewCron().Days().At("08:00").Start(notifierApp.Do, func(err error) {
+	cron.New().Days().At("08:00").In("Europe/Paris").Start(notifierApp.Do, func(err error) {
 		logger.Error("%+v", err)
 	})
 }

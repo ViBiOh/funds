@@ -77,7 +77,7 @@ func (a *app) Start() {
 		logger.Error("%+v", err)
 	}
 
-	cron.NewCron().Each(time.Hour*8).Start(a.refresh, func(err error) {
+	cron.New().Each(time.Hour*8).Start(a.refresh, func(err error) {
 		logger.Error("%+v", err)
 	})
 }
