@@ -1,7 +1,6 @@
 package model
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	"flag"
@@ -10,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ViBiOh/httputils/v2/pkg/concurrent"
 	"github.com/ViBiOh/httputils/v2/pkg/cron"
 	"github.com/ViBiOh/httputils/v2/pkg/db"
 	"github.com/ViBiOh/httputils/v2/pkg/errors"
@@ -87,9 +87,7 @@ func (a *app) refresh(_ time.Time) error {
 		return nil
 	}
 
-	if err := a.refreshData(context.Background()); err != nil {
-		logger.Error("%#v", err)
-	}
+	a.refreshData(context.Background())
 
 	if a.dbConnexion != nil {
 		if err := a.saveData(); err != nil {
@@ -100,44 +98,27 @@ func (a *app) refresh(_ time.Time) error {
 	return nil
 }
 
-func (a *app) refreshData(ctx context.Context) error {
+func (a *app) refreshData(ctx context.Context) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
 	defer span.Finish()
 
-	inputs, results := tools.ConcurrentAction(maxConcurrentFetcher, true, func(ID interface{}) (interface{}, error) {
+	onSuccess := func(output interface{}) {
+		content := output.(Fund)
+		a.fundsMap.Store(content.ID, content)
+	}
+
+	onError := func(err error) {
+		logger.Error("%s", err)
+	}
+
+	inputs := concurrent.Run(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
 		return fetchFund(ctx, a.fundsURL, ID.([]byte))
-	})
+	}, onSuccess, onError)
 
-	go func() {
-		defer close(inputs)
-
-		for _, fundID := range fundsIds {
-			inputs <- fundID
-		}
-	}()
-
-	errorIds := make([][]byte, 0)
-
-	for {
-		result, ok := <-results
-
-		if !ok {
-			break
-		}
-
-		if result.Err != nil {
-			errorIds = append(errorIds, result.Input.([]byte))
-		} else {
-			content := result.Output.(Fund)
-			a.fundsMap.Store(content.ID, content)
-		}
+	for _, fundID := range fundsIds {
+		inputs <- fundID
 	}
-
-	if len(errorIds) > 0 {
-		return errors.New("errors with ids %s", bytes.Join(errorIds, []byte(",")))
-	}
-
-	return nil
+	close(inputs)
 }
 
 func (a *app) saveData() (err error) {
