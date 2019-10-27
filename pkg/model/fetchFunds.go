@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/ViBiOh/httputils/v2/pkg/errors"
 	"github.com/ViBiOh/httputils/v2/pkg/request"
 	opentracing "github.com/opentracing/opentracing-go"
 )
@@ -121,11 +122,11 @@ func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error
 	fund := &Fund{ID: cleanID}
 
 	if err := fetchInfosAndPerformances(ctx, url, fund); err != nil {
-		return *fund, err
+		return *fund, errors.Wrap(err, "unable to fetch infos for %s", fundID)
 	}
 
 	if err := fetchVolatilite(ctx, url, fund); err != nil {
-		return *fund, err
+		return *fund, errors.Wrap(err, "unable to fetch volatilite for %s", fundID)
 	}
 
 	fund.ComputeScore()
