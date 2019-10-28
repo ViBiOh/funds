@@ -11,7 +11,6 @@ import (
 	"github.com/ViBiOh/httputils/v2/pkg/cors"
 	"github.com/ViBiOh/httputils/v2/pkg/db"
 	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/opentracing"
 	"github.com/ViBiOh/httputils/v2/pkg/owasp"
 	"github.com/ViBiOh/httputils/v2/pkg/prometheus"
 )
@@ -22,7 +21,6 @@ func main() {
 	serverConfig := httputils.Flags(fs, "")
 	alcotestConfig := alcotest.Flags(fs, "")
 	prometheusConfig := prometheus.Flags(fs, "prometheus")
-	opentracingConfig := opentracing.Flags(fs, "tracing")
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
 
@@ -34,7 +32,6 @@ func main() {
 	alcotest.DoAndExit(alcotestConfig)
 
 	prometheusApp := prometheus.New(prometheusConfig)
-	opentracingApp := opentracing.New(opentracingConfig)
 	owaspApp := owasp.New(owaspConfig)
 	corsApp := cors.New(corsConfig)
 
@@ -43,7 +40,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	handler := httputils.ChainMiddlewares(fundApp.Handler(), prometheusApp, opentracingApp, owaspApp, corsApp)
+	handler := httputils.ChainMiddlewares(fundApp.Handler(), prometheusApp, owaspApp, corsApp)
 
 	go fundApp.Start()
 

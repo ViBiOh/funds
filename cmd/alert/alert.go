@@ -9,7 +9,6 @@ import (
 	"github.com/ViBiOh/httputils/v2/pkg/cron"
 	"github.com/ViBiOh/httputils/v2/pkg/db"
 	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/opentracing"
 	"github.com/ViBiOh/mailer/pkg/client"
 )
 
@@ -18,7 +17,6 @@ func main() {
 
 	check := fs.Bool("c", false, "Healthcheck (check and exit)")
 
-	opentracingConfig := opentracing.Flags(fs, "tracing")
 	mailerConfig := client.Flags(fs, "mailer")
 	fundsConfig := model.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
@@ -29,8 +27,6 @@ func main() {
 	if *check {
 		return
 	}
-
-	opentracing.New(opentracingConfig)
 
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	logger.Fatal(err)

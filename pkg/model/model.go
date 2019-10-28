@@ -17,7 +17,6 @@ import (
 	"github.com/ViBiOh/httputils/v2/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v2/pkg/logger"
 	"github.com/ViBiOh/httputils/v2/pkg/tools"
-	opentracing "github.com/opentracing/opentracing-go"
 )
 
 const (
@@ -95,9 +94,6 @@ func (a *app) refresh(_ time.Time) error {
 }
 
 func (a *app) refreshData(ctx context.Context) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "Fetch Funds")
-	defer span.Finish()
-
 	onSuccess := func(output interface{}) {
 		content := output.(Fund)
 		a.fundsMap.Store(content.ID, content)

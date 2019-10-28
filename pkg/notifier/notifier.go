@@ -10,7 +10,6 @@ import (
 	"github.com/ViBiOh/httputils/v2/pkg/logger"
 	"github.com/ViBiOh/httputils/v2/pkg/tools"
 	"github.com/ViBiOh/mailer/pkg/client"
-	opentracing "github.com/opentracing/opentracing-go"
 )
 
 const (
@@ -83,10 +82,7 @@ func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund)
 
 // Do send notification to users
 func (a App) Do(currentTime time.Time) error {
-	span := opentracing.StartSpan("Funds Notify")
-	defer span.Finish()
-
-	usedCtx := opentracing.ContextWithSpan(context.Background(), span)
+	usedCtx := context.Background()
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {

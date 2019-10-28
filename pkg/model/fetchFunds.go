@@ -9,7 +9,6 @@ import (
 
 	"github.com/ViBiOh/httputils/v2/pkg/errors"
 	"github.com/ViBiOh/httputils/v2/pkg/request"
-	opentracing "github.com/opentracing/opentracing-go"
 )
 
 var emptyByte = []byte("")
@@ -60,12 +59,6 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) error {
-	if ctx != nil {
-		span, _ := opentracing.StartSpanFromContext(ctx, "Fetch Fund Infos")
-		defer span.Finish()
-		span.SetTag("fund.id", string(fund.ID))
-	}
-
 	body, _, _, err := request.Get(nil, fmt.Sprintf("%s&tab=1", url), nil)
 	if err != nil {
 		return err
@@ -89,12 +82,6 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 }
 
 func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
-	if ctx != nil {
-		span, _ := opentracing.StartSpanFromContext(ctx, "Fetch Fund Volatilite")
-		defer span.Finish()
-		span.SetTag("fund.id", string(fund.ID))
-	}
-
 	body, _, _, err := request.Get(nil, fmt.Sprintf("%s&tab=2", url), nil)
 	if err != nil {
 		return err
@@ -110,13 +97,6 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 }
 
 func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error) {
-	if ctx != nil {
-		var span opentracing.Span
-		span, ctx = opentracing.StartSpanFromContext(ctx, "Fetch Fund")
-		defer span.Finish()
-		span.SetTag("fund.id", string(fundID))
-	}
-
 	cleanID := cleanID(fundID)
 	url := fmt.Sprintf("%s%s", fundsURL, cleanID)
 	fund := &Fund{ID: cleanID}
