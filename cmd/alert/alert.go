@@ -37,6 +37,6 @@ func main() {
 	logger.Fatal(err)
 
 	cron.New().Days().At("08:00").In("Europe/Paris").Start(notifierApp.Do, func(err error) {
-		logger.Error("%+v", err)
+		logger.Error("%s", err)
 	})
 }
