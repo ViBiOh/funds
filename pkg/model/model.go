@@ -9,14 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/v2/pkg/concurrent"
-	"github.com/ViBiOh/httputils/v2/pkg/cron"
-	"github.com/ViBiOh/httputils/v2/pkg/db"
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
-	"github.com/ViBiOh/httputils/v2/pkg/httperror"
-	"github.com/ViBiOh/httputils/v2/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/tools"
+	"github.com/ViBiOh/httputils/v3/pkg/concurrent"
+	"github.com/ViBiOh/httputils/v3/pkg/cron"
+	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v3/pkg/flags"
+	"github.com/ViBiOh/httputils/v3/pkg/httperror"
+	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
+	"github.com/ViBiOh/httputils/v3/pkg/logger"
 )
 
 const (
@@ -50,7 +49,7 @@ type app struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		infos: tools.NewFlag(prefix, "funds").Name("Infos").Default("").Label("Informations URL").ToString(fs),
+		infos: flags.New(prefix, "funds").Name("Infos").Default("").Label("Informations URL").ToString(fs),
 	}
 }
 
@@ -63,7 +62,7 @@ func New(config Config, dbConfig db.Config) (App, error) {
 
 	fundsDB, err := db.New(dbConfig)
 	if err != nil {
-		logger.Error("%#v", errors.WithStack(err))
+		logger.Error("%s", err)
 	} else {
 		app.dbConnexion = fundsDB
 	}
@@ -161,7 +160,7 @@ func (a *app) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {
-				httperror.InternalServerError(w, errors.WithStack(err))
+				httperror.InternalServerError(w, err)
 			}
 			return
 		}

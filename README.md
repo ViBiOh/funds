@@ -35,6 +35,8 @@ Usage of api:
         [db] Pass {API_DB_PASS}
   -dbPort string
         [db] Port {API_DB_PORT} (default "5432")
+  -dbSslmode string
+        [db] SSL Mode {API_DB_SSLMODE} (default "disable")
   -dbUser string
         [db] User {API_DB_USER}
   -frameOptions string
@@ -68,6 +70,8 @@ Usage of alert:
         [db] Pass {ALERT_DB_PASS}
   -dbPort string
         [db] Port {ALERT_DB_PORT} (default "5432")
+  -dbSslmode string
+        [db] SSL Mode {ALERT_DB_SSLMODE} (default "disable")
   -dbUser string
         [db] User {ALERT_DB_USER}
   -infos string

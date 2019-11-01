@@ -1,9 +1,8 @@
 package model
 
 import (
+	"errors"
 	"testing"
-
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
 )
 
 func TestSaveAlert(t *testing.T) {

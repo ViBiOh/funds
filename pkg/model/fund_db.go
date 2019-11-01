@@ -2,9 +2,9 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 
-	"github.com/ViBiOh/httputils/v2/pkg/db"
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
+	"github.com/ViBiOh/httputils/v3/pkg/db"
 )
 
 const fundByIsinQuery = `
@@ -67,7 +67,7 @@ func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&isin, &label, &score); err != nil {
-			return nil, errors.WithStack(err)
+			return nil, err
 		}
 
 		list = append(list, &Fund{Isin: isin, Label: label, Score: score})
@@ -87,7 +87,7 @@ func (a *app) readFundByIsin(isin string) (*Fund, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 
 	return &Fund{Isin: isin, Label: label, Score: score}, nil
@@ -96,7 +96,6 @@ func (a *app) readFundByIsin(isin string) (*Fund, error) {
 func (a *app) listFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
 	rows, err := a.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
-		err = errors.WithStack(err)
 		return
 	}
 
@@ -125,14 +124,10 @@ func (a *app) saveFund(fund *Fund, tx *sql.Tx) (err error) {
 
 	if _, err = a.readFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			if _, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score); err != nil {
-				err = errors.WithStack(err)
-			}
-		} else {
-			err = errors.WithStack(err)
+			_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
-	} else if _, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin); err != nil {
-		err = errors.WithStack(err)
+	} else {
+		_, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
 	}
 
 	return

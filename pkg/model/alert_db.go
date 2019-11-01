@@ -2,9 +2,9 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 
-	"github.com/ViBiOh/httputils/v2/pkg/db"
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
+	"github.com/ViBiOh/httputils/v3/pkg/db"
 )
 
 const listAlertsOpenedQuery = `
@@ -61,8 +61,8 @@ func (a *app) listAlertsOpened() (alerts []*Alert, err error) {
 	)
 
 	for rows.Next() {
-		if err = rows.Scan(&isin, &alertType, &score); err != nil {
-			err = errors.WithStack(err)
+		err = rows.Scan(&isin, &alertType, &score)
+		if err != nil {
 			return
 		}
 
@@ -89,9 +89,6 @@ func (a *app) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
 		}()
 	}
 
-	if _, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType); err != nil {
-		err = errors.WithStack(err)
-	}
-
+	_, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
 	return
 }

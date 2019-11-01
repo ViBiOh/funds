@@ -6,9 +6,9 @@ import (
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
-	"github.com/ViBiOh/httputils/v2/pkg/cron"
-	"github.com/ViBiOh/httputils/v2/pkg/db"
-	"github.com/ViBiOh/httputils/v2/pkg/logger"
+	"github.com/ViBiOh/httputils/v3/pkg/cron"
+	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
 )
 

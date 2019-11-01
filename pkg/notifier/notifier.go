@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/tools"
+	"github.com/ViBiOh/httputils/v3/pkg/flags"
+	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
 )
 
@@ -45,8 +45,8 @@ type App struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		recipients: tools.NewFlag(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
-		score:      tools.NewFlag(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
+		recipients: flags.New(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
+		score:      flags.New(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
 	}
 }
 

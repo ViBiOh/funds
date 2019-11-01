@@ -7,8 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
-	"github.com/ViBiOh/httputils/v2/pkg/request"
+	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
 var emptyByte = []byte("")
@@ -64,7 +63,7 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 		return err
 	}
 
-	result, err := request.ReadBody(body)
+	result, err := request.ReadContent(body)
 	if err != nil {
 		return err
 	}
@@ -87,7 +86,7 @@ func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
 		return err
 	}
 
-	result, err := request.ReadBody(body)
+	result, err := request.ReadContent(body)
 	if err != nil {
 		return err
 	}
@@ -102,11 +101,11 @@ func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error
 	fund := &Fund{ID: cleanID}
 
 	if err := fetchInfosAndPerformances(ctx, url, fund); err != nil {
-		return *fund, errors.Wrap(err, "unable to fetch infos for %s", fundID)
+		return *fund, fmt.Errorf("unable to fetch infos for %s: %w", fundID, err)
 	}
 
 	if err := fetchVolatilite(ctx, url, fund); err != nil {
-		return *fund, errors.Wrap(err, "unable to fetch volatilite for %s", fundID)
+		return *fund, fmt.Errorf("unable to fetch volatilite for %s: %w", fundID, err)
 	}
 
 	fund.ComputeScore()
