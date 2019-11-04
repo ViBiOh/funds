@@ -58,7 +58,7 @@ func extractPerformance(extract *regexp.Regexp, body []byte) float64 {
 }
 
 func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) error {
-	resp, err := request.Get(ctx, fmt.Sprintf("%s&tab=1", url), nil)
+	resp, err := request.New().Get(fmt.Sprintf("%s&tab=1", url)).Send(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func fetchInfosAndPerformances(ctx context.Context, url string, fund *Fund) erro
 }
 
 func fetchVolatilite(ctx context.Context, url string, fund *Fund) error {
-	resp, err := request.Get(ctx, fmt.Sprintf("%s&tab=2", url), nil)
+	resp, err := request.New().Get(fmt.Sprintf("%s&tab=2", url)).Send(ctx, nil)
 	if err != nil {
 		return err
 	}
