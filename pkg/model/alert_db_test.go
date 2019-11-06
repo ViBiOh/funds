@@ -35,7 +35,7 @@ func TestSaveAlert(t *testing.T) {
 			}
 
 			if failed {
-				t.Errorf("SaveAlert(%#v) = (%#v), want (%#v)", testCase.input, err, testCase.wantErr)
+				t.Errorf("SaveAlert() = %s, want %s", err, testCase.wantErr)
 			}
 		})
 	}
