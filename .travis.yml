@@ -5,19 +5,12 @@ jobs:
     sudo: required
     services:
     - docker
-    script: docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" -t "vibioh/$(make name)-api:$(make version)" -f Dockerfile_api .
+    script: |
+      docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" --target api -t "vibioh/$(make name)-api:$(make version)" -f Dockerfile_api .
+      docker build --target notifier -t "vibioh/$(make name)-notifier:$(make version)" -f Dockerfile_api .
     after_success:
     - echo "${DOCKER_PASS}" | docker login -u vibioh --password-stdin
     - docker push "vibioh/$(make name)-api:$(make version)"
-
-  - stage: Build
-
-    sudo: required
-    services:
-    - docker
-    script: docker build -t "vibioh/$(make name)-notifier:$(make version)" -f Dockerfile_notifier .
-    after_success:
-    - echo "${DOCKER_PASS}" | docker login -u vibioh --password-stdin
     - docker push "vibioh/$(make name)-notifier:$(make version)"
 
   - stage: Build
@@ -25,10 +18,10 @@ jobs:
     sudo: required
     services:
     - docker
-    script: docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" -t "vibioh/$(make name)-ui:$(make version)" -f Dockerfile_ui .
+    script: docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" -t "${DOCKER_USER}/$(make name)-ui:$(make version)" -f Dockerfile_ui .
     after_success:
-    - echo "${DOCKER_PASS}" | docker login -u vibioh --password-stdin
-    - docker push "vibioh/$(make name)-ui:$(make version)"
+    - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+    - docker push "${DOCKER_USER}/$(make name)-ui:$(make version)"
 
   - stage: Publish
 
@@ -36,19 +29,21 @@ jobs:
     services:
     - docker
     script:
-    - echo "${DOCKER_PASS}" | docker login -u vibioh --password-stdin
-    - docker pull "vibioh/$(make name)-api:$(make version)"
-    - docker tag "vibioh/$(make name)-api:$(make version)" "vibioh/$(make name)-api:latest"
-    - docker push "vibioh/$(make name)-api:latest"
-    - docker pull "vibioh/$(make name)-notifier:$(make version)"
-    - docker tag "vibioh/$(make name)-notifier:$(make version)" "vibioh/$(make name)-notifier:latest"
-    - docker push "vibioh/$(make name)-notifier:latest"
-    - docker pull "vibioh/$(make name)-ui:$(make version)"
-    - docker tag "vibioh/$(make name)-ui:$(make version)" "vibioh/$(make name)-ui:latest"
-    - docker push "vibioh/$(make name)-ui:latest"
+    - export APP_NAME="$(make name)"
+    - export APP_VERSION="$(make version)"
+    - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+    - docker pull "${DOCKER_USER}/${APP_NAME}-api:${APP_VERSION}"
+    - docker tag "${DOCKER_USER}/${APP_NAME}-api:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-api:latest"
+    - docker push "${DOCKER_USER}/${APP_NAME}-api:latest"
+    - docker pull "${DOCKER_USER}/${APP_NAME}-notifier:${APP_VERSION}"
+    - docker tag "${DOCKER_USER}/${APP_NAME}-notifier:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-notifier:latest"
+    - docker push "${DOCKER_USER}/${APP_NAME}-notifier:latest"
+    - docker pull "${DOCKER_USER}/${APP_NAME}-ui:${APP_VERSION}"
+    - docker tag "${DOCKER_USER}/${APP_NAME}-ui:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-ui:latest"
+    - docker push "${DOCKER_USER}/${APP_NAME}-ui:latest"
     after_success:
     - curl -q -sS -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
-    - curl -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/dashboard.git" https://doc.esdoc.org/api/create
+    - curl -q -SS -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/funds.git" https://doc.esdoc.org/api/create
 
   - stage: Deploy
 
@@ -62,8 +57,6 @@ jobs:
         -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
         -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
         -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
-        -e "s|\${ENVIRONMENT}|prod|g" \
-        -e "s|\${COMMIT_SHA}|$(make version)|g" \
         -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
