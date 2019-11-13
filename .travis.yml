@@ -42,7 +42,7 @@ jobs:
     - docker tag "${DOCKER_USER}/${APP_NAME}-ui:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-ui:latest"
     - docker push "${DOCKER_USER}/${APP_NAME}-ui:latest"
     after_success:
-    - curl -q -sS -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
+    - curl -sSqL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
     - curl -q -SS -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/funds.git" https://doc.esdoc.org/api/create
 
   - stage: Deploy
