@@ -3,19 +3,21 @@ jobs:
   - stage: Build
 
     sudo: required
+    language: minimal
     services:
     - docker
     script: |
-      docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" --target api -t "vibioh/$(make name)-api:$(make version)" -f Dockerfile_api .
-      docker build --target notifier -t "vibioh/$(make name)-notifier:$(make version)" -f Dockerfile_api .
+      docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" --target api -t "${DOCKER_USER}/$(make name)-api:$(make version)" -f Dockerfile_api .
+      docker build --target notifier -t "${DOCKER_USER}/$(make name)-notifier:$(make version)" -f Dockerfile_api .
     after_success:
-    - echo "${DOCKER_PASS}" | docker login -u vibioh --password-stdin
-    - docker push "vibioh/$(make name)-api:$(make version)"
-    - docker push "vibioh/$(make name)-notifier:$(make version)"
+    - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+    - docker push "${DOCKER_USER}/$(make name)-api:$(make version)"
+    - docker push "${DOCKER_USER}/$(make name)-notifier:$(make version)"
 
   - stage: Build
 
     sudo: required
+    language: minimal
     services:
     - docker
     script: docker build --build-arg CODECOV_TOKEN --build-arg "APP_VERSION=$(make version)" -t "${DOCKER_USER}/$(make name)-ui:$(make version)" -f Dockerfile_ui .
@@ -26,27 +28,24 @@ jobs:
   - stage: Publish
 
     sudo: required
+    language: minimal
     services:
     - docker
     script:
     - export APP_NAME="$(make name)"
     - export APP_VERSION="$(make version)"
     - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-    - docker pull "${DOCKER_USER}/${APP_NAME}-api:${APP_VERSION}"
-    - docker tag "${DOCKER_USER}/${APP_NAME}-api:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-api:latest"
-    - docker push "${DOCKER_USER}/${APP_NAME}-api:latest"
-    - docker pull "${DOCKER_USER}/${APP_NAME}-notifier:${APP_VERSION}"
-    - docker tag "${DOCKER_USER}/${APP_NAME}-notifier:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-notifier:latest"
-    - docker push "${DOCKER_USER}/${APP_NAME}-notifier:latest"
-    - docker pull "${DOCKER_USER}/${APP_NAME}-ui:${APP_VERSION}"
-    - docker tag "${DOCKER_USER}/${APP_NAME}-ui:${APP_VERSION}" "${DOCKER_USER}/${APP_NAME}-ui:latest"
-    - docker push "${DOCKER_USER}/${APP_NAME}-ui:latest"
+    - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "docker_promote"
+    - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-api" "$(make version)"
+    - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-notifier" "$(make version)"
+    - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-ui" "$(make version)"
     after_success:
     - curl -q -sSL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
     - curl -q -SSL --max-time 10 -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/funds.git" https://doc.esdoc.org/api/create
 
   - stage: Deploy
 
+    language: minimal
     script: |
       sed \
         -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
@@ -59,10 +58,8 @@ jobs:
         -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
         -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
-    deploy:
-      provider: script
-      skip_cleanup: true
-      script: bash script/deploy "$(make name)" "@docker-compose-env.yml"
+      curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
+      scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:
   - Build
