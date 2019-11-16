@@ -1,7 +1,7 @@
-import { createStore, applyMiddleware } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import appReducers from 'reducers';
-import appSagas from 'sagas';
+import { createStore, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
+import appReducers from "reducers";
+import appSagas from "sagas";
 
 /**
  * ReduxSaga configuration.

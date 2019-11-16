@@ -1,7 +1,7 @@
-import 'regenerator-runtime/runtime';
-import { call, put } from 'redux-saga/effects';
-import actions from 'actions';
-import Config from 'services/Config';
+import "regenerator-runtime/runtime";
+import { call, put } from "redux-saga/effects";
+import actions from "actions";
+import Config from "services/Config";
 
 /**
  * Saga of for retrieving config

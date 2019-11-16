@@ -1,7 +1,7 @@
-import 'regenerator-runtime/runtime';
-import { call, put } from 'redux-saga/effects';
-import actions from 'actions';
-import Funds from 'services/Funds';
+import "regenerator-runtime/runtime";
+import { call, put } from "redux-saga/effects";
+import actions from "actions";
+import Funds from "services/Funds";
 
 /**
  * Saga of getFunds action

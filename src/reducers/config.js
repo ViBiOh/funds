@@ -1,11 +1,11 @@
-import actions from 'actions';
+import actions from "actions";
 
 /**
  * Config reducer initial state.
  * @type {Object}
  */
 export const initialState = {
-  ready: false,
+  ready: false
 };
 
 /**
@@ -20,7 +20,7 @@ export default function(state = initialState, action) {
       return {
         ...initialState,
         ...action.config,
-        ready: true,
+        ready: true
       };
 
     default:

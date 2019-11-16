@@ -6,10 +6,10 @@ import (
 	"os"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	httputils "github.com/ViBiOh/httputils/v3/pkg"
 	"github.com/ViBiOh/httputils/v3/pkg/alcotest"
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
 	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
@@ -31,24 +31,23 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	prometheusApp := prometheus.New(prometheusConfig)
-	owaspApp := owasp.New(owaspConfig)
-	corsApp := cors.New(corsConfig)
-
 	fundApp, err := model.New(fundsConfig, dbConfig)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	handler := httputils.ChainMiddlewares(fundApp.Handler(), prometheusApp, owaspApp, corsApp)
-
 	go fundApp.Start()
 
-	httputils.New(serverConfig).ListenAndServe(handler, httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httputils.New(serverConfig)
+	server.Health(httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusServiceUnavailable)
 		}
-	})), nil)
+	})))
+	server.Middleware(prometheus.New(prometheusConfig))
+	server.Middleware(owasp.New(owaspConfig))
+	server.Middleware(cors.New(corsConfig))
+	server.ListenServeWait(fundApp.Handler())
 }

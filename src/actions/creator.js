@@ -21,7 +21,7 @@ export const makeActionCreator = (type, ...argNames) => (...args) => {
  */
 export const toTypeName = name =>
   String(name)
-    .replace(/([A-Z])/g, '_$1')
+    .replace(/([A-Z])/g, "_$1")
     .toUpperCase();
 
 /**
@@ -33,7 +33,7 @@ export const toTypeName = name =>
  */
 export const makeActionAndTypeCreator = (type, action, inputs = []) => ({
   [type]: type,
-  [action]: makeActionCreator(type, ...inputs),
+  [action]: makeActionCreator(type, ...inputs)
 });
 
 /**
@@ -43,13 +43,25 @@ export const makeActionAndTypeCreator = (type, action, inputs = []) => ({
  * @param  {Array}  outputs       Properties' names of response action
  * @return {object}               An object container constants and functions for requesting API
  */
-export const makeApiActionCreator = (camelCaseName, inputs = [], outputs = []) => {
+export const makeApiActionCreator = (
+  camelCaseName,
+  inputs = [],
+  outputs = []
+) => {
   const typeName = toTypeName(camelCaseName);
 
   return {
     [typeName]: typeName,
     ...makeActionAndTypeCreator(`${typeName}_REQUEST`, camelCaseName, inputs),
-    ...makeActionAndTypeCreator(`${typeName}_SUCCEEDED`, `${camelCaseName}Succeeded`, outputs),
-    ...makeActionAndTypeCreator(`${typeName}_FAILED`, `${camelCaseName}Failed`, ['error']),
+    ...makeActionAndTypeCreator(
+      `${typeName}_SUCCEEDED`,
+      `${camelCaseName}Succeeded`,
+      outputs
+    ),
+    ...makeActionAndTypeCreator(
+      `${typeName}_FAILED`,
+      `${camelCaseName}Failed`,
+      ["error"]
+    )
   };
 };

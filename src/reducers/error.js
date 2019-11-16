@@ -14,7 +14,7 @@ const endError = /_SUCCEEDED$/;
  * Error's reducer initial state.
  * @type {String}
  */
-export const initialState = '';
+export const initialState = "";
 
 /**
  * Error's reducer.
