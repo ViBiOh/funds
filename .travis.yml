@@ -46,20 +46,10 @@ jobs:
   - stage: Deploy
 
     language: minimal
-    script: |
-      sed \
-        -e "s|\${PERFORMANCE_URL}|${PERFORMANCE_URL}|g" \
-        -e "s|\${FUNDS_DATABASE_HOST}|${FUNDS_DATABASE_HOST}|g" \
-        -e "s|\${FUNDS_DATABASE_USER}|${FUNDS_DATABASE_USER}|g" \
-        -e "s|\${FUNDS_DATABASE_PASS}|${FUNDS_DATABASE_PASS}|g" \
-        -e "s|\${FUNDS_DATABASE_NAME}|${FUNDS_DATABASE_NAME}|g" \
-        -e "s|\${FUNDS_NOTIFICATION_RECIPIENTS}|${FUNDS_NOTIFICATION_RECIPIENTS}|g" \
-        -e "s|\${MAILER_USER}|${MAILER_USER}|g" \
-        -e "s|\${MAILER_PASS}|${MAILER_PASS}|g" \
-        -e "s|\\\$|\$\$|g" \
-        docker-compose.yml > docker-compose-env.yml
-      curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
-      scripts/deploy "$(make name)" "@docker-compose-env.yml"
+    script:
+    - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy" "env_replace"
+    - scripts/env_replace docker-compose.yml PERFORMANCE_URL FUNDS_DATABASE_HOST FUNDS_DATABASE_USER FUNDS_DATABASE_PASS FUNDS_DATABASE_NAME FUNDS_NOTIFICATION_RECIPIENTS MAILER_USER MAILER_PASS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
+    - scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:
   - Build
