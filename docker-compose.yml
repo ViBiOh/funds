@@ -1,3 +1,5 @@
+---
+
 version: "2.1"
 
 services:
@@ -24,7 +26,7 @@ services:
     cpu_shares: 256
     mem_limit: 25165824
     security_opt:
-    - no-new-privileges
+      - no-new-privileges
 
   notifier:
     image: vibioh/funds-notifier
@@ -47,7 +49,7 @@ services:
     cpu_shares: 256
     mem_limit: 25165824
     security_opt:
-    - no-new-privileges
+      - no-new-privileges
 
   site:
     image: vibioh/funds-ui
@@ -72,4 +74,4 @@ services:
     cpu_shares: 128
     mem_limit: 67108864
     security_opt:
-    - no-new-privileges
+      - no-new-privileges
