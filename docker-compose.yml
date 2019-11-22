@@ -31,7 +31,7 @@ services:
   notifier:
     image: vibioh/funds-notifier
     healthcheck:
-      test: [ "CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}" ]
+      test: ["CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}"]
     labels:
       traefik.enable: "false"
     environment:
