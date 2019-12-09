@@ -150,9 +150,7 @@ func (a *app) ListFunds() []Fund {
 }
 
 func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
-	if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r)); err != nil {
-		httperror.InternalServerError(w, err)
-	}
+	httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r))
 }
 
 // Handler for model request. Should be use with net/http
