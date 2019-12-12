@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/v3/pkg/concurrent"
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
@@ -93,18 +92,19 @@ func (a *app) refresh(_ time.Time) error {
 }
 
 func (a *app) refreshData(ctx context.Context) {
-	onSuccess := func(output interface{}) {
-		content := output.(Fund)
-		a.fundsMap.Store(content.ID, content)
-	}
+	inputs := make(chan []byte, maxConcurrentFetcher)
 
-	onError := func(err error) {
-		logger.Error("%s", err)
+	for i := uint(0); i < maxConcurrentFetcher; i++ {
+		go func() {
+			for input := range inputs {
+				if output, err := fetchFund(ctx, a.fundsURL, input); err != nil {
+					logger.Error("%s", err)
+				} else {
+					a.fundsMap.Store(output.ID, output)
+				}
+			}
+		}()
 	}
-
-	inputs := concurrent.Run(maxConcurrentFetcher, func(ID interface{}) (interface{}, error) {
-		return fetchFund(ctx, a.fundsURL, ID.([]byte))
-	}, onSuccess, onError)
 
 	for _, fundID := range fundsIds {
 		inputs <- fundID
