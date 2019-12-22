@@ -35,12 +35,12 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "enzyme": "3.10.0",
-    "enzyme-adapter-react-16": "1.15.1",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.2",
     "prettier": "1.19.1",
     "react-scripts": "3.3.0",
     "react-test-renderer": "16.12.0",
-    "sinon": "7.5.0"
+    "sinon": "8.0.0"
   },
   "browserslist": {
     "production": [

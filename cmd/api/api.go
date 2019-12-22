@@ -38,16 +38,18 @@ func main() {
 
 	go fundApp.Start()
 
-	server := httputils.New(serverConfig)
-	server.Health(httputils.HealthHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	healthHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusServiceUnavailable)
 		}
-	})))
-	server.Middleware(prometheus.New(prometheusConfig))
-	server.Middleware(owasp.New(owaspConfig))
-	server.Middleware(cors.New(corsConfig))
+	})
+
+	server := httputils.New(serverConfig)
+	server.Health(healthHandler)
+	server.Middleware(prometheus.New(prometheusConfig).Middleware)
+	server.Middleware(owasp.New(owaspConfig).Middleware)
+	server.Middleware(cors.New(corsConfig).Middleware)
 	server.ListenServeWait(fundApp.Handler())
 }
