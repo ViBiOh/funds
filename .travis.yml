@@ -42,15 +42,15 @@ jobs:
         - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-notifier" "$(make version)"
         - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-ui" "$(make version)"
       after_success:
-        - curl -q -sSL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/funds
-        - curl -q -SSL --max-time 10 -X POST --data-urlencode "gitUrl=git@github.com:ViBiOh/funds.git" https://doc.esdoc.org/api/create
+        - curl -q -sSL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/${TRAVIS_REPO_SLUG}
+        - curl -q -SSL --max-time 10 -X POST --data-urlencode "gitUrl=git@github.com:${TRAVIS_REPO_SLUG}.git" https://doc.esdoc.org/api/create
 
     - stage: Deploy
 
       language: minimal
       script:
         - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy" "env_replace"
-        - scripts/env_replace docker-compose.yml PERFORMANCE_URL FUNDS_DATABASE_HOST FUNDS_DATABASE_USER FUNDS_DATABASE_PASS FUNDS_DATABASE_NAME FUNDS_NOTIFICATION_RECIPIENTS MAILER_USER MAILER_PASS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
+        - scripts/env_replace docker-compose.yml DOCKER_USER PERFORMANCE_URL FUNDS_DATABASE_HOST FUNDS_DATABASE_USER FUNDS_DATABASE_PASS FUNDS_DATABASE_NAME FUNDS_NOTIFICATION_RECIPIENTS MAILER_USER MAILER_PASS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
         - scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:

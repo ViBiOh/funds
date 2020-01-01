@@ -4,7 +4,7 @@ version: "2.1"
 
 services:
   api:
-    image: vibioh/funds-api
+    image: ${DOCKER_USER}/funds-api
     labels:
       traefik.http.routers.funds-api-http.rule: Host(`funds-api.vibioh.fr`)
       traefik.http.routers.funds-api-http.entrypoints: http
@@ -29,7 +29,7 @@ services:
       - no-new-privileges
 
   notifier:
-    image: vibioh/funds-notifier
+    image: ${DOCKER_USER}/funds-notifier
     healthcheck:
       test: ["CMD", "/funds-notifier", "-c", "-dbHost", "${FUNDS_DATABASE_HOST}", "-dbUser", "${FUNDS_DATABASE_USER}", "-dbPass", "${FUNDS_DATABASE_PASS}", "-dbName", "${FUNDS_DATABASE_NAME}"]
     labels:
@@ -52,7 +52,7 @@ services:
       - no-new-privileges
 
   site:
-    image: vibioh/funds-ui
+    image: ${DOCKER_USER}/funds-ui
     labels:
       traefik.http.routers.funds-ui-http.rule: Host(`funds.vibioh.fr`)
       traefik.http.routers.funds-ui-http.entrypoints: http
