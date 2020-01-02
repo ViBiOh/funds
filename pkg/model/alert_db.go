@@ -3,9 +3,30 @@ package model
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 )
+
+const listLastAlertByIsin = `
+SELECT
+  isin,
+  type,
+  score,
+  creation_date
+FROM
+  alerts
+WHERE
+  (isin, creation_date) IN (
+    SELECT
+      isin,
+      max(creation_date)
+    FROM
+      alerts
+    GROUP BY
+      isin
+   )
+`
 
 const listAlertsOpenedQuery = `
 SELECT
@@ -44,10 +65,39 @@ INSERT INTO
 )
 `
 
-func (a *app) listAlertsOpened() (alerts []*Alert, err error) {
+func (a *app) listLastAlertByIsin() (alerts []Alert, err error) {
+	rows, err := a.dbConnexion.Query(listLastAlertByIsin)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		err = db.RowsClose(rows, err)
+	}()
+
+	var (
+		isin      string
+		alertType string
+		score     float64
+		date      time.Time
+	)
+
+	for rows.Next() {
+		err = rows.Scan(&isin, &alertType, &score, &date)
+		if err != nil {
+			return
+		}
+
+		alerts = append(alerts, Alert{Isin: isin, AlertType: alertType, Score: score, Date: date})
+	}
+
+	return
+}
+
+func (a *app) listAlertsOpened() (alerts []Alert, err error) {
 	rows, err := a.dbConnexion.Query(listAlertsOpenedQuery)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	defer func() {
@@ -66,7 +116,7 @@ func (a *app) listAlertsOpened() (alerts []*Alert, err error) {
 			return
 		}
 
-		alerts = append(alerts, &Alert{Isin: isin, AlertType: alertType, Score: score})
+		alerts = append(alerts, Alert{Isin: isin, AlertType: alertType, Score: score})
 	}
 
 	return
