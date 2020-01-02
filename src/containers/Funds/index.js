@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import actions from 'actions';
-import { isUndefined } from 'helpers/Object';
-import { getSearchParamsAsObject } from 'helpers/URL';
-import setRef from 'helpers/ref';
-import Throbber from 'components/Throbber';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import actions from "actions";
+import { isUndefined } from "helpers/Object";
+import { getSearchParamsAsObject } from "helpers/URL";
+import setRef from "helpers/ref";
+import Throbber from "components/Throbber";
 import {
   AGGREGATE_SIZES,
   AGGREGAT_PARAM,
   AGGREGAT_SIZE_PARAM,
   ORDER_PARAM,
   ASCENDING_ORDER_PARAM,
-  RESERVED_PARAM,
-} from 'components/Funds/Constants';
-import Header from 'components/Funds/Header';
-import Modifiers from 'components/Funds/Modifiers';
-import Graph from 'components/Funds/Graph';
-import List from 'components/Funds/List';
-import style from './index.module.css';
+  RESERVED_PARAM
+} from "components/Funds/Constants";
+import Header from "components/Funds/Header";
+import Modifiers from "components/Funds/Modifiers";
+import Graph from "components/Funds/Graph";
+import List from "components/Funds/List";
+import style from "./index.module.css";
 
 export class Funds extends Component {
   constructor(props) {
@@ -39,24 +39,27 @@ export class Funds extends Component {
       .filter(([key]) => !RESERVED_PARAM.includes(key))
       .forEach(([key, value]) => this.props.setFilter(key, value));
 
-    this.props.setOrder(params[ORDER_PARAM] || '', isUndefined(params, ASCENDING_ORDER_PARAM));
+    this.props.setOrder(
+      params[ORDER_PARAM] || "",
+      isUndefined(params, ASCENDING_ORDER_PARAM)
+    );
 
     this.props.setAggregat(
-      params[AGGREGAT_PARAM] || '',
-      params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0],
+      params[AGGREGAT_PARAM] || "",
+      params[AGGREGAT_SIZE_PARAM] || AGGREGATE_SIZES[0]
     );
   }
 
   onAggregateSizeChange(value) {
     const {
-      funds: { aggregat },
+      funds: { aggregat }
     } = this.props;
 
     this.props.setAggregat(aggregat.key, value.target.value);
   }
 
   filterBy(filterName, value) {
-    if (value === '') {
+    if (value === "") {
       this.header.resetInput();
     }
 
@@ -73,7 +76,7 @@ export class Funds extends Component {
 
   reverseOrder() {
     const {
-      order: { key, descending },
+      order: { key, descending }
     } = this.props.funds;
     this.props.setOrder(key, !descending);
   }
@@ -82,7 +85,7 @@ export class Funds extends Component {
     const {
       funds: { all, displayed, aggregated, filters, order, aggregat },
       pending,
-      error,
+      error
     } = this.props;
 
     let content;
@@ -95,7 +98,7 @@ export class Funds extends Component {
     return (
       <>
         <Header
-          ref={e => setRef(this, 'header', e)}
+          ref={e => setRef(this, "header", e)}
           orderBy={this.orderBy}
           aggregateBy={this.aggregateBy}
           filterBy={this.filterBy}
@@ -139,7 +142,7 @@ export class Funds extends Component {
 function mapStateToProps(state) {
   return {
     pending: state.pending[actions.GET_FUNDS],
-    funds: state.funds,
+    funds: state.funds
   };
 }
 
@@ -151,13 +154,10 @@ const mapDispatchToProps = {
   getFunds: actions.getFunds,
   setFilter: actions.setFilter,
   setOrder: actions.setOrder,
-  setAggregat: actions.setAggregat,
+  setAggregat: actions.setAggregat
 };
 
 /**
  * Funds connected.
  */
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Funds);
+export default connect(mapStateToProps, mapDispatchToProps)(Funds);

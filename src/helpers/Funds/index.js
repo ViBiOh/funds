@@ -1,5 +1,5 @@
-import { buildFullTextRegex, fullTextRegexFilter } from 'helpers/Search';
-import { isUndefined } from 'helpers/Object';
+import { buildFullTextRegex, fullTextRegexFilter } from "helpers/Search";
+import { isUndefined } from "helpers/Object";
 
 export function filterFunds(funds, filters = {}) {
   if (!Array.isArray(funds)) {
@@ -54,7 +54,7 @@ export function aggregateFunds(funds, aggregat) {
 
   const aggregated = Object.keys(aggregate).map(label => ({
     label,
-    count: aggregate[label],
+    count: aggregate[label]
   }));
   aggregated.sort((o1, o2) => o2.count - o1.count);
 

@@ -4,9 +4,13 @@
  */
 export function getSearchParamsAsObject() {
   const params = {};
-  window.location.search.replace(/([^?&=]+)(?:=([^?&=]*))?/g, (match, key, value) => {
-    params[key] = typeof value === 'undefined' ? true : decodeURIComponent(value);
-  });
+  window.location.search.replace(
+    /([^?&=]+)(?:=([^?&=]*))?/g,
+    (match, key, value) => {
+      params[key] =
+        typeof value === "undefined" ? true : decodeURIComponent(value);
+    }
+  );
 
   return params;
 }

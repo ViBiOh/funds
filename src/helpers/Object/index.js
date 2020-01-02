@@ -5,5 +5,5 @@
  * @return {Boolean}     True is undefined, false otherwise
  */
 export function isUndefined(o, key) {
-  return !o || typeof o[key] === 'undefined';
+  return !o || typeof o[key] === "undefined";
 }

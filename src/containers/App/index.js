@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import actions from 'actions';
-import Funds from 'containers/Funds';
-import Throbber from 'components/Throbber';
-import style from './index.module.css';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import actions from "actions";
+import Funds from "containers/Funds";
+import Throbber from "components/Throbber";
+import style from "./index.module.css";
 
 /**
  * App Component.
@@ -35,7 +35,7 @@ export class AppComponent extends Component {
 
 AppComponent.propTypes = {
   ready: PropTypes.bool.isRequired,
-  init: PropTypes.func.isRequired,
+  init: PropTypes.func.isRequired
 };
 
 /**
@@ -44,7 +44,7 @@ AppComponent.propTypes = {
  */
 function mapStateToProps(state) {
   return {
-    ready: state.config.ready,
+    ready: state.config.ready
   };
 }
 
@@ -53,13 +53,10 @@ function mapStateToProps(state) {
  * @type {Object}
  */
 const mapDispatchToProps = {
-  init: actions.init,
+  init: actions.init
 };
 
 /**
  * AppComponent connected.
  */
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AppComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(AppComponent);
