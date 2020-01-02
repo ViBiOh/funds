@@ -6,6 +6,7 @@ ol {
 .icon {
   display: inline-block;
   position: relative;
+  height: var(--icon-size);
 }
 
 .icon ol {

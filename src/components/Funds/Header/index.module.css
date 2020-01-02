@@ -17,14 +17,19 @@
 
 .header input[type='text'] {
   border-radius: 0;
+  border: 0;
+  border-top: 1px solid var(--dark);
+  border-bottom: 1px solid var(--dark);
   flex: 1 1 16rem;
   height: var(--icon-size);
+  margin: 0;
   padding: 0.5rem;
   width: 16rem;
 }
 
 @media screen and (min-width: 1024px) {
   .header input[type='text'] {
+    border-left: 1px solid var(--dark);
     flex: 5;
   }
 }
