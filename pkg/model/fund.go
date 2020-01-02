@@ -13,6 +13,7 @@ type Fund struct {
 	OneYear       float64 `json:"1y"`
 	VolThreeYears float64 `json:"v3y"`
 	Score         float64 `json:"score"`
+	Alert         *Alert  `json:"alert"`
 }
 
 // GetID returns Fund's ID

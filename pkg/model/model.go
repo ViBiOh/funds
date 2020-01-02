@@ -34,7 +34,7 @@ type App interface {
 	Health() bool
 	Start()
 	Handler() http.Handler
-	ListFunds() []Fund
+	ListFunds([]Alert) []Fund
 	GetFundsAbove(float64, map[string]Alert) ([]*Fund, error)
 	GetFundsBelow(map[string]Alert) ([]*Fund, error)
 	GetIsinAlert() ([]Alert, error)
@@ -141,11 +141,18 @@ func (a *app) Health() bool {
 }
 
 // ListFunds return content of funds' map
-func (a *app) ListFunds() []Fund {
+func (a *app) ListFunds(alerts []Alert) []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
-		funds = append(funds, value.(Fund))
+		fund := value.(Fund)
+		for _, alert := range alerts {
+			if fund.Isin == alert.Isin {
+				fund.Alert = &alert
+			}
+		}
+
+		funds = append(funds, fund)
 		return true
 	})
 
@@ -153,17 +160,13 @@ func (a *app) ListFunds() []Fund {
 }
 
 func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
-	httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r))
-}
-
-func (a *app) alertsHandler(w http.ResponseWriter, r *http.Request) {
 	alerts, err := a.GetIsinAlert()
 	if err != nil {
 		httperror.InternalServerError(w, fmt.Errorf("unable to retrieve alerts: %w", err))
 		return
 	}
 
-	httpjson.ResponseArrayJSON(w, http.StatusOK, alerts, httpjson.IsPretty(r))
+	httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(alerts), httpjson.IsPretty(r))
 }
 
 // Handler for model request. Should be use with net/http
@@ -181,8 +184,6 @@ func (a *app) Handler() http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, listPrefix) {
 			a.listHandler(w, r)
-		} else if strings.HasPrefix(r.URL.Path, alertsPrefix) {
-			a.alertsHandler(w, r)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}

@@ -39,7 +39,7 @@ func main() {
 	go fundApp.Start()
 
 	healthHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if len(fundApp.ListFunds()) > 0 && fundApp.Health() {
+		if len(fundApp.ListFunds(nil)) > 0 && fundApp.Health() {
 			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusServiceUnavailable)

@@ -4,9 +4,9 @@ import "time"
 
 // Alert for a funds
 type Alert struct {
-	Isin      string
-	AlertType string
-	Score     float64
+	Isin      string    `json:"-"`
+	AlertType string    `json:"type"`
+	Score     float64   `json:"score"`
 	Date      time.Time `json:"omitempty"`
 }
 
