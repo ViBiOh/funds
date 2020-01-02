@@ -1,15 +1,18 @@
-import funtch from 'funtch';
-import ConfigService from 'services/Config';
-import FundsService from './index';
+import ConfigService from "services/Config";
+import FundsService from "./index";
 
-jest.mock('funtch');
-jest.mock('services/Config');
+jest.mock("services/Config");
 
-it('should fetch data for funds', () => {
-  ConfigService.getApiUrl.mockReturnValue('localhost');
-  funtch.get.mockResolvedValue({});
+it("should fetch data for funds", () => {
+  const getMock = jest.fn().mockReturnValue({
+    results: []
+  });
+
+  ConfigService.getClient.mockReturnValue({
+    get: getMock
+  });
 
   return FundsService.getFunds().then(() => {
-    expect(funtch.get).toHaveBeenCalledWith('localhost');
+    expect(getMock).toHaveBeenCalledWith("/list");
   });
 });
