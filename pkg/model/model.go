@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"flag"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -20,6 +21,7 @@ import (
 const (
 	maxConcurrentFetcher = 8
 	listPrefix           = "/list"
+	alertsPrefix         = "/alerts"
 )
 
 // Config of package
@@ -33,9 +35,10 @@ type App interface {
 	Start()
 	Handler() http.Handler
 	ListFunds() []Fund
-	GetFundsAbove(float64, map[string]*Alert) ([]*Fund, error)
-	GetFundsBelow(map[string]*Alert) ([]*Fund, error)
-	GetCurrentAlerts() (map[string]*Alert, error)
+	GetFundsAbove(float64, map[string]Alert) ([]*Fund, error)
+	GetFundsBelow(map[string]Alert) ([]*Fund, error)
+	GetIsinAlert() ([]Alert, error)
+	GetCurrentAlerts() (map[string]Alert, error)
 	SaveAlert(*Alert, *sql.Tx) error
 }
 
@@ -153,6 +156,16 @@ func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
 	httpjson.ResponseArrayJSON(w, http.StatusOK, a.ListFunds(), httpjson.IsPretty(r))
 }
 
+func (a *app) alertsHandler(w http.ResponseWriter, r *http.Request) {
+	alerts, err := a.GetIsinAlert()
+	if err != nil {
+		httperror.InternalServerError(w, fmt.Errorf("unable to retrieve alerts: %w", err))
+		return
+	}
+
+	httpjson.ResponseArrayJSON(w, http.StatusOK, alerts, httpjson.IsPretty(r))
+}
+
 // Handler for model request. Should be use with net/http
 func (a *app) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -162,13 +175,14 @@ func (a *app) Handler() http.Handler {
 			}
 			return
 		}
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
 
 		if strings.HasPrefix(r.URL.Path, listPrefix) {
-			if r.Method == http.MethodGet {
-				a.listHandler(w, r)
-			} else {
-				w.WriteHeader(http.StatusMethodNotAllowed)
-			}
+			a.listHandler(w, r)
+		} else if strings.HasPrefix(r.URL.Path, alertsPrefix) {
+			a.alertsHandler(w, r)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
