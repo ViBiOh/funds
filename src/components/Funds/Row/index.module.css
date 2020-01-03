@@ -39,6 +39,8 @@
 }
 
 .label {
+  display: inline-flex;
+  align-items: center;
   flex: 3;
   overflow: hidden;
   text-align: left;
@@ -65,6 +67,14 @@
   display: inline-flex;
 }
 
+.alert {
+  display: none;
+}
+
+svg.alertInline {
+  height: 1.8rem;
+}
+
 @media screen and (max-width: 1023px) {
   .row {
     padding: 0.2rem;
@@ -82,6 +92,27 @@
   .label {
     flex-basis: 100%;
     width: 100%;
+  }
+
+  .alert {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.2rem;
+    border: 0.1rem solid;
+    flex: none;
+    margin: 0.2rem;
+    max-width: 100%;
+    order: 5;
+    width: auto;
+    padding-right: 0.5rem;
+  }
+
+  .alert svg {
+    padding: 0.5rem;
+  }
+
+  .alertInline {
+    display: none;
   }
 
   .isin {
