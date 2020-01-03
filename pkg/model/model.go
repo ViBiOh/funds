@@ -147,8 +147,10 @@ func (a *app) ListFunds(alerts []Alert) []Fund {
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
 		for _, alert := range alerts {
+			fundAlert := alert
+
 			if fund.Isin == alert.Isin {
-				fund.Alert = &alert
+				fund.Alert = &fundAlert
 			}
 		}
 
