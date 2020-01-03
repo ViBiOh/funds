@@ -7,7 +7,7 @@ type Alert struct {
 	Isin      string    `json:"-"`
 	AlertType string    `json:"type"`
 	Score     float64   `json:"score"`
-	Date      time.Time `json:"omitempty"`
+	Date      time.Time `json:"date,omitempty"`
 }
 
 // GetIsinAlert retrieves last alert occured on by isin

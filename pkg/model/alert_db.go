@@ -79,10 +79,11 @@ func (a *app) listLastAlertByIsin() (alerts []Alert, err error) {
 		isin      string
 		alertType string
 		score     float64
-		date      time.Time
 	)
 
 	for rows.Next() {
+		var date time.Time
+
 		err = rows.Scan(&isin, &alertType, &score, &date)
 		if err != nil {
 			return
