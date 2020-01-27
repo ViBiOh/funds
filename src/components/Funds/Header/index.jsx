@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { FaSortAmountDown, FaChartPie, FaFilter } from 'react-icons/fa';
-import setRef from 'helpers/ref';
-import { COLUMNS } from 'components/Funds/Constants';
-import HeaderIcon from 'components/Funds/HeaderIcon';
-import style from './index.module.css';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { FaSortAmountDown, FaChartPie, FaFilter } from "react-icons/fa";
+import setRef from "helpers/setRef";
+import { COLUMNS } from "components/Funds/Constants";
+import HeaderIcon from "components/Funds/HeaderIcon";
+import style from "./index.module.css";
 
 export default class FundsHeader extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      toggleDisplayed: '',
-      selectedFilter: 'label',
+      toggleDisplayed: "",
+      selectedFilter: "label"
     };
 
     this.onOrderBy = this.onOrderBy.bind(this);
@@ -26,18 +26,18 @@ export default class FundsHeader extends Component {
   onOrderBy(...args) {
     const { orderBy } = this.props;
     orderBy(...args);
-    this.setState({ toggleDisplayed: '' });
+    this.setState({ toggleDisplayed: "" });
   }
 
   onAggregateBy(...args) {
     const { aggregateBy } = this.props;
     aggregateBy(...args);
-    this.setState({ toggleDisplayed: '' });
+    this.setState({ toggleDisplayed: "" });
   }
 
   onFilterChange(selectedFilter) {
     this.resetInput();
-    this.setState({ selectedFilter, toggleDisplayed: '' });
+    this.setState({ selectedFilter, toggleDisplayed: "" });
   }
 
   onTextChangeDebounce(e) {
@@ -54,27 +54,27 @@ export default class FundsHeader extends Component {
   get orderDisplayed() {
     const { toggleDisplayed } = this.state;
 
-    return toggleDisplayed === 'order';
+    return toggleDisplayed === "order";
   }
 
   get sigmaDisplayed() {
     const { toggleDisplayed } = this.state;
 
-    return toggleDisplayed === 'sigma';
+    return toggleDisplayed === "sigma";
   }
 
   get filterDisplayed() {
     const { toggleDisplayed } = this.state;
 
-    return toggleDisplayed === 'filter';
+    return toggleDisplayed === "filter";
   }
 
   toggleDisplay(icon, display) {
-    this.setState({ toggleDisplayed: display ? icon : '' });
+    this.setState({ toggleDisplayed: display ? icon : "" });
   }
 
   resetInput() {
-    this.filter.value = '';
+    this.filter.value = "";
   }
 
   render() {
@@ -87,25 +87,37 @@ export default class FundsHeader extends Component {
           filter="sortable"
           onClick={this.onOrderBy}
           icon={
-            <FaSortAmountDown onClick={() => this.toggleDisplay('order', !this.orderDisplayed)} />
+            <FaSortAmountDown
+              onClick={() => this.toggleDisplay("order", !this.orderDisplayed)}
+            />
           }
           displayed={this.orderDisplayed}
         />
         <HeaderIcon
           filter="summable"
           onClick={this.onAggregateBy}
-          icon={<FaChartPie onClick={() => this.toggleDisplay('sigma', !this.sigmaDisplayed)} />}
+          icon={
+            <FaChartPie
+              onClick={() => this.toggleDisplay("sigma", !this.sigmaDisplayed)}
+            />
+          }
           displayed={this.sigmaDisplayed}
         />
         <HeaderIcon
           filter="filterable"
           onClick={this.onFilterChange}
-          icon={<FaFilter onClick={() => this.toggleDisplay('filter', !this.filterDisplayed)} />}
+          icon={
+            <FaFilter
+              onClick={() =>
+                this.toggleDisplay("filter", !this.filterDisplayed)
+              }
+            />
+          }
           displayed={this.filterDisplayed}
         />
         <input
           type="text"
-          ref={e => setRef(this, 'filter', e)}
+          ref={e => setRef(this, "filter", e)}
           placeholder={`Fitre sur ${COLUMNS[selectedFilter].label}`}
           onChange={this.onTextChangeDebounce}
         />
@@ -117,5 +129,5 @@ export default class FundsHeader extends Component {
 FundsHeader.propTypes = {
   aggregateBy: PropTypes.func.isRequired,
   filterBy: PropTypes.func.isRequired,
-  orderBy: PropTypes.func.isRequired,
+  orderBy: PropTypes.func.isRequired
 };

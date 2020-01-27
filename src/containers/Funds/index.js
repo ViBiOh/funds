@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import actions from "actions";
 import { isUndefined } from "helpers/Object";
 import { getSearchParamsAsObject } from "helpers/URL";
-import setRef from "helpers/ref";
+import setRef from "helpers/setRef";
 import Throbber from "components/Throbber";
 import {
   AGGREGATE_SIZES,

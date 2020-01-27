@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Chart from 'chart.js';
-import setRef from 'helpers/ref';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import Chart from "chart.js";
+import setRef from "helpers/setRef";
 
 export default class Graph extends Component {
   /**
@@ -40,29 +40,29 @@ export default class Graph extends Component {
     } else if (this.graph) {
       const options = {
         legend: {
-          display: false,
+          display: false
         },
         scales: {
           xAxes: [
             {
-              display: false,
-            },
+              display: false
+            }
           ],
           yAxes: [
             {
               display: false,
               ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
+                beginAtZero: true
+              }
+            }
+          ]
+        }
       };
 
       this.chart = new Chart(this.graph, {
         type,
         data,
-        options,
+        options
       });
     }
 
@@ -77,7 +77,13 @@ export default class Graph extends Component {
 
   render() {
     const { className } = this.props;
-    return <canvas ref={e => setRef(this, 'graph', e)} className={className} height={200} />;
+    return (
+      <canvas
+        ref={e => setRef(this, "graph", e)}
+        className={className}
+        height={200}
+      />
+    );
   }
 }
 
@@ -85,10 +91,10 @@ Graph.propTypes = {
   className: PropTypes.string,
   data: PropTypes.shape({
     datasets: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-    labels: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  }).isRequired,
+    labels: PropTypes.arrayOf(PropTypes.shape({})).isRequired
+  }).isRequired
 };
 
 Graph.defaultProps = {
-  className: '',
+  className: ""
 };
