@@ -17,7 +17,7 @@ ifeq ($(DEBUG), true)
 	MAIN_RUNNER = dlv debug $(MAIN_SOURCE) --
 endif
 
-NOTIFIER_SOURCE = cmd/alert/alert.go
+NOTIFIER_SOURCE = cmd/notifier/notifier.go
 NOTIFIER_RUNNER = go run $(NOTIFIER_SOURCE)
 ifeq ($(DEBUG), true)
 	NOTIFIER_RUNNER = dlv debug $(NOTIFIER_SOURCE) --

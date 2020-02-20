@@ -1,12 +1,17 @@
 # scripts
 scripts/
 
-coverage*
-
 # Node Package Manager
 node_modules/
 build/
 
 # Golang
 bin/
+release/
+coverage.*
+profile.out
+
+# Files
 .env
+cacert.pem
+zoneinfo.zip

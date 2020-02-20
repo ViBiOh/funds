@@ -1,0 +1,13 @@
+FROM scratch
+
+ENV ZONEINFO zoneinfo.zip
+
+HEALTHCHECK --retries=10 CMD [ "/notifier", "-c" ]
+ENTRYPOINT [ "/notifier" ]
+
+ARG TARGETOS
+ARG TARGETARCH
+
+COPY cacert.pem /etc/ssl/certs/ca-certificates.crt
+COPY zoneinfo.zip /
+COPY release/notifier_${TARGETOS}_${TARGETARCH} /notifier
