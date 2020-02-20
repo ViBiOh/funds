@@ -3,6 +3,7 @@ scripts/
 
 # Node Package Manager
 node_modules/
+coverage/
 build/
 
 # Golang
