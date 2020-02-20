@@ -1,19 +1,5 @@
-FROM node:13 as builder
-
-WORKDIR /usr/src/app
-COPY . .
-
-RUN npm ci \
- && npm test \
- && npm run build \
- && git diff -- *.go \
- && git diff --quiet -- *.go
-
-ARG CODECOV_TOKEN
-RUN curl -q -sSL --max-time 10 https://codecov.io/bash | bash
-
 FROM vibioh/viws:light
 
-ARG APP_VERSION
-ENV VERSION=${APP_VERSION}
-COPY --from=builder /usr/src/app/build/ /www/
+ARG VERSION
+ENV VERSION=${VERSION}
+COPY build/ /www/

@@ -34,8 +34,8 @@ Usage of api:
         [db] Name {API_DB_NAME}
   -dbPass string
         [db] Pass {API_DB_PASS}
-  -dbPort string
-        [db] Port {API_DB_PORT} (default "5432")
+  -dbPort uint
+        [db] Port {API_DB_PORT} (default 5432)
   -dbSslmode string
         [db] SSL Mode {API_DB_SSLMODE} (default "disable")
   -dbUser string
@@ -48,29 +48,33 @@ Usage of api:
         [funds] Informations URL {API_INFOS}
   -key string
         [http] Key file {API_KEY}
-  -port int
+  -okStatus int
+        [http] Healthy HTTP Status code {API_OK_STATUS} (default 204)
+  -port uint
         [http] Listen port {API_PORT} (default 1080)
   -prometheusPath string
         [prometheus] Path for exposing metrics {API_PROMETHEUS_PATH} (default "/metrics")
   -url string
         [alcotest] URL to check {API_URL}
   -userAgent string
-        [alcotest] User-Agent for check {API_USER_AGENT} (default "Golang alcotest")
+        [alcotest] User-Agent for check {API_USER_AGENT} (default "Alcotest")
 ```
 
-### Alert
+### Notifier
 
 ```bash
-Usage of alert:
+Usage of notifier:
   -c    Healthcheck (check and exit)
+  -cron
+        [notifier] Start as a cron {ALERT_CRON}
   -dbHost string
         [db] Host {ALERT_DB_HOST}
   -dbName string
         [db] Name {ALERT_DB_NAME}
   -dbPass string
         [db] Pass {ALERT_DB_PASS}
-  -dbPort string
-        [db] Port {ALERT_DB_PORT} (default "5432")
+  -dbPort uint
+        [db] Port {ALERT_DB_PORT} (default 5432)
   -dbSslmode string
         [db] SSL Mode {ALERT_DB_SSLMODE} (default "disable")
   -dbUser string

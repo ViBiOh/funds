@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
+	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
@@ -24,19 +25,23 @@ type scoreTemplateContent struct {
 	BelowFunds []*model.Fund `json:"belowFunds"`
 }
 
+// App of package
+type App interface {
+	Start()
+}
+
 // Config of package
 type Config struct {
-	mailerURL  *string
-	mailerUser *string
-	mailerPass *string
 	recipients *string
 	score      *float64
+	cron       *bool
 }
 
 // App of package
-type App struct {
+type app struct {
 	recipients []string
 	score      float64
+	cron       bool
 
 	modelApp  model.App
 	mailerApp client.App
@@ -47,22 +52,38 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
 		recipients: flags.New(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
 		score:      flags.New(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
+		cron:       flags.New(prefix, "notifier").Name("Cron").Default(false).Label("Start as a cron").ToBool(fs),
 	}
 }
 
 // New creates new App from Config
-func New(config Config, modelApp model.App, mailerApp client.App) *App {
+func New(config Config, modelApp model.App, mailerApp client.App) App {
 	logger.Info("Notification to %s for score above %.2f", *config.recipients, *config.score)
 
-	return &App{
+	return &app{
 		recipients: strings.Split(*config.recipients, ","),
 		score:      *config.score,
+		cron:       *config.cron,
 		modelApp:   modelApp,
 		mailerApp:  mailerApp,
 	}
 }
 
-func (a App) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
+// Start notifier
+func (a app) Start() {
+	if !a.cron {
+		if err := a.do(time.Now()); err != nil {
+			logger.Error("%s", err)
+		}
+		return
+	}
+
+	cron.New().Days().At("08:00").In("Europe/Paris").Start(a.do, func(err error) {
+		logger.Error("%s", err)
+	})
+}
+
+func (a app) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
 			return err
@@ -72,7 +93,7 @@ func (a App) saveTypedAlerts(score float64, funds []*model.Fund, alertType strin
 	return nil
 }
 
-func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
+func (a app) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
 	if err := a.saveTypedAlerts(score, above, "above"); err != nil {
 		return err
 	}
@@ -80,8 +101,7 @@ func (a App) saveAlerts(score float64, above []*model.Fund, below []*model.Fund)
 	return a.saveTypedAlerts(score, below, "below")
 }
 
-// Do send notification to users
-func (a App) Do(currentTime time.Time) error {
+func (a app) do(currentTime time.Time) error {
 	usedCtx := context.Background()
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
