@@ -15,6 +15,7 @@
     "date-fns": "2.10.0",
     "funtch": "2.1.0",
     "history": "4.10.1",
+    "prop-types": "15.7.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "react-icons": "3.9.0",
@@ -29,15 +30,40 @@
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --coverage",
     "eject": "react-scripts eject",
-    "style": "eslint src/**/*.js src/**/*.jsx",
-    "format": "prettier --write $(find src -name '*.js')"
+    "style": "eslint --fix \"src/**/*.js{,x}\"",
+    "format": "prettier --write \"src/**/*.js{,x}\""
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "airbnb"
+    ],
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "paths": [
+            "src"
+          ]
+        }
+      }
+    },
+    "env": {
+      "jest": true
+    },
+    "rules": {
+      "import/no-extraneous-dependencies": 0,
+      "react/jsx-props-no-spreading": 0
+    }
   },
   "devDependencies": {
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
+    "eslint": "6.8.0",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-react": "7.19.0",
+    "eslint-plugin-react-hooks": "2.5.0",
     "prettier": "1.19.1",
     "react-scripts": "3.4.0",
     "react-test-renderer": "16.13.0",

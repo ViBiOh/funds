@@ -1,12 +1,12 @@
-import "regenerator-runtime/runtime";
-import { call, select } from "redux-saga/effects";
-import History from "AppHistory";
+import 'regenerator-runtime/runtime';
+import { call, select } from 'redux-saga/effects';
+import History from 'AppHistory';
 import {
   ORDER_PARAM,
   ASCENDING_ORDER_PARAM,
   AGGREGAT_PARAM,
-  AGGREGAT_SIZE_PARAM
-} from "components/Funds/Constants";
+  AGGREGAT_SIZE_PARAM,
+} from 'components/Funds/Constants';
 
 /**
  * Selector in state for funds.
@@ -21,7 +21,7 @@ export function fundsSelector({ funds } = {}) {
  * Saga of updating url from filter/agregate
  * @yield {Function} Saga effects to sequence flow of work
  */
-export default function*() {
+export default function* () {
   const { filters, order, aggregat } = yield select(fundsSelector);
 
   const params = Object.entries(filters)
@@ -41,9 +41,9 @@ export default function*() {
     params.push(`${AGGREGAT_SIZE_PARAM}=${encodeURIComponent(aggregat.size)}`);
   }
 
-  let query = "";
+  let query = '';
   if (params.length) {
-    query = `?${params.join("&")}`;
+    query = `?${params.join('&')}`;
   }
 
   yield call(History.push, `/${query}`);

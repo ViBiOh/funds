@@ -1,11 +1,11 @@
-import actions from "actions";
+import actions from 'actions';
 
 /**
  * Config reducer initial state.
  * @type {Object}
  */
 export const initialState = {
-  ready: false
+  ready: false,
 };
 
 /**
@@ -14,13 +14,13 @@ export const initialState = {
  * @param {Object} action Action dispatched
  * @return {Object} New state
  */
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case actions.GET_CONFIG_SUCCEEDED:
       return {
         ...initialState,
         ...action.config,
-        ready: true
+        ready: true,
       };
 
     default:

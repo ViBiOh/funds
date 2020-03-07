@@ -14,7 +14,7 @@ const endError = /_SUCCEEDED$/;
  * Error's reducer initial state.
  * @type {String}
  */
-export const initialState = "";
+export const initialState = '';
 
 /**
  * Error's reducer.
@@ -22,7 +22,7 @@ export const initialState = "";
  * @param  {Object} action Action dispatched
  * @return {Object}        New state
  */
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   if (startError.test(action.type)) {
     return String(action.error);
   }

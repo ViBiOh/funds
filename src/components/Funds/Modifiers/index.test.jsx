@@ -71,7 +71,9 @@ it('should call given callback for removing filter', () => {
   props.filterBy = jest.fn();
 
   const wrapper = shallow(<Modifiers {...props} />);
-  wrapper.find('span[data-funds-filter] Button[data-funds-filter-clear]').simulate('click');
+  wrapper
+    .find('span[data-funds-filter] Button[data-funds-filter-clear]')
+    .simulate('click');
 
   expect(props.filterBy).toHaveBeenCalledWith('isin', '');
 });
@@ -84,7 +86,9 @@ it('should render order if specified', () => {
 
   const wrapper = shallow(<Modifiers {...props} />);
   expect(wrapper.find('span[data-funds-order]').length).toEqual(1);
-  expect(wrapper.find('span[data-funds-order] FaSortAmountUp').length).toEqual(1);
+  expect(wrapper.find('span[data-funds-order] FaSortAmountUp').length).toEqual(
+    1,
+  );
 });
 
 it('should render order descending if specified', () => {
@@ -95,7 +99,9 @@ it('should render order descending if specified', () => {
   };
 
   const wrapper = shallow(<Modifiers {...props} />);
-  expect(wrapper.find('span[data-funds-order] FaSortAmountDown').length).toEqual(1);
+  expect(
+    wrapper.find('span[data-funds-order] FaSortAmountDown').length,
+  ).toEqual(1);
 });
 
 it('should call given callback for removing order', () => {
@@ -106,7 +112,9 @@ it('should call given callback for removing order', () => {
   props.orderBy = jest.fn();
 
   const wrapper = shallow(<Modifiers {...props} />);
-  wrapper.find('span[data-funds-order] Button[data-funds-order-clear]').simulate('click');
+  wrapper
+    .find('span[data-funds-order] Button[data-funds-order-clear]')
+    .simulate('click');
 
   expect(props.orderBy).toHaveBeenCalledWith('');
 });
@@ -129,7 +137,9 @@ it('should call given callback for removing order', () => {
   props.aggregateBy = jest.fn();
 
   const wrapper = shallow(<Modifiers {...props} />);
-  wrapper.find('span[data-funds-aggregat] Button[data-funds-aggregat-clear]').simulate('click');
+  wrapper
+    .find('span[data-funds-aggregat] Button[data-funds-aggregat-clear]')
+    .simulate('click');
 
   expect(props.aggregateBy).toHaveBeenCalledWith('');
 });

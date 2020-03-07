@@ -19,10 +19,9 @@ export const makeActionCreator = (type, ...argNames) => (...args) => {
  * @param  {string} name A camel case action name
  * @return {string}      Snake upper case type name
  */
-export const toTypeName = name =>
-  String(name)
-    .replace(/([A-Z])/g, "_$1")
-    .toUpperCase();
+export const toTypeName = (name) => String(name)
+  .replace(/([A-Z])/g, '_$1')
+  .toUpperCase();
 
 /**
  * Action creator : return the function and the constant for the given action
@@ -33,7 +32,7 @@ export const toTypeName = name =>
  */
 export const makeActionAndTypeCreator = (type, action, inputs = []) => ({
   [type]: type,
-  [action]: makeActionCreator(type, ...inputs)
+  [action]: makeActionCreator(type, ...inputs),
 });
 
 /**
@@ -46,7 +45,7 @@ export const makeActionAndTypeCreator = (type, action, inputs = []) => ({
 export const makeApiActionCreator = (
   camelCaseName,
   inputs = [],
-  outputs = []
+  outputs = [],
 ) => {
   const typeName = toTypeName(camelCaseName);
 
@@ -56,12 +55,12 @@ export const makeApiActionCreator = (
     ...makeActionAndTypeCreator(
       `${typeName}_SUCCEEDED`,
       `${camelCaseName}Succeeded`,
-      outputs
+      outputs,
     ),
     ...makeActionAndTypeCreator(
       `${typeName}_FAILED`,
       `${camelCaseName}Failed`,
-      ["error"]
-    )
+      ['error'],
+    ),
   };
 };

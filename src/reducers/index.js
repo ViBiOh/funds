@@ -1,8 +1,8 @@
-import { combineReducers } from "redux";
-import config from "./config";
-import error from "./error";
-import funds from "./funds";
-import pending from "./pending";
+import { combineReducers } from 'redux';
+import config from './config';
+import error from './error';
+import funds from './funds';
+import pending from './pending';
 
 /**
  * Combined reducers of app.
@@ -12,5 +12,5 @@ export default combineReducers({
   config,
   error,
   funds,
-  pending
+  pending,
 });
