@@ -18,23 +18,35 @@ function renderCount(fundsSize, initialSize) {
 
   return (
     <span key="count" className={style.modifier} data-funds-count>
-      {fundsSize} / {initialSize}
+      {fundsSize}
+      {' / '}
+      {initialSize}
     </span>
   );
 }
 
 function renderFilters(filters, filterBy) {
   return Object.keys(filters)
-    .filter(filter => filters[filter])
-    .map(filter => (
+    .filter((filter) => filters[filter])
+    .map((filter) => (
       <span key={filter} className={style.modifier} data-funds-filter>
         <FaFilter />
         <span>
-          <em> {COLUMNS[filter].label}</em> ≃{' '}
+          <em>
+            {' '}
+            {COLUMNS[filter].label}
+          </em>
+          {' '}
+          ≃
+          {' '}
         </span>
 
         <span>{filters[filter]}</span>
-        <Button type="none" onClick={() => filterBy(filter, '')} data-funds-filter-clear>
+        <Button
+          type="none"
+          onClick={() => filterBy(filter, '')}
+          data-funds-filter-clear
+        >
           <FaWindowClose />
         </Button>
       </span>
@@ -71,14 +83,19 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
     <span className={style.modifier} data-funds-aggregat>
       <FaChartPie />
       <select value={aggregat.size} onChange={onAggregateSizeChange}>
-        {AGGREGATE_SIZES.map(size => (
+        {AGGREGATE_SIZES.map((size) => (
           <option key={size} value={size}>
             {size}
           </option>
         ))}
-      </select>{' '}
+      </select>
+      {' '}
       {label}
-      <Button type="none" onClick={() => aggregateBy('')} data-funds-aggregat-clear>
+      <Button
+        type="none"
+        onClick={() => aggregateBy('')}
+        data-funds-aggregat-clear
+      >
         <FaWindowClose />
       </Button>
     </span>

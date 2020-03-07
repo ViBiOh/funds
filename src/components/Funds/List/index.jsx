@@ -12,7 +12,7 @@ export default function List({ funds, filterBy }) {
   return (
     <div key="list">
       <Row key="header" fund={COLUMNS_HEADER} />
-      {funds.map(fund => (
+      {funds.map((fund) => (
         <Row key={fund.id} fund={fund} filterBy={filterBy} />
       ))}
     </div>

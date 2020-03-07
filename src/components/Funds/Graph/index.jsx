@@ -20,7 +20,7 @@ export default function Graph({ aggregat, aggregated }) {
     ],
   };
   let i = 0;
-  aggregated.forEach(entry => {
+  aggregated.forEach((entry) => {
     data.labels.push(entry.label);
     data.datasets[0].data.push(entry.count);
     data.datasets[0].backgroundColor.push(CHART_COLORS[i]);
@@ -42,5 +42,5 @@ Graph.propTypes = {
       label: PropTypes.string.isRequired,
       count: PropTypes.number.isRequired,
     }),
-  ),
+  ).isRequired,
 };

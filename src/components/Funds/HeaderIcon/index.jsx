@@ -5,12 +5,18 @@ import Button from 'components/Button';
 import { COLUMNS } from 'components/Funds/Constants';
 import style from './index.module.css';
 
-export default function HeaderIcon({ filter, onClick, icon, displayed }) {
+export default function HeaderIcon({
+  filter, onClick, icon, displayed,
+}) {
   const list = Object.entries(COLUMNS)
     .filter(([, column]) => column[filter])
     .map(([key, column]) => (
       <li key={key}>
-        <Button type="none" className={style.button} onClick={() => onClick(key)}>
+        <Button
+          type="none"
+          className={style.button}
+          onClick={() => onClick(key)}
+        >
           {column.label}
         </Button>
       </li>
@@ -18,12 +24,12 @@ export default function HeaderIcon({ filter, onClick, icon, displayed }) {
 
   const iconClasses = classnames({
     [style.active]: displayed,
-  })
+  });
 
   const listClasses = classnames({
     [style.displayed]: displayed,
     [style.hidden]: !displayed,
-  })
+  });
 
   return (
     <span className={style.icon}>

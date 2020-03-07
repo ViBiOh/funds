@@ -1,18 +1,18 @@
-import ConfigService from "services/Config";
-import FundsService from "./index";
+import ConfigService from 'services/Config';
+import FundsService from './index';
 
-jest.mock("services/Config");
+jest.mock('services/Config');
 
-it("should fetch data for funds", () => {
+it('should fetch data for funds', () => {
   const getMock = jest.fn().mockReturnValue({
-    results: []
+    results: [],
   });
 
   ConfigService.getClient.mockReturnValue({
-    get: getMock
+    get: getMock,
   });
 
   return FundsService.getFunds().then(() => {
-    expect(getMock).toHaveBeenCalledWith("/list");
+    expect(getMock).toHaveBeenCalledWith('/list');
   });
 });

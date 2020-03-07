@@ -4,7 +4,7 @@ import style from './index.module.css';
 
 const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
 
-const getValue = value => {
+const getValue = (value) => {
   if (!NUMBER_PATTERN.test(value)) {
     return '';
   }
@@ -13,7 +13,11 @@ const getValue = value => {
 };
 
 export default function PerformanceCell({ type, value }) {
-  return <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>{value}</span>;
+  return (
+    <span className={`${style.performance} ${style[type]} ${getValue(value)}`}>
+      {value}
+    </span>
+  );
 }
 
 PerformanceCell.propTypes = {

@@ -1,11 +1,11 @@
-import funtch from "funtch";
+import funtch from 'funtch';
 
 /**
  * Default http client.
  * @type {Object}
  */
 let httpClient = funtch.withDefault({
-  baseURL: "https://funds-api.vibioh.fr"
+  baseURL: 'https://funds-api.vibioh.fr',
 });
 
 /**
@@ -17,11 +17,11 @@ export default class ConfigService {
    * @return {Object} Config environment
    */
   static async getConfig() {
-    const config = await funtch.get("/env");
+    const config = await funtch.get('/env');
 
     if (config && config.API_URL) {
       httpClient = funtch.withDefault({
-        baseURL: config.API_URL
+        baseURL: config.API_URL,
       });
     }
 

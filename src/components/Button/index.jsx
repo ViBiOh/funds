@@ -8,7 +8,13 @@ import style from './index.module.css';
  * @param Object} props Props of the component.
  * @return {React.Component} Button with rendered children.
  */
-export default function Button({ children, type, active, className, ...buttonProps }) {
+export default function Button({
+  children,
+  type,
+  active,
+  className,
+  ...buttonProps
+}) {
   let content = children;
   if (Array.isArray(children)) {
     content = <div className={style.wrapper}>{children}</div>;
@@ -28,8 +34,19 @@ export default function Button({ children, type, active, className, ...buttonPro
 Button.displayName = 'Button';
 
 Button.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
-  type: PropTypes.oneOf(['transparent', 'primary', 'success', 'info', 'warning', 'danger', 'none']),
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
+  type: PropTypes.oneOf([
+    'transparent',
+    'primary',
+    'success',
+    'info',
+    'warning',
+    'danger',
+    'none',
+  ]),
   active: PropTypes.bool,
   className: PropTypes.string,
 };

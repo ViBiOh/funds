@@ -4,7 +4,16 @@ import Row from './index';
 
 function defaultProps() {
   return {
-    fund: { category: 'Test', rating: 4, '1m': 0.0, '3m': 0.0, '6m': 0.0, '1y': 0.0, v3y: 0.0, score: 0.0 },
+    fund: {
+      category: 'Test',
+      rating: 4,
+      '1m': 0.0,
+      '3m': 0.0,
+      '6m': 0.0,
+      '1y': 0.0,
+      v3y: 0.0,
+      score: 0.0,
+    },
   };
 }
 

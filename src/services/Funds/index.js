@@ -1,4 +1,4 @@
-import ConfigService from "services/Config";
+import ConfigService from 'services/Config';
 
 /**
  * Service for dealing with Funds.
@@ -9,7 +9,7 @@ export default class FundsService {
    * @return {Array} List of funds
    */
   static async getFunds() {
-    const list = await ConfigService.getClient().get("/list");
+    const list = await ConfigService.getClient().get('/list');
     return list.results;
   }
 }

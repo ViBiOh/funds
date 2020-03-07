@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import actions from "actions";
-import Funds from "containers/Funds";
-import Throbber from "components/Throbber";
-import style from "./index.module.css";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import actions from 'actions';
+import ConnectedFunds from 'containers/Funds';
+import Throbber from 'components/Throbber';
+import style from './index.module.css';
 
 /**
  * App Component.
@@ -14,14 +14,17 @@ export class AppComponent extends Component {
    * React lifecycle.
    */
   componentDidMount() {
-    this.props.init();
+    const { init } = this.props;
+    init();
   }
 
   /**
    * React lifecycle.
    */
   render() {
-    if (!this.props.ready) {
+    const { ready } = this.props;
+
+    if (!ready) {
       return (
         <div className={style.loader}>
           <Throbber label="Loading environment" />
@@ -29,13 +32,13 @@ export class AppComponent extends Component {
       );
     }
 
-    return <Funds />;
+    return <ConnectedFunds />;
   }
 }
 
 AppComponent.propTypes = {
   ready: PropTypes.bool.isRequired,
-  init: PropTypes.func.isRequired
+  init: PropTypes.func.isRequired,
 };
 
 /**
@@ -44,7 +47,7 @@ AppComponent.propTypes = {
  */
 function mapStateToProps(state) {
   return {
-    ready: state.config.ready
+    ready: state.config.ready,
   };
 }
 
@@ -53,7 +56,7 @@ function mapStateToProps(state) {
  * @type {Object}
  */
 const mapDispatchToProps = {
-  init: actions.init
+  init: actions.init,
 };
 
 /**
