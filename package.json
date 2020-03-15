@@ -67,7 +67,7 @@
     "prettier": "1.19.1",
     "react-scripts": "3.4.0",
     "react-test-renderer": "16.13.0",
-    "sinon": "9.0.0"
+    "sinon": "9.0.1"
   },
   "browserslist": {
     "production": [
