@@ -52,7 +52,9 @@ export function cleanSearchValues(values) {
   }
 
   if (values.length > CLEAN_SEARCH_MIN_LENGTH) {
-    const filteredValues = values.filter((v) => v.length > CLEAN_WORDS_MIN_LENTH);
+    const filteredValues = values.filter(
+      (v) => v.length > CLEAN_WORDS_MIN_LENTH,
+    );
     if (filteredValues.length / values.length > CLEAN_SEARCH_PERCENTAGE) {
       return filteredValues;
     }

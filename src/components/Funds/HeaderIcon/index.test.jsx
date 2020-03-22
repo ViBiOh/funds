@@ -23,10 +23,7 @@ it('should call given callback on item click', () => {
   props.onClick = jest.fn();
 
   const wrapper = shallow(<HeaderIcon {...props} />);
-  wrapper
-    .find('Button')
-    .at(0)
-    .simulate('click');
+  wrapper.find('Button').at(0).simulate('click');
 
   expect(props.onClick).toHaveBeenCalledWith(Object.keys(COLUMNS)[0]);
 });
