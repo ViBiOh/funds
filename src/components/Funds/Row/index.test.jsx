@@ -21,10 +21,7 @@ it('should always render as a span', () => {
   const props = defaultProps();
   const wrapper = shallow(<Row {...props} />);
 
-  wrapper
-    .find('Button')
-    .at(0)
-    .simulate('click');
+  wrapper.find('Button').at(0).simulate('click');
 
   expect(wrapper.type()).toEqual('span');
 });
@@ -34,10 +31,7 @@ it('should call given filterBy func on category click', () => {
   props.filterBy = jest.fn();
   const wrapper = shallow(<Row {...props} />);
 
-  wrapper
-    .find('Button')
-    .at(0)
-    .simulate('click');
+  wrapper.find('Button').at(0).simulate('click');
 
   expect(props.filterBy).toHaveBeenCalledWith('category', 'Test');
 });
@@ -47,10 +41,7 @@ it('should call given filterBy func on rating click', () => {
   props.filterBy = jest.fn();
   const wrapper = shallow(<Row {...props} />);
 
-  wrapper
-    .find('Button')
-    .at(1)
-    .simulate('click');
+  wrapper.find('Button').at(1).simulate('click');
 
   expect(props.filterBy).toHaveBeenCalledWith('rating', 4);
 });
