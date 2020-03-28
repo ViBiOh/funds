@@ -43,6 +43,7 @@ jobs:
         - npm run style
         - npm run test
         - npm run build
+        - ./remove_hash_from_asset.js "$(make version)"
         - git --no-pager diff && git diff --quiet
         - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
         - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
