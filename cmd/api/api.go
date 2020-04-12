@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"net/http"
 	"os"
 
 	"github.com/ViBiOh/funds/pkg/model"
@@ -31,23 +30,16 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	fundApp, err := model.New(fundsConfig, dbConfig)
-	if err != nil {
-		logger.Fatal(err)
-	}
+	fundsDb, err := db.New(dbConfig)
+	logger.Fatal(err)
+
+	fundApp := model.New(fundsConfig, fundsDb)
 
 	go fundApp.Start()
 
-	healthHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if len(fundApp.ListFunds(nil)) > 0 && fundApp.Health() {
-			w.WriteHeader(http.StatusOK)
-		} else {
-			w.WriteHeader(http.StatusServiceUnavailable)
-		}
-	})
-
 	server := httputils.New(serverConfig)
-	server.Health(healthHandler)
+	server.Health(fundsDb.Ping)
+	server.Health(fundApp.Health)
 	server.Middleware(prometheus.New(prometheusConfig).Middleware)
 	server.Middleware(owasp.New(owaspConfig).Middleware)
 	server.Middleware(cors.New(corsConfig).Middleware)

@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -31,7 +32,7 @@ type Config struct {
 
 // App of package
 type App interface {
-	Health() bool
+	Health() error
 	Start()
 	Handler() http.Handler
 	ListFunds([]Alert) []Fund
@@ -56,20 +57,13 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, dbConfig db.Config) (App, error) {
-	app := &app{
+func New(config Config, dbApp *sql.DB) App {
+	return &app{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
-	}
 
-	fundsDB, err := db.New(dbConfig)
-	if err != nil {
-		logger.Error("%s", err)
-	} else {
-		app.dbConnexion = fundsDB
+		dbConnexion: dbApp,
 	}
-
-	return app, nil
 }
 
 func (a *app) Start() {
@@ -136,8 +130,12 @@ func (a *app) saveData() (err error) {
 }
 
 // Health check health
-func (a *app) Health() bool {
-	return db.Ping(a.dbConnexion)
+func (a *app) Health() error {
+	if len(a.ListFunds(nil)) == 0 {
+		return errors.New("no funds fetched")
+	}
+
+	return nil
 }
 
 // ListFunds return content of funds' map

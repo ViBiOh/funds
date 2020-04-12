@@ -3,7 +3,7 @@ module github.com/ViBiOh/funds
 go 1.14
 
 require (
-	github.com/ViBiOh/httputils/v3 v3.12.0
+	github.com/ViBiOh/httputils/v3 v3.13.0
 	github.com/ViBiOh/mailer v1.6.3
 	github.com/golang/protobuf v1.3.4 // indirect
 	github.com/prometheus/procfs v0.0.10 // indirect
