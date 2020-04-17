@@ -1,0 +1,72 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funds-http
+spec:
+  entryPoints:
+    - http
+  routes:
+    - match: Host(`funds.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: redirect
+      services:
+        - name: funds
+          port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funds-https
+spec:
+  entryPoints:
+    - https
+  routes:
+    - match: Host(`funds.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: ratelimit
+      services:
+        - name: funds
+          port: 80
+  tls:
+    certResolver: default
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funds-api-http
+spec:
+  entryPoints:
+    - http
+  routes:
+    - match: Host(`funds-api.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: redirect
+      services:
+        - name: funds-api
+          port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: funds-api-https
+spec:
+  entryPoints:
+    - https
+  routes:
+    - match: Host(`funds-api.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: compress
+        - name: ratelimit
+      services:
+        - name: funds-api
+          port: 80
+  tls:
+    certResolver: default

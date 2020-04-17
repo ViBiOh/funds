@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: funds-notifier
+data:
+  NOTIFIER_MAILER_URL: http://mailer
+  NOTIFIER_SCORE: "20"
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: funds-notifier
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "0 7 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: funds-notifier
+              image: vibioh/funds-notifier
+              envFrom:
+                - configMapRef:
+                    name: funds-notifier
+                - secretRef:
+                    name: funds-notifier
+              resources:
+                requests:
+                  memory: 24M
+                limits:
+                  memory: 64M
