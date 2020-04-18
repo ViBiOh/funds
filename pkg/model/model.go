@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	maxConcurrentFetcher = 8
+	maxConcurrentFetcher = 1
 	listPrefix           = "/list"
 	alertsPrefix         = "/alerts"
 )
@@ -91,17 +91,19 @@ func (a *app) refresh(_ time.Time) error {
 func (a *app) refreshData(ctx context.Context) {
 	inputs := make(chan []byte, maxConcurrentFetcher)
 
-	for i := uint(0); i < maxConcurrentFetcher; i++ {
-		go func() {
+	go func() {
+		for i := uint(0); i < maxConcurrentFetcher; i++ {
 			for input := range inputs {
 				if output, err := fetchFund(ctx, a.fundsURL, input); err != nil {
 					logger.Error("%s", err)
 				} else {
 					a.fundsMap.Store(output.ID, output)
 				}
+
+				time.Sleep(10 * time.Second)
 			}
-		}()
-	}
+		}
+	}()
 
 	for _, fundID := range fundsIds {
 		inputs <- fundID
