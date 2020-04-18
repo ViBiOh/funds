@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
         - name: funds
-          image: vibioh/funds
+          image: vibioh/funds-ui
           ports:
             - name: http
               containerPort: 1080
