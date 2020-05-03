@@ -111,17 +111,6 @@ func (a *app) saveFund(fund *Fund, tx *sql.Tx) (err error) {
 		return errNilFund
 	}
 
-	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(a.dbConnexion, tx); err != nil {
-		return
-	}
-
-	if usedTx != tx {
-		defer func() {
-			err = db.EndTx(usedTx, err)
-		}()
-	}
-
 	if _, err = a.readFundByIsin(fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
 			_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)

@@ -124,21 +124,19 @@ func (a *app) listAlertsOpened() (alerts []Alert, err error) {
 }
 
 // SaveAlert saves Alert
-func (a *app) SaveAlert(alert *Alert, tx *sql.Tx) (err error) {
+func (a *app) SaveAlert(alert *Alert) (err error) {
 	if alert == nil {
 		return errors.New("cannot save nil")
 	}
 
 	var usedTx *sql.Tx
-	if usedTx, err = db.GetTx(a.dbConnexion, tx); err != nil {
+	if usedTx, err = a.dbConnexion.Begin(); err != nil {
 		return
 	}
 
-	if usedTx != tx {
-		defer func() {
-			err = db.EndTx(usedTx, err)
-		}()
-	}
+	defer func() {
+		err = db.EndTx(usedTx, err)
+	}()
 
 	_, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
 	return
