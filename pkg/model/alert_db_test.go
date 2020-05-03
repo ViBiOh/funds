@@ -22,7 +22,7 @@ func TestSaveAlert(t *testing.T) {
 		t.Run(testCase.intention, func(t *testing.T) {
 			app := app{}
 
-			err := app.SaveAlert(testCase.input, nil)
+			err := app.SaveAlert(testCase.input)
 
 			failed := false
 

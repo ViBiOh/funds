@@ -85,7 +85,7 @@ func (a app) Start() {
 
 func (a app) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}, nil); err != nil {
+		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}); err != nil {
 			return err
 		}
 	}

@@ -40,7 +40,7 @@ type App interface {
 	GetFundsBelow(map[string]Alert) ([]*Fund, error)
 	GetIsinAlert() ([]Alert, error)
 	GetCurrentAlerts() (map[string]Alert, error)
-	SaveAlert(*Alert, *sql.Tx) error
+	SaveAlert(*Alert) error
 }
 
 type app struct {
@@ -113,7 +113,7 @@ func (a *app) refreshData(ctx context.Context) {
 
 func (a *app) saveData() (err error) {
 	var tx *sql.Tx
-	if tx, err = db.GetTx(a.dbConnexion, nil); err != nil {
+	if tx, err = a.dbConnexion.Begin(); err != nil {
 		return
 	}
 
