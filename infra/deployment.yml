@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: funds-api
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   selector:
     matchLabels:
@@ -44,6 +48,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: funds
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   selector:
     matchLabels:

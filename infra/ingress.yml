@@ -3,6 +3,10 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: funds-http
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   entryPoints:
     - http
@@ -20,6 +24,10 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: funds-https
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   entryPoints:
     - https
@@ -39,6 +47,10 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: funds-api-http
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   entryPoints:
     - http
@@ -56,6 +68,10 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: funds-api-https
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   entryPoints:
     - https

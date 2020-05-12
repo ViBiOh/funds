@@ -3,6 +3,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: funds
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   selector:
     name: funds
@@ -16,6 +20,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: funds-api
+  labels:
+    app.kubernetes.io/name: funds
+    app.kubernetes.io/instance: funds
+    app.kubernetes.io/managed-by: kubectl
 spec:
   selector:
     name: funds-api
