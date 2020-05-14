@@ -83,9 +83,9 @@ func (a app) Start() {
 	})
 }
 
-func (a app) saveTypedAlerts(score float64, funds []*model.Fund, alertType string) error {
+func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []*model.Fund, alertType string) error {
 	for _, fund := range funds {
-		if err := a.modelApp.SaveAlert(&model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}); err != nil {
+		if err := a.modelApp.SaveAlert(ctx, &model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}); err != nil {
 			return err
 		}
 	}
@@ -93,16 +93,16 @@ func (a app) saveTypedAlerts(score float64, funds []*model.Fund, alertType strin
 	return nil
 }
 
-func (a app) saveAlerts(score float64, above []*model.Fund, below []*model.Fund) error {
-	if err := a.saveTypedAlerts(score, above, "above"); err != nil {
+func (a app) saveAlerts(ctx context.Context, score float64, above []*model.Fund, below []*model.Fund) error {
+	if err := a.saveTypedAlerts(ctx, score, above, "above"); err != nil {
 		return err
 	}
 
-	return a.saveTypedAlerts(score, below, "below")
+	return a.saveTypedAlerts(ctx, score, below, "below")
 }
 
 func (a app) do(currentTime time.Time) error {
-	usedCtx := context.Background()
+	ctx := context.Background()
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
@@ -122,13 +122,13 @@ func (a app) do(currentTime time.Time) error {
 	logger.Info("Got %d funds below their initial alert", len(above))
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(usedCtx); err != nil {
+		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(ctx); err != nil {
 			return err
 		}
 
 		logger.Info("Mail notification sent to %d recipients for %d funds", len(a.recipients), len(above)+len(below))
 
-		if err := a.saveAlerts(a.score, above, below); err != nil {
+		if err := a.saveAlerts(ctx, a.score, above, below); err != nil {
 			return err
 		}
 	}

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 
@@ -76,25 +77,19 @@ func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
 	return list, nil
 }
 
-func (a *app) readFundByIsin(isin string) (*Fund, error) {
-	var (
-		label string
-		score float64
-	)
+func (a *app) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
+	item := Fund{Isin: isin}
 
-	err := a.dbConnexion.QueryRow(fundByIsinQuery, isin).Scan(&label, &score)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, err
-		}
-		return nil, err
+	scanner := func(row db.RowScanner) error {
+		return row.Scan(&item.Label, &item.Score)
 	}
+	err := db.GetRow(ctx, a.db, scanner, fundByIsinQuery, isin)
 
-	return &Fund{Isin: isin, Label: label, Score: score}, nil
+	return item, err
 }
 
 func (a *app) listFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := a.dbConnexion.Query(fundsWithScoreAboveQuery, minScore)
+	rows, err := a.db.Query(fundsWithScoreAboveQuery, minScore)
 	if err != nil {
 		return
 	}
@@ -106,17 +101,17 @@ func (a *app) listFundsWithScoreAbove(minScore float64) (funds []*Fund, err erro
 	return scanFunds(rows, 0)
 }
 
-func (a *app) saveFund(fund *Fund, tx *sql.Tx) (err error) {
+func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {
 	if fund == nil {
 		return errNilFund
 	}
 
-	if _, err = a.readFundByIsin(fund.Isin); err != nil {
+	if _, err = a.readFundByIsin(ctx, fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			_, err = tx.Exec(fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+			err = db.Exec(ctx, a.db, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
 	} else {
-		_, err = tx.Exec(fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
+		err = db.Exec(ctx, a.db, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
 	}
 
 	return
