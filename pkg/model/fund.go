@@ -1,5 +1,7 @@
 package model
 
+import "context"
+
 // Fund informations
 type Fund struct {
 	ID            string  `json:"id"`
@@ -54,10 +56,13 @@ func (a *app) GetFundsBelow(currentAlerts map[string]Alert) ([]*Fund, error) {
 	funds := make([]*Fund, 0)
 
 	for _, alert := range currentAlerts {
-		if fund, err := a.readFundByIsin(alert.Isin); err != nil {
+		fund, err := a.readFundByIsin(context.Background(), alert.Isin)
+		if err != nil {
 			return nil, err
-		} else if fund.Score < alert.Score {
-			funds = append(funds, fund)
+		}
+
+		if fund.Score < alert.Score {
+			funds = append(funds, &fund)
 		}
 	}
 

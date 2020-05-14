@@ -1,7 +1,7 @@
 package model
 
 import (
-	"database/sql"
+	"context"
 	"errors"
 	"time"
 
@@ -66,7 +66,7 @@ INSERT INTO
 `
 
 func (a *app) listLastAlertByIsin() (alerts []Alert, err error) {
-	rows, err := a.dbConnexion.Query(listLastAlertByIsin)
+	rows, err := a.db.Query(listLastAlertByIsin)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (a *app) listLastAlertByIsin() (alerts []Alert, err error) {
 }
 
 func (a *app) listAlertsOpened() (alerts []Alert, err error) {
-	rows, err := a.dbConnexion.Query(listAlertsOpenedQuery)
+	rows, err := a.db.Query(listAlertsOpenedQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -124,20 +124,10 @@ func (a *app) listAlertsOpened() (alerts []Alert, err error) {
 }
 
 // SaveAlert saves Alert
-func (a *app) SaveAlert(alert *Alert) (err error) {
+func (a *app) SaveAlert(ctx context.Context, alert *Alert) (err error) {
 	if alert == nil {
 		return errors.New("cannot save nil")
 	}
 
-	var usedTx *sql.Tx
-	if usedTx, err = a.dbConnexion.Begin(); err != nil {
-		return
-	}
-
-	defer func() {
-		err = db.EndTx(usedTx, err)
-	}()
-
-	_, err = usedTx.Exec(saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
-	return
+	return db.Exec(ctx, a.db, saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
 }

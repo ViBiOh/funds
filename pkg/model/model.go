@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
-	"github.com/ViBiOh/httputils/v3/pkg/db"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
@@ -40,13 +39,13 @@ type App interface {
 	GetFundsBelow(map[string]Alert) ([]*Fund, error)
 	GetIsinAlert() ([]Alert, error)
 	GetCurrentAlerts() (map[string]Alert, error)
-	SaveAlert(*Alert) error
+	SaveAlert(context.Context, *Alert) error
 }
 
 type app struct {
-	dbConnexion *sql.DB
-	fundsURL    string
-	fundsMap    sync.Map
+	db       *sql.DB
+	fundsURL string
+	fundsMap sync.Map
 }
 
 // Flags adds flags for configuring package
@@ -57,12 +56,12 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, dbApp *sql.DB) App {
+func New(config Config, db *sql.DB) App {
 	return &app{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 
-		dbConnexion: dbApp,
+		db: db,
 	}
 }
 
@@ -79,7 +78,7 @@ func (a *app) refresh(_ time.Time) error {
 
 	a.refreshData(context.Background())
 
-	if a.dbConnexion != nil {
+	if a.db != nil {
 		if err := a.saveData(); err != nil {
 			return err
 		}
@@ -112,18 +111,11 @@ func (a *app) refreshData(ctx context.Context) {
 }
 
 func (a *app) saveData() (err error) {
-	var tx *sql.Tx
-	if tx, err = a.dbConnexion.Begin(); err != nil {
-		return
-	}
-
-	defer func() {
-		err = db.EndTx(tx, err)
-	}()
+	ctx := context.Background()
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err = a.saveFund(&fund, tx)
+		err = a.saveFund(ctx, &fund)
 
 		return err == nil
 	})

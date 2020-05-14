@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"errors"
 	"testing"
 )
@@ -22,7 +23,7 @@ func TestSaveAlert(t *testing.T) {
 		t.Run(testCase.intention, func(t *testing.T) {
 			app := app{}
 
-			err := app.SaveAlert(testCase.input)
+			err := app.SaveAlert(context.Background(), testCase.input)
 
 			failed := false
 
