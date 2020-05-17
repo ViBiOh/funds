@@ -108,10 +108,10 @@ func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {
 
 	if _, err = a.readFundByIsin(ctx, fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			err = db.Exec(ctx, a.db, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+			err = db.Exec(ctx, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
 	} else {
-		err = db.Exec(ctx, a.db, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
+		err = db.Exec(ctx, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
 	}
 
 	return

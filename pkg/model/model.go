@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
+	"github.com/ViBiOh/httputils/v3/pkg/db"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
@@ -115,7 +116,9 @@ func (a *app) saveData() (err error) {
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err = a.saveFund(ctx, &fund)
+		err := db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
+			return a.saveFund(ctx, &fund)
+		})
 
 		return err == nil
 	})
