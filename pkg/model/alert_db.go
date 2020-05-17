@@ -129,5 +129,7 @@ func (a *app) SaveAlert(ctx context.Context, alert *Alert) (err error) {
 		return errors.New("cannot save nil")
 	}
 
-	return db.Exec(ctx, a.db, saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
+	return db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
+		return db.Exec(ctx, saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
+	})
 }
