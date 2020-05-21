@@ -36,8 +36,8 @@ type App interface {
 	Start()
 	Handler() http.Handler
 	ListFunds([]Alert) []Fund
-	GetFundsAbove(float64, map[string]Alert) ([]*Fund, error)
-	GetFundsBelow(map[string]Alert) ([]*Fund, error)
+	GetFundsAbove(float64, map[string]Alert) ([]Fund, error)
+	GetFundsBelow(map[string]Alert) ([]Fund, error)
 	GetIsinAlert() ([]Alert, error)
 	GetCurrentAlerts() (map[string]Alert, error)
 	SaveAlert(context.Context, *Alert) error

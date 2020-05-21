@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // Alert for a funds
 type Alert struct {
@@ -12,14 +15,14 @@ type Alert struct {
 
 // GetIsinAlert retrieves last alert occured on by isin
 func (a *app) GetIsinAlert() ([]Alert, error) {
-	return a.listLastAlertByIsin()
+	return a.listLastAlertByIsin(context.Background())
 }
 
 // GetCurrentAlerts retrieves current opened alerts
 func (a *app) GetCurrentAlerts() (map[string]Alert, error) {
 	currentAlerts := make(map[string]Alert)
 
-	alerts, err := a.listAlertsOpened()
+	alerts, err := a.listAlertsOpened(context.Background())
 	if err != nil {
 		return nil, err
 	}
