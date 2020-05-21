@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 )
@@ -57,48 +58,31 @@ WHERE
 
 var errNilFund = errors.New("unable to save nil Fund")
 
-func scanFunds(rows *sql.Rows, pageSize uint) ([]*Fund, error) {
-	var (
-		isin  string
-		label string
-		score float64
-	)
-
-	list := make([]*Fund, 0, pageSize)
-
-	for rows.Next() {
-		if err := rows.Scan(&isin, &label, &score); err != nil {
-			return nil, err
-		}
-
-		list = append(list, &Fund{Isin: isin, Label: label, Score: score})
-	}
-
-	return list, nil
-}
-
 func (a *app) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	item := Fund{Isin: isin}
 
-	scanner := func(row db.RowScanner) error {
+	scanner := func(row *sql.Row) error {
 		return row.Scan(&item.Label, &item.Score)
 	}
-	err := db.GetRow(ctx, a.db, scanner, fundByIsinQuery, isin)
+	err := db.Get(ctx, a.db, scanner, fundByIsinQuery, isin)
 
 	return item, err
 }
 
-func (a *app) listFundsWithScoreAbove(minScore float64) (funds []*Fund, err error) {
-	rows, err := a.db.Query(fundsWithScoreAboveQuery, minScore)
-	if err != nil {
-		return
+func (a *app) listFundsWithScoreAbove(ctx context.Context, minScore float64) (funds []Fund, err error) {
+	list := make([]Fund, 0)
+	scanner := func(rows *sql.Rows) error {
+		var item Fund
+
+		if err := rows.Scan(&item.Isin, &item.Label, &item.Score); err != nil {
+			return fmt.Errorf("unable to scan data: %s", err)
+		}
+
+		list = append(list, item)
+		return nil
 	}
 
-	defer func() {
-		err = db.RowsClose(rows, err)
-	}()
-
-	return scanFunds(rows, 0)
+	return list, db.List(ctx, a.db, scanner, fundsWithScoreAboveQuery, minScore)
 }
 
 func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {

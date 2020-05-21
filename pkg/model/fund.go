@@ -30,10 +30,12 @@ func (f *Fund) ComputeScore() {
 }
 
 // GetFundsAbove retrieves funds above score
-func (a *app) GetFundsAbove(score float64, currentAlerts map[string]Alert) ([]*Fund, error) {
-	fundsToAlert := make([]*Fund, 0)
+func (a *app) GetFundsAbove(score float64, currentAlerts map[string]Alert) ([]Fund, error) {
+	fundsToAlert := make([]Fund, 0)
 
-	funds, err := a.listFundsWithScoreAbove(score)
+	ctx := context.Background()
+
+	funds, err := a.listFundsWithScoreAbove(ctx, score)
 	if err != nil {
 		return nil, err
 	}
@@ -52,17 +54,19 @@ func (a *app) GetFundsAbove(score float64, currentAlerts map[string]Alert) ([]*F
 }
 
 // GetFundsBelow retrieves funds below score
-func (a *app) GetFundsBelow(currentAlerts map[string]Alert) ([]*Fund, error) {
-	funds := make([]*Fund, 0)
+func (a *app) GetFundsBelow(currentAlerts map[string]Alert) ([]Fund, error) {
+	funds := make([]Fund, 0)
+
+	ctx := context.Background()
 
 	for _, alert := range currentAlerts {
-		fund, err := a.readFundByIsin(context.Background(), alert.Isin)
+		fund, err := a.readFundByIsin(ctx, alert.Isin)
 		if err != nil {
 			return nil, err
 		}
 
 		if fund.Score < alert.Score {
-			funds = append(funds, &fund)
+			funds = append(funds, fund)
 		}
 	}
 

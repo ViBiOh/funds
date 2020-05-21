@@ -20,9 +20,9 @@ const (
 )
 
 type scoreTemplateContent struct {
-	Score      float64       `json:"score"`
-	AboveFunds []*model.Fund `json:"aboveFunds"`
-	BelowFunds []*model.Fund `json:"belowFunds"`
+	Score      float64      `json:"score"`
+	AboveFunds []model.Fund `json:"aboveFunds"`
+	BelowFunds []model.Fund `json:"belowFunds"`
 }
 
 // App of package
@@ -83,7 +83,7 @@ func (a app) Start() {
 	})
 }
 
-func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []*model.Fund, alertType string) error {
+func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := a.modelApp.SaveAlert(ctx, &model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}); err != nil {
 			return err
@@ -93,7 +93,7 @@ func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []*model.
 	return nil
 }
 
-func (a app) saveAlerts(ctx context.Context, score float64, above []*model.Fund, below []*model.Fund) error {
+func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, below []model.Fund) error {
 	if err := a.saveTypedAlerts(ctx, score, above, "above"); err != nil {
 		return err
 	}

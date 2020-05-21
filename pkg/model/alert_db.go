@@ -2,13 +2,14 @@ package model
 
 import (
 	"context"
+	"database/sql"
 	"errors"
-	"time"
+	"fmt"
 
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 )
 
-const listLastAlertByIsin = `
+const listLastAlertByIsinQuery = `
 SELECT
   isin,
   type,
@@ -65,62 +66,38 @@ INSERT INTO
 )
 `
 
-func (a *app) listLastAlertByIsin() (alerts []Alert, err error) {
-	rows, err := a.db.Query(listLastAlertByIsin)
-	if err != nil {
-		return nil, err
-	}
+func (a *app) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
+	list := make([]Alert, 0)
 
-	defer func() {
-		err = db.RowsClose(rows, err)
-	}()
+	scanner := func(rows *sql.Rows) error {
+		var item Alert
 
-	var (
-		isin      string
-		alertType string
-		score     float64
-	)
-
-	for rows.Next() {
-		var date time.Time
-
-		err = rows.Scan(&isin, &alertType, &score, &date)
-		if err != nil {
-			return
+		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
+			return fmt.Errorf("unable to scan data: %s", err)
 		}
 
-		alerts = append(alerts, Alert{Isin: isin, AlertType: alertType, Score: score, Date: date})
+		list = append(list, item)
+		return nil
 	}
 
-	return
+	return list, db.List(ctx, a.db, scanner, listLastAlertByIsinQuery)
 }
 
-func (a *app) listAlertsOpened() (alerts []Alert, err error) {
-	rows, err := a.db.Query(listAlertsOpenedQuery)
-	if err != nil {
-		return nil, err
-	}
+func (a *app) listAlertsOpened(ctx context.Context) ([]Alert, error) {
+	list := make([]Alert, 0)
 
-	defer func() {
-		err = db.RowsClose(rows, err)
-	}()
+	scanner := func(rows *sql.Rows) error {
+		var item Alert
 
-	var (
-		isin      string
-		alertType string
-		score     float64
-	)
-
-	for rows.Next() {
-		err = rows.Scan(&isin, &alertType, &score)
-		if err != nil {
-			return
+		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
+			return fmt.Errorf("unable to scan data: %s", err)
 		}
 
-		alerts = append(alerts, Alert{Isin: isin, AlertType: alertType, Score: score})
+		list = append(list, item)
+		return nil
 	}
 
-	return
+	return list, db.List(ctx, a.db, scanner, listAlertsOpenedQuery)
 }
 
 // SaveAlert saves Alert
