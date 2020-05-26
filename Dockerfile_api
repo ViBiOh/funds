@@ -1,4 +1,4 @@
-FROM scratch as api
+FROM vibioh/scratch as api
 
 ENV ZONEINFO zoneinfo.zip
 EXPOSE 1080
