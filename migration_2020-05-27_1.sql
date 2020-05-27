@@ -1,0 +1,4 @@
+CREATE SCHEMA funds;
+
+ALTER TABLE funds SET SCHEMA funds;
+ALTER TABLE alerts SET SCHEMA funds;

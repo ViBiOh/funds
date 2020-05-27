@@ -14,7 +14,7 @@ SELECT
   label,
   score
 FROM
-  funds
+  funds.funds
 WHERE
   isin = $1
 `
@@ -25,7 +25,7 @@ SELECT
   label,
   score
 FROM
-  funds
+  funds.funds
 WHERE
   score >= $1
 ORDER BY
@@ -34,7 +34,7 @@ ORDER BY
 
 const fundsCreateQuery = `
 INSERT INTO
-  funds
+  funds.funds
 (
   isin,
   label,
@@ -48,7 +48,7 @@ INSERT INTO
 
 const fundsUpdateScoreQuery = `
 UPDATE
-  funds
+  funds.funds
 SET
   score = $1,
   update_date = $2

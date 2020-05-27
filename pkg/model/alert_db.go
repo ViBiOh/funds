@@ -16,14 +16,14 @@ SELECT
   score,
   creation_date
 FROM
-  alerts
+  funds.alerts
 WHERE
   (isin, creation_date) IN (
     SELECT
       isin,
       max(creation_date)
     FROM
-      alerts
+      funds.alerts
     GROUP BY
       isin
    )
@@ -35,13 +35,13 @@ SELECT
   type,
   score
 FROM
-  alerts
+  funds.alerts
 WHERE
   isin IN (
     SELECT
       isin
     FROM
-      alerts
+      funds.alerts
     GROUP BY
       isin
     HAVING
@@ -54,7 +54,7 @@ ORDER BY
 
 const saveAlertQuery = `
 INSERT INTO
-  alerts
+  funds.alerts
 (
   isin,
   score,
