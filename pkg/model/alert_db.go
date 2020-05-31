@@ -33,7 +33,8 @@ const listAlertsOpenedQuery = `
 SELECT
   isin,
   type,
-  score
+  score,
+  creation_date
 FROM
   funds.alerts
 WHERE
