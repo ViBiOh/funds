@@ -73,7 +73,7 @@ func New(config Config, modelApp model.App, mailerApp client.App) App {
 func (a app) Start() {
 	if !a.cron {
 		if err := a.do(time.Now()); err != nil {
-			logger.Error("%s", err)
+			logger.Fatal(err)
 		}
 		return
 	}
