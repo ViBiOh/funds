@@ -18,7 +18,7 @@ func TestCleanID(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		if got := cleanID(testCase.fundID); string(got) != testCase.want {
+		if got := cleanID(testCase.fundID); got != testCase.want {
 			t.Errorf("cleanID(%v) = %v, want %v", testCase.fundID, got, testCase.want)
 		}
 	}

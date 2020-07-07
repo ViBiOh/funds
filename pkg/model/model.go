@@ -22,7 +22,6 @@ import (
 const (
 	maxConcurrentFetcher = 1
 	listPrefix           = "/list"
-	alertsPrefix         = "/alerts"
 )
 
 // Config of package

@@ -101,7 +101,7 @@ func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, 
 	return a.saveTypedAlerts(ctx, score, below, "below")
 }
 
-func (a app) do(currentTime time.Time) error {
+func (a app) do(_ time.Time) error {
 	ctx := context.Background()
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
