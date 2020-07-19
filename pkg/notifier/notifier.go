@@ -122,7 +122,7 @@ func (a app) do(_ time.Time) error {
 	logger.Info("Got %d funds below their initial alert", len(above))
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := client.NewEmail(a.mailerApp).From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(ctx); err != nil {
+		if err := client.NewEmail().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(ctx, a.mailerApp); err != nil {
 			return err
 		}
 
