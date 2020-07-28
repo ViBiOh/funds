@@ -7,7 +7,7 @@ import Funds from 'services/Funds';
  * Saga of getFunds action
  * @yield {Function} Saga effects to sequence flow of work
  */
-export default function* () {
+export default function* saga() {
   try {
     const funds = yield call(Funds.getFunds);
     yield put(actions.getFundsSucceeded(funds));

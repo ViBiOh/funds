@@ -14,7 +14,7 @@ export const initialState = {
  * @param {Object} action Action dispatched
  * @return {Object} New state
  */
-export default function (state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case actions.GET_CONFIG_SUCCEEDED:
       return {
