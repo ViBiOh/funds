@@ -43,7 +43,7 @@ function updateList(funds, filters, order, aggregat) {
  * @param {Object} action Action dispatched
  * @return {Object} New state
  */
-export default function (state = initialState, action) {
+export default function reducer(state = initialState, action) {
   let temp;
 
   switch (action.type) {

@@ -21,7 +21,7 @@ export function fundsSelector({ funds } = {}) {
  * Saga of updating url from filter/agregate
  * @yield {Function} Saga effects to sequence flow of work
  */
-export default function* () {
+export default function* saga() {
   const { filters, order, aggregat } = yield select(fundsSelector);
 
   const params = Object.entries(filters)

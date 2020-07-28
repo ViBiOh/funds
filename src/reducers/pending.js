@@ -22,7 +22,7 @@ export const initialState = {};
  * @param  {Object} action Action dispatched
  * @return {Object}        New state
  */
-export default function (state = initialState, action) {
+export default function reducer(state = initialState, action) {
   const start = startPending.exec(action.type);
   if (start && start.length > 1) {
     return { ...state, [start[1]]: true };

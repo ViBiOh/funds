@@ -22,7 +22,7 @@ export const initialState = '';
  * @param  {Object} action Action dispatched
  * @return {Object}        New state
  */
-export default function (state = initialState, action) {
+export default function reducer(state = initialState, action) {
   if (startError.test(action.type)) {
     return String(action.error);
   }
