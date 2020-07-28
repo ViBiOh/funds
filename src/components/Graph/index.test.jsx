@@ -3,16 +3,14 @@ import { shallow, mount } from 'enzyme';
 import Chart from 'chart.js';
 import Graph from './index';
 
-jest.mock('chart.js', () =>
-  jest.fn().mockImplementation(() => ({
-    data: {
-      datasets: [],
-      labels: [],
-    },
-    update: jest.fn(),
-    destroy: jest.fn(),
-  })),
-);
+jest.mock('chart.js', () => jest.fn().mockImplementation(() => ({
+  data: {
+    datasets: [],
+    labels: [],
+  },
+  update: jest.fn(),
+  destroy: jest.fn(),
+})));
 
 function defaultProps() {
   return {
