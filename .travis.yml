@@ -17,9 +17,9 @@ jobs:
       script:
         - make
         - git --no-pager diff -- ':(exclude)go.sum' && git diff --quiet -- ':(exclude)go.sum'
-        - curl -q -sSL --max-time 10 -o cacert.pem https://curl.haxx.se/ca/cacert.pem
-        - curl -q -sSL --max-time 10 -o zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip
-        - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
+        - curl -q -sSL --max-time 30 -o cacert.pem https://curl.haxx.se/ca/cacert.pem
+        - curl -q -sSL --max-time 30 -o zoneinfo.zip https://raw.githubusercontent.com/golang/go/master/lib/time/zoneinfo.zip
+        - curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
         - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
         - ./scripts/release build
         - DOCKER_IMAGE="${DOCKER_USER}/$(make name)-api" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_api ./scripts/release docker
@@ -44,7 +44,7 @@ jobs:
         - npm run build
         - ./remove_hash_from_asset.js "$(make version)"
         - git --no-pager diff && git diff --quiet
-        - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
+        - curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
         - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
         - DOCKER_IMAGE="${DOCKER_USER}/$(make name)-ui" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_ui ./scripts/release docker
 
@@ -54,13 +54,13 @@ jobs:
       script:
         - export APP_NAME="$(make name)"
         - export APP_VERSION="$(make version)"
-        - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "docker_promote"
+        - curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "docker_promote"
         - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-api" "$(make version)"
         - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-notifier" "$(make version)"
         - scripts/docker_promote "${DOCKER_USER}/${APP_NAME}-ui" "$(make version)"
       after_success:
-        - curl -q -sSL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/${TRAVIS_REPO_SLUG}
-        - curl -q -SSL --max-time 10 -X POST --data-urlencode "gitUrl=git@github.com:${TRAVIS_REPO_SLUG}.git" https://doc.esdoc.org/api/create
+        - curl -q -sSL --max-time 30 -X POST https://goreportcard.com/checks?repo=github.com/${TRAVIS_REPO_SLUG}
+        - curl -q -sSL --max-time 30 -X POST --data-urlencode "gitUrl=git@github.com:${TRAVIS_REPO_SLUG}.git" https://doc.esdoc.org/api/create
 
 stages:
   - Build
