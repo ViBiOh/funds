@@ -16,13 +16,16 @@ spec:
       labels:
         name: funds-api
       annotations:
-        prometheus.io/scrape: "true"
+        prometheus.io/scrape: 'true'
         prometheus.io/scheme: http
-        prometheus.io/port: "1080"
+        prometheus.io/port: '1080'
     spec:
       containers:
         - name: funds
           image: vibioh/funds-api
+          env:
+            - name: API_LOGGER_JSON
+              value: 'true'
           envFrom:
             - secretRef:
                 name: funds-api
@@ -63,13 +66,16 @@ spec:
       labels:
         name: funds
       annotations:
-        prometheus.io/scrape: "true"
+        prometheus.io/scrape: 'true'
         prometheus.io/scheme: http
-        prometheus.io/port: "1080"
+        prometheus.io/port: '1080'
     spec:
       containers:
         - name: funds
           image: vibioh/funds-ui
+          env:
+            - name: VIWS_LOGGER_JSON
+              value: 'true'
           ports:
             - name: http
               containerPort: 1080
