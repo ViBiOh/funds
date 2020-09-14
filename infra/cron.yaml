@@ -1,0 +1,15 @@
+---
+nameOverride: funds
+
+image:
+  repository: vibioh/funds-notifier
+
+config:
+  NOTIFIER_MAILER_URL: http://mailer
+  NOTIFIER_SCORE: '20'
+
+secretRef: funds-notifier
+
+containers:
+  - name: job
+    args: []
