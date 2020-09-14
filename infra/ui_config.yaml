@@ -1,0 +1,13 @@
+---
+nameOverride: funds
+
+image:
+  repository: vibioh/funds-ui
+
+config:
+  VIWS_LOGGER_JSON: 'true'
+
+ingress:
+  enabled: true
+  hosts:
+    - funds.vibioh.fr

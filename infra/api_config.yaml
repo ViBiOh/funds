@@ -1,0 +1,15 @@
+---
+nameOverride: funds-api
+
+image:
+  repository: vibioh/funds-api
+
+config:
+  API_LOGGER_JSON: 'true'
+
+secretRef: funds-api
+
+ingress:
+  enabled: true
+  hosts:
+    - funds-api.vibioh.fr
