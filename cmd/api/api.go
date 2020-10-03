@@ -31,6 +31,7 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 	logger.Global(logger.New(loggerConfig))
+	defer logger.Close()
 
 	fundsDb, err := db.New(dbConfig)
 	logger.Fatal(err)
