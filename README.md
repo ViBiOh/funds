@@ -42,7 +42,7 @@ Usage of api:
   -frameOptions string
         [owasp] X-Frame-Options {API_FRAME_OPTIONS} (default "deny")
   -graceDuration string
-        [http] Grace duration when SIGTERM received {API_GRACE_DURATION} (default "15s")
+        [http] Grace duration when SIGTERM received {API_GRACE_DURATION} (default "30s")
   -hsts
         [owasp] Indicate Strict Transport Security {API_HSTS} (default true)
   -infos string
