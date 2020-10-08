@@ -10,6 +10,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	httputils_model "github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
 )
@@ -40,11 +41,9 @@ func main() {
 
 	go fundApp.Start()
 
-	server := httputils.New(serverConfig)
-	server.Health(fundsDb.Ping)
-	server.Health(fundApp.Health)
-	server.Middleware(prometheus.New(prometheusConfig).Middleware)
-	server.Middleware(owasp.New(owaspConfig).Middleware)
-	server.Middleware(cors.New(corsConfig).Middleware)
-	server.ListenServeWait(fundApp.Handler())
+	httputils.New(serverConfig).ListenAndServe(fundApp.Handler(), []httputils_model.Middleware{
+		prometheus.New(prometheusConfig).Middleware,
+		owasp.New(owaspConfig).Middleware,
+		cors.New(corsConfig).Middleware,
+	}, fundsDb.Ping, fundApp.Health)
 }
