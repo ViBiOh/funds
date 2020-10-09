@@ -45,6 +45,8 @@ Usage of api:
         [http] Grace duration when SIGTERM received {API_GRACE_DURATION} (default "30s")
   -hsts
         [owasp] Indicate Strict Transport Security {API_HSTS} (default true)
+  -idleTimeout string
+        [http] Idle Timeout {API_IDLE_TIMEOUT} (default "2m")
   -infos string
         [funds] Informations URL {API_INFOS}
   -key string
@@ -65,10 +67,16 @@ Usage of api:
         [http] Listen port {API_PORT} (default 1080)
   -prometheusPath string
         [prometheus] Path for exposing metrics {API_PROMETHEUS_PATH} (default "/metrics")
+  -readTimeout string
+        [http] Read Timeout {API_READ_TIMEOUT} (default "5s")
+  -shutdownTimeout string
+        [http] Shutdown Timeout {API_SHUTDOWN_TIMEOUT} (default "10s")
   -url string
         [alcotest] URL to check {API_URL}
   -userAgent string
         [alcotest] User-Agent for check {API_USER_AGENT} (default "Alcotest")
+  -writeTimeout string
+        [http] Write Timeout {API_WRITE_TIMEOUT} (default "10s")
 ```
 
 ### Notifier
