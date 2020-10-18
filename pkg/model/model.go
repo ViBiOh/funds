@@ -180,6 +180,13 @@ func (a *app) Handler() http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, listPrefix) {
 			a.listHandler(w, r)
+		} else if r.URL.Path == "/ready" {
+			if a.Health() == nil {
+				w.WriteHeader(http.StatusOK)
+			} else {
+				w.WriteHeader(http.StatusTeapot)
+			}
+			return
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
