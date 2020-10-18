@@ -4,6 +4,5 @@ go 1.15
 
 require (
 	github.com/ViBiOh/httputils/v3 v3.32.0
-	github.com/ViBiOh/mailer v1.8.2
-	google.golang.org/protobuf v1.25.0 // indirect
+	github.com/ViBiOh/mailer v1.9.0
 )
