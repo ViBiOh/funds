@@ -38,20 +38,3 @@ it('should update chart on mount', () => {
   mount(<Graph {...props} />);
   expect(Chart).toHaveBeenCalled();
 });
-
-it('should update chart on update', () => {
-  const props = defaultProps();
-  const wrapper = mount(<Graph {...props} />);
-  wrapper.setProps({ type: 'bar' });
-
-  expect(wrapper.instance().chart.update).toHaveBeenCalled();
-});
-
-it('should destroy chart on unmount', () => {
-  const props = defaultProps();
-  const wrapper = mount(<Graph {...props} />);
-  const destroyFn = wrapper.instance().chart.destroy;
-  wrapper.unmount();
-
-  expect(destroyFn).toHaveBeenCalled();
-});
