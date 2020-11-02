@@ -5,16 +5,16 @@ metadata:
   name: funds-notifier
   namespace: default
 spec:
-  interval: 10m
+  interval: 120m
   chart:
     spec:
       chart: cron
-      version: '0.0.8'
+      version: "0.0.8"
       sourceRef:
         kind: HelmRepository
         name: vibioh
         namespace: flux-system
-      interval: 10m
+      interval: 120m
 
   values:
     nameOverride: funds-notifier
@@ -24,7 +24,7 @@ spec:
 
     config:
       NOTIFIER_MAILER_URL: http://mailer
-      NOTIFIER_SCORE: '20'
+      NOTIFIER_SCORE: "20"
 
     secrets:
       NOTIFIER_DB_HOST: AgCnm/gda849hFYrwZLXWpdSe5fxaKsXHb73tXeqvuQCW9DbGR2qv8d6GNrEjnc024Bag5IXVpEvmL/PMkEJ4jFBY6rQKB171fcNkDQzG/PBqW2BjAWwm8yjkeUG4qgjyrW3e5W/JRvyzVTEkvZIRVw8MM6ONzXKUPrlylVgEfr89wdOfnJjanfYgmQ4yy4Qc0+2Q4fC1vz1BTczCxoD2j3G764WtODLLjPOmpCCn8HmVeTt0yo+1eiwahSYxyQSjpXncXFziZDRW8dDtOmcBgiuip8XSpI0w9hTbWDGhjqkb0fj44h+15wq02ChZSBEJ221bkJ2cMcSS9Crj1XnmLUH2ishm4cAP9FIluURq4q/EHAlfipjBo6wCtQvJD53kOIauTtVBjgGGjWA+tMuYLxD8MBkABbz51b1Rwnuo20dhhG6foK4aV/oKp3XBkCAiumTNnoIjTlRr8c7MbAYxOZmnqy4KunKuQNSps3ewtqOmCsCqEwLyMHy8YFt7k4F1O2mcsUm+cLFtfXlr6oIep4vYrrHlSF8MivaY4ctKUjgOWAkb7vG4w9ULq57y5e7S20iclhqF4zSnTI5zRK+0Q/SxBnxgz8cE9F0HAwISCqHyg15HPWUDXbCc3Z+ss76qTyAAKyskxMgoCc9LoN6AvXpfnFIRPHd9yW+l8Kpra0rC9lWhdf5gQ55MKERCjgoAjle+xq79oX3HEDS+h4OWYhmcvmxUI+0
