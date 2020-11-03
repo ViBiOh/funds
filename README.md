@@ -1,6 +1,6 @@
 # Funds
 
-[![Build Status](https://travis-ci.com/ViBiOh/funds.svg?branch=master)](https://travis-ci.com/ViBiOh/funds)
+[![Build](https://github.com/ViBiOh/funds/workflows/Build/badge.svg)](https://github.com/ViBiOh/funds/actions)
 [![codecov](https://codecov.io/gh/ViBiOh/funds/branch/master/graph/badge.svg)](https://codecov.io/gh/ViBiOh/funds)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ViBiOh/funds)](https://goreportcard.com/report/github.com/ViBiOh/funds)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ViBiOh_funds&metric=alert_status)](https://sonarcloud.io/dashboard?id=ViBiOh_funds)
