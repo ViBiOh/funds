@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.20"
+      version: '0.0.24'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -23,7 +23,7 @@ spec:
       repository: vibioh/funds-api
 
     config:
-      API_LOGGER_JSON: "true"
+      API_LOGGER_JSON: 'true'
 
     readinessProbePath: /ready
 
