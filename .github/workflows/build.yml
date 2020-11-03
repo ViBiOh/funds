@@ -53,7 +53,7 @@ jobs:
           DOCKER_IMAGE="${{ secrets.DOCKER_USER }}/$(make name)-notifier" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_notifier ./scripts/release docker
 
   front:
-    name: React
+    name: Javascript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
