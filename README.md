@@ -65,6 +65,8 @@ Usage of api:
         [http] Healthy HTTP Status code {API_OK_STATUS} (default 204)
   -port uint
         [http] Listen port {API_PORT} (default 1080)
+  -prometheusIgnore string
+        [prometheus] Ignored path prefixes for metrics, comma separated {API_PROMETHEUS_IGNORE} (default "/ready")
   -prometheusPath string
         [prometheus] Path for exposing metrics {API_PROMETHEUS_PATH} (default "/metrics")
   -readTimeout string

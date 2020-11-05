@@ -8,6 +8,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/alcotest"
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
 	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	httputils_model "github.com/ViBiOh/httputils/v3/pkg/model"
@@ -21,7 +22,7 @@ func main() {
 	serverConfig := httputils.Flags(fs, "")
 	alcotestConfig := alcotest.Flags(fs, "")
 	loggerConfig := logger.Flags(fs, "logger")
-	prometheusConfig := prometheus.Flags(fs, "prometheus")
+	prometheusConfig := prometheus.Flags(fs, "prometheus", flags.NewOverride("Ignore", "/ready"))
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
 
