@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS funds.funds;
 DROP SEQUENCE IF EXISTS funds.alerts_id_seq;
 DROP TYPE IF EXISTS funds.alert_type;
 
-DROP SCHEMA IF EXISTS funds
+DROP SCHEMA IF EXISTS funds;
 
 -- schema
 CREATE SCHEMA funds;
