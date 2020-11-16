@@ -26,6 +26,7 @@ spec:
       NOTIFIER_MAILER_URL: http://mailer
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: funds-db
+      NOTIFIER_DB_PORT: '80'
       NOTIFIER_DB_NAME: funds
       NOTIFIER_DB_USER: funds
 
