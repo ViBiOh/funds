@@ -39,12 +39,13 @@ type Config struct {
 
 // App of package
 type app struct {
-	recipients []string
-	score      float64
-	cron       bool
-
 	modelApp  model.App
 	mailerApp client.App
+
+	recipients []string
+	score      float64
+
+	cron bool
 }
 
 // Flags adds flags for configuring package

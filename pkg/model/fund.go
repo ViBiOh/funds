@@ -4,6 +4,7 @@ import "context"
 
 // Fund informations
 type Fund struct {
+	Alert         *Alert  `json:"alert,omitempty"`
 	ID            string  `json:"id"`
 	Isin          string  `json:"isin"`
 	Label         string  `json:"label"`
@@ -15,7 +16,6 @@ type Fund struct {
 	OneYear       float64 `json:"1y"`
 	VolThreeYears float64 `json:"v3y"`
 	Score         float64 `json:"score"`
-	Alert         *Alert  `json:"alert,omitempty"`
 }
 
 // GetID returns Fund's ID

@@ -7,10 +7,10 @@ import (
 
 // Alert for a funds
 type Alert struct {
-	Isin      string    `json:"-"`
-	AlertType string    `json:"type"`
-	Score     float64   `json:"score"`
 	Date      time.Time `json:"date,omitempty"`
+	AlertType string    `json:"type"`
+	Isin      string    `json:"-"`
+	Score     float64   `json:"score"`
 }
 
 // GetIsinAlert retrieves last alert occured on by isin
