@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.40"
+      version: '0.0.42'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -23,7 +23,7 @@ spec:
       repository: vibioh/funds-ui # {"$imagepolicy": "default:funds-ui"}
 
     config:
-      VIWS_LOGGER_JSON: "true"
+      VIWS_LOGGER_JSON: 'true'
 
     ingress:
       enabled: true
