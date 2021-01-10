@@ -11,6 +11,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
+	mailerModel "github.com/ViBiOh/mailer/pkg/model"
 )
 
 const (
@@ -123,7 +124,7 @@ func (a app) do(_ time.Time) error {
 	logger.Info("Got %d funds below their initial alert", len(above))
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := client.NewEmail().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds").Send(ctx, a.mailerApp); err != nil {
+		if err := a.mailerApp.Send(ctx, *mailerModel.NewMailRequest().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds")); err != nil {
 			return err
 		}
 

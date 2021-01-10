@@ -30,8 +30,11 @@ func main() {
 	fundsDb, err := db.New(dbConfig)
 	logger.Fatal(err)
 
+	mailerApp, err := client.New(mailerConfig)
+	logger.Fatal(err)
+	defer mailerApp.Close()
+
 	fundApp := model.New(fundsConfig, fundsDb)
-	mailerApp := client.New(mailerConfig)
 
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
