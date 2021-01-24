@@ -80,9 +80,9 @@ func (a app) Start() {
 		return
 	}
 
-	cron.New().Days().At("08:00").In("Europe/Paris").Start(a.do, func(err error) {
+	cron.New().Days().At("08:00").In("Europe/Paris").OnError(func(err error) {
 		logger.Error("%s", err)
-	})
+	}).Start(a.do, nil)
 }
 
 func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []model.Fund, alertType string) error {
