@@ -32,7 +32,7 @@ type Config struct {
 // App of package
 type App interface {
 	Health() error
-	Start()
+	Start(<-chan struct{})
 	Handler() http.Handler
 	ListFunds([]Alert) []Fund
 	GetFundsAbove(float64, map[string]Alert) ([]Fund, error)
@@ -65,10 +65,10 @@ func New(config Config, db *sql.DB) App {
 	}
 }
 
-func (a *app) Start() {
-	cron.New().Each(time.Hour*8).Now().Start(a.refresh, func(err error) {
+func (a *app) Start(done <-chan struct{}) {
+	cron.New().Each(time.Hour*8).Now().OnError(func(err error) {
 		logger.Error("%s", err)
-	})
+	}).Start(a.refresh, done)
 }
 
 func (a *app) refresh(_ time.Time) error {

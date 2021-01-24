@@ -40,7 +40,8 @@ func main() {
 
 	fundApp := model.New(fundsConfig, fundsDb)
 
-	go fundApp.Start()
+	server := httputils.New(serverConfig)
+	go fundApp.Start(server.GetDone())
 
-	httputils.New(serverConfig).ListenAndServe(fundApp.Handler(), []httputils_model.Pinger{fundsDb.Ping}, prometheus.New(prometheusConfig).Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
+	server.ListenAndServe(fundApp.Handler(), []httputils_model.Pinger{fundsDb.Ping}, prometheus.New(prometheusConfig).Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
 }
