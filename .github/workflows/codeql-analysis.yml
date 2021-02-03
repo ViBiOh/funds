@@ -1,13 +1,15 @@
 ---
-name: 'CodeQL'
+name: "CodeQL"
 
 on:
   push:
-    branches: [master]
+    branches:
+      - main
   pull_request:
-    branches: [master]
+    branches:
+      - main
   schedule:
-    - cron: '0 0 * * 6'
+    - cron: "0 0 * * 6"
 
 jobs:
   analyze:
@@ -19,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         # Supported options are ['csharp', 'cpp', 'go', 'java', 'javascript', 'python']
-        language: ['go']
+        language: ["go"]
 
     steps:
       - name: Checkout repository
@@ -37,7 +39,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.15'
+          go-version: "^1.15"
 
       - name: Autobuild
         run: make build
