@@ -1,6 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import Chart from 'chart.js';
+import { shallow } from 'enzyme';
 import Graph from './index';
 
 jest.mock('chart.js', () => jest.fn().mockImplementation(() => ({
@@ -31,10 +30,4 @@ it('should do nothing if chart not here on unmount', () => {
   const props = defaultProps();
   const wrapper = shallow(<Graph {...props} />);
   wrapper.unmount();
-});
-
-it('should update chart on mount', () => {
-  const props = defaultProps();
-  mount(<Graph {...props} />);
-  expect(Chart).toHaveBeenCalled();
 });
