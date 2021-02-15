@@ -17,7 +17,7 @@ spec:
   values:
     nameOverride: funds
     image:
-      repository: vibioh/funds-ui:202102151051 # {"$imagepolicy": "default:funds-ui"}
+      repository: vibioh/funds-ui:202102151100 # {"$imagepolicy": "default:funds-ui"}
     config:
       VIWS_LOGGER_JSON: 'true'
     ingress:
