@@ -19,6 +19,8 @@ spec:
   values:
     nameOverride: funds-notifier
 
+    schedule: '0 8 * * *'
+
     image:
       repository: vibioh/funds-notifier
 
