@@ -12,9 +12,9 @@
 ```bash
 Usage of api:
   -address string
-        [http] Listen address {API_ADDRESS}
+        [server] Listen address {API_ADDRESS}
   -cert string
-        [http] Certificate file {API_CERT}
+        [server] Certificate file {API_CERT}
   -corsCredentials
         [cors] Access-Control-Allow-Credentials {API_CORS_CREDENTIALS}
   -corsExpose string
@@ -46,11 +46,11 @@ Usage of api:
   -hsts
         [owasp] Indicate Strict Transport Security {API_HSTS} (default true)
   -idleTimeout string
-        [http] Idle Timeout {API_IDLE_TIMEOUT} (default "2m")
+        [server] Idle Timeout {API_IDLE_TIMEOUT} (default "2m")
   -infos string
         [funds] Informations URL {API_INFOS}
   -key string
-        [http] Key file {API_KEY}
+        [server] Key file {API_KEY}
   -loggerJson
         [logger] Log format as JSON {API_LOGGER_JSON}
   -loggerLevel string
@@ -64,21 +64,35 @@ Usage of api:
   -okStatus int
         [http] Healthy HTTP Status code {API_OK_STATUS} (default 204)
   -port uint
-        [http] Listen port {API_PORT} (default 1080)
+        [server] Listen port {API_PORT} (default 1080)
+  -prometheusAddress string
+        [prometheus] Listen address {API_PROMETHEUS_ADDRESS}
+  -prometheusCert string
+        [prometheus] Certificate file {API_PROMETHEUS_CERT}
+  -prometheusIdleTimeout string
+        [prometheus] Idle Timeout {API_PROMETHEUS_IDLE_TIMEOUT} (default "10s")
   -prometheusIgnore string
         [prometheus] Ignored path prefixes for metrics, comma separated {API_PROMETHEUS_IGNORE} (default "/ready")
-  -prometheusPath string
-        [prometheus] Path for exposing metrics {API_PROMETHEUS_PATH} (default "/metrics")
+  -prometheusKey string
+        [prometheus] Key file {API_PROMETHEUS_KEY}
+  -prometheusPort uint
+        [prometheus] Listen port {API_PROMETHEUS_PORT} (default 9090)
+  -prometheusReadTimeout string
+        [prometheus] Read Timeout {API_PROMETHEUS_READ_TIMEOUT} (default "5s")
+  -prometheusShutdownTimeout string
+        [prometheus] Shutdown Timeout {API_PROMETHEUS_SHUTDOWN_TIMEOUT} (default "5s")
+  -prometheusWriteTimeout string
+        [prometheus] Write Timeout {API_PROMETHEUS_WRITE_TIMEOUT} (default "10s")
   -readTimeout string
-        [http] Read Timeout {API_READ_TIMEOUT} (default "5s")
+        [server] Read Timeout {API_READ_TIMEOUT} (default "5s")
   -shutdownTimeout string
-        [http] Shutdown Timeout {API_SHUTDOWN_TIMEOUT} (default "10s")
+        [server] Shutdown Timeout {API_SHUTDOWN_TIMEOUT} (default "10s")
   -url string
         [alcotest] URL to check {API_URL}
   -userAgent string
         [alcotest] User-Agent for check {API_USER_AGENT} (default "Alcotest")
   -writeTimeout string
-        [http] Write Timeout {API_WRITE_TIMEOUT} (default "10s")
+        [server] Write Timeout {API_WRITE_TIMEOUT} (default "10s")
 ```
 
 ### Notifier
@@ -102,12 +116,12 @@ Usage of notifier:
         [db] User {NOTIFIER_DB_USER}
   -infos string
         [funds] Informations URL {NOTIFIER_INFOS}
-  -mailerPass string
-        [mailer] Pass {NOTIFIER_MAILER_PASS}
+  -mailerName string
+        [mailer] HTTP Username or AMQP Exchange name {NOTIFIER_MAILER_NAME} (default "mailer")
+  -mailerPassword string
+        [mailer] HTTP Pass {NOTIFIER_MAILER_PASSWORD}
   -mailerURL string
-        [mailer] URL (an instance of github.com/ViBiOh/mailer) {NOTIFIER_MAILER_URL}
-  -mailerUser string
-        [mailer] User {NOTIFIER_MAILER_USER}
+        [mailer] URL (https?:// or amqps?://) {NOTIFIER_MAILER_URL}
   -recipients string
         [notifier] Email of notifications recipients {NOTIFIER_RECIPIENTS}
   -score float

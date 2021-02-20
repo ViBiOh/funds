@@ -6,8 +6,8 @@ import (
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/funds/pkg/notifier"
-	"github.com/ViBiOh/httputils/v3/pkg/db"
-	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/db"
+	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
 )
 

@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	"github.com/ViBiOh/httputils/v3/pkg/cron"
-	"github.com/ViBiOh/httputils/v3/pkg/flags"
-	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/cron"
+	"github.com/ViBiOh/httputils/v4/pkg/flags"
+	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
 	mailerModel "github.com/ViBiOh/mailer/pkg/model"
 )

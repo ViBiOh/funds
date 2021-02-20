@@ -11,12 +11,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/v3/pkg/cron"
-	"github.com/ViBiOh/httputils/v3/pkg/db"
-	"github.com/ViBiOh/httputils/v3/pkg/flags"
-	"github.com/ViBiOh/httputils/v3/pkg/httperror"
-	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/cron"
+	"github.com/ViBiOh/httputils/v4/pkg/db"
+	"github.com/ViBiOh/httputils/v4/pkg/flags"
+	"github.com/ViBiOh/httputils/v4/pkg/httperror"
+	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
+	"github.com/ViBiOh/httputils/v4/pkg/logger"
 )
 
 const (
