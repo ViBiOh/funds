@@ -24,7 +24,7 @@ spec:
   values:
     nameOverride: funds-api
     image:
-      repository: vibioh/funds-api:202102211154 # {"$imagepolicy": "default:funds-api"}
+      repository: vibioh/funds-api:202102212027 # {"$imagepolicy": "default:funds-api"}
     config:
       API_LOGGER_JSON: 'true'
       API_DB_HOST: funds-db
