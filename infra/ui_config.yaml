@@ -24,10 +24,10 @@ spec:
   values:
     nameOverride: funds
     image:
-      repository: vibioh/funds-ui:202102212027 # {"$imagepolicy": "default:funds-ui"}
+      repository: vibioh/funds-ui:202102212027 # {"$imagepolicy": "default:flux-funds-web"}
     config:
       VIWS_LOGGER_JSON: 'true'
     ingress:
       enabled: true
       hosts:
-      - funds.vibioh.fr
+        - funds.vibioh.fr
