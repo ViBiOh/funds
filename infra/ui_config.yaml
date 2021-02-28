@@ -24,7 +24,7 @@ spec:
   values:
     nameOverride: funds
     image:
-      repository: vibioh/funds-ui:202102281332 # {"$imagepolicy": "default:flux-funds-web"}
+      repository: vibioh/funds-ui:202102281337 # {"$imagepolicy": "default:flux-funds-web"}
     config:
       VIWS_LOGGER_JSON: 'true'
     ingress:
