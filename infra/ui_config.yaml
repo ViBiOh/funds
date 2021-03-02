@@ -31,4 +31,4 @@ spec:
     ingress:
       enabled: true
       hosts:
-        - funds.vibioh.fr
+      - funds.vibioh.fr
