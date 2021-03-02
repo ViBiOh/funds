@@ -16,6 +16,7 @@ spec:
       interval: 120m
   install:
     skipCRDs: true
+  maxHistory: 3
   upgrade:
     remediation:
       retries: 3
@@ -30,4 +31,4 @@ spec:
     ingress:
       enabled: true
       hosts:
-      - funds.vibioh.fr
+        - funds.vibioh.fr

@@ -16,6 +16,7 @@ spec:
       interval: 120m
   install:
     skipCRDs: true
+  maxHistory: 3
   upgrade:
     remediation:
       retries: 3
@@ -38,7 +39,7 @@ spec:
     ingress:
       enabled: true
       hosts:
-      - funds-api.vibioh.fr
+        - funds-api.vibioh.fr
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -58,6 +59,7 @@ spec:
       interval: 120m
   install:
     skipCRDs: true
+  maxHistory: 3
   upgrade:
     remediation:
       retries: 3
