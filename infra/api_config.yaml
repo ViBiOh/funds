@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: '0.0.47'
+      version: '0.0.48'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -25,7 +25,8 @@ spec:
   values:
     nameOverride: funds-api
     image:
-      repository: vibioh/funds-api:202103020810 # {"$imagepolicy": "default:flux-funds-api"}
+      name: vibioh/funds-api
+      tag: 202103020810 # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       API_LOGGER_JSON: 'true'
       API_DB_HOST: funds-db
