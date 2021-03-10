@@ -31,7 +31,8 @@ spec:
     schedule: '0 8 * * *'
 
     image:
-      repository: vibioh/funds-notifier
+      name: vibioh/funds-notifier
+      tag: 'latest' # {"$imagepolicy": "default:flux-funds-cron:tag"}
 
     config:
       NOTIFIER_SCORE: '20'
@@ -47,4 +48,3 @@ spec:
 
     containers:
       - name: job
-        args: []
