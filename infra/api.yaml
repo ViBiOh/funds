@@ -40,36 +40,6 @@ spec:
       enabled: true
       hosts:
       - funds-api.vibioh.fr
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: funds-db
-  namespace: default
-spec:
-  interval: 120m
-  chart:
-    spec:
-      chart: postgres
-      version: "0.0.19"
-      sourceRef:
-        kind: HelmRepository
-        name: vibioh
-        namespace: default
-      interval: 120m
-  install:
-    skipCRDs: true
-  maxHistory: 3
-  upgrade:
-    remediation:
-      retries: 3
-  rollback:
-    cleanupOnFail: true
-  values:
-    nameOverride: funds-db
-    config:
-      POSTGRES_USER: funds
-      POSTGRES_DB: funds
-    secrets:
-      POSTGRES_PASSWORD: AgAxk/7hXQjutcydu6zcin5GIs5884wb9TfZeZmkvR6ZtZcjiWGkdb84c0AqdWY6TYGPH/JThzf8w9zJhTUWNE2LYfkTluaHwXHwBz9q+qq/BRM2kI87lNLJJToegNWZM6tnNO+fRxe+G7PI71Viv7I4aIPvPaS4kD6MN4/xHSjwXGxeRHFoayqFCOWUYcpqsxGQuMvW/NGtddjOBcd+zn2ZUet+NXhmHGfNLX/m/YYEfkWZGqSQ7gtMz5O9Z/BN/frJ8ry72dIlTQCd06/BamAW8Sgv5oQ41US4NRaDEVpMp8BqZMCCJuerbqp4zrvuqV+cqMgv/48KLYFX9tP8fNOMsJCetzzJ3KgbXSYAuBhWMnjaBm+J9fQRHq7ZIyo0N37ncDadAjgmGLAJUZKCfgluHI3A8a2c5OaElJPMYJunu50S+CWMQBL6ELqTOImqKIl0pP7GRt3N4wrGkFncP7Uw6gj+tg/NJ9fYVkqNp1/fCdQmk2bwWi3yV30Slkgfyudmb7bD36ow4wRmNjyemKO7KgsNln7pGSl8s54IT2BjffS62Qoy6KCPTNLP19FjkXtECtlbeOoG5XE0TfUj+xZ+NsMfLLfNmqCJ5GTZV49UhGm7Ba9ZH2H0FxROxT1kFMXUtjXcJg+hVVB1tHFdMkhr8uO8zTjU3LqLW19tLOvpbkS0bYvRzVXb8omoDiGtaMVb7KW+bc/bw6udmMMgSRkltkmDU+B8dI9k+OjepJMPkzKczUgQAT+Xc5eGFxH1E37RTGfHdiWeoXMLOFc=
-      FIBR_BACKUP_PASSWORD: AgDJL16rh62Y0BOXBc1oq5+58lLGSQEiH4NfmvpfuO1uXmV0OUpHlI5oP3ikmBse8SI39c3ZzoRIjMKRJVtfz5ZwHbK30fxSVHOFiN8+knvAO8wyUmBXh87wQ/U15+2+/efYVb5Lw28vWITZZzewPFCUEUDXiuJ0fWtpCMxNReFT0TB54sv7p1+HPzzv/XHu2qxGpi+ar169XsK8bK1qdrbm9zjBUttVxnzFOxGV4R/ebJCOGSpC8DuRsaUxfv26b8Rf5yhCtEGwayheqyYKaqXTK4hQgoNrCQh0mWjoZBkAlbi6HKUB0N5MGrRJiieJv5/pnXksKAihYIZsthe17tHJKEIy07YorgyALUQ1LRkDVfTTtHLM4r43sPQIpmEDCT/n/nd5P+h7swVuAa8wb4a4o4qZITDtIHl9IpOFs9tvw5kdhuWWdpywIgH23vae6SN31b0YednGvFVVzjU2qL4G929FUZiRPr3lXUwZGdHLdXT9oFc4usDNsARgmrKWqDZSSp8dR7bdtYv1t+wlMoUnnomCiod+2kh3BKVCTTC+WetjVKdMyB8uouavYuCxj2iXIEL1ik1hVgQOIiCRabYFFD0z1rlJEhZl/+orCg8kG1HF5jK3W10gYpsLKPfEYalHt7CHU4R0LUiCSn7z+XqTxMJAu64ZmdcGR2Cc1sI3eXkMIqBa52PnpuBM2MzlT9DCPktfiS4a+7nO8/DOFdV4l0Ggb4atioAvVTb/jmkfVleJk+4g2hEv4+G54oEVSFhawjcnFvV5ADkWFCU=
+    canary:
+      enabled: true
+      url: https://funds-api.vibioh.fr/list

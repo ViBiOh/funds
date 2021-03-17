@@ -32,3 +32,6 @@ spec:
       enabled: true
       hosts:
       - funds.vibioh.fr
+    canary:
+      enabled: true
+      url: https://funds.vibioh.fr
