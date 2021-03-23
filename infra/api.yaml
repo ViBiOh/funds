@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.58"
+      version: '0.0.58'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -25,21 +25,31 @@ spec:
     nameOverride: funds-api
     image:
       name: vibioh/funds-api
-      tag: "202103211534" # {"$imagepolicy": "default:flux-funds-api:tag"}
+      tag: '202103211534' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
-      API_LOGGER_JSON: "true"
+      API_LOGGER_JSON: 'true'
       API_DB_HOST: funds-db
-      API_DB_PORT: "80"
+      API_DB_PORT: '80'
       API_DB_NAME: funds
       API_DB_USER: funds
     readinessProbePath: /ready
     secrets:
       API_DB_PASS: AgAIjcPIpxJWC3QJRqivmB+Hy4cRgmF7yXJkAc8PabU0ffaVf9BxjfZ4Cf4BpRVRUZNY2+itL1O008vTEmWCmPt4fLq20XPo+r+Iz03Xt2Qz1ZZUvk69b+DsnJ9DIbCXrCJN+fK6gzcDo6zlRD+5D4fXGO8ktg9HF1Kg7/NWb2n1B3YFNqqRgKUx1FAg515vyvMdGkPJb6gyB3kzkczHhbiaPa9FisixK/BZbaGYkzcI1Jt2t1eMds8VH/kKezD2hnb8qrtjfhHHpbMXYStNxuWHETzpzS8H26QYQhG7LmMjHy/HMQo1+h4+VbLNaBsbJK4woZ1vEqo/cYbDovxQwVjnnQMEs6wuAdPYRU5DXt1h8tN9FfVT+ePEJuAzOIg+WX53jk7ofnsHT0oo0Q+kOk821X+en5Tleej6oETGmokXO2rxfqG0eLXDQdB78vsT93Yq2cHVLMw1nAiYb1QfURREcTLZll+JzK1gi8OmdPz8AKdjCcnJf1jfMsjRRLmgOmojMly1xQ2yJg6x2WeG8giLU3e84fdHVoo0e09FxULv8RzqQqtiQrE03q2DC2CKR5rptwIz/d5w/CPAuxmEixPrr9z7EMnLDnePGQfRJDapR8vnp4jguYsfyCJa+EQHontBhRf97RnoSQ6MxwrZQtV4nmjB9W2f6vrZQDei3bmBHgZdzkO2dEWM37qk35m30IL2CKSbK7eMDhPttZ+t3e1D8BJ/57pgZgaS9KjsrfmAoBAM7ldCVoN8hRSVHxz8n//wuLDSWmMKof0Ixok=
       API_INFOS: AgBhyCHxSwLIJY6fy8jsbnFHq1ecmUkgKPQX672jxyeQeJpL2aLQzBKDrhICM3I2gaGRzLGRq6PjPt+qLJFHw2qlcQLw8FzdOX9gqOQiv844r3e6GUJdm8Kvz+AQbS1XXSsmzwF8EPJJz7zH1EqznGfHhJUIhM4oNsTlIOK11TYVP13jnsIradlkOvseAHniTFrNMcxO8vyk2QP3tCUFEuASr1N1IF4FLvmv+0Z4KSZcPE18kkDTHL8yIOCZK0qyAAJzoiAx/NOifMKrpia6xpFJXGkwraU+my6W0nsTjCLHj+i90lpf+JIog4q9Ey6jeByA+sduzOgIwABVehP5SbjxJ3+B6IyTuU/dljTvsE07C/gL8WiZGeIjj+Yqb0p7bDYdtk9e2T/72MI0708SX/QGS4uq+4BWgE0e2zZdlajr1yQosfuV5dCapKk2v76BF7BGXipfzU5NX2TAd2pzVp/CDz5hQnlKrUw8Xcjd2r6AWSiu64ku9ODdM4N/pqdkT7L7f0TZx/cLuZ56YB0eiZmdk+YFGqHTNm28oyp73l0JBFcT9/wN85/CICahJn/Q321FFNk/B4Md5aiayDbwvtFU3JPOxcaT1sbffkGGinKLvAqWblpAI8Aqf///NAVrcVa9JVh5aPpYMSuE2klOkZxm+vPijIqMZqJhxlmjcJAjQTSO8rMgz0ybYlGTG0rFPZD7qnb0i1O4LIolS9+wgHIX596a7FZSFEfqesZ9hj22IwNNYB6pVV9Rl0xzvaYQ16Us8NJuh6f2InWzybQvDw==
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              topologyKey: kubernetes.io/hostname
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - funds-db
     ingress:
       enabled: true
       hosts:
-      - funds-api.vibioh.fr
+        - funds-api.vibioh.fr
     canary:
       enabled: true
       url: https://funds-api.vibioh.fr/list
