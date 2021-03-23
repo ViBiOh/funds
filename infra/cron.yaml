@@ -27,7 +27,7 @@ spec:
     schedule: '0 8 * * *'
     image:
       name: vibioh/funds-notifier
-      tag: '202103211534' # {"$imagepolicy": "default:flux-funds-cron:tag"}
+      tag: '202103231342' # {"$imagepolicy": "default:flux-funds-cron:tag"}
     config:
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: funds-db
