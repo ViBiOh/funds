@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Chart from 'chart.js';
+import { Chart } from 'chart.js';
 import setRef from 'helpers/setRef';
 
 export default class Graph extends Component {
