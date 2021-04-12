@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.64"
+      version: '0.0.64'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -25,13 +25,13 @@ spec:
     nameOverride: funds
     image:
       name: vibioh/funds-ui
-      tag: "202104111754" # {"$imagepolicy": "default:flux-funds-web:tag"}
+      tag: '202104111754' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
-      VIWS_LOGGER_JSON: "true"
+      VIWS_LOGGER_JSON: 'true'
     ingress:
       enabled: true
       hosts:
-      - funds.vibioh.fr
+        - funds.vibioh.fr
     canary:
       enabled: true
       url: https://funds.vibioh.fr
