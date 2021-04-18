@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"strings"
-	"time"
 
 	"github.com/ViBiOh/funds/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
@@ -74,7 +73,7 @@ func New(config Config, modelApp model.App, mailerApp client.App) App {
 // Start notifier
 func (a app) Start() {
 	if !a.cron {
-		if err := a.do(time.Now()); err != nil {
+		if err := a.do(context.Background()); err != nil {
 			logger.Fatal(err)
 		}
 		return
@@ -103,9 +102,7 @@ func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, 
 	return a.saveTypedAlerts(ctx, score, below, "below")
 }
 
-func (a app) do(_ time.Time) error {
-	ctx := context.Background()
-
+func (a app) do(ctx context.Context) error {
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
 		return err
