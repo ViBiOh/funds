@@ -71,12 +71,12 @@ func (a *app) Start(done <-chan struct{}) {
 	}).Start(a.refresh, done)
 }
 
-func (a *app) refresh(_ time.Time) error {
+func (a *app) refresh(ctx context.Context) error {
 	if a.fundsURL == "" {
 		return nil
 	}
 
-	a.refreshData(context.Background())
+	a.refreshData(ctx)
 
 	if a.db != nil {
 		if err := a.saveData(); err != nil {
