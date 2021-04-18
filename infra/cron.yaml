@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cron
-      version: "0.0.17"
+      version: '0.0.17'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -26,8 +26,8 @@ spec:
     nameOverride: funds-notifier
     schedule: '0 8 * * *'
     image:
-      name: vibioh/funds-notifier
-      tag: '202104180910' # {"$imagepolicy": "default:flux-funds-cron:tag"}
+      name: vibioh/funds-api
+      tag: '202104180910' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: funds-db
@@ -39,4 +39,6 @@ spec:
       NOTIFIER_RECIPIENTS: AgAGqCu9m2tVU1MmDNY3afoR/gkyoKvtFsMXLaTrzROsT1OL75K82zh+EJ7va2h159lWHfhRErqpOMyFEq30TYfTWYDdk7/tCKeBraJOUlnXRC4aNqJzy6OBZtzcPLHMfvk7A99NqRJueIkQHLLSp9IqbRl8V/75eKTafEQDFSp5q9R9YQXub/YJGjJWBCD7pkZhzpbUtPpddovVH1mL2BtBXFPR96QIPSq+ZPnyBk5rKpsRZr4LTwHT5koo06fJ3IPK9x6SE/G19IaBhhJYTjVZ8j7gDUrCokg75m1ERGliUiuWSaIgcqjMNyg/h+OPjD6okT45z2xOsFgbAnKIT6oKeO5svHiyrBxMw+zqcpD3emhNyI21T05FlFTgMQ8IM/UtYS4i1NGP6Gf+L+rAiIxz1Nhhe08fPnT8dpQ5/GbODn8F+Cuw7of7/iCS/dnDk28sK8PHBYOsyZxLMM5XSXsJRHGYgblQz2gUmr475YY6E6OuMwj/tHTJZmaUpy9ZbInCHvNSg3TQLcY2a2IfF4andPVk9T3JDi1dmQ1lF8lpWhfEdLwoRP1IWAF9vui3PyniA0WKcMzJ/G1exuUCN702qyc8NCzEKFrtgpIqDaT0ApUVA9+U1Cc5RvY3pUI6SyWLyTNBrru6dL9+VPMDcAStONExAZPfvDsHR7qMPdJcy3+G2EdbEV2dPEo9oEXZbVuPsAfi/4PMctEbSxl6D2XTvnWb14S4rWCASQL8QRTQAg70vJo7dKkZ
       NOTIFIER_MAILER_URL: AgAH1wSlEcgctwejKHHfB6PWSZo8BjvNS+t1y28zyqrxLMkPBGO72mHUZwaK0Zy//x1i4WpCv0nVcaUs4XGf6yYbvAvacwHFVZR4wG/FCcuwQ1/kZnld5phk0LVgQJ9Y5GuvQE2DPCzkn4vO8ahL/3yCWC1Jrj0x4Unk7mZS4FGU5njXKd1YA/JrFo0aYIJl4uhKKb/FLUGbRw7CYou3klAY2NaA6depsLUBJPRHAOOxDHPy2EAsxl//j9scZi4jnppHolScqLLlP/V/02Kt4ZjZYTc1fjiWJwiMJCMDdkxARlaCQgUZYHkJQXGiv/cXyC0HMcaCg6V6nZvgLio4vO3hhTSR2QIJcZcDu8QaQ1iQE3tomptJ972HBb8cS1K0fZr1tpIbJr0Nhx9SPD+wWxdgyrUZ+cjX8npN/M+Tiwr6TeZvsWR1a2weHD5UD36FChA9KEXnmzI2N+84YylWIRQC6VkF+skn5dJOpwoEugx3fIwWnaQ8WQ0ZoVG39HeClQPeBl7mPRJohvdl/q6wWaLNH722THKnKJ3WXlZCJ88+hOs8scOQlK20wAuMUGPlH6MvDf2NeTvpA0H6uDhTDmq4U/xMVdSgmQD2vJLn2ULWJY4imfgejLaSDDc7mpk0ZwarTKAnASBV3iP6ouRTFjPIfG+Or0Qu49g4p5Rk+C2nk2B240WyzWnRp9fJlX2HDsnp4gWwdcLBcMZb2MQxmb/SyDkrwuQiNGYbX1xfPpehG8jFOgKD87ZYiHzhXlrF6kqTmOLRfz/gtZJXKpWp10fytJN5yQpukysfcwCuhlmphg3L+CJF
     containers:
-    - name: job
+      - name: job
+        command:
+          - /notifier

@@ -29,6 +29,8 @@ Usage of api:
         [owasp] Content-Security-Policy {API_CSP} (default "default-src 'self'; base-uri 'self'")
   -dbHost string
         [db] Host {API_DB_HOST}
+  -dbMaxConn uint
+        [db] Max Open Connections {API_DB_MAX_CONN} (default 5)
   -dbName string
         [db] Name {API_DB_NAME}
   -dbPass string
@@ -99,11 +101,10 @@ Usage of api:
 
 ```bash
 Usage of notifier:
-  -c    Healthcheck (check and exit)
-  -cron
-        [notifier] Start as a cron {NOTIFIER_CRON}
   -dbHost string
         [db] Host {NOTIFIER_DB_HOST}
+  -dbMaxConn uint
+        [db] Max Open Connections {NOTIFIER_DB_MAX_CONN} (default 5)
   -dbName string
         [db] Name {NOTIFIER_DB_NAME}
   -dbPass string

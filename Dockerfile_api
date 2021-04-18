@@ -17,4 +17,5 @@ ARG TARGETOS
 ARG TARGETARCH
 
 COPY release/api_${TARGETOS}_${TARGETARCH} /api
+COPY release/notifier_${TARGETOS}_${TARGETARCH} /notifier
 

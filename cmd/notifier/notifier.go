@@ -14,18 +14,12 @@ import (
 func main() {
 	fs := flag.NewFlagSet("notifier", flag.ExitOnError)
 
-	check := fs.Bool("c", false, "Healthcheck (check and exit)")
-
 	mailerConfig := client.Flags(fs, "mailer")
 	fundsConfig := model.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
 	notifierConfig := notifier.Flags(fs, "")
 
 	logger.Fatal(fs.Parse(os.Args[1:]))
-
-	if *check {
-		return
-	}
 
 	fundsDb, err := db.New(dbConfig)
 	logger.Fatal(err)
@@ -44,5 +38,5 @@ func main() {
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
 
-	notifierApp.Start()
+	logger.Fatal(notifierApp.Start())
 }

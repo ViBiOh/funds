@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/ViBiOh/funds/pkg/model"
-	"github.com/ViBiOh/httputils/v4/pkg/cron"
 	"github.com/ViBiOh/httputils/v4/pkg/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/mailer/pkg/client"
@@ -27,14 +26,13 @@ type scoreTemplateContent struct {
 
 // App of package
 type App interface {
-	Start()
+	Start() error
 }
 
 // Config of package
 type Config struct {
 	recipients *string
 	score      *float64
-	cron       *bool
 }
 
 // App of package
@@ -44,8 +42,6 @@ type app struct {
 
 	recipients []string
 	score      float64
-
-	cron bool
 }
 
 // Flags adds flags for configuring package
@@ -53,7 +49,6 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
 		recipients: flags.New(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
 		score:      flags.New(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
-		cron:       flags.New(prefix, "notifier").Name("Cron").Default(false).Label("Start as a cron").ToBool(fs),
 	}
 }
 
@@ -64,24 +59,9 @@ func New(config Config, modelApp model.App, mailerApp client.App) App {
 	return &app{
 		recipients: strings.Split(*config.recipients, ","),
 		score:      *config.score,
-		cron:       *config.cron,
 		modelApp:   modelApp,
 		mailerApp:  mailerApp,
 	}
-}
-
-// Start notifier
-func (a app) Start() {
-	if !a.cron {
-		if err := a.do(context.Background()); err != nil {
-			logger.Fatal(err)
-		}
-		return
-	}
-
-	cron.New().Days().At("08:00").In("Europe/Paris").OnError(func(err error) {
-		logger.Error("%s", err)
-	}).Start(a.do, nil)
 }
 
 func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []model.Fund, alertType string) error {
@@ -102,7 +82,10 @@ func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, 
 	return a.saveTypedAlerts(ctx, score, below, "below")
 }
 
-func (a app) do(ctx context.Context) error {
+// Start notifier
+func (a app) Start() error {
+	ctx := context.Background()
+
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
 	if err != nil {
 		return err
