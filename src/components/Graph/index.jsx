@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Chart } from 'chart.js';
+import {
+  Chart,
+  BarElement,
+  BarController,
+  LinearScale,
+  Legend,
+  Tooltip,
+} from 'chart.js';
 import setRef from 'helpers/setRef';
 
 export default class Graph extends Component {
@@ -43,22 +50,17 @@ export default class Graph extends Component {
           display: false,
         },
         scales: {
-          xAxes: [
-            {
-              display: false,
-            },
-          ],
-          yAxes: [
-            {
-              display: false,
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
+          x: {
+            display: false,
+          },
+          y: {
+            display: false,
+            beginAtZero: true,
+          },
         },
       };
 
+      Chart.register(BarElement, BarController, LinearScale, Legend, Tooltip);
       this.chart = new Chart(this.graph, {
         type,
         data,
