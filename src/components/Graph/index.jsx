@@ -5,6 +5,7 @@ import {
   BarElement,
   BarController,
   LinearScale,
+  CategoryScale,
   Legend,
   Tooltip,
 } from 'chart.js';
@@ -60,7 +61,14 @@ export default class Graph extends Component {
         },
       };
 
-      Chart.register(BarElement, BarController, LinearScale, Legend, Tooltip);
+      Chart.register(
+        BarElement,
+        BarController,
+        LinearScale,
+        CategoryScale,
+        Legend,
+        Tooltip,
+      );
       this.chart = new Chart(this.graph, {
         type,
         data,
