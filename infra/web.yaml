@@ -28,10 +28,11 @@ spec:
       tag: '202106040956' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
       VIWS_LOGGER_JSON: 'true'
+      VIWS_PROMETHEUS_GZIP: 'false'
     ingress:
       enabled: true
       hosts:
-      - funds.vibioh.fr
+        - funds.vibioh.fr
     canary:
       enabled: true
       url: https://funds.vibioh.fr
