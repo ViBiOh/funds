@@ -10,6 +10,6 @@ export default class FundsService {
    */
   static async getFunds() {
     const list = await ConfigService.getClient().get('/list');
-    return list.results;
+    return list.items;
   }
 }
