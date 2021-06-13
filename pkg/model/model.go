@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"flag"
 	"fmt"
@@ -43,7 +42,7 @@ type App interface {
 }
 
 type app struct {
-	db       *sql.DB
+	db       db.App
 	fundsURL string
 	fundsMap sync.Map
 }
@@ -56,7 +55,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, db *sql.DB) App {
+func New(config Config, db db.App) App {
 	return &app{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
@@ -115,7 +114,7 @@ func (a *app) saveData() (err error) {
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
-		err := db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
+		err := a.db.DoAtomic(ctx, func(ctx context.Context) error {
 			return a.saveFund(ctx, &fund)
 		})
 

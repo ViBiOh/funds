@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-
-	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
 const fundByIsinQuery = `
@@ -64,7 +62,7 @@ func (a *app) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	scanner := func(row *sql.Row) error {
 		return row.Scan(&item.Label, &item.Score)
 	}
-	err := db.Get(ctx, a.db, scanner, fundByIsinQuery, isin)
+	err := a.db.Get(ctx, scanner, fundByIsinQuery, isin)
 
 	return item, err
 }
@@ -82,7 +80,7 @@ func (a *app) listFundsWithScoreAbove(ctx context.Context, minScore float64) (fu
 		return nil
 	}
 
-	return list, db.List(ctx, a.db, scanner, fundsWithScoreAboveQuery, minScore)
+	return list, a.db.List(ctx, scanner, fundsWithScoreAboveQuery, minScore)
 }
 
 func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {
@@ -92,10 +90,10 @@ func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {
 
 	if _, err = a.readFundByIsin(ctx, fund.Isin); err != nil {
 		if err == sql.ErrNoRows {
-			err = db.Exec(ctx, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
+			err = a.db.Exec(ctx, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
 	} else {
-		err = db.Exec(ctx, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
+		err = a.db.Exec(ctx, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
 	}
 
 	return
