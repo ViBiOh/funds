@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-
-	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
 const listLastAlertByIsinQuery = `
@@ -81,7 +79,7 @@ func (a *app) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 		return nil
 	}
 
-	return list, db.List(ctx, a.db, scanner, listLastAlertByIsinQuery)
+	return list, a.db.List(ctx, scanner, listLastAlertByIsinQuery)
 }
 
 func (a *app) listAlertsOpened(ctx context.Context) ([]Alert, error) {
@@ -98,7 +96,7 @@ func (a *app) listAlertsOpened(ctx context.Context) ([]Alert, error) {
 		return nil
 	}
 
-	return list, db.List(ctx, a.db, scanner, listAlertsOpenedQuery)
+	return list, a.db.List(ctx, scanner, listAlertsOpenedQuery)
 }
 
 // SaveAlert saves Alert
@@ -107,7 +105,7 @@ func (a *app) SaveAlert(ctx context.Context, alert *Alert) (err error) {
 		return errors.New("cannot save nil")
 	}
 
-	return db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
-		return db.Exec(ctx, saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
+	return a.db.DoAtomic(ctx, func(ctx context.Context) error {
+		return a.db.Exec(ctx, saveAlertQuery, alert.Isin, alert.Score, alert.AlertType)
 	})
 }
