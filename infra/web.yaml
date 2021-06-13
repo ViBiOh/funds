@@ -25,7 +25,7 @@ spec:
     nameOverride: funds
     image:
       name: vibioh/funds-ui
-      tag: '202106130839' # {"$imagepolicy": "default:flux-funds-web:tag"}
+      tag: '202106131413' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
       VIWS_LOGGER_JSON: 'true'
       VIWS_PROMETHEUS_GZIP: 'false'
@@ -33,7 +33,7 @@ spec:
     ingress:
       enabled: true
       hosts:
-        - funds.vibioh.fr
+      - funds.vibioh.fr
     canary:
       enabled: true
       url: https://funds.vibioh.fr
