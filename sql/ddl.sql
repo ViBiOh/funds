@@ -33,7 +33,7 @@ CREATE TABLE funds.alerts (
   id INTEGER DEFAULT nextval('funds.alerts_id_seq') NOT NULL,
   isin TEXT NOT NULL REFERENCES funds.funds(isin),
   score NUMERIC(5,2) NOT NULL,
-  type alert_type NOT NULL,
+  type funds.alert_type NOT NULL,
   creation_date TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
