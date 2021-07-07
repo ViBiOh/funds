@@ -30,6 +30,7 @@ spec:
       VIWS_LOGGER_JSON: 'true'
       VIWS_PROMETHEUS_GZIP: 'false'
       VIWS_GZIP: 'false'
+      VIWS_PUSH: /static/js/main.chunk.js,/static/css/main.chunk.css
     ingress:
       enabled: true
       hosts:
