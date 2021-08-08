@@ -77,7 +77,7 @@ func (a *app) refresh(ctx context.Context) error {
 
 	a.refreshData(ctx)
 
-	if a.db != nil {
+	if a.db.Enabled() {
 		if err := a.saveData(); err != nil {
 			return err
 		}
