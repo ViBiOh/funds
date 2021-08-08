@@ -19,29 +19,24 @@ const (
 )
 
 type scoreTemplateContent struct {
-	Score      float64      `json:"score"`
 	AboveFunds []model.Fund `json:"aboveFunds"`
 	BelowFunds []model.Fund `json:"belowFunds"`
+	Score      float64      `json:"score"`
 }
 
 // App of package
-type App interface {
-	Start() error
+type App struct {
+	mailerApp client.App
+	modelApp  *model.App
+
+	recipients []string
+	score      float64
 }
 
 // Config of package
 type Config struct {
 	recipients *string
 	score      *float64
-}
-
-// App of package
-type app struct {
-	modelApp  *model.App
-	mailerApp client.App
-
-	recipients []string
-	score      float64
 }
 
 // Flags adds flags for configuring package
@@ -56,7 +51,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 func New(config Config, modelApp *model.App, mailerApp client.App) App {
 	logger.Info("Notification to %s for score above %.2f", *config.recipients, *config.score)
 
-	return &app{
+	return App{
 		recipients: strings.Split(*config.recipients, ","),
 		score:      *config.score,
 		modelApp:   modelApp,
@@ -64,7 +59,7 @@ func New(config Config, modelApp *model.App, mailerApp client.App) App {
 	}
 }
 
-func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []model.Fund, alertType string) error {
+func (a App) saveTypedAlerts(ctx context.Context, score float64, funds []model.Fund, alertType string) error {
 	for _, fund := range funds {
 		if err := a.modelApp.SaveAlert(ctx, &model.Alert{Isin: fund.Isin, Score: score, AlertType: alertType}); err != nil {
 			return err
@@ -74,7 +69,7 @@ func (a app) saveTypedAlerts(ctx context.Context, score float64, funds []model.F
 	return nil
 }
 
-func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, below []model.Fund) error {
+func (a App) saveAlerts(ctx context.Context, score float64, above []model.Fund, below []model.Fund) error {
 	if err := a.saveTypedAlerts(ctx, score, above, "above"); err != nil {
 		return err
 	}
@@ -83,7 +78,7 @@ func (a app) saveAlerts(ctx context.Context, score float64, above []model.Fund, 
 }
 
 // Start notifier
-func (a app) Start() error {
+func (a App) Start() error {
 	ctx := context.Background()
 
 	currentAlerts, err := a.modelApp.GetCurrentAlerts()
@@ -104,7 +99,11 @@ func (a app) Start() error {
 	logger.Info("Got %d funds below their initial alert", len(above))
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := a.mailerApp.Send(ctx, *mailerModel.NewMailRequest().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{a.score, above, below}).To(a.recipients...).Template("funds")); err != nil {
+		if err := a.mailerApp.Send(ctx, *mailerModel.NewMailRequest().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{
+			Score:      a.score,
+			AboveFunds: above,
+			BelowFunds: below,
+		}).To(a.recipients...).Template("funds")); err != nil {
 			return err
 		}
 
