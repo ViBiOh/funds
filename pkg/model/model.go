@@ -29,19 +29,7 @@ type Config struct {
 }
 
 // App of package
-type App interface {
-	Health() error
-	Start(<-chan struct{})
-	Handler() http.Handler
-	ListFunds([]Alert) []Fund
-	GetFundsAbove(float64, map[string]Alert) ([]Fund, error)
-	GetFundsBelow(map[string]Alert) ([]Fund, error)
-	GetIsinAlert() ([]Alert, error)
-	GetCurrentAlerts() (map[string]Alert, error)
-	SaveAlert(context.Context, *Alert) error
-}
-
-type app struct {
+type App struct {
 	db       db.App
 	fundsURL string
 	fundsMap sync.Map
@@ -55,8 +43,8 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, db db.App) App {
-	return &app{
+func New(config Config, db db.App) *App {
+	return &App{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 
@@ -64,13 +52,14 @@ func New(config Config, db db.App) App {
 	}
 }
 
-func (a *app) Start(done <-chan struct{}) {
+// Start worker
+func (a *App) Start(done <-chan struct{}) {
 	cron.New().Each(time.Hour*8).Now().OnError(func(err error) {
 		logger.Error("%s", err)
 	}).Start(a.refresh, done)
 }
 
-func (a *app) refresh(ctx context.Context) error {
+func (a *App) refresh(ctx context.Context) error {
 	if a.fundsURL == "" {
 		return nil
 	}
@@ -86,7 +75,7 @@ func (a *app) refresh(ctx context.Context) error {
 	return nil
 }
 
-func (a *app) refreshData(ctx context.Context) {
+func (a *App) refreshData(ctx context.Context) {
 	inputs := make(chan []byte, maxConcurrentFetcher)
 
 	go func() {
@@ -109,7 +98,7 @@ func (a *app) refreshData(ctx context.Context) {
 	close(inputs)
 }
 
-func (a *app) saveData() (err error) {
+func (a *App) saveData() (err error) {
 	ctx := context.Background()
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
@@ -125,7 +114,7 @@ func (a *app) saveData() (err error) {
 }
 
 // Health check health
-func (a *app) Health() error {
+func (a *App) Health() error {
 	if len(a.ListFunds(nil)) == 0 {
 		return errors.New("no funds fetched")
 	}
@@ -134,7 +123,7 @@ func (a *app) Health() error {
 }
 
 // ListFunds return content of funds' map
-func (a *app) ListFunds(alerts []Alert) []Fund {
+func (a *App) ListFunds(alerts []Alert) []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
@@ -154,7 +143,7 @@ func (a *app) ListFunds(alerts []Alert) []Fund {
 	return funds
 }
 
-func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
+func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 	alerts, err := a.GetIsinAlert()
 	if err != nil {
 		httperror.InternalServerError(w, fmt.Errorf("unable to retrieve alerts: %w", err))
@@ -165,7 +154,7 @@ func (a *app) listHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler for model request. Should be use with net/http
-func (a *app) Handler() http.Handler {
+func (a *App) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			if _, err := w.Write(nil); err != nil {

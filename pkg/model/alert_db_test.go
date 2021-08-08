@@ -21,7 +21,7 @@ func TestSaveAlert(t *testing.T) {
 
 	for _, testCase := range cases {
 		t.Run(testCase.intention, func(t *testing.T) {
-			app := app{}
+			app := App{}
 
 			err := app.SaveAlert(context.Background(), testCase.input)
 

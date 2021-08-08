@@ -14,12 +14,12 @@ type Alert struct {
 }
 
 // GetIsinAlert retrieves last alert occured on by isin
-func (a *app) GetIsinAlert() ([]Alert, error) {
+func (a *App) GetIsinAlert() ([]Alert, error) {
 	return a.listLastAlertByIsin(context.Background())
 }
 
 // GetCurrentAlerts retrieves current opened alerts
-func (a *app) GetCurrentAlerts() (map[string]Alert, error) {
+func (a *App) GetCurrentAlerts() (map[string]Alert, error) {
 	currentAlerts := make(map[string]Alert)
 
 	alerts, err := a.listAlertsOpened(context.Background())

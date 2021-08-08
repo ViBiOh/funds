@@ -56,7 +56,7 @@ WHERE
 
 var errNilFund = errors.New("unable to save nil Fund")
 
-func (a *app) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
+func (a *App) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	item := Fund{Isin: isin}
 
 	scanner := func(row *sql.Row) error {
@@ -67,7 +67,7 @@ func (a *app) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	return item, err
 }
 
-func (a *app) listFundsWithScoreAbove(ctx context.Context, minScore float64) (funds []Fund, err error) {
+func (a *App) listFundsWithScoreAbove(ctx context.Context, minScore float64) (funds []Fund, err error) {
 	list := make([]Fund, 0)
 	scanner := func(rows *sql.Rows) error {
 		var item Fund
@@ -83,7 +83,7 @@ func (a *app) listFundsWithScoreAbove(ctx context.Context, minScore float64) (fu
 	return list, a.db.List(ctx, scanner, fundsWithScoreAboveQuery, minScore)
 }
 
-func (a *app) saveFund(ctx context.Context, fund *Fund) (err error) {
+func (a *App) saveFund(ctx context.Context, fund *Fund) (err error) {
 	if fund == nil {
 		return errNilFund
 	}

@@ -37,7 +37,7 @@ type Config struct {
 
 // App of package
 type app struct {
-	modelApp  model.App
+	modelApp  *model.App
 	mailerApp client.App
 
 	recipients []string
@@ -53,7 +53,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, modelApp model.App, mailerApp client.App) App {
+func New(config Config, modelApp *model.App, mailerApp client.App) App {
 	logger.Info("Notification to %s for score above %.2f", *config.recipients, *config.score)
 
 	return &app{

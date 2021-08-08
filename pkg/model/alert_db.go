@@ -65,7 +65,7 @@ INSERT INTO
 )
 `
 
-func (a *app) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
+func (a *App) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 	list := make([]Alert, 0)
 
 	scanner := func(rows *sql.Rows) error {
@@ -82,7 +82,7 @@ func (a *app) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 	return list, a.db.List(ctx, scanner, listLastAlertByIsinQuery)
 }
 
-func (a *app) listAlertsOpened(ctx context.Context) ([]Alert, error) {
+func (a *App) listAlertsOpened(ctx context.Context) ([]Alert, error) {
 	list := make([]Alert, 0)
 
 	scanner := func(rows *sql.Rows) error {
@@ -100,7 +100,7 @@ func (a *app) listAlertsOpened(ctx context.Context) ([]Alert, error) {
 }
 
 // SaveAlert saves Alert
-func (a *app) SaveAlert(ctx context.Context, alert *Alert) (err error) {
+func (a *App) SaveAlert(ctx context.Context, alert *Alert) (err error) {
 	if alert == nil {
 		return errors.New("cannot save nil")
 	}
