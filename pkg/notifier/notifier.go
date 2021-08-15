@@ -99,7 +99,7 @@ func (a App) Start() error {
 	logger.Info("Got %d funds below their initial alert", len(above))
 
 	if len(a.recipients) > 0 && (len(above) > 0 || len(below) > 0) {
-		if err := a.mailerApp.Send(ctx, *mailerModel.NewMailRequest().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{
+		if err := a.mailerApp.Send(ctx, mailerModel.NewMailRequest().From(from).As(name).WithSubject(subject).Data(scoreTemplateContent{
 			Score:      a.score,
 			AboveFunds: above,
 			BelowFunds: below,
