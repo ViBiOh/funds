@@ -42,8 +42,8 @@ type Config struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		recipients: flags.New(prefix, "notifier").Name("Recipients").Default("").Label("Email of notifications recipients").ToString(fs),
-		score:      flags.New(prefix, "notifier").Name("Score").Default(25.0).Label("Score value to notification when above").ToFloat64(fs),
+		recipients: flags.New(prefix, "notifier", "Recipients").Default("", nil).Label("Email of notifications recipients").ToString(fs),
+		score:      flags.New(prefix, "notifier", "Score").Default(25.0, nil).Label("Score value to notification when above").ToFloat64(fs),
 	}
 }
 
