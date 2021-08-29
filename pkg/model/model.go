@@ -150,7 +150,7 @@ func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpjson.WriteArray(w, http.StatusOK, a.ListFunds(alerts), httpjson.IsPretty(r))
+	httpjson.WriteArray(w, http.StatusOK, a.ListFunds(alerts))
 }
 
 // Handler for model request. Should be use with net/http
