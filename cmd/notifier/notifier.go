@@ -23,11 +23,7 @@ func main() {
 
 	fundsDb, err := db.New(dbConfig)
 	logger.Fatal(err)
-	defer func() {
-		if err := fundsDb.Close(); err != nil {
-			logger.Error("error while closing database connection: %s", err)
-		}
-	}()
+	defer fundsDb.Close()
 
 	mailerApp, err := client.New(mailerConfig)
 	logger.Fatal(err)

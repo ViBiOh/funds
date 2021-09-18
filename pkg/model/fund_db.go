@@ -2,9 +2,10 @@ package model
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/jackc/pgx/v4"
 )
 
 const fundByIsinQuery = `
@@ -59,7 +60,7 @@ var errNilFund = errors.New("unable to save nil Fund")
 func (a *App) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	item := Fund{Isin: isin}
 
-	scanner := func(row *sql.Row) error {
+	scanner := func(row pgx.Row) error {
 		return row.Scan(&item.Label, &item.Score)
 	}
 	err := a.db.Get(ctx, scanner, fundByIsinQuery, isin)
@@ -69,7 +70,7 @@ func (a *App) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 
 func (a *App) listFundsWithScoreAbove(ctx context.Context, minScore float64) (funds []Fund, err error) {
 	list := make([]Fund, 0)
-	scanner := func(rows *sql.Rows) error {
+	scanner := func(rows pgx.Rows) error {
 		var item Fund
 
 		if err := rows.Scan(&item.Isin, &item.Label, &item.Score); err != nil {
@@ -89,7 +90,7 @@ func (a *App) saveFund(ctx context.Context, fund *Fund) (err error) {
 	}
 
 	if _, err = a.readFundByIsin(ctx, fund.Isin); err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			err = a.db.Exec(ctx, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
 	} else {

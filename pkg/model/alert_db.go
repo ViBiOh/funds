@@ -2,9 +2,10 @@ package model
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/jackc/pgx/v4"
 )
 
 const listLastAlertByIsinQuery = `
@@ -68,7 +69,7 @@ INSERT INTO
 func (a *App) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 	list := make([]Alert, 0)
 
-	scanner := func(rows *sql.Rows) error {
+	scanner := func(rows pgx.Rows) error {
 		var item Alert
 
 		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
@@ -85,7 +86,7 @@ func (a *App) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 func (a *App) listAlertsOpened(ctx context.Context) ([]Alert, error) {
 	list := make([]Alert, 0)
 
-	scanner := func(rows *sql.Rows) error {
+	scanner := func(rows pgx.Rows) error {
 		var item Alert
 
 		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
