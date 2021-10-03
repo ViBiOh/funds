@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ViBiOh/httputils/v4 v4.25.3
-	github.com/ViBiOh/mailer v1.26.1
+	github.com/ViBiOh/mailer v1.26.2
 	github.com/jackc/pgx/v4 v4.13.0
 )
 
