@@ -94,7 +94,7 @@ func (a *App) saveFund(ctx context.Context, fund *Fund) (err error) {
 			err = a.db.Exec(ctx, fundsCreateQuery, fund.Isin, fund.Label, fund.Score)
 		}
 	} else {
-		err = a.db.Exec(ctx, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
+		err = a.db.One(ctx, fundsUpdateScoreQuery, fund.Score, "now()", fund.Isin)
 	}
 
 	return
