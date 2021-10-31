@@ -10,23 +10,27 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 )
 
-var emptyByte = []byte("")
-var zeroByte = []byte("0")
-var periodByte = []byte(".")
-var commaByte = []byte(",")
-var percentByte = []byte("%")
-var ampersandByte = []byte("&")
-var htmlAmpersandByte = []byte("&amp;")
+var (
+	emptyByte         = []byte("")
+	zeroByte          = []byte("0")
+	periodByte        = []byte(".")
+	commaByte         = []byte(",")
+	percentByte       = []byte("%")
+	ampersandByte     = []byte("&")
+	htmlAmpersandByte = []byte("&amp;")
+)
 
-var isinRegex = regexp.MustCompile(`ISIN.:(\S+)`)
-var labelRegex = regexp.MustCompile(`\|([^|]*?)\|ISIN`)
-var ratingRegex = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
-var categoryRegex = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
-var perfOneMonthRegex = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
-var perfThreeMonthRegex = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
-var perfSixMonthRegex = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
-var perfOneYearRegex = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
-var volThreeYearRegex = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
+var (
+	isinRegex           = regexp.MustCompile(`ISIN.:(\S+)`)
+	labelRegex          = regexp.MustCompile(`\|([^|]*?)\|ISIN`)
+	ratingRegex         = regexp.MustCompile(`<span\sclass=".*?stars([0-9]).*?">`)
+	categoryRegex       = regexp.MustCompile(`<span[^>]*?>Catégorie</span>.*?<span[^>]*?>(.*?)</span>`)
+	perfOneMonthRegex   = regexp.MustCompile(`<td[^>]*?>1 mois</td><td[^>]*?>(.*?)</td>`)
+	perfThreeMonthRegex = regexp.MustCompile(`<td[^>]*?>3 mois</td><td[^>]*?>(.*?)</td>`)
+	perfSixMonthRegex   = regexp.MustCompile(`<td[^>]*?>6 mois</td><td[^>]*?>(.*?)</td>`)
+	perfOneYearRegex    = regexp.MustCompile(`<td[^>]*?>1 an</td><td[^>]*?>(.*?)</td>`)
+	volThreeYearRegex   = regexp.MustCompile(`<td[^>]*?>Ecart-type 3 ans.?</td><td[^>]*?>(.*?)</td>`)
+)
 
 func cleanID(fundID []byte) string {
 	return string(bytes.ToLower(fundID))

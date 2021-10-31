@@ -49,16 +49,17 @@ app: init dev
 .PHONY: init
 init:
 	@curl --disable --silent --show-error --location --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/main/bootstrap" | bash -s -- "-c" "git_hooks" "coverage"
-	go install github.com/kisielk/errcheck@latest
-	go install golang.org/x/lint/golint@latest
-	go install golang.org/x/tools/cmd/goimports@latest
+	go install "github.com/kisielk/errcheck@latest"
+	go install "golang.org/x/lint/golint@latest"
+	go install "golang.org/x/tools/cmd/goimports@latest"
+	go install "mvdan.cc/gofumpt@latest"
 	go mod tidy -compat=1.17
 
 ## format: Format code. e.g Prettier (js), format (golang)
 .PHONY: format
 format:
 	goimports -w $(shell find . -name "*.go")
-	gofmt -s -w $(shell find . -name "*.go")
+	gofumpt -s -w $(shell find . -name "*.go")
 
 ## style: Check lint, code styling rules. e.g. pylint, phpcs, eslint, style (java) etc ...
 .PHONY: style

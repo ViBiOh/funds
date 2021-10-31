@@ -6,7 +6,7 @@ import (
 )
 
 func TestCleanID(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		fundID []byte
 		want   string
 	}{
@@ -25,7 +25,7 @@ func TestCleanID(t *testing.T) {
 }
 
 func TestExtractLabel(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		extract      *regexp.Regexp
 		body         []byte
 		defaultValue []byte
@@ -66,7 +66,7 @@ func TestExtractLabel(t *testing.T) {
 }
 
 func TestExtractPerformance(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		extract *regexp.Regexp
 		body    []byte
 		want    float64

@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetID(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		instance Fund
 		want     string
 	}{
@@ -28,7 +28,7 @@ func TestGetID(t *testing.T) {
 }
 
 func TestComputeScore(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		instance *Fund
 		want     float64
 	}{

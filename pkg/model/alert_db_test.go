@@ -7,7 +7,7 @@ import (
 )
 
 func TestSaveAlert(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		input     *Alert
 		wantErr   error
