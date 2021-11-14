@@ -3,7 +3,7 @@ module github.com/ViBiOh/funds
 go 1.17
 
 require (
-	github.com/ViBiOh/httputils/v4 v4.27.1
+	github.com/ViBiOh/httputils/v4 v4.29.1
 	github.com/ViBiOh/mailer v1.26.5
 	github.com/jackc/pgx/v4 v4.13.0
 )
