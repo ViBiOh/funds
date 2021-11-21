@@ -51,7 +51,9 @@
       "jest": true
     },
     "rules": {
+      "default-param-last": 0,
       "import/no-extraneous-dependencies": 0,
+      "react/function-component-definition": 0,
       "react/jsx-props-no-spreading": 0
     }
   },
