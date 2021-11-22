@@ -76,26 +76,24 @@ func (a *App) refresh(ctx context.Context) error {
 }
 
 func (a *App) refreshData(ctx context.Context) {
-	inputs := make(chan []byte, maxConcurrentFetcher)
+	wg := NewGroup(maxConcurrentFetcher)
 
-	go func() {
-		for i := uint(0); i < maxConcurrentFetcher; i++ {
-			for input := range inputs {
-				if output, err := fetchFund(ctx, a.fundsURL, input); err != nil {
+	for _, fundID := range fundsIds {
+		func(fundID []byte) {
+			wg.Go(func() error {
+				if output, err := fetchFund(ctx, a.fundsURL, fundID); err != nil {
 					logger.Error("%s", err)
 				} else {
 					a.fundsMap.Store(output.ID, output)
 				}
 
 				time.Sleep(10 * time.Second)
-			}
-		}
-	}()
-
-	for _, fundID := range fundsIds {
-		inputs <- fundID
+				return nil
+			})
+		}(fundID)
 	}
-	close(inputs)
+
+	_ = wg.Wait()
 }
 
 func (a *App) saveData() (err error) {
