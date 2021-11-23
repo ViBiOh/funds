@@ -25,7 +25,7 @@ spec:
     nameOverride: funds
     image:
       name: vibioh/funds-ui
-      tag: '202111221850' # {"$imagepolicy": "default:flux-funds-web:tag"}
+      tag: '202111230746' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
       VIWS_LOGGER_JSON: 'true'
       VIWS_PROMETHEUS_GZIP: 'false'
