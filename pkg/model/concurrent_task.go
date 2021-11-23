@@ -7,19 +7,19 @@ import (
 
 // Group describes a task group with a fail-fast approach
 type Group struct {
-	cancel  context.CancelFunc
-	wg      sync.WaitGroup
-	once    sync.Once
-	done    chan struct{}
-	limiter chan struct{}
 	err     error
+	done    chan struct{}
+	limiter chan bool
+	cancel  context.CancelFunc
+	once    sync.Once
+	wg      sync.WaitGroup
 }
 
 // NewGroup creates a Group with given concurrency limit
 func NewGroup(limit uint64) *Group {
 	return &Group{
 		done:    make(chan struct{}),
-		limiter: make(chan struct{}, limit),
+		limiter: make(chan bool, limit),
 	}
 }
 
@@ -37,7 +37,7 @@ func (g *Group) WithContext(ctx context.Context) context.Context {
 func (g *Group) Go(f func() error) {
 	select {
 	case <-g.done:
-	case g.limiter <- struct{}{}:
+	case g.limiter <- true:
 		g.wg.Add(1)
 
 		go func() {
@@ -55,9 +55,16 @@ func (g *Group) Go(f func() error) {
 
 // Wait for Group to end
 func (g *Group) Wait() error {
-	defer g.close(nil)
-
 	g.wg.Wait()
+
+	select {
+	case <-g.done:
+	default:
+		close(g.done)
+	}
+
+	close(g.limiter)
+
 	return g.err
 }
 
