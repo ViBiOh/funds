@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ViBiOh/httputils/v4/pkg/concurrent"
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 	"github.com/ViBiOh/httputils/v4/pkg/flags"
@@ -76,11 +77,11 @@ func (a *App) refresh(ctx context.Context) error {
 }
 
 func (a *App) refreshData(ctx context.Context) {
-	wg := NewGroup(maxConcurrentFetcher)
+	wg := concurrent.NewLimited(4)
 
 	for _, fundID := range fundsIds {
 		func(fundID []byte) {
-			wg.Go(func() error {
+			wg.Go(func() {
 				if output, err := fetchFund(ctx, a.fundsURL, fundID); err != nil {
 					logger.Error("%s", err)
 				} else {
@@ -88,12 +89,11 @@ func (a *App) refreshData(ctx context.Context) {
 				}
 
 				time.Sleep(10 * time.Second)
-				return nil
 			})
 		}(fundID)
 	}
 
-	_ = wg.Wait()
+	wg.Wait()
 }
 
 func (a *App) saveData() (err error) {
