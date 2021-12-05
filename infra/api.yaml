@@ -25,7 +25,7 @@ spec:
     nameOverride: funds-api
     image:
       name: vibioh/funds-api
-      tag: '202112050940' # {"$imagepolicy": "default:flux-funds-api:tag"}
+      tag: '202112051025' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       API_LOGGER_JSON: 'true'
       API_DB_HOST: funds-db
