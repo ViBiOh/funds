@@ -44,7 +44,7 @@ func main() {
 	logger.Fatal(err)
 	defer mailerApp.Close()
 
-	fundApp := model.New(fundsConfig, fundsDb)
+	fundApp := model.New(fundsConfig, fundsDb, tracerApp)
 
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)

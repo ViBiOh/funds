@@ -62,8 +62,7 @@ func main() {
 	defer fundsDb.Close()
 
 	healthApp := health.New(healthConfig, fundsDb.Ping)
-
-	fundApp := model.New(fundsConfig, fundsDb)
+	fundApp := model.New(fundsConfig, fundsDb, tracerApp)
 
 	go fundApp.Start(healthApp.Done())
 

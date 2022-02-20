@@ -17,11 +17,12 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/tracer"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
-	maxConcurrentFetcher = 1
-	listPrefix           = "/list"
+	listPrefix = "/list"
 )
 
 // Config of package
@@ -31,6 +32,7 @@ type Config struct {
 
 // App of package
 type App struct {
+	tracer   trace.Tracer
 	db       db.App
 	fundsURL string
 	fundsMap sync.Map
@@ -44,12 +46,13 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, db db.App) *App {
+func New(config Config, db db.App, tracerApp tracer.App) *App {
 	return &App{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 
-		db: db,
+		db:     db,
+		tracer: tracerApp.GetTracer("model"),
 	}
 }
 
@@ -63,6 +66,12 @@ func (a *App) Start(done <-chan struct{}) {
 func (a *App) refresh(ctx context.Context) error {
 	if a.fundsURL == "" {
 		return nil
+	}
+
+	if a.tracer != nil {
+		var span trace.Span
+		ctx, span = a.tracer.Start(ctx, "refresh")
+		defer span.End()
 	}
 
 	a.refreshData(ctx)
