@@ -68,7 +68,7 @@ func (a *App) refresh(ctx context.Context) error {
 	a.refreshData(ctx)
 
 	if a.db.Enabled() {
-		if err := a.saveData(); err != nil {
+		if err := a.saveData(ctx); err != nil {
 			return err
 		}
 	}
@@ -96,9 +96,7 @@ func (a *App) refreshData(ctx context.Context) {
 	wg.Wait()
 }
 
-func (a *App) saveData() (err error) {
-	ctx := context.Background()
-
+func (a *App) saveData(ctx context.Context) (err error) {
 	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
 		fund := value.(Fund)
 		err := a.db.DoAtomic(ctx, func(ctx context.Context) error {
@@ -142,7 +140,7 @@ func (a *App) ListFunds(alerts []Alert) []Fund {
 }
 
 func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
-	alerts, err := a.GetIsinAlert()
+	alerts, err := a.GetIsinAlert(r.Context())
 	if err != nil {
 		httperror.InternalServerError(w, fmt.Errorf("unable to retrieve alerts: %w", err))
 		return

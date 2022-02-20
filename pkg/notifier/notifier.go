@@ -78,21 +78,19 @@ func (a App) saveAlerts(ctx context.Context, score float64, above []model.Fund, 
 }
 
 // Start notifier
-func (a App) Start() error {
-	ctx := context.Background()
-
-	currentAlerts, err := a.modelApp.GetCurrentAlerts()
+func (a App) Start(ctx context.Context) error {
+	currentAlerts, err := a.modelApp.GetCurrentAlerts(ctx)
 	if err != nil {
 		return err
 	}
 
-	above, err := a.modelApp.GetFundsAbove(a.score, currentAlerts)
+	above, err := a.modelApp.GetFundsAbove(ctx, a.score, currentAlerts)
 	if err != nil {
 		return err
 	}
 	logger.Info("Got %d funds above %f", len(above), a.score)
 
-	below, err := a.modelApp.GetFundsBelow(currentAlerts)
+	below, err := a.modelApp.GetFundsBelow(ctx, currentAlerts)
 	if err != nil {
 		return err
 	}
