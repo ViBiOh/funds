@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: '0.0.80'
+      version: '0.0.81'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -27,11 +27,13 @@ spec:
       name: vibioh/funds-api
       tag: '202202131031' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
-      API_LOGGER_JSON: 'true'
       API_DB_HOST: funds-db
-      API_DB_PORT: '80'
       API_DB_NAME: funds
+      API_DB_PORT: '80'
       API_DB_USER: funds
+      API_LOGGER_JSON: 'true'
+      API_TRACER_URL: http://jaeger.monitoring:14268/api/traces
+      OTEL_SERVICE_NAME: funds
     readinessProbePath: /ready
     secrets:
       API_DB_PASS: AgB63wjQEP9tWVvK/6wXKBDgeM5Or2o9hTPoeOglrWGNnV0bIXeEGGTn+bwHu7IHpycZWCQEO0YDLWo9OLOKstAnl2HWhnyS9wulaiHVb9WNSDjSmgW+b0M6MIB4zzim+3SrXGY8U5+8DSleZRDGU3ja89ts+jZZveDN35qY0Siip0CkD5ebjCM9hzR+xsqW1TImtpkZFyeygmNcgcsn5MSUR5iwXViZutaOpCiKU6kyjDGkzoDKdTOeHzj8ZxXyTWy9Y4P31L+dWaBRAsvGj3uv8NmOq09NZfafdOd2fDF7Iur00QjfXNuxGgRP208hyS4G1v7MQ3LGWq/z9cW/zvPzHyQDqf60Wn8EllbX1AyB+bAk+ZXdSPT8P9UKrof7NjQKU/apkmXpr3IhRzKRbjkUf+DpoBe2dK6Ghk7FopExu1J2RQOoDcBapPX3R3/Sa0BVKA34xiKfdap5Ri+dXMqCwaSd0rH+dVVf6xbdE6tZf6CgOQp6uXkuEH5Er5CxbLyqfH8LeDFHgA1RDlhDbD3X2WIza5XMmeXlyfZGL4EPCcZsLgtqPq6T0bHK+clKw+1wbfa36cEy/fkRzo5E9m26DLNkEjnDS5p60JtewTiLxzLWeMd0dzPShBoHduQAbxzwSV0A0eUPOMKAt6wDsemW7NDc04HP3MFELiwd1JcB1k3NEPVryx0EEN/ZVRqpXHkkRfTeaq93xMIk7KlWuyct1sgki/RXF1eo9oZlKep9MsUx4KRCX6Ha9+B15KzwE16oY9S/WP7pHXBDqPA=
@@ -39,4 +41,6 @@ spec:
     ingress:
       enabled: true
       hosts:
-      - funds-api.vibioh.fr
+        - funds-api.vibioh.fr
+    pprof:
+      enabled: true
