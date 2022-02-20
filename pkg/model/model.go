@@ -58,7 +58,7 @@ func New(config Config, db db.App, tracerApp tracer.App) *App {
 
 // Start worker
 func (a *App) Start(done <-chan struct{}) {
-	cron.New().Each(time.Hour*8).Now().OnError(func(err error) {
+	cron.New().Each(time.Hour*8).Now().WithTracer(a.tracer).OnError(func(err error) {
 		logger.Error("%s", err)
 	}).Start(a.refresh, done)
 }
