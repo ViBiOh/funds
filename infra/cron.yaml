@@ -27,7 +27,7 @@ spec:
     schedule: '0 8 * * *'
     image:
       name: vibioh/funds-api
-      tag: '202202131031' # {"$imagepolicy": "default:flux-funds-api:tag"}
+      tag: '202202201014' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: funds-db
@@ -41,6 +41,6 @@ spec:
       NOTIFIER_RECIPIENTS: AgAgqea3eXto3Ep2ctYdhZrRzkAzL2mbaHkTQiUppDNhj0mC7yh9WuUUHtp2ciOjRUU5QihDjf7cjBxgZKp5CTaMtahCEgbhoM9u4zia9pC6NxW3I4FEgX1m7mL4UU/gOyrieU1tVmka0LLSUa5OmsrfFckGeT7DysSi3FOrFnlpYSdmoeeq6fHJOGQg9Sbe8SJYejgFXlb+haVlAMZYATJawY41C6f81hGnNa5VUQXfcDvu/QB14470kc7PaTPkfKs7afCooUbvY2bC+lb26CsRpoZ3TxlLp2jVFkjIC/pP0+2ZH3exbjLCaeVJgmDouOrF7uZfQaVflm4VK4y97pg6Y5OF6gdb4cpDt4qu8qRWAwz/7Z7EK1uuVh1I4fYZ2D56yKhTaCatDxz3BKPeggRmlMDaPIwNZBRSxdfKHqq3wAH6GYvrUuhP6qwOTUUzwYS98COXZ34cZ+io/PYVXbnxSlBOdPbUdxuwL56yxIAWiiu/7QeBlv+lR+iTTdn/3yg2ycuhcy3LeU1AhzYS2jihUwSI9Gw6q8Bf4hvQHXqeOZW9m8MAezM6eDoNaC/Exq2JCasqxl+0F+apYmpOU1N/D3DAr/IkpQA0feBxoDt+cDkP7rJptdnoK7dpqo7n8lxz/w4ovPMzIC8hghcANlwj06Ij8KSt3K0Ynu8PbxHLnSzHRiXRxKhiw0dZ4NS1OGrfQ3QL1KfsdX7Xl7TnI0imq4e3dKN9ZbgP44ZfeiKTevTh46p4qH2u
       NOTIFIER_MAILER_URL: AgAE2GV19ItYWSesjXtyQkYZM42kteicxxMJ9pZKQ/dxES2sXpkGNDLZF34pr5mn+n4xIgaRW8Up7WXayd/g1U21TtMr8PrbsjQoS58a8QAWD6ImVTTrQqLjzZAB3oYtM24njySUAOAwPc1w5PGR/BVVPDxD8adsWaMgWTcczX7FfXBOhb+Xqc+R3QXQUkfmbMJu6t7xRx4S1NjskLO15sxSfo40VKy4/jkAPtLhGuuWaHWHt4tNY7siEmi/HcrJasccmPC76qlGY4+3b4vuuzYJGx5vXX/+toVowqkd5Bf2FeXbCqckLCvpmNvZ7BzFMWLqlYiWC0nb1SW3SjW2d+Podg0BdeLMjJKNTn+jun4kvKGqD5Sj3psRWn8i5RWAG89tjvAOLqZF8vMl2J1/+fvYxj27RpVk1rUmFdf0p/aCTAuEwl/Y1LwRSmoxNbABKLrJIHh9dC3F8kPuhAlJhkbKxoNwJ0V77zQjAKh+lKm06DyDkBJh5Yw9BfeRhMLtoZGSA3LFGarI4LJJ1Zfo7A54k7zZ9MWScscQlT/OYwcemYknHyq4ADi5yb76LZ/89J0cNQP5zr7/RkVuA/OxGLJvufTU/9imDDXor3aCxB1o0kL9ZewksDM0VZ+MNs6NvaQpWXVaNnApoZoNAb1C9VCQRFmeS5WXUgfMG42kqhezeLZKV5VMrMalLEXcIYqgpMlvMY6UAofN+lwm2ZsP6pCptcvHPj/kCnboGTNrkSqY79lDcWGU4N06igOcZH4hI66wukc=
     containers:
-      - name: job
-        command:
-          - /notifier
+    - name: job
+      command:
+      - /notifier

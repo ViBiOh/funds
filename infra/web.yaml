@@ -25,7 +25,7 @@ spec:
     nameOverride: funds
     image:
       name: vibioh/funds-ui
-      tag: '202202131031' # {"$imagepolicy": "default:flux-funds-web:tag"}
+      tag: '202202201014' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
       VIWS_LOGGER_JSON: 'true'
       VIWS_PROMETHEUS_GZIP: 'false'
@@ -33,21 +33,21 @@ spec:
     ingress:
       enabled: true
       hosts:
-        - funds.vibioh.fr
+      - funds.vibioh.fr
     canary:
       enabled: true
       url: https://funds.vibioh.fr
     affinity:
       podAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/instance
-                    operator: In
-                    values:
-                      - funds-db
-              topologyKey: 'kubernetes.io/hostname'
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                - funds-db
+            topologyKey: 'kubernetes.io/hostname'
     pprof:
       enabled: true
