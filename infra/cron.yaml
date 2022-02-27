@@ -27,7 +27,7 @@ spec:
     schedule: '0 8 * * *'
     image:
       name: vibioh/funds-api
-      tag: '202202201530' # {"$imagepolicy": "default:flux-funds-api:tag"}
+      tag: '202202270827' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: funds-db
