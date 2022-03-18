@@ -106,7 +106,7 @@ func (a *App) refreshData(ctx context.Context) {
 }
 
 func (a *App) saveData(ctx context.Context) (err error) {
-	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	a.fundsMap.Range(func(_ any, value any) bool {
 		fund := value.(Fund)
 		err := a.db.DoAtomic(ctx, func(ctx context.Context) error {
 			return a.saveFund(ctx, &fund)
@@ -131,7 +131,7 @@ func (a *App) Health() error {
 func (a *App) ListFunds(alerts []Alert) []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
-	a.fundsMap.Range(func(_ interface{}, value interface{}) bool {
+	a.fundsMap.Range(func(_ any, value any) bool {
 		fund := value.(Fund)
 		for _, alert := range alerts {
 			fundAlert := alert
