@@ -7,36 +7,34 @@ import (
 )
 
 func TestSaveAlert(t *testing.T) {
-	cases := []struct {
-		intention string
-		input     *Alert
-		wantErr   error
+	cases := map[string]struct {
+		input   *Alert
+		wantErr error
 	}{
-		{
-			"simple",
+		"simple": {
 			nil,
 			errors.New("cannot save nil"),
 		},
 	}
 
-	for _, testCase := range cases {
-		t.Run(testCase.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			app := App{}
 
-			err := app.SaveAlert(context.Background(), testCase.input)
+			err := app.SaveAlert(context.Background(), tc.input)
 
 			failed := false
 
-			if err == nil && testCase.wantErr != nil {
+			if err == nil && tc.wantErr != nil {
 				failed = true
-			} else if err != nil && testCase.wantErr == nil {
+			} else if err != nil && tc.wantErr == nil {
 				failed = true
-			} else if err != nil && err.Error() != testCase.wantErr.Error() {
+			} else if err != nil && err.Error() != tc.wantErr.Error() {
 				failed = true
 			}
 
 			if failed {
-				t.Errorf("SaveAlert() = `%s`, want `%s`", err, testCase.wantErr)
+				t.Errorf("SaveAlert() = `%s`, want `%s`", err, tc.wantErr)
 			}
 		})
 	}

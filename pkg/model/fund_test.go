@@ -5,47 +5,51 @@ import (
 )
 
 func TestGetID(t *testing.T) {
-	cases := []struct {
+	cases := map[string]struct {
 		instance Fund
 		want     string
 	}{
-		{
+		"empty": {
 			Fund{},
 			"",
 		},
-		{
+		"value": {
 			Fund{ID: "test"},
 			"test",
 		},
 	}
 
-	for _, testCase := range cases {
-		result := testCase.instance.GetID()
-		if result != testCase.want {
-			t.Errorf("GetID() of %v = %v, want %v", testCase.instance, result, testCase.want)
-		}
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
+			result := tc.instance.GetID()
+			if result != tc.want {
+				t.Errorf("GetID() of %v = %v, want %v", tc.instance, result, tc.want)
+			}
+		})
 	}
 }
 
 func TestComputeScore(t *testing.T) {
-	cases := []struct {
+	cases := map[string]struct {
 		instance *Fund
 		want     float64
 	}{
-		{
+		"empty": {
 			&Fund{},
 			0.0,
 		},
-		{
+		"value": {
 			&Fund{OneMonth: 1 / 0.25, ThreeMonths: 1 / 0.3, SixMonths: 1 / 0.25, OneYear: 1 / 0.2, VolThreeYears: 1 / 0.1},
 			3.0,
 		},
 	}
 
-	for _, testCase := range cases {
-		testCase.instance.ComputeScore()
-		if testCase.instance.Score != testCase.want {
-			t.Errorf("ComputeScore() of %v = %v, want %v", testCase.instance, testCase.instance.Score, testCase.want)
-		}
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
+			tc.instance.ComputeScore()
+			if tc.instance.Score != tc.want {
+				t.Errorf("ComputeScore() of %v = %v, want %v", tc.instance, tc.instance.Score, tc.want)
+			}
+		})
 	}
 }
