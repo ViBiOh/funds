@@ -3,7 +3,7 @@ module github.com/ViBiOh/funds
 go 1.18
 
 require (
-	github.com/ViBiOh/flags v0.1.0
+	github.com/ViBiOh/flags v1.0.0
 	github.com/ViBiOh/httputils/v4 v4.38.1
 	github.com/ViBiOh/mailer v1.28.0
 	github.com/jackc/pgx/v4 v4.15.0
