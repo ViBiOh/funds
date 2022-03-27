@@ -41,7 +41,7 @@ type App struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		infos: flags.New(prefix, "funds", "Infos").Default("", nil).Label("Informations URL").ToString(fs),
+		infos: flags.String(fs, prefix, "funds", "Infos", "Informations URL", "", nil),
 	}
 }
 
