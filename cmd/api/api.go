@@ -57,12 +57,12 @@ func main() {
 	promServer := server.New(promServerConfig)
 	prometheusApp := prometheus.New(prometheusConfig)
 
-	fundsDb, err := db.New(dbConfig, tracerApp)
+	fundsDb, err := db.New(dbConfig, tracerApp.GetTracer("database"))
 	logger.Fatal(err)
 	defer fundsDb.Close()
 
 	healthApp := health.New(healthConfig, fundsDb.Ping)
-	fundApp := model.New(fundsConfig, fundsDb, tracerApp)
+	fundApp := model.New(fundsConfig, fundsDb, tracerApp.GetTracer("funds"))
 
 	go fundApp.Start(healthApp.Done())
 
