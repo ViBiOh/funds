@@ -17,7 +17,6 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
-	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -46,13 +45,13 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, db db.App, tracerApp tracer.App) *App {
+func New(config Config, db db.App, tracer trace.Tracer) *App {
 	return &App{
 		fundsURL: strings.TrimSpace(*config.infos),
 		fundsMap: sync.Map{},
 
 		db:     db,
-		tracer: tracerApp.GetTracer("model"),
+		tracer: tracer,
 	}
 }
 

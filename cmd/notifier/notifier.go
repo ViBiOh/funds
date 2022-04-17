@@ -36,7 +36,7 @@ func main() {
 	defer tracerApp.Close()
 	request.AddTracerToDefaultClient(tracerApp.GetProvider())
 
-	fundsDb, err := db.New(dbConfig, tracerApp)
+	fundsDb, err := db.New(dbConfig, tracerApp.GetTracer("database"))
 	logger.Fatal(err)
 	defer fundsDb.Close()
 
@@ -44,7 +44,7 @@ func main() {
 	logger.Fatal(err)
 	defer mailerApp.Close()
 
-	fundApp := model.New(fundsConfig, fundsDb, tracerApp)
+	fundApp := model.New(fundsConfig, fundsDb, tracerApp.GetTracer("funds"))
 
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
