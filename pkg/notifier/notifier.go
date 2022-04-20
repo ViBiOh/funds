@@ -26,10 +26,9 @@ type scoreTemplateContent struct {
 
 // App of package
 type App struct {
-	mailerApp client.App
-	modelApp  *model.App
-
+	modelApp   *model.App
 	recipients []string
+	mailerApp  client.App
 	score      float64
 }
 
