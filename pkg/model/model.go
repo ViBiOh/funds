@@ -88,17 +88,17 @@ func (a *App) refreshData(ctx context.Context) {
 	wg := concurrent.NewLimited(4)
 
 	for _, fundID := range fundsIds {
-		func(fundID []byte) {
-			wg.Go(func() {
-				if output, err := fetchFund(ctx, a.fundsURL, fundID); err != nil {
-					logger.Error("%s", err)
-				} else {
-					a.fundsMap.Store(output.ID, output)
-				}
+		fundID := fundID
 
-				time.Sleep(10 * time.Second)
-			})
-		}(fundID)
+		wg.Go(func() {
+			if output, err := fetchFund(ctx, a.fundsURL, fundID); err != nil {
+				logger.Error("%s", err)
+			} else {
+				a.fundsMap.Store(output.ID, output)
+			}
+
+			time.Sleep(10 * time.Second)
+		})
 	}
 
 	wg.Wait()
