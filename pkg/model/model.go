@@ -17,6 +17,7 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -67,11 +68,8 @@ func (a *App) refresh(ctx context.Context) error {
 		return nil
 	}
 
-	if a.tracer != nil {
-		var span trace.Span
-		ctx, span = a.tracer.Start(ctx, "refresh")
-		defer span.End()
-	}
+	ctx, end := tracer.StartSpan(ctx, a.tracer, "refresh")
+	defer end()
 
 	a.refreshData(ctx)
 

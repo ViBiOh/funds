@@ -12,7 +12,6 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 	"github.com/ViBiOh/mailer/pkg/client"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func main() {
@@ -49,13 +48,8 @@ func main() {
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
 
-	ctx := context.Background()
-	tracer := tracerApp.GetTracer("notifier")
-	if tracer != nil {
-		var span trace.Span
-		ctx, span = tracer.Start(ctx, "notifier")
-		defer span.End()
-	}
+	ctx, end := tracer.StartSpan(context.Background(), tracerApp.GetTracer("notifier"), "notifier")
+	defer end()
 
 	logger.Fatal(notifierApp.Start(ctx))
 }
