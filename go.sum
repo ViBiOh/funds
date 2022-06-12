@@ -36,10 +36,10 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/ViBiOh/flags v1.0.0 h1:ECiQMH2tK04PaCkPRuziWAtxYGtx2Ej8O15ZZ2Jx4Ww=
 github.com/ViBiOh/flags v1.0.0/go.mod h1:W0YgB4Nqou2j/2vevgO3kyrcS2f+ci/+w+jDGzVZilk=
-github.com/ViBiOh/httputils/v4 v4.42.2 h1:HJWjCFmhJUX/17AVErX9LspIedrfPw6TKdUvIrq1TiQ=
-github.com/ViBiOh/httputils/v4 v4.42.2/go.mod h1:JClFms9PvTnR/owI18t6uhgMsFuvzRTWk7kpPN7xmoc=
-github.com/ViBiOh/mailer v1.28.11 h1:vBM9dQjL0l4ssupEK6d4yw8297EK+lRArVmuS/Swlsw=
-github.com/ViBiOh/mailer v1.28.11/go.mod h1:gqtaEKVNrBh78ScOAFl41yRQtNwVGISncb9iu9txBAg=
+github.com/ViBiOh/httputils/v4 v4.43.0 h1:gCfKN1/wRrVxK4r3cDv6IsgkD9YKqRQisjIw5oxsTeE=
+github.com/ViBiOh/httputils/v4 v4.43.0/go.mod h1:Wb7F+LQHW1GyiWc1SdzM1qH72M9ZKIqJymDrXHlzpT0=
+github.com/ViBiOh/mailer v1.28.12 h1:dn1WAQ9+UEuLjSPnFowx89y5YtYrS4WZ6ep0WdDFixo=
+github.com/ViBiOh/mailer v1.28.12/go.mod h1:mT01Ic9QJkPdlab/FTcLa9TXkgoUk8mejOeCqbQ4dk8=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
