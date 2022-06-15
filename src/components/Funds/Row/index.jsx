@@ -33,10 +33,11 @@ function formatAlert(alert) {
  * Row functional component
  * @param {Object} options.fund       Fund displayed on th erow
  * @param {Function} options.filterBy Filter function
+ * @param {string} options.dataTestId Id for tests
  */
-export default function Row({ fund, filterBy }) {
+export default function Row({ fund, filterBy, dataTestId }) {
   return (
-    <span className={style.row}>
+    <span className={style.row} data-testid={dataTestId}>
       <span className={style.isin}>{fund.isin}</span>
       <span className={style.label} title={fund.label}>
         {fund.alert ? (
@@ -100,8 +101,10 @@ Row.propTypes = {
     }),
   }).isRequired,
   filterBy: PropTypes.func,
+  dataTestId: PropTypes.string,
 };
 
 Row.defaultProps = {
   filterBy: () => null,
+  dataTestId: undefined,
 };

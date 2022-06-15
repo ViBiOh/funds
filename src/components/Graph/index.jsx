@@ -86,18 +86,20 @@ export default class Graph extends Component {
   }
 
   render() {
-    const { className } = this.props;
+    const { className, dataTestId } = this.props;
     return (
       <canvas
         ref={(e) => setRef(this, 'graph', e)}
         className={className}
         height={200}
+        data-testid={dataTestId}
       />
     );
   }
 }
 
 Graph.propTypes = {
+  dataTestId: PropTypes.string,
   className: PropTypes.string,
   data: PropTypes.shape({
     datasets: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
@@ -107,4 +109,5 @@ Graph.propTypes = {
 
 Graph.defaultProps = {
   className: '',
+  dataTestId: 'graph',
 };

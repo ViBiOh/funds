@@ -1,28 +1,29 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import Button from './index';
 
 it('should always render as a button', () => {
-  expect(shallow(<Button />).type()).toEqual('button');
+  const { queryByRole } = render(<Button />);
+  expect(queryByRole('button')).toBeTruthy();
 });
 
 it('should not wrap child', () => {
-  const wrapper = shallow(
+  const { container } = render(
     <Button>
       <span>First</span>
     </Button>,
   );
 
-  expect(wrapper.find('span').length).toEqual(1);
+  expect(container.querySelector('span').textContent).toEqual('First');
 });
 
 it('should wrap children in div', () => {
-  const wrapper = shallow(
+  const { container } = render(
     <Button>
       <span>First</span>
       <span>Second</span>
     </Button>,
   );
 
-  expect(wrapper.find('div').length).toEqual(1);
+  expect(container.querySelector('div')).toBeTruthy();
 });

@@ -32,13 +32,7 @@ function renderFilters(filters, filterBy) {
       <span key={filter} className={style.modifier} data-funds-filter>
         <FaFilter />
         <span>
-          <em>
-            {' '}
-            {COLUMNS[filter].label}
-          </em>
-          {' '}
-          ≃
-          {' '}
+          <em> {COLUMNS[filter].label}</em> ≃{' '}
         </span>
 
         <span>{filters[filter]}</span>
@@ -61,7 +55,11 @@ function renderOrder(order, orderBy, reverseOrder) {
   return (
     <span className={style.modifier} data-funds-order>
       <Button type="none" onClick={reverseOrder}>
-        {order.descending ? <FaSortAmountDown /> : <FaSortAmountUp />}
+        {order.descending ? (
+          <FaSortAmountDown data-fa-sort-amount-down />
+        ) : (
+          <FaSortAmountUp data-fa-sort-amount-up />
+        )}
       </Button>
 
       <span>{COLUMNS[order.key].label}</span>
@@ -88,8 +86,7 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
             {size}
           </option>
         ))}
-      </select>
-      {' '}
+      </select>{' '}
       {label}
       <Button
         type="none"

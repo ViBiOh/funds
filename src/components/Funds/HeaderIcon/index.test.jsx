@@ -1,6 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import { COLUMNS } from 'components/Funds/Constants';
+import { render, fireEvent } from '@testing-library/react';
 import HeaderIcon from './index';
 
 function defaultProps() {
@@ -14,16 +14,17 @@ function defaultProps() {
 
 it('should always render as a span', () => {
   const props = defaultProps();
-  const wrapper = shallow(<HeaderIcon {...props} />);
-  expect(wrapper.type()).toEqual('span');
+  const { container } = render(<HeaderIcon {...props} />);
+  expect(container.querySelector('span')).toBeTruthy();
 });
 
 it('should call given callback on item click', () => {
   const props = defaultProps();
   props.onClick = jest.fn();
 
-  const wrapper = shallow(<HeaderIcon {...props} />);
-  wrapper.find('Button').at(0).simulate('click');
+  const { queryAllByRole } = render(<HeaderIcon {...props} />);
+
+  fireEvent.click(queryAllByRole('button')[0]);
 
   expect(props.onClick).toHaveBeenCalledWith(Object.keys(COLUMNS)[0]);
 });
