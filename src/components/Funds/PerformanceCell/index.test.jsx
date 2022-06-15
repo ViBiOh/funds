@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import { shallow } from 'enzyme';
 import PerformanceCell from './index';
 
 const defaultProps = {
@@ -7,17 +7,21 @@ const defaultProps = {
 };
 
 it('should always render as a span', () => {
-  expect(shallow(<PerformanceCell {...defaultProps} />).type()).toEqual('span');
+  const { container } = render(<PerformanceCell {...defaultProps} />);
+  expect(container.querySelector('span')).toBeTruthy();
 });
 
 it('should have style for given value', () => {
-  const wrapper = shallow(<PerformanceCell {...defaultProps} value={10} />);
-
-  expect(wrapper.props().className.split(' ').length).toEqual(3);
+  const { container } = render(
+    <PerformanceCell {...defaultProps} value={10} />,
+  );
+  expect(container.firstChild.className.split(' ').length).toEqual(3);
 });
 
 it('should have style for negative value', () => {
-  const wrapper = shallow(<PerformanceCell {...defaultProps} value={-10} />);
+  const { container } = render(
+    <PerformanceCell {...defaultProps} value={-10} />,
+  );
 
-  expect(wrapper.props().className.split(' ').length).toEqual(3);
+  expect(container.firstChild.className.split(' ').length).toEqual(3);
 });

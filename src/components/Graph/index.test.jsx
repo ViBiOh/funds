@@ -1,15 +1,17 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import { shallow } from 'enzyme';
 import Graph from './index';
 
-jest.mock('chart.js', () => jest.fn().mockImplementation(() => ({
-  data: {
-    datasets: [],
-    labels: [],
-  },
-  update: jest.fn(),
-  destroy: jest.fn(),
-})));
+jest.mock('chart.js', () =>
+  jest.fn().mockImplementation(() => ({
+    data: {
+      datasets: [],
+      labels: [],
+    },
+    update: jest.fn(),
+    destroy: jest.fn(),
+  })),
+);
 
 function defaultProps() {
   return {
@@ -22,12 +24,12 @@ function defaultProps() {
 
 it('should always render as a canvas', () => {
   const props = defaultProps();
-  const wrapper = shallow(<Graph {...props} />);
-  expect(wrapper.type()).toEqual('canvas');
+  const { container } = render(<Graph {...props} />);
+  expect(container.querySelector('canvas')).toBeTruthy();
 });
 
 it('should do nothing if chart not here on unmount', () => {
   const props = defaultProps();
-  const wrapper = shallow(<Graph {...props} />);
-  wrapper.unmount();
+  const { unmount } = render(<Graph {...props} />);
+  unmount();
 });

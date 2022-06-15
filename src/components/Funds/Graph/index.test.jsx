@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import { shallow } from 'enzyme';
 import Graph from './index';
 
 function defaultProps() {
@@ -11,8 +11,8 @@ function defaultProps() {
 
 it('should not render if no aggregat key', () => {
   const props = defaultProps();
-  const wrapper = shallow(<Graph {...props} />);
-  expect(wrapper.type()).toEqual(null);
+  const { container } = render(<Graph {...props} />);
+  expect(container.firstChild).toBeNull();
 });
 
 it('should render a Graph if key and aggregated values', () => {
@@ -29,6 +29,6 @@ it('should render a Graph if key and aggregated values', () => {
     },
   ];
 
-  const wrapper = shallow(<Graph {...props} />);
-  expect(wrapper.type().name).toEqual('Graph');
+  const { queryByTestId } = render(<Graph {...props} />);
+  expect(queryByTestId('graph')).toBeTruthy();
 });

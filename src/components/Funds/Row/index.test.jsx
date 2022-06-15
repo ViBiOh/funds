@@ -1,5 +1,5 @@
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { shallow } from 'enzyme';
 import Row from './index';
 
 function defaultProps() {
@@ -19,19 +19,21 @@ function defaultProps() {
 
 it('should always render as a span', () => {
   const props = defaultProps();
-  const wrapper = shallow(<Row {...props} />);
+  const { queryAllByRole, container } = render(<Row {...props} />);
 
-  wrapper.find('Button').at(0).simulate('click');
+  const button = queryAllByRole('button')[0];
+  fireEvent.click(button);
 
-  expect(wrapper.type()).toEqual('span');
+  expect(container.querySelector('span')).toBeTruthy();
 });
 
 it('should call given filterBy func on category click', () => {
   const props = defaultProps();
   props.filterBy = jest.fn();
-  const wrapper = shallow(<Row {...props} />);
+  const { queryAllByRole } = render(<Row {...props} />);
 
-  wrapper.find('Button').at(0).simulate('click');
+  const button = queryAllByRole('button')[0];
+  fireEvent.click(button);
 
   expect(props.filterBy).toHaveBeenCalledWith('category', 'Test');
 });
@@ -39,9 +41,10 @@ it('should call given filterBy func on category click', () => {
 it('should call given filterBy func on rating click', () => {
   const props = defaultProps();
   props.filterBy = jest.fn();
-  const wrapper = shallow(<Row {...props} />);
+  const { queryAllByRole } = render(<Row {...props} />);
 
-  wrapper.find('Button').at(1).simulate('click');
+  const button = queryAllByRole('button')[1];
+  fireEvent.click(button);
 
   expect(props.filterBy).toHaveBeenCalledWith('rating', 4);
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import Header from './index';
 
 function defaultProps() {
@@ -12,6 +12,6 @@ function defaultProps() {
 
 it('should always render as a header', () => {
   const props = defaultProps();
-  const wrapper = shallow(<Header {...props} />);
-  expect(wrapper.type()).toEqual('header');
+  const { container } = render(<Header {...props} />);
+  expect(container.querySelector('header')).toBeTruthy();
 });

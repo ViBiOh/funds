@@ -11,9 +11,14 @@ import Row from 'components/Funds/Row';
 export default function List({ funds, filterBy }) {
   return (
     <div key="list">
-      <Row key="header" fund={COLUMNS_HEADER} />
+      <Row key="header" fund={COLUMNS_HEADER} dataTestId="row-header" />
       {funds.map((fund) => (
-        <Row key={fund.id} fund={fund} filterBy={filterBy} />
+        <Row
+          key={fund.id}
+          fund={fund}
+          filterBy={filterBy}
+          dataTestId="fund-row"
+        />
       ))}
     </div>
   );

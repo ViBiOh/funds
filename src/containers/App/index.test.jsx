@@ -1,7 +1,12 @@
 import React from 'react';
-import sinon from 'sinon';
-import { shallow } from 'enzyme';
-import ConnectedFunds from 'containers/Funds';
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { combineReducers, createStore } from 'redux';
+import error, { initialState as errorInitialState } from 'reducers/error';
+import funds, { initialState as fundsInitialState } from 'reducers/funds';
+import pending, { initialState as pendingInitialState } from 'reducers/pending';
+import config, { initialState as configInitialState } from 'reducers/config';
+
 import { AppComponent } from './index';
 
 function defaultProps() {
@@ -13,31 +18,52 @@ function defaultProps() {
 
 it('should render as a div if not ready', () => {
   const props = defaultProps();
-  const wrapper = shallow(<AppComponent {...props} />);
-  expect(wrapper.type()).toEqual('div');
+  const { container } = render(<AppComponent {...props} />);
+  expect(container.querySelector('div')).toBeTruthy();
 });
 
 it('should show a Throbber while not ready', () => {
   const props = defaultProps();
 
-  const wrapper = shallow(<AppComponent {...props} />);
-  expect(wrapper.find('Throbber').length).toEqual(1);
+  const { queryByText } = render(<AppComponent {...props} />);
+  expect(queryByText('Loading environment')).toBeTruthy();
 });
 
 it('should trigger init on mount', () => {
   const props = defaultProps();
-  props.init = sinon.spy();
+  props.init = jest.fn();
 
-  const wrapper = shallow(<AppComponent {...props} />);
-  wrapper.instance().componentDidMount();
+  render(<AppComponent {...props} />);
 
-  expect(props.init.called).toEqual(true);
+  expect(props.init).toHaveBeenCalled();
 });
 
-it('should render Funds when ready', () => {
+it('should render Funds when ready', async () => {
   const props = defaultProps();
-  props.ready = true;
 
-  const wrapper = shallow(<AppComponent {...props} />);
-  expect(wrapper.find(ConnectedFunds).length).toEqual(1);
+  const { container } = render(
+    <Provider
+      store={createStore(
+        combineReducers({
+          config,
+          error,
+          funds,
+          pending,
+        }),
+        {
+          config: configInitialState,
+          error: errorInitialState,
+          funds: fundsInitialState,
+          pending: pendingInitialState,
+        },
+      )}
+    >
+      <AppComponent {...props} />
+    </Provider>,
+  );
+
+  const connectedFunds = await container.querySelectorAll(
+    '[data-connected-funds]',
+  );
+  expect(connectedFunds.length).toEqual(1);
 });
