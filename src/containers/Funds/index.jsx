@@ -32,7 +32,9 @@ export class Funds extends Component {
   }
 
   componentDidMount() {
-    const { getFunds, setFilter, setOrder, setAggregat } = this.props;
+    const {
+      getFunds, setFilter, setOrder, setAggregat,
+    } = this.props;
 
     getFunds();
 
@@ -93,7 +95,9 @@ export class Funds extends Component {
 
   render() {
     const {
-      funds: { all, displayed, aggregated, filters, order, aggregat },
+      funds: {
+        all, displayed, aggregated, filters, order, aggregat,
+      },
       pending,
       error,
     } = this.props;

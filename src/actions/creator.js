@@ -5,26 +5,23 @@
  * @return {func}                Function that generate action with type and properties given the
  *                               params
  */
-export const makeActionCreator =
-  (type, ...argNames) =>
-  (...args) => {
-    const action = { type };
-    argNames.forEach((arg, index) => {
-      action[argNames[index]] = args[index];
-    });
+export const makeActionCreator = (type, ...argNames) => (...args) => {
+  const action = { type };
+  argNames.forEach((arg, index) => {
+    action[argNames[index]] = args[index];
+  });
 
-    return action;
-  };
+  return action;
+};
 
 /**
  * Transform a name into a type name : SNAKE_UPPER_CASE
  * @param  {string} name A camel case action name
  * @return {string}      Snake upper case type name
  */
-export const toTypeName = (name) =>
-  String(name)
-    .replace(/([A-Z])/g, '_$1')
-    .toUpperCase();
+export const toTypeName = (name) => String(name)
+  .replace(/([A-Z])/g, '_$1')
+  .toUpperCase();
 
 /**
  * Action creator : return the function and the constant for the given action
