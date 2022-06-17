@@ -32,7 +32,13 @@ function renderFilters(filters, filterBy) {
       <span key={filter} className={style.modifier} data-funds-filter>
         <FaFilter />
         <span>
-          <em> {COLUMNS[filter].label}</em> ≃{' '}
+          <em>
+            {' '}
+            {COLUMNS[filter].label}
+          </em>
+          {' '}
+          ≃
+          {' '}
         </span>
 
         <span>{filters[filter]}</span>
@@ -86,7 +92,8 @@ function renderAggregat(aggregat, aggregateBy, onAggregateSizeChange) {
             {size}
           </option>
         ))}
-      </select>{' '}
+      </select>
+      {' '}
       {label}
       <Button
         type="none"
