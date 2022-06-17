@@ -1,7 +1,6 @@
 import React from 'react';
-import funtch from 'funtch';
 import PropTypes from 'prop-types';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import error, { initialState as errorInitialState } from 'reducers/error';
@@ -11,8 +10,10 @@ import config, { initialState as configInitialState } from 'reducers/config';
 
 import { AppComponent } from './index';
 
-jest.mock('funtch');
-jest.mock('AppStore');
+jest.mock('../Funds', () => () => {
+  const MockName = 'connected-funds';
+  return <MockName />;
+});
 
 function defaultProps() {
   return {
@@ -68,19 +69,13 @@ function ReduxProvider({ children }) {
 
 ReduxProvider.propTypes = { children: PropTypes.node.isRequired };
 
-it('should render Funds when ready', async (done) => {
+it('should render Funds when ready', () => {
   const props = defaultProps();
-
-  funtch.get.mockResolvedValue({});
+  props.ready = true;
 
   const { container } = render(<AppComponent {...props} />, {
     wrapper: ReduxProvider,
   });
 
-  const connectedFunds = await container.querySelectorAll(
-    '[data-connected-funds]',
-  );
-
-  expect(connectedFunds.length).toEqual(1);
-  done();
+  expect(container.querySelector('connected-funds')).toBeTruthy();
 });

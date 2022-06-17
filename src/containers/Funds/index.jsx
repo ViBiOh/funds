@@ -121,7 +121,7 @@ export class Funds extends Component {
           </div>
         )}
 
-        <article className={style.container} data-connected-funds>
+        <article className={style.container}>
           <div className={style.modifiers}>
             <Modifiers
               fundsSize={displayed.length}

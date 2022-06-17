@@ -2,16 +2,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import Graph from './index';
 
-jest.mock('chart.js', () =>
-  jest.fn().mockImplementation(() => ({
-    data: {
-      datasets: [],
-      labels: [],
-    },
-    update: jest.fn(),
-    destroy: jest.fn(),
-  })),
-);
+jest.mock('chart.js');
 
 function defaultProps() {
   return {
