@@ -5,9 +5,7 @@ import Button from 'components/Button';
 import { COLUMNS } from 'components/Funds/Constants';
 import style from './index.module.css';
 
-export default function HeaderIcon({
-  filter, onClick, icon, displayed,
-}) {
+export default function HeaderIcon({ filter, onClick, icon, displayed }) {
   const list = Object.entries(COLUMNS)
     .filter(([, column]) => column[filter])
     .map(([key, column]) => (

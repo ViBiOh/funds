@@ -86,31 +86,33 @@ export default class FundsHeader extends Component {
         <HeaderIcon
           filter="sortable"
           onClick={this.onOrderBy}
-          icon={(
+          icon={
             <FaSortAmountDown
               onClick={() => this.toggleDisplay('order', !this.orderDisplayed)}
             />
-          )}
+          }
           displayed={this.orderDisplayed}
         />
         <HeaderIcon
           filter="summable"
           onClick={this.onAggregateBy}
-          icon={(
+          icon={
             <FaChartPie
               onClick={() => this.toggleDisplay('sigma', !this.sigmaDisplayed)}
             />
-          )}
+          }
           displayed={this.sigmaDisplayed}
         />
         <HeaderIcon
           filter="filterable"
           onClick={this.onFilterChange}
-          icon={(
+          icon={
             <FaFilter
-              onClick={() => this.toggleDisplay('filter', !this.filterDisplayed)}
+              onClick={() =>
+                this.toggleDisplay('filter', !this.filterDisplayed)
+              }
             />
-          )}
+          }
           displayed={this.filterDisplayed}
         />
         <input

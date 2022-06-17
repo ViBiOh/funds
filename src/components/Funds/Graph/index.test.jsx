@@ -2,6 +2,8 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import Graph from './index';
 
+jest.mock('chart.js');
+
 function defaultProps() {
   return {
     aggregat: {},
