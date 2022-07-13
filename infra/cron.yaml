@@ -24,8 +24,8 @@ spec:
     cleanupOnFail: true
   values:
     nameOverride: funds-notifier
-    jobLabel:
-      k8s-cleaner: "true"
+    jobLabels:
+      k8s-cleaner: 'true'
     schedule: '0 8 * * *'
     image:
       name: vibioh/funds-api
