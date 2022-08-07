@@ -73,7 +73,7 @@ func (a *App) listLastAlertByIsin(ctx context.Context) ([]Alert, error) {
 		var item Alert
 
 		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
-			return fmt.Errorf("unable to scan data: %s", err)
+			return fmt.Errorf("scan data: %s", err)
 		}
 
 		list = append(list, item)
@@ -90,7 +90,7 @@ func (a *App) listAlertsOpened(ctx context.Context) ([]Alert, error) {
 		var item Alert
 
 		if err := rows.Scan(&item.Isin, &item.AlertType, &item.Score, &item.Date); err != nil {
-			return fmt.Errorf("unable to scan data: %s", err)
+			return fmt.Errorf("scan data: %s", err)
 		}
 
 		list = append(list, item)

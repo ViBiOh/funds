@@ -148,7 +148,7 @@ func (a *App) ListFunds(alerts []Alert) []Fund {
 func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 	alerts, err := a.GetIsinAlert(r.Context())
 	if err != nil {
-		httperror.InternalServerError(w, fmt.Errorf("unable to retrieve alerts: %w", err))
+		httperror.InternalServerError(w, fmt.Errorf("retrieve alerts: %w", err))
 		return
 	}
 

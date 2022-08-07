@@ -105,11 +105,11 @@ func fetchFund(ctx context.Context, fundsURL string, fundID []byte) (Fund, error
 	fund := &Fund{ID: cleanID}
 
 	if err := fetchInfosAndPerformances(ctx, url, fund); err != nil {
-		return *fund, fmt.Errorf("unable to fetch infos for %s: %w", fundID, err)
+		return *fund, fmt.Errorf("fetch infos for %s: %w", fundID, err)
 	}
 
 	if err := fetchVolatilite(ctx, url, fund); err != nil {
-		return *fund, fmt.Errorf("unable to fetch volatilite for %s: %w", fundID, err)
+		return *fund, fmt.Errorf("fetch volatilite for %s: %w", fundID, err)
 	}
 
 	fund.ComputeScore()

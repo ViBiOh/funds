@@ -55,7 +55,7 @@ WHERE
   isin = $3
 `
 
-var errNilFund = errors.New("unable to save nil Fund")
+var errNilFund = errors.New("save nil Fund")
 
 func (a *App) readFundByIsin(ctx context.Context, isin string) (Fund, error) {
 	item := Fund{Isin: isin}
@@ -74,7 +74,7 @@ func (a *App) listFundsWithScoreAbove(ctx context.Context, minScore float64) (fu
 		var item Fund
 
 		if err := rows.Scan(&item.Isin, &item.Label, &item.Score); err != nil {
-			return fmt.Errorf("unable to scan data: %s", err)
+			return fmt.Errorf("scan data: %s", err)
 		}
 
 		list = append(list, item)
