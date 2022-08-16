@@ -74,7 +74,7 @@ func (a *App) listFundsWithScoreAbove(ctx context.Context, minScore float64) (fu
 		var item Fund
 
 		if err := rows.Scan(&item.Isin, &item.Label, &item.Score); err != nil {
-			return fmt.Errorf("scan data: %s", err)
+			return fmt.Errorf("scan data: %w", err)
 		}
 
 		list = append(list, item)
