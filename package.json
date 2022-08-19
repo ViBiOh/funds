@@ -12,7 +12,7 @@
   "dependencies": {
     "chart.js": "3.9.1",
     "classnames": "2.3.1",
-    "date-fns": "2.29.1",
+    "date-fns": "2.29.2",
     "funtch": "2.5.4",
     "history": "5.3.0",
     "prop-types": "15.8.1",
