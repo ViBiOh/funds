@@ -39,7 +39,7 @@ func main() {
 	logger.Fatal(err)
 	defer fundsDb.Close()
 
-	mailerApp, err := client.New(mailerConfig, nil)
+	mailerApp, err := client.New(mailerConfig, nil, tracerApp.GetTracer("mailer"))
 	logger.Fatal(err)
 	defer mailerApp.Close()
 
