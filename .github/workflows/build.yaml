@@ -96,7 +96,7 @@ jobs:
           node-version: '16'
       - name: Build
         run: |
-          npm ci
+          npm ci --ignore-scripts
           npm run format
           npm run style
           npm test
