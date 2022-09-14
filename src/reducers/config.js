@@ -15,15 +15,13 @@ export const initialState = {
  * @return {Object} New state
  */
 export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case actions.GET_CONFIG_SUCCEEDED:
-      return {
-        ...initialState,
-        ...action.config,
-        ready: true,
-      };
-
-    default:
-      return state;
+  if (action.type === actions.GET_CONFIG_SUCCEEDED) {
+    return {
+      ...initialState,
+      ...action.config,
+      ready: true,
+    };
   }
+
+  return state;
 }

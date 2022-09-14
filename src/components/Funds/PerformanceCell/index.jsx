@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import style from './index.module.css';
 
-const NUMBER_PATTERN = /^[+-]?[0-9]+\.?[0-9]*$/;
+const NUMBER_PATTERN = /^[+-]?\d+\.?\d*$/;
 
 const getValue = (value) => {
   if (!NUMBER_PATTERN.test(value)) {
