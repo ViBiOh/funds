@@ -27,7 +27,7 @@ spec:
       name: vibioh/funds-api
       tag: '202209142326' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
-      API_DB_HOST: funds-db
+      API_DB_HOST: postgres
       API_DB_NAME: funds
       API_DB_PORT: '80'
       API_DB_USER: funds
@@ -36,7 +36,7 @@ spec:
       OTEL_SERVICE_NAME: funds
     readinessProbePath: /ready
     secrets:
-      API_DB_PASS: AgCcgFmTiwSi1RAsGtrV2cIkwo6hEd/C208MbgfgXLB8sATU4wUyvzj2NLQ/G0HiYtZj58+bK2z+1EfAPbOF0+upWDRFs9S0x/17IayVjbnYZUDaYiKrHUqB1KAoJOAQiHEJNgtCwdQvGAUCaUBe996VGLyot0z00L5QKxEEtUYhLBm/q0F8c7RlJfZwQ/vGKJxVRR67GNPmm1+b0XmuVE+cppTp2w2b41Fx9qCKoT9RV6YxEbo1T3JyaFEIt/3uBTBFDabDsZ4b6lMrlAyqex247WOyfoGIFDie4tChUh7YiVqu1W3v6Le1cfaG6lK6p4ivbMHaJfP9l4c5zCsbHUfdAOox6foQU4dFLxuUbdLYVCXaKLTWMNdOeLcI7FZip2DJz6dIeXGIh3aCf/OPb9unZ36iaooAfdDUVIeWuXPS5ogA3GTStI0SAu6TpHvE6qtCtPO+yLXhZ2brYvYwfFl35yPhJyYLsLSohTj5t7oT3GgMYEbOOHr9hpe5SxohkJsaxf6iE5ALTln1gPhJKjN6HQYp53GKZszOtHhYx+FH+MdMb3YwqYueDw8dCoKpxiNgR7xl+AmyzJDBI5Oi9lOlD08xgy3V7B6EkDXFq0VRL8wadcTC6hGp2/qxQ8Gua6u3SAf0UNNoYFS2WUD0FVl+o2jP5kEpxx5NjKmYyDAYvzr2pp09BIMGRDmZOP/9MVLoEpK8JRCgLdvxAx72uqOivd3ywj5DA94EJoXb7y//r10GOFRIWn72zR1sF1DaQw/fqGaQzQqlNV6RjZU=
+      API_DB_PASS: AgBrGyljPpXjrvs2SgpMKgBBUjCRwnia/oOAwTTvsZGzNzr4L1oWxkEGA5JFmG+EIjVDVwDsVtq71Mfrn/7Ri+Y6IOFDIjBm9XPJ/H5pTMXxtv7krssmHYQnpx053GYfOq2ukhbxrPQBwlfCp7gGIIemNuZdEL4xdcLpmqFXTiOvcUrAhQBUyGA9bChJMMtQeIFzi7OLWHEN5AQ7wiiHuMZrPrePA778IPWpuo70GjuPxYVhhUNLJ1pCLo0oEC6o5Zz3Zk9q+ZBUhHhUurGum9fRJp+Ef2kmbBCBCrhSOB26GlVABYabrK/wxVdLBbq4IEuykDCYNWefgZMQ3TVTLtIJQ6QXXDTmMeoG8uqUAHgiMvDVR9+SgcvLuyCWM8uLRhC9UYwLH+221hcKP4CI8GwnJygX3lf2MXYlEZTnm6f125Sx+mNUWhg0D59vMG+SrHHUKc28ExxPi2IWB7iMUWy3ZYybOr28xmomZiGxrx4wuzm4SCmrKmCej1eQRhjMpGbdRNKPUvcH7vbgtzHe2yFK5xScJl1Ug3gw1N7xIiMTxMuCMQqwDRDJIXdMyPMApcF8SgJa7khcIG5BElxFpLyKx7dxSlv6XDEQ/wCSVhxnQOM0HIwRV5D/BUxW8/Pwt+69WpoJ+bbBRIJKGcSzHfTNTEuwLNyJk1BTcqWQD9f25ypux+VRlAzl9EeI7COLsm3+inU6HA6QNzXrx+PnyY9jk6PQVVAd5fudb5qpF7XPsvoHqOctJhRjoGJ10OkTAD9Sv/4HUqMYtV41kb8=
       API_INFOS: AgCf0fIQ76F2yC1hsCmXU1Tc9LTO+BMeiSGIYNpgOBjpqI/fU4Tlx8mHC5IVxhhQxcjqfRtD5NvnSQXQSoczsFw9+OYW1JSizrPZX1pkKn8kepRYHhWDVRY+hUuKrcDihIqKq+h4TujwvASSXRzXPvoeV2sQU+atkKQwEzf4LSybCrqaTpQTMrTh9PCUvs1p3oJMp6aj3kUA8DaNaYkZ8EWKKIde74Hax/70JMf9kmQTzutD5PeUXRJ7Xu1dcLWvkLghyhkTXB9PUzw4MpxmLb5JX4z2UI5l63YYWrXnfSan+2mOS3lGwDcMsrqAOKVDqhXCw5feddaKfIrsJwJ9kSKuP//4ohKS5B4kGmKIuW6pYALQSybnrEBdpkxzwLPOWwSECIut1GxiD42iOAi3v54pyTRehJJoZktPYC3JL/+DbpI7YLfwNYE+sI8PD4gKGZfFK0oQ19kEkk5bVjbOC/azliuONtDc2rmb8dR/NPBp1cy7LbJHaS0ubFCtXX85Xb2M/LVsROTJxYl6AeNMRXNzaThFcRJCGniu+kgpPLisJyYFsi/MnIv0VE/yytOB7i5M2WfJ1wUO9KV1+8EwMXE0MEGG+IjUGgq8jiM4tN84rtbnzk959OmbDNyi+Aguh3bmWFpfNkpTW/yahaJGHyIvrsGeqtf+8ROTGx7CxnXgb7pq9/puP/0COBCAeSbuyZIeB6nknaB/lQBnZhoJdAKZbPmHZXmwdiLPC0Y/h4izGydnZkhK3mifBmjk9aMdsQiBlPbadeRr9WZf8xQJyg==
     ingress:
       enabled: true
@@ -54,5 +54,5 @@ spec:
                   - key: app.kubernetes.io/instance
                     operator: In
                     values:
-                      - funds-db
+                      - postgres
               topologyKey: 'kubernetes.io/hostname'
