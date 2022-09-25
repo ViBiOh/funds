@@ -65,7 +65,7 @@ func main() {
 	healthApp := health.New(healthConfig, fundsDb.Ping)
 	fundApp := model.New(fundsConfig, fundsDb, tracerApp.GetTracer("funds"))
 
-	go fundApp.Start(healthApp.Done())
+	go fundApp.Start(healthApp.Context())
 
 	go promServer.Start("prometheus", healthApp.End(), prometheusApp.Handler())
 	go appServer.Start("http", healthApp.End(), httputils.Handler(fundApp.Handler(), healthApp, prometheusApp.Middleware, tracerApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
