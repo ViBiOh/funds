@@ -25,12 +25,10 @@ const (
 	listPrefix = "/list"
 )
 
-// Config of package
 type Config struct {
 	infos *string
 }
 
-// App of package
 type App struct {
 	tracer   trace.Tracer
 	db       db.App
@@ -38,14 +36,12 @@ type App struct {
 	fundsMap sync.Map
 }
 
-// Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
 		infos: flags.String(fs, prefix, "funds", "Infos", "Informations URL", "", nil),
 	}
 }
 
-// New creates new App from Config
 func New(config Config, db db.App, tracer trace.Tracer) *App {
 	return &App{
 		fundsURL: strings.TrimSpace(*config.infos),
@@ -56,11 +52,10 @@ func New(config Config, db db.App, tracer trace.Tracer) *App {
 	}
 }
 
-// Start worker
-func (a *App) Start(done <-chan struct{}) {
+func (a *App) Start(ctx context.Context) {
 	cron.New().Each(time.Hour*8).Now().WithTracer(a.tracer).OnError(func(err error) {
 		logger.Error("%s", err)
-	}).Start(a.refresh, done)
+	}).Start(ctx, a.refresh)
 }
 
 func (a *App) refresh(ctx context.Context) error {
@@ -115,7 +110,6 @@ func (a *App) saveData(ctx context.Context) (err error) {
 	return
 }
 
-// Health check health
 func (a *App) Health() error {
 	if len(a.ListFunds(nil)) == 0 {
 		return errors.New("no funds fetched")
@@ -124,7 +118,6 @@ func (a *App) Health() error {
 	return nil
 }
 
-// ListFunds return content of funds' map
 func (a *App) ListFunds(alerts []Alert) []Fund {
 	funds := make([]Fund, 0, len(fundsIds))
 
@@ -155,7 +148,6 @@ func (a *App) listHandler(w http.ResponseWriter, r *http.Request) {
 	httpjson.WriteArray(w, http.StatusOK, a.ListFunds(alerts))
 }
 
-// Handler for model request. Should be use with net/http
 func (a *App) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
