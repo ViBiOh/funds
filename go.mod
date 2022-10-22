@@ -7,7 +7,7 @@ require (
 	github.com/ViBiOh/httputils/v4 v4.49.3
 	github.com/ViBiOh/mailer v1.30.14
 	github.com/jackc/pgx/v4 v4.17.2
-	go.opentelemetry.io/otel/trace v1.11.0
+	go.opentelemetry.io/otel/trace v1.11.1
 )
 
 require (
@@ -33,7 +33,7 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.3 // indirect
-	go.opentelemetry.io/otel v1.11.0 // indirect
+	go.opentelemetry.io/otel v1.11.1 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.11.0 // indirect
 	go.opentelemetry.io/otel/metric v0.32.3 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.0 // indirect
