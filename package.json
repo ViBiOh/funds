@@ -10,7 +10,7 @@
   },
   "homepage": "https://funds.vibioh.fr",
   "dependencies": {
-    "chart.js": "3.9.1",
+    "chart.js": "4.0.1",
     "classnames": "2.3.2",
     "date-fns": "2.29.3",
     "funtch": "2.5.4",
