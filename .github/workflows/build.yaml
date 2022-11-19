@@ -99,7 +99,6 @@ jobs:
           npm ci
           npm run format
           npm run style
-          // npm test
           npm run build
           ./remove_hash_from_asset.js "$(make version)"
           git --no-pager diff && git diff --quiet
