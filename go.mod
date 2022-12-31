@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/ViBiOh/flags v1.2.0
-	github.com/ViBiOh/httputils/v4 v4.50.7
+	github.com/ViBiOh/httputils/v4 v4.51.2
 	github.com/ViBiOh/mailer v1.30.18
 	github.com/jackc/pgx/v4 v4.17.2
 	go.opentelemetry.io/otel/trace v1.11.2
@@ -26,10 +26,10 @@ require (
 	github.com/jackc/pgtype v1.13.0 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/lib/pq v1.10.3 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
-	github.com/prometheus/common v0.38.0 // indirect
+	github.com/prometheus/common v0.39.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.37.0 // indirect
