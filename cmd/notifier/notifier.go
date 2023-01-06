@@ -30,12 +30,14 @@ func main() {
 	logger.Global(logger.New(loggerConfig))
 	defer logger.Close()
 
-	tracerApp, err := tracer.New(tracerConfig)
+	ctx := context.Background()
+
+	tracerApp, err := tracer.New(ctx, tracerConfig)
 	logger.Fatal(err)
-	defer tracerApp.Close()
+	defer tracerApp.Close(ctx)
 	request.AddTracerToDefaultClient(tracerApp.GetProvider())
 
-	fundsDb, err := db.New(dbConfig, tracerApp.GetTracer("database"))
+	fundsDb, err := db.New(ctx, dbConfig, tracerApp.GetTracer("database"))
 	logger.Fatal(err)
 	defer fundsDb.Close()
 
