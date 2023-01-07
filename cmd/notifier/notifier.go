@@ -50,7 +50,7 @@ func main() {
 	notifierApp := notifier.New(notifierConfig, fundApp, mailerApp)
 	logger.Fatal(err)
 
-	ctx, end := tracer.StartSpan(context.Background(), tracerApp.GetTracer("notifier"), "notifier")
+	ctx, end := tracer.StartSpan(ctx, tracerApp.GetTracer("notifier"), "notifier")
 	defer end()
 
 	logger.Fatal(notifierApp.Start(ctx))

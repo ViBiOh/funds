@@ -21,7 +21,7 @@ func TestSaveAlert(t *testing.T) {
 		t.Run(intention, func(t *testing.T) {
 			app := App{}
 
-			err := app.SaveAlert(context.Background(), tc.input)
+			err := app.SaveAlert(context.TODO(), tc.input)
 
 			failed := false
 
