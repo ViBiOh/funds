@@ -68,10 +68,12 @@ func main() {
 	healthApp := health.New(healthConfig, fundsDb.Ping)
 	fundApp := model.New(fundsConfig, fundsDb, tracerApp.GetTracer("funds"))
 
-	go fundApp.Start(healthApp.ContextDone())
+	go fundApp.Start(healthApp.Done(ctx))
 
-	go promServer.Start(healthApp.ContextEnd(), "prometheus", prometheusApp.Handler())
-	go appServer.Start(healthApp.ContextEnd(), "http", httputils.Handler(fundApp.Handler(), healthApp, prometheusApp.Middleware, tracerApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
+	endCtx := healthApp.End(ctx)
+
+	go promServer.Start(endCtx, "prometheus", prometheusApp.Handler())
+	go appServer.Start(endCtx, "http", httputils.Handler(fundApp.Handler(), healthApp, prometheusApp.Middleware, tracerApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
 
 	healthApp.WaitForTermination(appServer.Done())
 	server.GracefulWait(appServer.Done(), promServer.Done())
