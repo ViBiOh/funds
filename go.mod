@@ -6,7 +6,7 @@ require (
 	github.com/ViBiOh/flags v1.2.0
 	github.com/ViBiOh/httputils/v4 v4.53.7
 	github.com/ViBiOh/mailer v1.30.19
-	github.com/jackc/pgx/v5 v5.3.0
+	github.com/jackc/pgx/v5 v5.3.1
 	go.opentelemetry.io/otel/trace v1.13.0
 )
 
