@@ -51,7 +51,7 @@ func main() {
 	logger.Fatal(err)
 
 	ctx, end := tracer.StartSpan(ctx, tracerApp.GetTracer("notifier"), "notifier")
-	defer end()
+	defer end(nil)
 
 	logger.Fatal(notifierApp.Start(ctx))
 }

@@ -32,7 +32,7 @@ spec:
       API_DB_PORT: '80'
       API_DB_USER: funds
       API_LOGGER_JSON: 'true'
-      API_TRACER_URL: http://jaeger.monitoring:14268/api/traces
+      API_TRACER_URL: otel-collector.monitoring:4317
       OTEL_SERVICE_NAME: funds
     readinessProbePath: /ready
     secrets:

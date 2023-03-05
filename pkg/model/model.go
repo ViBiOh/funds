@@ -63,13 +63,15 @@ func (a *App) refresh(ctx context.Context) error {
 		return nil
 	}
 
+	var err error
+
 	ctx, end := tracer.StartSpan(ctx, a.tracer, "refresh")
-	defer end()
+	defer end(&err)
 
 	a.refreshData(ctx)
 
 	if a.db.Enabled() {
-		if err := a.saveData(ctx); err != nil {
+		if err = a.saveData(ctx); err != nil {
 			return err
 		}
 	}
