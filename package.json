@@ -21,7 +21,7 @@
     "react-icons": "4.8.0",
     "react-redux": "8.0.5",
     "redux": "4.2.1",
-    "redux-saga": "1.2.2",
+    "redux-saga": "1.2.3",
     "regenerator-runtime": "0.13.11",
     "url-join": "5.0.0"
   },
