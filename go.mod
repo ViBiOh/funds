@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/ViBiOh/flags v1.2.0
 	github.com/ViBiOh/httputils/v4 v4.55.0
-	github.com/ViBiOh/mailer v1.30.20
+	github.com/ViBiOh/mailer v1.31.0
 	github.com/jackc/pgx/v5 v5.3.1
 	go.opentelemetry.io/otel/trace v1.14.0
 )
