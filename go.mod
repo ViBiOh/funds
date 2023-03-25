@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/ViBiOh/flags v1.2.0
-	github.com/ViBiOh/httputils/v4 v4.54.4
+	github.com/ViBiOh/httputils/v4 v4.55.0
 	github.com/ViBiOh/mailer v1.30.20
 	github.com/jackc/pgx/v5 v5.3.1
 	go.opentelemetry.io/otel/trace v1.14.0
@@ -27,7 +27,7 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
-	github.com/streadway/amqp v1.0.0 // indirect
+	github.com/rabbitmq/amqp091-go v1.7.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.40.0 // indirect
 	go.opentelemetry.io/otel v1.14.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.14.0 // indirect
