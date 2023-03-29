@@ -33,6 +33,7 @@ spec:
       API_DB_USER: funds
       API_LOGGER_JSON: 'true'
       API_TRACER_URL: otel-collector.monitoring:4317
+      GOMAXPROCS: '1'
       OTEL_SERVICE_NAME: funds
     readinessProbePath: /ready
     secrets:

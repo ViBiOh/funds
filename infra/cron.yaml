@@ -31,6 +31,7 @@ spec:
       name: vibioh/funds-api
       tag: '202303291835' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
+      GOMAXPROCS: '1'
       NOTIFIER_SCORE: '20'
       NOTIFIER_DB_HOST: postgres
       NOTIFIER_DB_PORT: '80'

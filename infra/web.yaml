@@ -27,6 +27,7 @@ spec:
       name: vibioh/funds-ui
       tag: '202303291835' # {"$imagepolicy": "default:flux-funds-web:tag"}
     config:
+      GOMAXPROCS: '1'
       VIWS_LOGGER_JSON: 'true'
       VIWS_PROMETHEUS_GZIP: 'false'
       VIWS_GZIP: 'false'
