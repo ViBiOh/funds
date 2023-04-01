@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cron
-      version: '0.0.27'
+      version: '0.0.28'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -27,6 +27,7 @@ spec:
     jobLabels:
       k8s-cleaner: 'true'
     schedule: '0 8 * * *'
+    timeZone: 'Europe/Paris'
     image:
       name: vibioh/funds-api
       tag: '202303291835' # {"$imagepolicy": "default:flux-funds-api:tag"}
