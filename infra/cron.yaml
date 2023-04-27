@@ -30,7 +30,7 @@ spec:
     timeZone: 'Europe/Paris'
     image:
       name: vibioh/funds-api
-      tag: '202304241422' # {"$imagepolicy": "default:flux-funds-api:tag"}
+      tag: '202304272022' # {"$imagepolicy": "default:flux-funds-api:tag"}
     config:
       GOMAXPROCS: '1'
       NOTIFIER_SCORE: '20'
